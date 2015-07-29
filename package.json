@@ -23,9 +23,17 @@
     "lib": "lib"
   },
   "dependencies": {
+    "appium-android-ime": "^2.0.0",
+    "appium-logger": "^1.1.7",
+    "appium-support": "^2.0.0-beta12",
+    "appium-unlock": "0.0.1",
+    "asyncbox": "^2.0.4",
     "babel-runtime": "=5.5.5",
     "bluebird": "^2.9.32",
-    "source-map-support": "^0.3.1"
+    "io.appium.settings": "^2.0.0",
+    "lodash": "^3.10.0",
+    "source-map-support": "^0.3.1",
+    "teen_process": "^1.2.2"
   },
   "scripts": {
     "prepublish": "./node_modules/.bin/gulp prepublish",
@@ -34,6 +42,7 @@
   },
   "devDependencies": {
     "appium-gulp-plugins": "^1.2.12",
+    "appium-test-support": "0.0.5",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "gulp": "^3.8.11",

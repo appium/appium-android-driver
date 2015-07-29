@@ -1,4 +1,4 @@
-import {default as sample} from './lib/sample';
+import { AndroidDriver } from './lib/driver';
+import androidHelpers from './lib/android-helpers';
 
-export {sample};
-
+export { androidHelpers, AndroidDriver };
