@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "appium-android-ime": "^2.0.0",
+    "appium-base-driver": "^0.2.1",
     "appium-logger": "^1.1.7",
     "appium-support": "^2.0.0-beta12",
     "appium-unlock": "0.0.1",
