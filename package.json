@@ -41,6 +41,7 @@
     "watch": "./node_modules/.bin/gulp"
   },
   "devDependencies": {
+    "appium-adb": "^2.0.0-beta7",
     "appium-gulp-plugins": "^1.2.12",
     "appium-test-support": "0.0.5",
     "chai": "^3.0.0",
