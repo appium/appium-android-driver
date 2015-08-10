@@ -73,6 +73,9 @@ describe('driver e2e', () => {
 
       await driver.startAndroidSession(caps);
 
+      let val = await driver.bootstrap.sendCommand('action', {action: 'source'});
+      val.length.should.be.above(500);
+
       // TODO
     });
 
