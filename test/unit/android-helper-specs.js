@@ -119,22 +119,22 @@ describe('Android Helpers', () => {
   describe('getLaunchInfoFromManifest', withMocks({adb}, (mocks) => {
     it('should return when no app present', async () => {
       mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-      await helpers.getLaunchInfoFromManifest(adb, {});
+      await helpers.getLaunchInfo(adb, {});
       mocks.adb.verify();
     });
     it('should return when appPackage & appActivity are already present',
       async () => {
         mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-        await helpers.getLaunchInfoFromManifest(adb, {app: "foo", appPackage: "bar",
+        await helpers.getLaunchInfo(adb, {app: "foo", appPackage: "bar",
           appActivity: "act"});
         mocks.adb.verify();
     });
-    it('should return package and launch activity from moanifest', async () => {
+    it('should return package and launch activity from manifest', async () => {
       mocks.adb.expects('packageAndLaunchActivityFromManifest').withExactArgs('foo')
         .returns({apkPackage: 'pkg', apkActivity: 'ack'});
       const result = { appPackage: 'pkg', appWaitPackage: 'pkg',
                        appActivity: 'ack', appWaitActivity: 'ack' };
-      (await helpers.getLaunchInfoFromManifest(adb, {app: "foo"})).should.deep
+      (await helpers.getLaunchInfo(adb, {app: "foo"})).should.deep
         .equal(result);
       mocks.adb.verify();
     });
