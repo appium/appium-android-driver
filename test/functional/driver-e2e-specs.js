@@ -69,7 +69,7 @@ describe('driver e2e', () => {
         app: apiDemos
       };
       driver.caps = caps;
-      driver.opts.caps = caps;
+      driver.opts = caps;
 
       await driver.startAndroidSession(caps);
 
