@@ -61,7 +61,7 @@ describe('driver e2e', () => {
   });
 
   describe('startAndroidSession', () => {
-    it('starts a session', async function () {
+    it.skip('starts a session', async function () {
       this.timeout(20000);
 
       let driver = new AndroidDriver();
@@ -83,5 +83,11 @@ describe('driver e2e', () => {
 
     });
   });
+
+  // describe('full e2e of driver', () => {
+  //   it('gets source of apiDemos using wd.js', async function () {
+  //     let androidDriver = new
+  //   });
+  // });
 
 });
