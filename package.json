@@ -30,7 +30,7 @@
     "appium-chromedriver": "^2.1.3",
     "appium-express": "0.0.4",
     "appium-logger": "^1.1.7",
-    "appium-support": "^2.0.0-beta12",
+    "appium-support": "^2.0.0-beta21",
     "appium-unlock": "0.0.1",
     "asyncbox": "^2.0.4",
     "babel-runtime": "=5.5.5",
