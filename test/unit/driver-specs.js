@@ -16,5 +16,10 @@ describe('driver', () => {
       driver.should.exist;
       driver.opts.foo.should.equal('bar');
     });
+
+    it('has this.findElOrEls', () => {
+      let driver = new AndroidDriver({foo: 'bar'});
+      driver.findElOrEls.should.exist;
+    });
   });
 });
