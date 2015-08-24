@@ -11,6 +11,7 @@ import path from 'path';
 import { fs } from 'appium-support';
 import { path as settingsApkPath } from 'io.appium.settings';
 import { path as unlockApkPath } from 'appium-unlock';
+import _ from 'lodash';
 
 const should = chai.should(),
       REMOTE_TEMP_PATH = "/data/local/tmp";
@@ -273,4 +274,21 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
   }));
+  describe('removeNullProperties', () => {
+    it('should ignore null properties', async () => {
+      let test = {foo: null, bar: true};
+      helpers.removeNullProperties(test);
+      _.keys(test).length.should.equal(1);
+    });
+    it('should ignore undefined properties', async () => {
+      let test = {foo: undefined, bar: true};
+      helpers.removeNullProperties(test);
+      _.keys(test).length.should.equal(1);
+    });
+    it('should not ignore falsy properties like 0 and false', async () => {
+      let test = {foo: false, bar: true, zero: 0};
+      helpers.removeNullProperties(test);
+      _.keys(test).length.should.equal(3);
+    });
+  });
 });
