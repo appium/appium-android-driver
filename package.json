@@ -1,8 +1,13 @@
 {
   "name": "appium-android-driver",
-  "description": "Description goes here.",
+  "description": "Android UiAutomator and Chrome support for Appium",
   "keywords": [
-    "appium"
+    "appium",
+    "android",
+    "testing",
+    "automation",
+    "mobile",
+    "mobile testing"
   ],
   "version": "0.0.1",
   "author": "appium",
