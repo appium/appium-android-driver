@@ -7,6 +7,9 @@ import { startServer } from './lib/server';
 import AndroidDriver from './lib/driver';
 import androidHelpers from './lib/android-helpers';
 import androidCommands from './lib/commands/index';
+import webviewHelpers from './lib/webview-helpers';
+import { NATIVE_WIN, WEBVIEW_WIN, WEBVIEW_BASE,
+         CHROMIUM_WIN } from './lib/webview-helpers';
 import { commonCapConstraints } from './lib/desired-caps';
 
 const DEFAULT_HOST = "localhost";
@@ -23,4 +26,5 @@ if (require.main === module) {
 }
 
 export { androidHelpers, androidCommands, AndroidDriver, startServer,
-         commonCapConstraints };
+         commonCapConstraints, webviewHelpers, NATIVE_WIN, WEBVIEW_WIN,
+         WEBVIEW_BASE, CHROMIUM_WIN };
