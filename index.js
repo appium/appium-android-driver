@@ -6,6 +6,7 @@ import { asyncify } from 'asyncbox';
 import { startServer } from './lib/server';
 import AndroidDriver from './lib/driver';
 import androidHelpers from './lib/android-helpers';
+import androidCommands from './lib/commands/index';
 import { commonCapConstraints } from './lib/desired-caps';
 
 const DEFAULT_HOST = "localhost";
@@ -21,4 +22,5 @@ if (require.main === module) {
   asyncify(main);
 }
 
-export { androidHelpers, AndroidDriver, startServer, commonCapConstraints };
+export { androidHelpers, androidCommands, AndroidDriver, startServer,
+         commonCapConstraints };
