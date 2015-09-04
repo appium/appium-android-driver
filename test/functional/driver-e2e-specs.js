@@ -42,6 +42,30 @@ describe('createSession', function () {
     appPackage.should.equal(pkg);
     appActivity.should.equal(act);
   });
+  it('should error out for not apk extention', async () => {
+    let pkg = 'io.appium.android.apis';
+    let act = '.view.SplitTouchView';
+    let caps = {
+      app: "foo",
+      deviceName: 'Android',
+      platformName: 'Android',
+      appPackage: pkg,
+      appActivity: act
+    };
+    await driver.createSession(caps).should.eventually.be.rejectedWith(/apk/);
+  });
+  it('should error out for invalid app path', async () => {
+    let pkg = 'io.appium.android.apis';
+    let act = '.view.SplitTouchView';
+    let caps = {
+      app: "foo.apk",
+      deviceName: 'Android',
+      platformName: 'Android',
+      appPackage: pkg,
+      appActivity: act
+    };
+    await driver.createSession(caps).should.eventually.be.rejectedWith(/Could not find app/);
+  });
   afterEach(async () => {
     await driver.deleteSession();
   });
