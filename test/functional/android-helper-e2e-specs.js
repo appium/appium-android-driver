@@ -18,7 +18,7 @@ describe('android-helpers e2e', () => {
 
   describe('installApkRemotely', () => {
 
-    it('installs an apk by pushing it to the device then installing it from within', async function () {
+    it.skip('installs an apk by pushing it to the device then installing it from within', async function () {
       this.timeout(15000);
       var adb = await ADB.createADB();
 
