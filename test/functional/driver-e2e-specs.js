@@ -83,6 +83,13 @@ describe('createSession', function () {
     let {appPackage} = await driver.adb.getFocusedPackageAndActivity();
     appPackage.should.include('io.appium.android.apis');
   });
+  it('should error out if package is not on the device', async () => {
+    let caps = Object.assign({}, defaultCaps);
+    caps.app = '';
+    caps.appPackage = 'sipa.diordna.muippa.oi';
+    caps.appActivity = '.ApiDemos';
+    await driver.createSession(caps).should.eventually.be.rejectedWith(/Could not find package/);
+  });
   afterEach(async () => {
     await driver.deleteSession();
   });
