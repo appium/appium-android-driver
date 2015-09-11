@@ -74,17 +74,20 @@ describe('createSession', function () {
     let {appActivity} = await driver.adb.getFocusedPackageAndActivity();
     appActivity.should.include('HelloWorld');
   });
-  it.skip('should be able to load an app via package', async () => {
-    // TODO: 1.5 doesn't support this. Should it?
+  it('should be able to load an app via package', async () => {
     let caps = Object.assign({}, defaultCaps);
-    caps.app = 'io.appium.android.apis';
+    caps.app = '';
+    caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.ApiDemos';
     await driver.createSession(caps);
+    let {appPackage} = await driver.adb.getFocusedPackageAndActivity();
+    appPackage.should.include('io.appium.android.apis');
   });
   afterEach(async () => {
     await driver.deleteSession();
   });
 });
+
 describe('Commands', function () {
   before(() => {
     driver = new AndroidDriver();
