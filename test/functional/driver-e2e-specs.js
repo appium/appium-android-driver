@@ -7,14 +7,14 @@ import sampleApps from 'sample-apps';
 chai.should();
 chai.use(chaiAsPromised);
 
+let driver;
+let defaultCaps = {
+  app: sampleApps('ApiDemos-debug'),
+  deviceName: 'Android',
+  platformName: 'Android'
+};
+
 describe('createSession', function () {
-  let driver;
-  let defaultCaps = {
-    app: sampleApps('ApiDemos-debug'),
-    deviceName: 'Android',
-    platformName: 'Android'
-  };
-  this.timeout(20000);
   before(() => {
     driver = new AndroidDriver();
   });
@@ -80,6 +80,23 @@ describe('createSession', function () {
     caps.app = 'io.appium.android.apis';
     caps.appActivity = '.ApiDemos';
     await driver.createSession(caps);
+  });
+  afterEach(async () => {
+    await driver.deleteSession();
+  });
+});
+describe('Commands', function () {
+  before(() => {
+    driver = new AndroidDriver();
+  });
+  describe('Alerts', function () {
+    it('should throw a notYetImplemented error for alert methods', async () => {
+      await driver.createSession(defaultCaps);
+      await driver.getAlertText().should.eventually.be.rejectedWith(/implemented/);
+      await driver.setAlertText('new text').should.eventually.be.rejectedWith(/implemented/);
+      await driver.postAcceptAlert().should.eventually.be.rejectedWith(/implemented/);
+      await driver.postDismissAlert().should.eventually.be.rejectedWith(/implemented/);
+    });
   });
   afterEach(async () => {
     await driver.deleteSession();

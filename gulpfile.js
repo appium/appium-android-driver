@@ -6,5 +6,6 @@ var gulp = require('gulp'),
 boilerplate({
   build: 'appium-android-driver',
   jscs: false,
-  e2eTest: {android: true}
+  e2eTest: {android: true},
+  testTimeout: 20000
 });
