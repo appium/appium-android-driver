@@ -40,6 +40,16 @@ describe('createSession', function () {
     caps.appActivity = '.view.SplitTouchView';
     await driver.createSession(caps).should.eventually.be.rejectedWith(/apk/);
   });
+  it('should error out if neither an app or a browser is defined', async () => {
+    let caps = Object.assign({}, defaultCaps);
+    caps.app = '';
+    await driver.createSession(caps).should.eventually.be.rejectedWith(/include/);
+  });
+  it('should error out if both an app and a browser is defined', async () => {
+    let caps = Object.assign({}, defaultCaps);
+    caps.browserName = 'Chrome';
+    await driver.createSession(caps).should.eventually.be.rejectedWith(/both/);
+  });
   it('should error out for invalid app path', async () => {
     let caps = Object.assign({}, defaultCaps);
     caps.app = 'foo.apk';
@@ -61,7 +71,7 @@ describe('createSession', function () {
     caps.appActivity = 'io.appium.android.apis.app.HelloWorld';
     caps.intentCategory = 'appium.android.intent.category.SAMPLE_CODE';
     await driver.createSession(caps);
-    let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
+    let {appActivity} = await driver.adb.getFocusedPackageAndActivity();
     appActivity.should.include('HelloWorld');
   });
   it.skip('should be able to load an app via package', async () => {
