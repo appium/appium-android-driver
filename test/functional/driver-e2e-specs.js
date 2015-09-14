@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import 'mochawait';
-import { AndroidDriver } from '../../..';
+import { AndroidDriver } from '../..';
 import sampleApps from 'sample-apps';
 
 chai.should();
@@ -61,7 +61,7 @@ describe('createSession', function () {
     caps.appActivity = 'io.appium.android.apis.app.HelloWorld';
     caps.intentCategory = 'appium.android.intent.category.SAMPLE_CODE';
     await driver.createSession(caps);
-    let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
+    let {appActivity} = await driver.adb.getFocusedPackageAndActivity();
     appActivity.should.include('HelloWorld');
   });
   it.skip('should be able to load an app via package', async () => {

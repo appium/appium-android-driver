@@ -4,7 +4,7 @@ import 'mochawait';
 //import * as helpers from '../../lib/android-helpers';
 //import ADB from 'appium-adb';
 //import { withMocks } from 'appium-test-support';
-import { AndroidDriver } from '../../..';
+import { AndroidDriver } from '../..';
 
 /*const should = */chai.should();
 chai.use(chaiAsPromised);
