@@ -9,7 +9,7 @@
     "mobile",
     "mobile testing"
   ],
-  "version": "0.1.3",
+  "version": "0.1.4",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -36,7 +36,7 @@
     "appium-chromedriver": "^2.3.0",
     "appium-express": "^0.0.5",
     "appium-logger": "^1.1.7",
-    "appium-support": "2.0.0-beta21",
+    "appium-support": "^2.0.0",
     "appium-unlock": "0.0.1",
     "asyncbox": "^2.0.4",
     "babel-runtime": "=5.5.5",
