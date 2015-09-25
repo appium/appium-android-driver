@@ -1,8 +1,5 @@
-// TODO these tests should be moved along with the implementation to the
-// appium-android-driver package or wherever they should live
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import 'mochawait';
 import helpers from '../../lib/android-helpers';
 import ADB from 'appium-adb';
 import { withMocks } from 'appium-test-support';

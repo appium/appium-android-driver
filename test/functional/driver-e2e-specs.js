@@ -1,6 +1,5 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import 'mochawait';
 import { AndroidDriver } from '../..';
 import sampleApps from 'sample-apps';
 
@@ -17,6 +16,9 @@ let defaultCaps = {
 describe('createSession', function () {
   before(() => {
     driver = new AndroidDriver();
+  });
+  afterEach(async () => {
+    await driver.deleteSession();
   });
   it('should start android session focusing on default pkg and act', async () => {
     await driver.createSession(defaultCaps);
@@ -90,14 +92,14 @@ describe('createSession', function () {
     caps.appActivity = '.ApiDemos';
     await driver.createSession(caps).should.eventually.be.rejectedWith(/Could not find package/);
   });
-  afterEach(async () => {
-    await driver.deleteSession();
-  });
 });
 
 describe('Commands', function () {
   before(() => {
     driver = new AndroidDriver();
+  });
+  afterEach(async () => {
+    await driver.deleteSession();
   });
   describe('Alerts', function () {
     it('should throw a notYetImplemented error for alert methods', async () => {
@@ -107,8 +109,5 @@ describe('Commands', function () {
       await driver.postAcceptAlert().should.eventually.be.rejectedWith(/implemented/);
       await driver.postDismissAlert().should.eventually.be.rejectedWith(/implemented/);
     });
-  });
-  afterEach(async () => {
-    await driver.deleteSession();
   });
 });

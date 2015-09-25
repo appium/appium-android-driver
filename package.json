@@ -59,8 +59,8 @@
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "gulp": "^3.8.11",
-    "mochawait": "^2.0.0",
-    "yargs": "^3.10.0",
-    "sample-apps": "1.1.0"
+    "sample-apps": "1.1.0",
+    "sinon": "^1.16.1",
+    "yargs": "^3.10.0"
   }
 }
