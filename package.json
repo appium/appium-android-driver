@@ -9,7 +9,7 @@
     "mobile",
     "mobile testing"
   ],
-  "version": "0.1.5",
+  "version": "0.1.6",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "adm-zip": "^0.4.7",
-    "appium-adb": "beta",
+    "appium-adb": "2.0.0-beta15",
     "appium-android-bootstrap": "^2.1.5",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^0.4.1",
