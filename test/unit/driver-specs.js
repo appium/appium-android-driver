@@ -32,19 +32,21 @@ describe('driver', () => {
       sandbox.stub(driver, 'checkAppPresent');
       sandbox.stub(driver, 'checkPackagePresent');
       sandbox.stub(driver, 'startAndroidSession');
+      sandbox.stub(ADB, 'createADB');
     });
     afterEach(() => {
+
       sandbox.restore();
     });
-    it('should get java version if non is provided', async () => {
+    it('should get java version if none is provided', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: 'some.apk'});
       driver.opts.javaVersion.should.exist;
     });
     it('should get browser package details if browserName is provided', async () => {
-      sandbox.spy(helpers, 'getChromePkg');      
+      sandbox.spy(helpers, 'getChromePkg');
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'Chrome'});
       helpers.getChromePkg.calledOnce.should.be.true;
-    });    
+    });
     it('should check an app is present', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: 'some.apk'});
       driver.checkAppPresent.calledOnce.should.be.true;
