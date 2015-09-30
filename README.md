@@ -1,7 +1,7 @@
 appium-android-driver
 ===================
 
-Work in progress, stay tuned!
+Appium-android-driver
 
 ## Watch
 
