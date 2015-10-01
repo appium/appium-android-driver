@@ -65,7 +65,9 @@ describe('createSession', function () {
     caps.appActivity = '.view.SplitTouchView';
     caps.autoLaunch = false;
     await driver.createSession(caps);
-    await driver.adb.getFocusedPackageAndActivity().should.eventually.be.null;
+    let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
+    appPackage.should.not.equal(caps.appPackage);
+    appActivity.should.not.equal(caps.appActivity);
   });
   it('should be able to launch activity with custom intent parameter category', async () => {
     let caps = Object.assign({}, defaultCaps);
