@@ -95,21 +95,3 @@ describe('createSession', function () {
     await driver.createSession(caps).should.eventually.be.rejectedWith(/Could not find package/);
   });
 });
-
-describe('Commands', function () {
-  before(() => {
-    driver = new AndroidDriver();
-  });
-  afterEach(async () => {
-    await driver.deleteSession();
-  });
-  describe('Alerts', function () {
-    it('should throw a notYetImplemented error for alert methods', async () => {
-      await driver.createSession(defaultCaps);
-      await driver.getAlertText().should.eventually.be.rejectedWith(/implemented/);
-      await driver.setAlertText('new text').should.eventually.be.rejectedWith(/implemented/);
-      await driver.postAcceptAlert().should.eventually.be.rejectedWith(/implemented/);
-      await driver.postDismissAlert().should.eventually.be.rejectedWith(/implemented/);
-    });
-  });
-});
