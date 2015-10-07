@@ -7,5 +7,5 @@ boilerplate({
   build: 'appium-android-driver',
   jscs: false,
   e2eTest: {android: true},
-  testTimeout: 20000
+  testTimeout: 40000
 });
