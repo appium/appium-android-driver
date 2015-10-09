@@ -17,7 +17,7 @@ let defaultCaps = {
 };
 let unicodeImeId = 'io.appium.android.ime/.UnicodeIME';
 
-describe('apidemo - clear', function (){
+describe('apidemo - IME', function (){
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);
