@@ -24,17 +24,17 @@ describe('Find - from element', function () {
     await driver.deleteSession();
   });
   it('should find a single element by tag name', async () => {
-    let el = await driver.findElOrEls('class name', alv, false);
+    let el = await driver.findElOrEls('class name', alv);
     let innerEl = await driver.findElOrEls('class name', atv, false, el.ELEMENT);
     await driver.getText(innerEl.ELEMENT).should.eventually.equal("Access'ibility");
   });
   it('should find multiple elements by tag name', async () => {
-    let el = await driver.findElOrEls('class name', alv, false);
+    let el = await driver.findElOrEls('class name', alv);
     let innerEl = await driver.findElOrEls('class name', atv, true, el.ELEMENT);
     await driver.getText(innerEl[0].ELEMENT).should.eventually.have.length.above(10);
   });
   it('should not find an element that doesnt exist', async () => {
-    let el = await driver.findElOrEls('class name', alv, false);
+    let el = await driver.findElOrEls('class name', alv);
     await driver.findElOrEls('class name', 'blargimarg', false, el.ELEMENT)
       .should.be.rejectedWith(/could not be located/);
   });

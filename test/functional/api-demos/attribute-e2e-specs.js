@@ -18,7 +18,7 @@ describe('apidemo - attributes', function () {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);
-    let animation = await driver.findElOrEls('accessibility id', 'Animation', false);
+    let animation = await driver.findElOrEls('accessibility id', 'Animation');
     animationEl = animation.ELEMENT;
   });
   after(async () => {
