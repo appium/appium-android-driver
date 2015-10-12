@@ -15,7 +15,7 @@ let defaultCaps = {
   appActivity: '.app.StatusBarNotifications'
 };
 
-describe('apidemo - notifications', function (){
+describe('apidemo - notifications', function () {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);

@@ -21,7 +21,7 @@ let assertSource = async (source) => {
   nodes.length.should.equal(1);
 };
 
-describe('apidemo - source', function (){
+describe('apidemo - source', function () {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);

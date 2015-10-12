@@ -14,7 +14,7 @@ let defaultCaps = {
   platformName: 'Android'
 };
 
-describe('apidemo - orientation', function (){
+describe('apidemo - orientation', function () {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);

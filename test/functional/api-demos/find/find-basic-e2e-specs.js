@@ -14,7 +14,7 @@ let defaultCaps = {
   platformName: 'Android'
 };
 
-describe('Find - basic', function(){
+describe('Find - basic', function () {
   let singleResourceId;
   before(async () => {
     driver = new AndroidDriver();

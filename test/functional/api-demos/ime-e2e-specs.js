@@ -11,19 +11,18 @@ let defaultCaps = {
   app: sampleApps('ApiDemos-debug'),
   deviceName: 'Android',
   platformName: 'Android',
-  appActivity: "view.Controls1",
   unicodeKeyboard: true,
   resetKeyboard: true
 };
 let unicodeImeId = 'io.appium.android.ime/.UnicodeIME';
 
-describe('apidemo - IME', function (){
+describe('apidemo - IME', function () {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);
   });
   beforeEach(async () => {
-    await driver.reset();
+    await driver.startActivity('io.appium.android.apis', 'io.appium.android.apis.ApiDemos');
   });
   after(async () => {
     await driver.deleteSession();

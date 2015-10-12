@@ -15,7 +15,7 @@ let defaultCaps = {
 let atv = 'android.widget.TextView';
 let f = "android.widget.FrameLayout";
 
-describe('Find - xpath', function(){
+describe('Find - xpath', function () {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);

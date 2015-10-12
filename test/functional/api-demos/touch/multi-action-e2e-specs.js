@@ -14,7 +14,7 @@ let defaultCaps = {
   appActivity: '.view.SplitTouchView'
 };
 
-describe('apidemo - touch - multi-actions', function(){
+describe('apidemo - touch - multi-actions', function () {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);
@@ -22,24 +22,22 @@ describe('apidemo - touch - multi-actions', function(){
   after(async () => {
     await driver.deleteSession();
   });
-  describe('drag', function () {
-    it('should scroll two different lists', async () => {
-      let lists = await driver.findElOrEls('class name', 'android.widget.ListView', true);
-      let leftList = lists[0].ELEMENT;
-      let rightList = lists[1].ELEMENT;
-      let leftGestures = [
-        {action: 'press', options: {element: leftList}},
-        {action: 'moveTo', options: {element: leftList, x: 10, y: 0}},
-        {action: 'moveTo', options: {element: leftList, x: 10, y: -75}},
-        {action: 'moveTo', options: {element: leftList, x: 10, y: -150}}
-      ];
-      let rightGestures = [
-        {action: 'press', options: {element: rightList}},
-        {action: 'moveTo', options: {element: rightList, x: 10, y: 0}},
-        {action: 'moveTo', options: {element: rightList, x: 10, y: -75}},
-        {action: 'moveTo', options: {element: rightList, x: 10, y: -150}}
-      ];
-      await driver.performMultiAction([leftGestures, rightGestures]);
-    });
+  it('should scroll two different lists', async () => {
+    let lists = await driver.findElOrEls('class name', 'android.widget.ListView', true);
+    let leftList = lists[0].ELEMENT;
+    let rightList = lists[1].ELEMENT;
+    let leftGestures = [
+      {action: 'press', options: {element: leftList}},
+      {action: 'moveTo', options: {element: leftList, x: 10, y: 0}},
+      {action: 'moveTo', options: {element: leftList, x: 10, y: -75}},
+      {action: 'moveTo', options: {element: leftList, x: 10, y: -150}}
+    ];
+    let rightGestures = [
+      {action: 'press', options: {element: rightList}},
+      {action: 'moveTo', options: {element: rightList, x: 10, y: 0}},
+      {action: 'moveTo', options: {element: rightList, x: 10, y: -75}},
+      {action: 'moveTo', options: {element: rightList, x: 10, y: -150}}
+    ];
+    await driver.performMultiAction([leftGestures, rightGestures]);
   });
 });

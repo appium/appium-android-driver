@@ -14,7 +14,7 @@ let defaultCaps = {
   platformName: 'Android'
 };
 
-describe('apidemo - attributes', function(){
+describe('apidemo - attributes', function () {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);
