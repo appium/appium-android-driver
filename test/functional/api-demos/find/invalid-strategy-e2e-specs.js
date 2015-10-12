@@ -13,7 +13,7 @@ let defaultCaps = {
   platformName: 'Android'
 };
 
-describe('Find - invalid strategy', function(){
+describe('Find - invalid strategy', function () {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);

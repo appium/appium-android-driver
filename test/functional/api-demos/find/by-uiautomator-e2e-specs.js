@@ -13,7 +13,7 @@ let defaultCaps = {
   platformName: 'Android'
 };
 
-describe('Find - uiautomator', function(){
+describe('Find - uiautomator', function () {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);

@@ -1,27 +1,26 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { AndroidDriver } from '../..';
+import { AndroidDriver } from '../../../..';
 import sampleApps from 'sample-apps';
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let driver, caps;
+let driver;
 let defaultCaps = {
   app: sampleApps('ApiDemos-debug'),
   deviceName: 'Android',
-  platformName: 'Android'
+  platformName: 'Android',
+  appActivity: '.view.DragAndDropDemo'
 };
 
-describe('touch - performTouch', function () {
+describe('performTouch', function () {
   before(async () => {
     driver = new AndroidDriver();
-    caps = Object.assign({}, defaultCaps);
-    caps.appActivity = '.view.DragAndDropDemo';
-    await driver.createSession(caps);
+    await driver.createSession(defaultCaps);
   });
   afterEach(async () => {
-    await driver.reset();
+    await driver.startActivity('io.appium.android.apis', '.view.DragAndDropDemo');
   });
   it('should drag by element', async () => {
     let startEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_3");

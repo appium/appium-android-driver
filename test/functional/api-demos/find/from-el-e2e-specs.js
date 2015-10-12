@@ -15,7 +15,7 @@ let defaultCaps = {
 let atv = 'android.widget.TextView';
 let alv = 'android.widget.ListView';
 
-describe('Find - from element', function(){
+describe('Find - from element', function () {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);
