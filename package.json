@@ -33,10 +33,10 @@
     "appium-android-bootstrap": "^2.2.2",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^1.0.2",
-    "appium-chromedriver": "^2.3.7",
+    "appium-chromedriver": "^2.5.0",
     "appium-express": "^1.0.0",
     "appium-logger": "^2.0.0",
-    "appium-support": "^2.0.6",
+    "appium-support": "^2.0.7",
     "appium-unlock": "0.0.1",
     "asyncbox": "^2.0.4",
     "babel-runtime": "=5.8.24",
@@ -45,7 +45,7 @@
     "lodash": "^3.10.0",
     "mobile-json-wire-protocol": "^1.0.2",
     "source-map-support": "^0.3.1",
-    "teen_process": "^1.2.2",
+    "teen_process": "^1.4.0",
     "temp": "^0.8.3"
   },
   "scripts": {
