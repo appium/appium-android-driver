@@ -28,6 +28,7 @@ let defaultCaps = {
   platformName: 'Android'
 };
 
+let driver = new AndroidDriver();
 await driver.createSession(defaultCaps);
 ```
 Run commands:
