@@ -9,7 +9,7 @@
     "mobile",
     "mobile testing"
   ],
-  "version": "1.0.2",
+  "version": "1.1.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -32,7 +32,7 @@
     "appium-adb": "^2.0.1",
     "appium-android-bootstrap": "^2.2.2",
     "appium-android-ime": "^2.0.0",
-    "appium-base-driver": "^1.1.0",
+    "appium-base-driver": "^1.0.2",
     "appium-chromedriver": "^2.5.0",
     "appium-express": "^1.0.0",
     "appium-logger": "^2.0.0",
