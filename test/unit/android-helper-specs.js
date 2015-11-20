@@ -26,6 +26,9 @@ describe('Android Helpers', () => {
     it('should return null if it cannot parse java verstion', () => {
       should.not.exist(helpers.parseJavaVersion('foo bar'));
     });
+    it('should parse OpenJDK versioning', function () {
+      helpers.parseJavaVersion('openjdk version 1.8').should.be.equal('1.8');
+    });
   });
 
   describe('getJavaVersion', withMocks({teen_process}, (mocks) => {
