@@ -40,6 +40,9 @@ describe('apidemo - attributes', function () {
     await driver.getAttribute('name', textViewEl).should.eventually.become('Bouncing Balls');
     await driver.back();
   });
+  it('should be able to find content description attribute', async () => {
+    await driver.getAttribute('contentDescription', animationEl).should.eventually.become("Animation");
+  });
   it('should be able to find displayed attribute', async () => {
     await driver.getAttribute('displayed', animationEl).should.eventually.become('true');
   });
