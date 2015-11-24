@@ -41,8 +41,7 @@ describe('apidemo - attributes', function () {
     await driver.back();
   });
   it('should be able to find content description attribute', async () => {
-    let el = await driver.findElOrEls('name', 'Animation');
-    await driver.getAttribute('contentDescription').should.eventually.become("Animation");
+    await driver.getAttribute('contentDescription', animationEl).should.eventually.become("Animation");
   });
   it('should be able to find displayed attribute', async () => {
     await driver.getAttribute('displayed', animationEl).should.eventually.become('true');
