@@ -4,7 +4,6 @@ import helpers from '../../lib/android-helpers';
 import ADB from 'appium-adb';
 import { withMocks } from 'appium-test-support';
 import * as teen_process from 'teen_process';
-import path from 'path';
 import { fs } from 'appium-support';
 import { path as settingsApkPath } from 'io.appium.settings';
 import { path as unlockApkPath } from 'appium-unlock';
@@ -142,8 +141,7 @@ describe('Android Helpers', () => {
   }));
   describe('getRemoteApkPath', () => {
     it('should return remote path', () => {
-      helpers.getRemoteApkPath('foo').should.equal(path.resolve(REMOTE_TEMP_PATH,
-        'foo.apk'));
+      helpers.getRemoteApkPath('foo').should.equal(`${REMOTE_TEMP_PATH}/foo.apk`);
     });
   });
   describe('resetApp', withMocks({adb, fs, helpers}, (mocks) => {
