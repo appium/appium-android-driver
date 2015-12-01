@@ -22,7 +22,7 @@ describe('Find - accessibility ID', function(){
     await driver.deleteSession();
   });
   it('should find an element by name', async () => {
-    await driver.findElOrEls('accessibility id', 'Animation', false).should.eventually.exist;
+    await driver.findElOrEls('accessibility id', 'Animation').should.eventually.exist;
   });
   it('should return an array of one element if the `multi` param is true', async () => {
     // TODO: this returns an object instead of an array. Investigate.
@@ -30,6 +30,6 @@ describe('Find - accessibility ID', function(){
     //         .should.eventually.have.length(1);
   });
   it('should find an element with a content-desc property containing an apostrophe', async () => {
-    await driver.findElOrEls('accessibility id', "Access'ibility", false).should.eventually.exist;
+    await driver.findElOrEls('accessibility id', "Access'ibility").should.eventually.exist;
   });
 });

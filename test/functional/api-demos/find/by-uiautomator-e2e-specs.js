@@ -52,12 +52,12 @@ describe('Find - uiautomator', function () {
       .should.eventually.have.length.at.least(10);
   });
   it('should find an element with an int argument', async () => {
-    let el = await driver.findElOrEls('-android uiautomator', 'new UiSelector().index(0)', false);
+    let el = await driver.findElOrEls('-android uiautomator', 'new UiSelector().index(0)');
     await driver.getName(el.ELEMENT).should.eventually.equal('android.widget.FrameLayout');
   });
   it('should find an element with a string argument', async () => {
     await driver
-      .findElOrEls('-android uiautomator', 'new UiSelector().description("Animation")', false)
+      .findElOrEls('-android uiautomator', 'new UiSelector().description("Animation")')
       .should.eventually.exist;
   });
   it('should find an element with an overloaded method argument', async () => {
@@ -69,7 +69,7 @@ describe('Find - uiautomator', function () {
       .should.eventually.have.length.at.least(10);
   });
   it('should find an element with a long chain of methods', async () => {
-    let el = await driver.findElOrEls('-android uiautomator', 'new UiSelector().clickable(true).className(android.widget.TextView).index(1)', false);
+    let el = await driver.findElOrEls('-android uiautomator', 'new UiSelector().clickable(true).className(android.widget.TextView).index(1)');
     await driver.getText(el.ELEMENT).should.eventually.equal('Accessibility');
   });
   it('should find an element with recursive UiSelectors', async () => {
@@ -110,22 +110,22 @@ describe('Find - uiautomator', function () {
   });
   it('should scroll to, and return elements using UiScrollable', async () => {
     let selector = 'new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text("Views").instance(0))';
-    let el = await driver.findElOrEls('-android uiautomator', selector, false);
+    let el = await driver.findElOrEls('-android uiautomator', selector);
     await driver.getText(el.ELEMENT).should.eventually.equal('Views');
   });
   it('should allow chaining UiScrollable methods', async () => {
     let selector = 'new UiScrollable(new UiSelector().scrollable(true).instance(0)).setMaxSearchSwipes(10).scrollIntoView(new UiSelector().text("Views").instance(0))';
-    let el = await driver.findElOrEls('-android uiautomator', selector, false);
+    let el = await driver.findElOrEls('-android uiautomator', selector);
     await driver.getText(el.ELEMENT).should.eventually.equal('Views');
   });
   it('should allow UiScrollable scrollIntoView', async () => {
     let selector = 'new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text("Views").instance(0));';
-    let el = await driver.findElOrEls('-android uiautomator', selector, false);
+    let el = await driver.findElOrEls('-android uiautomator', selector);
     await driver.getText(el.ELEMENT).should.eventually.equal('Views');
   });
   it('should error reasonably if a UiScrollable does not return a UiObject', async () => {
     let selector = 'new UiScrollable(new UiSelector().scrollable(true).instance(0)).setMaxSearchSwipes(10)';
-    await driver.findElOrEls('-android uiautomator', selector, false)
+    await driver.findElOrEls('-android uiautomator', selector)
       .should.eventually.be.rejectedWith(/resource could not be found/);
   });
 }); 

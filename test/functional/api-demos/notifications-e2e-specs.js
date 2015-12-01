@@ -24,7 +24,7 @@ describe('apidemo - notifications', function () {
     await driver.deleteSession();
   });
   it('should open the notification shade @skip-ci', async () => {
-    let el = await driver.findElOrEls('accessibility id', ':-|', false);
+    let el = await driver.findElOrEls('accessibility id', ':-|');
     await driver.click(el.ELEMENT);
     await driver.openNotifications();
     await B.delay(500);

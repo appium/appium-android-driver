@@ -29,11 +29,11 @@ describe('Find - basic', function () {
     await driver.deleteSession();
   });
   it('should find a single element by content-description', async () => {
-    let el = await driver.findElOrEls('accessibility id', 'Animation', false);
+    let el = await driver.findElOrEls('accessibility id', 'Animation');
     await driver.getText(el.ELEMENT).should.eventually.equal('Animation');
   });
   it('should find an element by class name', async () => {
-    let el = await driver.findElOrEls('class name', 'android.widget.TextView', false);
+    let el = await driver.findElOrEls('class name', 'android.widget.TextView');
     await driver.getText(el.ELEMENT).should.eventually.equal('API Demos');
   });
   it('should find multiple elements by class name', async () => {
@@ -41,7 +41,7 @@ describe('Find - basic', function () {
       .should.eventually.have.length.at.least(10);
   });
   it('should not find an element that doesnt exist', async () => {
-    await driver.findElOrEls('class name', 'blargimarg', false)
+    await driver.findElOrEls('class name', 'blargimarg')
       .should.be.rejectedWith(/could not be located/);
   });
   it('should not find multiple elements that doesnt exist', async () => {
@@ -52,11 +52,11 @@ describe('Find - basic', function () {
     await driver.findElOrEls('class name', '', true).should.be.rejectedWith(/selector/);
   });
   it('should find a single element by string id @skip-android-all', async () => {
-    let el = await driver.findElOrEls('id', 'activity_sample_code', false);
+    let el = await driver.findElOrEls('id', 'activity_sample_code');
     await driver.getText(el.ELEMENT).should.eventually.equal('API Demos');
   });
   it('should find a single element by resource-id', async () => {
-    await driver.findElOrEls('id', `android:id/${singleResourceId}`, false)
+    await driver.findElOrEls('id', `android:id/${singleResourceId}`)
       .should.eventually.exist;
   });
   it('should find multiple elements by resource-id', async () => {
@@ -68,7 +68,7 @@ describe('Find - basic', function () {
       .should.eventually.have.length(1);
   });
   it('should find a single element by resource-id with implicit package', async () => {
-    await driver.findElOrEls('id', singleResourceId, false)
+    await driver.findElOrEls('id', singleResourceId)
       .should.eventually.exist;
   });
   it('should find a single element by resource-id with implicit package', async () => {

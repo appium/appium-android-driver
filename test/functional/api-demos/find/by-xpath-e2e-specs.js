@@ -24,17 +24,17 @@ describe('Find - xpath', function () {
     await driver.deleteSession();
   });
   it('should throw when matching nothing', async () => {
-    await driver.findElOrEls('xpath', '//whatthat', false).should.eventually.be.rejectedWith(/could not be located/);
+    await driver.findElOrEls('xpath', '//whatthat').should.eventually.be.rejectedWith(/could not be located/);
   });
   it('should throw with status 7 for hierarchy root', async () => {
-    await driver.findElOrEls('xpath', '/*', false).should.eventually.be.rejectedWith(/could not be located/);
+    await driver.findElOrEls('xpath', '/*').should.eventually.be.rejectedWith(/could not be located/);
   });
   it('should find element by type', async () => {
-    let el = await driver.findElOrEls('xpath', `//${atv}`, false);
+    let el = await driver.findElOrEls('xpath', `//${atv}`);
     await driver.getText(el.ELEMENT).should.eventually.equal('API Demos');
   });
   it('should find element by text', async () => {
-    let el = await driver.findElOrEls('xpath', `//${atv}[@text='Accessibility']`, false);
+    let el = await driver.findElOrEls('xpath', `//${atv}[@text='Accessibility']`);
     await driver.getText(el.ELEMENT).should.eventually.equal('Accessibility');
   });
   it('should find exactly one element via elementsByXPath', async () => {
@@ -43,11 +43,11 @@ describe('Find - xpath', function () {
     await driver.getText(el[0].ELEMENT).should.eventually.equal('Accessibility');
   });
   it('should find element by partial text', async () => {
-    let el = await driver.findElOrEls('xpath', `//${atv}[contains(@text, 'Accessibility')]`, false);
+    let el = await driver.findElOrEls('xpath', `//${atv}[contains(@text, 'Accessibility')]`);
     await driver.getText(el.ELEMENT).should.eventually.equal('Accessibility');
   });
   it('should find the last element', async () => {
-    let el = await driver.findElOrEls('xpath', `(//${atv})[last()]`, false);
+    let el = await driver.findElOrEls('xpath', `(//${atv})[last()]`);
     let text = await driver.getText(el.ELEMENT);
     ["OS", "Text", "Views", "Preference"].should.include(text);
   });
@@ -60,7 +60,7 @@ describe('Find - xpath', function () {
   //});
 
   it('should find element by index and embedded desc', async () => {
-    let el = await driver.findElOrEls('xpath', `//${f}//${atv}[5]`, false);
+    let el = await driver.findElOrEls('xpath', `//${f}//${atv}[5]`);
     await driver.getText(el.ELEMENT).should.eventually.equal('Content');
   });
   it('should find all elements', async () => {
