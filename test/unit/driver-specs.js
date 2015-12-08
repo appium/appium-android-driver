@@ -39,7 +39,7 @@ describe('driver', () => {
       sandbox.restore();
     });
     it('should get java version if none is provided', async () => {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', app: 'some.apk'});
+      await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
       driver.opts.javaVersion.should.exist;
     });
     it('should get browser package details if browserName is provided', async () => {
@@ -48,11 +48,15 @@ describe('driver', () => {
       helpers.getChromePkg.calledOnce.should.be.true;
     });
     it('should check an app is present', async () => {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', app: 'some.apk'});
+      await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
       driver.checkAppPresent.calledOnce.should.be.true;
     });
     it('should check a package is present', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
+      driver.checkPackagePresent.calledOnce.should.be.true;
+    });
+    it('should accept a package via the app capability', async () => {
+      await driver.createSession({platformName: 'Android', deviceName: 'device', app: 'some.app.package'});
       driver.checkPackagePresent.calledOnce.should.be.true;
     });
     it('should delete a session on failure', async () => {
@@ -119,7 +123,7 @@ describe('driver', () => {
     });
     it('should not throw an error if caps contain an app, package or valid browser', () => {
       expect(() => {
-        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: 'some.apk'});
+        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
       }).to.not.throw(Error);
       expect(() => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', browserName: 'Chrome'});
@@ -130,7 +134,7 @@ describe('driver', () => {
     });
     it('should throw an error if caps contain both an app and browser', () => {
       expect(() => {
-        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: 'some.apk', browserName: 'Chrome'});
+        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk', browserName: 'Chrome'});
       }).to.throw(/should not include both/);
     });
   });

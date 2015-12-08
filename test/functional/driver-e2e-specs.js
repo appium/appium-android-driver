@@ -57,7 +57,7 @@ describe('createSession', function () {
     caps.app = 'foo.apk';
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
-    await driver.createSession(caps).should.eventually.be.rejectedWith(/Could not find app/);
+    await driver.createSession(caps).should.eventually.be.rejectedWith(/Could not find/);
   });
   it('should be able to start session without launching or installing app', async () => {
     let caps = Object.assign({}, defaultCaps);
@@ -92,6 +92,6 @@ describe('createSession', function () {
     caps.app = '';
     caps.appPackage = 'sipa.diordna.muippa.oi';
     caps.appActivity = '.ApiDemos';
-    await driver.createSession(caps).should.eventually.be.rejectedWith(/Could not find package/);
+    await driver.createSession(caps).should.eventually.be.rejectedWith(/Could not find/);
   });
 });
