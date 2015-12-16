@@ -94,4 +94,12 @@ describe('createSession', function () {
     caps.appActivity = '.ApiDemos';
     await driver.createSession(caps).should.eventually.be.rejectedWith(/Could not find/);
   });
+  it('should get updated capabilities', async () => {
+    let caps = Object.assign({}, defaultCaps);
+    caps.appPackage = 'io.appium.android.apis';
+    caps.appActivity = '.view.SplitTouchView';
+    await driver.createSession(caps);
+    let serverCaps = await driver.getSession();
+    serverCaps.takesScreenshot.should.exist;
+  });
 });
