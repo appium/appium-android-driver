@@ -5,7 +5,6 @@ import sinon from 'sinon';
 import helpers from '../../lib/android-helpers';
 import { AndroidDriver } from '../..';
 import ADB from 'appium-adb';
-import Bootstrap from 'appium-android-bootstrap';
 
 let driver;
 let sandbox = sinon.sandbox.create();
@@ -35,7 +34,6 @@ describe('driver', () => {
       sandbox.stub(ADB, 'createADB');
     });
     afterEach(() => {
-
       sandbox.restore();
     });
     it('should get java version if none is provided', async () => {
@@ -59,6 +57,10 @@ describe('driver', () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: 'some.app.package'});
       driver.checkPackagePresent.calledOnce.should.be.true;
     });
+    it('should add server details to caps', async () => {
+      await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
+      driver.caps.webStorageEnabled.should.exist;
+    });
     it('should delete a session on failure', async () => {
       // Force an error to make sure deleteSession gets called
       sandbox.stub(helpers, 'getJavaVersion').throws();
@@ -73,7 +75,7 @@ describe('driver', () => {
     beforeEach(async () => {
       driver = new AndroidDriver();
       driver.adb = new ADB();
-      driver.bootstrap = new Bootstrap();
+      driver.bootstrap = new helpers.bootstrap();
       sandbox.stub(driver, 'stopChromedriverProxies');
       sandbox.stub(driver.adb, 'setIME');
       sandbox.stub(driver.adb, 'forceStop');
@@ -109,6 +111,74 @@ describe('driver', () => {
       driver.adb.uninstallApk.calledOnce.should.be.true;
     });
   });
+  describe('startAndroidSession', () => {
+    beforeEach(async () => {
+      driver = new AndroidDriver();
+      driver.adb = new ADB();
+      driver.bootstrap = new helpers.bootstrap();
+      driver.settings = { update: function () {} };
+      driver.caps = {};
+
+      // create a fake bootstrap because we can't mock
+      // driver.bootstrap.<whatever> in advance
+      let fakeBootstrap = {start: function () {},
+                           onUnexpectedShutdown: {catch: function () {}}
+                          };
+
+      sandbox.stub(helpers, 'initDevice');
+      sandbox.stub(helpers, 'unlock');
+      sandbox.stub(helpers, 'bootstrap').returns(fakeBootstrap);
+      sandbox.stub(driver, 'initAUT');
+      sandbox.stub(driver, 'startAUT');
+      sandbox.stub(driver, 'defaultWebviewName');
+      sandbox.stub(driver, 'setContext');
+      sandbox.stub(driver, 'startChromeSession');
+      sandbox.stub(driver.settings, 'update');
+      sandbox.stub(driver.adb, 'getPlatformVersion');
+    });
+    afterEach(() => {
+      sandbox.restore();
+    });
+    it('should set actual platform version', async () => {
+      await driver.startAndroidSession();
+      driver.adb.getPlatformVersion.calledOnce.should.be.true;
+    });
+    it('should auto launch app if it is on the device', async () => {
+      driver.opts.autoLaunch = true;
+      await driver.startAndroidSession();
+      driver.initAUT.calledOnce.should.be.true;
+    });
+    it('should handle chrome sessions', async () => {
+      driver.opts.browserName = 'Chrome';
+      await driver.startAndroidSession();
+      driver.startChromeSession.calledOnce.should.be.true;
+    });
+    it('should unlock the device', async () => {
+      await driver.startAndroidSession();
+      helpers.unlock.calledOnce.should.be.true;
+    });
+    it('should start AUT if auto lauching', async () => {
+      driver.opts.autoLaunch = true;
+      await driver.startAndroidSession();
+      driver.initAUT.calledOnce.should.be.true;
+    });
+    it('should not start AUT if not auto lauching', async () => {
+      driver.opts.autoLaunch = false;
+      await driver.startAndroidSession();
+      driver.initAUT.calledOnce.should.be.false;
+    });
+    it('should set the context if autoWebview is requested', async () => {
+      driver.opts.autoWebview = true;
+      await driver.startAndroidSession();
+      driver.defaultWebviewName.calledOnce.should.be.true;
+      driver.setContext.calledOnce.should.be.true;
+    });
+    it('should not set the context if autoWebview is not requested', async () => {
+      await driver.startAndroidSession();
+      driver.defaultWebviewName.calledOnce.should.be.false;
+      driver.setContext.calledOnce.should.be.false;
+    });
+  });
   describe('validateDesiredCaps', () => {
     before(() => {
       driver = new AndroidDriver();
@@ -138,7 +208,6 @@ describe('driver', () => {
       }).to.throw(/should not include both/);
     });
   });
-
   describe('proxying', () => {
     before(() => {
       driver = new AndroidDriver();
