@@ -115,6 +115,7 @@ console.log(await driver.getOrientation()); // -> 'LANDSCAPE'
 | `setNetworkConnection`     |
 | `setOrientation`           |
 | `setValue`                 |
+| `setUrl`                   |
 | `startActivity`            |
 | `startChromedriverProxy`   |
 | `stopChromedriverProxies`  |
