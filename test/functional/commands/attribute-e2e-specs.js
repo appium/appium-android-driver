@@ -49,7 +49,12 @@ describe('apidemo - attributes', function () {
   it('should be able to find displayed attribute through normal func', async () => {
     await driver.elementDisplayed(animationEl).should.eventually.become(true);
   });
-  it('should be able to get element location', async () => {
+  it('should be able to get element location using getLocation', async () => {
+    let location = await driver.getLocation(animationEl);
+    location.x.should.be.at.least(0);
+    location.y.should.be.at.least(0);
+  });
+  it('should be able to get element location using getLocationInView', async () => {
     let location = await driver.getLocationInView(animationEl);
     location.x.should.be.at.least(0);
     location.y.should.be.at.least(0);
