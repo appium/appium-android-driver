@@ -1,5 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import sinon from 'sinon';
 import helpers from '../../lib/android-helpers';
 import ADB from 'appium-adb';
 import { withMocks } from 'appium-test-support';
@@ -93,29 +94,51 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
   }));
-  describe('getActiveDevice', withMocks({adb}, (mocks) => {
+
+  describe('getDeviceInfoFromCaps', () => {
+    before(() => {
+      sinon.stub(ADB, 'createADB', async () => {
+        return {
+          getDevicesWithRetry: async () => {
+            return [
+              {udid: 'emulator-1234'},
+              {udid: 'rotalume-1337'}
+            ];
+          },
+          getPortFromEmulatorString: () => {
+            return 1234;
+          }
+        };
+      });
+    });
+
+    after(() => {
+      ADB.createADB.restore();
+    });
+
     it('should throw error when udid not in list', async () => {
-      mocks.adb.expects('getDevicesWithRetry').withExactArgs()
-        .returns(["foo"]);
-      await helpers.getActiveDevice(adb, "bar").should.eventually
-        .be.rejectedWith("bar");
-      mocks.adb.verify();
+      let caps = {
+        udid: 'foomulator'
+      };
+
+      await helpers.getDeviceInfoFromCaps(caps).should.be.rejectedWith('foomulator');
     });
     it('should get deviceId and emPort when udid is present', async () => {
-      mocks.adb.expects('getDevicesWithRetry').withExactArgs()
-        .returns([{udid: 'emulator-1234'}]);
-      (await helpers.getActiveDevice(adb, "emulator-1234")).should.deep
-        .equal({ deviceId: 'emulator-1234', emPort: 1234 });
-      mocks.adb.verify();
+      let caps = {
+        udid: 'emulator-1234'
+      };
+
+      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      udid.should.equal('emulator-1234');
+      emPort.should.equal(1234);
     });
-    it('should get first deviceId and emPort', async () => {
-      mocks.adb.expects('getDevicesWithRetry').withExactArgs()
-        .returns([{udid: 'emulator-1234'}, {udid: 'emulator2-2345'}]);
-      (await helpers.getActiveDevice(adb)).should.deep
-        .equal({ deviceId: 'emulator-1234', emPort: 1234 });
-      mocks.adb.verify();
+    it('should get first deviceId and emPort by default', async () => {
+      let {udid, emPort} = await helpers.getDeviceInfoFromCaps();
+      udid.should.equal('emulator-1234');
+      emPort.should.equal(1234);
     });
-  }));
+  });
+
   describe('getLaunchInfoFromManifest', withMocks({adb}, (mocks) => {
     it('should return when no app present', async () => {
       mocks.adb.expects('packageAndLaunchActivityFromManifest').never();

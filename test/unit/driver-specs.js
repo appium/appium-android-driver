@@ -31,7 +31,21 @@ describe('driver', () => {
       sandbox.stub(driver, 'checkAppPresent');
       sandbox.stub(driver, 'checkPackagePresent');
       sandbox.stub(driver, 'startAndroidSession');
-      sandbox.stub(ADB, 'createADB');
+      sandbox.stub(ADB, 'createADB', async () => {
+        return {
+          getDevicesWithRetry: async () => {
+            return [
+              {udid: 'emulator-1234'},
+              {udid: 'rotalume-1337'}
+            ];
+          },
+          getPortFromEmulatorString: () => {
+            return 1234;
+          },
+          setDeviceId: () => {},
+          setEmulatorPort: () => {}
+        };
+      });
     });
     afterEach(() => {
       sandbox.restore();
