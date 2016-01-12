@@ -68,6 +68,7 @@ console.log(await driver.getOrientation()); // -> 'LANDSCAPE'
 | `getContexts`              |
 | `getCurrentActivity`       |
 | `getCurrentContext`        |
+| `getDeviceTime`            |
 | `getLocationInView`        |
 | `getLog`                   |
 | `getLogTypes`              |
