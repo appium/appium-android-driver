@@ -89,7 +89,7 @@ describe('driver', () => {
     beforeEach(async () => {
       driver = new AndroidDriver();
       driver.adb = new ADB();
-      driver.bootstrap = new helpers.bootstrap();
+      driver.bootstrap = new helpers.bootstrap(driver.adb);
       sandbox.stub(driver, 'stopChromedriverProxies');
       sandbox.stub(driver.adb, 'setIME');
       sandbox.stub(driver.adb, 'forceStop');
@@ -129,7 +129,7 @@ describe('driver', () => {
     beforeEach(async () => {
       driver = new AndroidDriver();
       driver.adb = new ADB();
-      driver.bootstrap = new helpers.bootstrap();
+      driver.bootstrap = new helpers.bootstrap(driver.adb);
       driver.settings = { update: function () {} };
       driver.caps = {};
 
