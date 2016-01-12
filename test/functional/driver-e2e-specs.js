@@ -103,3 +103,20 @@ describe('createSession', function () {
     serverCaps.takesScreenshot.should.exist;
   });
 });
+
+describe('close', function () {
+  before(() => {
+    driver = new AndroidDriver();
+  });
+  afterEach(async () => {
+    await driver.deleteSession();
+  });
+  it('should close application', async () => {
+    await driver.createSession(defaultCaps);
+    await driver.closeApp();
+    let {appPackage} = await driver.adb.getFocusedPackageAndActivity();
+    if (appPackage) {
+      appPackage.should.not.equal("io.appium.android.apis");
+    }
+  });
+});
