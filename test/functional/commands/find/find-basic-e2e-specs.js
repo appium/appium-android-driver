@@ -79,4 +79,14 @@ describe('Find - basic', function () {
     await driver.findElOrEls('id', singleResourceId, true)
       .should.eventually.have.length(1);
   });
+  it('should respect implicit wait', async () => {
+    let implicitWait = 5000;
+    await driver.implicitWait(implicitWait);
+    let beforeMs = Date.now();
+    await driver.findElOrEls('id', 'there_is_nothing_called_this', true)
+      .should.eventually.have.length(0);
+    let afterMs = Date.now();
+    (afterMs - beforeMs).should.be.below(implicitWait + 2000);
+    (afterMs - beforeMs).should.be.above(implicitWait);
+  });
 });
