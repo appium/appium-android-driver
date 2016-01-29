@@ -79,14 +79,26 @@ describe('Find - basic', function () {
     await driver.findElOrEls('id', singleResourceId, true)
       .should.eventually.have.length(1);
   });
-  it('should respect implicit wait', async () => {
+  describe.only('implicit wait', () => {
     let implicitWait = 5000;
-    await driver.implicitWait(implicitWait);
-    let beforeMs = Date.now();
-    await driver.findElOrEls('id', 'there_is_nothing_called_this', true)
-      .should.eventually.have.length(0);
-    let afterMs = Date.now();
-    (afterMs - beforeMs).should.be.below(implicitWait + 2000);
-    (afterMs - beforeMs).should.be.above(implicitWait);
+    before(async () => {
+      await driver.implicitWait(implicitWait);
+    });
+    it('should respect implicit wait with multiple elements', async () => {
+      let beforeMs = Date.now();
+      await driver.findElOrEls('id', 'there_is_nothing_called_this', true)
+        .should.eventually.have.length(0);
+      let afterMs = Date.now();
+      (afterMs - beforeMs).should.be.below(implicitWait + 5000);
+      (afterMs - beforeMs).should.be.above(implicitWait);
+    });
+    it('should respect implicit wait with a single element', async () => {
+      let beforeMs = Date.now();
+      await driver.findElOrEls('id', 'there_is_nothing_called_this', false)
+        .should.eventually.have.length(0);
+      let afterMs = Date.now();
+      (afterMs - beforeMs).should.be.below(implicitWait + 5000);
+      (afterMs - beforeMs).should.be.above(implicitWait);
+    });
   });
 });
