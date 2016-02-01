@@ -79,7 +79,7 @@ describe('Find - basic', function () {
     await driver.findElOrEls('id', singleResourceId, true)
       .should.eventually.have.length(1);
   });
-  describe.only('implicit wait', () => {
+  describe('implicit wait', () => {
     let implicitWait = 5000;
     before(async () => {
       await driver.implicitWait(implicitWait);
@@ -95,7 +95,7 @@ describe('Find - basic', function () {
     it('should respect implicit wait with a single element', async () => {
       let beforeMs = Date.now();
       await driver.findElOrEls('id', 'there_is_nothing_called_this', false)
-        .should.eventually.have.length(0);
+        .should.eventually.be.rejectedWith(/could not be located/);
       let afterMs = Date.now();
       (afterMs - beforeMs).should.be.below(implicitWait + 5000);
       (afterMs - beforeMs).should.be.above(implicitWait);

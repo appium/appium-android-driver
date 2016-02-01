@@ -25,6 +25,7 @@ if (require.main === module) {
   asyncify(main);
 }
 
+export default AndroidDriver;
 export { androidHelpers, androidCommands, AndroidDriver, startServer,
          commonCapConstraints, webviewHelpers, NATIVE_WIN, WEBVIEW_WIN,
          WEBVIEW_BASE, CHROMIUM_WIN };

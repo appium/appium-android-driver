@@ -29,7 +29,7 @@ describe('Find - uiautomator', function () {
     let els = await driver
       .findElOrEls('-android uiautomator', 'new UiSelector().className("android.widget.TextView")', true);
     els.length.should.be.above(8);
-    els.length.should.be.below(12);
+    els.length.should.be.below(14);
   });
   it('should find elements without prepending "new UiSelector()"', async () => {
     await driver.findElOrEls('-android uiautomator', '.clickable(true)', true)
@@ -128,4 +128,4 @@ describe('Find - uiautomator', function () {
     await driver.findElOrEls('-android uiautomator', selector, false)
       .should.eventually.be.rejectedWith(/resource could not be found/);
   });
-}); 
+});
