@@ -1,0 +1,49 @@
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import { AndroidDriver } from '../../..';
+import sampleApps from 'sample-apps';
+
+chai.should();
+chai.use(chaiAsPromised);
+
+let driver;
+let defaultCaps = {
+  app: sampleApps('ApiDemos-debug'),
+  deviceName: 'Android',
+  platformName: 'Android'
+};
+
+describe('startActivity', function () {
+  before(async () => {
+    driver = new AndroidDriver();
+    await driver.createSession(defaultCaps);
+  });
+  after(async () => {
+    await driver.deleteSession();
+  });
+
+  it('should launch a new package and activity', async () => {
+    let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
+    appPackage.should.equal('io.appium.android.apis');
+    appActivity.should.equal('.ApiDemos');
+
+    let startAppPackage = 'io.appium.android.apis';
+    let startAppActivity = '.view.SplitTouchView';
+
+    await driver.startActivity(startAppPackage, startAppActivity);
+
+    let {appPackage: newAppPackage, appActivity: newAppActivity} = await driver.adb.getFocusedPackageAndActivity();
+    newAppPackage.should.equal(startAppPackage);
+    newAppActivity.should.equal(startAppActivity);
+  });
+  it('should be able to launch activity with custom intent parameter category', async () => {
+    let startAppPackage = 'io.appium.android.apis';
+    let startAppActivity = 'io.appium.android.apis.app.HelloWorld';
+    let startIntentCategory = 'appium.android.intent.category.SAMPLE_CODE';
+
+    await driver.startActivity(startAppPackage, startAppActivity, undefined, undefined, startIntentCategory);
+
+    let {appActivity} = await driver.adb.getFocusedPackageAndActivity();
+    appActivity.should.include('HelloWorld');
+  });
+});
