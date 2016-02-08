@@ -46,4 +46,28 @@ describe('startActivity', function () {
     let {appActivity} = await driver.adb.getFocusedPackageAndActivity();
     appActivity.should.include('HelloWorld');
   });
+  it('should be able to launch activity with dontStopAppOnReset = true', async () => {
+    let startAppPackage = 'io.appium.android.apis';
+    let startAppActivity = '.os.MorseCode';
+    await driver.startActivity(startAppPackage, startAppActivity,
+                               startAppPackage, startAppActivity,
+                               undefined, undefined,
+                               undefined, undefined,
+                               true);
+    let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
+    appPackage.should.equal(startAppPackage);
+    appActivity.should.equal(startAppActivity);
+  });
+  it('should be able to launch activity with dontStopAppOnReset = false', async () => {
+    let startAppPackage = 'io.appium.android.apis';
+    let startAppActivity = '.os.MorseCode';
+    await driver.startActivity(startAppPackage, startAppActivity,
+                               startAppPackage, startAppActivity,
+                               undefined, undefined,
+                               undefined, undefined,
+                               false);
+    let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
+    appPackage.should.equal(startAppPackage);
+    appActivity.should.equal(startAppActivity);
+  });
 });
