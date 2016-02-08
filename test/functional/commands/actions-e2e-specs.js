@@ -13,10 +13,12 @@ let caps = {
   app: sampleApps('ApiDemos-debug'),
   deviceName: 'Android',
   platformName: 'Android',
+  appPackage: 'io.appium.android.apis',
   appActivity: '.view.TextFields'
 };
 
-describe('replaceValue', function () {
+
+describe('actions', () => {
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(caps);
@@ -25,13 +27,34 @@ describe('replaceValue', function () {
     await driver.deleteSession();
   });
 
-  it('should replace existing value in a text field', async () => {
-    let el = _.last(await driver.findElOrEls('class name', 'android.widget.EditText', true));
-    el.should.exist;
-    await driver.setValue('original value', el.ELEMENT);
-    await driver.getText(el.ELEMENT).should.eventually.equal('original value');
+  describe('replaceValue', function () {
+    it('should replace existing value in a text field', async () => {
+      let el = _.last(await driver.findElOrEls('class name', 'android.widget.EditText', true));
+      el.should.exist;
+      await driver.setValue('original value', el.ELEMENT);
+      await driver.getText(el.ELEMENT).should.eventually.equal('original value');
 
-    await driver.replaceValue('replaced value', el.ELEMENT);
-    await driver.getText(el.ELEMENT).should.eventually.equal('replaced value');
+      await driver.replaceValue('replaced value', el.ELEMENT);
+      await driver.getText(el.ELEMENT).should.eventually.equal('replaced value');
+    });
+  });
+
+  describe('key codes', function () {
+    beforeEach(async () => {
+      await driver.startActivity(caps.appPackage, caps.appActivity);
+    });
+
+    it('should press key code 3 without metastate', async () => {
+      await driver.pressKeyCode(3).should.not.be.rejected;
+    });
+    it('should press key code 3 with metastate', async () => {
+      await driver.pressKeyCode(3, 193).should.not.be.rejected;
+    });
+    it('should long press key code 3 without metastate', async () => {
+      await driver.longPressKeyCode(3).should.not.be.rejected;
+    });
+    it('should long press key code 3 with metastate', async () => {
+      await driver.longPressKeyCode(3, 193).should.not.be.rejected;
+    });
   });
 });
