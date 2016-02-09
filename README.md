@@ -136,6 +136,11 @@ console.log(await driver.getOrientation()); // -> 'LANDSCAPE'
 | `wrapBootstrapDisconnect`  |
 
 
+## API Notes
+
+`lock` behaves differently in Android than it does in iOS. In Android it does not take any arguments, and locks the screen and returns immediately.
+
+
 ## Watch
 
 ```
