@@ -27,6 +27,20 @@ describe('actions', () => {
     await driver.deleteSession();
   });
 
+  describe('lock', function () {
+    it('should lock the device for 4 seconds (+/- 30 secs)', async () => {
+      // there is a lot of variance in time for locking and unlocking
+      let before = new Date().getTime() / 1000;
+      await driver.lock(4);
+      let now = (new Date().getTime() / 1000);
+      (now - before).should.be.above(4);
+      (now - before).should.be.below(4 + 30);
+
+      // for some reason adb.getFocusedPackageAndActivity does not return anything in this case
+      await driver.getPageSource().should.eventually.include('package="io.appium.android.apis"');
+    });
+  });
+
   describe('replaceValue', function () {
     it('should replace existing value in a text field', async () => {
       let el = _.last(await driver.findElOrEls('class name', 'android.widget.EditText', true));
