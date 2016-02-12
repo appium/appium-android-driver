@@ -12,10 +12,12 @@ let driver;
 let caps = {
   app: sampleApps('gpsDemo-debug'),
   deviceName: 'Android',
-  platformName: 'Android'
+  platformName: 'Android',
+  autoLaunch: false
 };
 
-describe("geo-location", function () {
+describe.skip("geo-location", function () {
+  this.timeout(120000);
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(caps);
