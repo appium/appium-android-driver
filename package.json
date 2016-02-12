@@ -41,7 +41,7 @@
     "asyncbox": "^2.0.4",
     "babel-runtime": "=5.8.24",
     "bluebird": "^2.9.32",
-    "io.appium.settings": "^2.0.0",
+    "io.appium.settings": "^2.1.0",
     "lodash": "^3.10.0",
     "mobile-json-wire-protocol": "^1.2.0",
     "source-map-support": "^0.3.1",
