@@ -31,7 +31,7 @@ describe('driver', () => {
       sandbox.stub(driver, 'checkAppPresent');
       sandbox.stub(driver, 'checkPackagePresent');
       sandbox.stub(driver, 'startAndroidSession');
-      sandbox.stub(ADB, 'createADB', async () => {
+      sandbox.stub(ADB, 'createADB', async (opts) => {
         return {
           getDevicesWithRetry: async () => {
             return [
@@ -43,7 +43,8 @@ describe('driver', () => {
             return 1234;
           },
           setDeviceId: () => {},
-          setEmulatorPort: () => {}
+          setEmulatorPort: () => {},
+          adbPort: opts.adbPort
         };
       });
     });
@@ -83,6 +84,10 @@ describe('driver', () => {
         await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
       } catch (ign) {}
       driver.deleteSession.calledOnce.should.be.true;
+    });
+    it('should pass along adbPort capability to ADB', async () => {
+      await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', adbPort: 1111});
+      driver.adb.adbPort.should.equal(1111);
     });
   });
   describe('deleteSession', () => {
