@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import webviewHelpers from '../../../lib/webview-helpers';
-import { AndroidDriver } from '../../..';
+import AndroidDriver from '../../..';
 
 let driver;
 let sandbox = sinon.sandbox.create();

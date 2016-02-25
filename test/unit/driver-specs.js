@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import log from '../../lib/logger';
 import sinon from 'sinon';
 import helpers from '../../lib/android-helpers';
-import { AndroidDriver } from '../..';
+import AndroidDriver from '../..';
 import ADB from 'appium-adb';
 
 let driver;
@@ -135,13 +135,13 @@ describe('driver', () => {
       driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.bootstrap = new helpers.bootstrap(driver.adb);
-      driver.settings = { update: function () {} };
+      driver.settings = { update () {} };
       driver.caps = {};
 
       // create a fake bootstrap because we can't mock
       // driver.bootstrap.<whatever> in advance
-      let fakeBootstrap = {start: function () {},
-                           onUnexpectedShutdown: {catch: function () {}}
+      let fakeBootstrap = {start () {},
+                           onUnexpectedShutdown: {catch () {}}
                           };
 
       sandbox.stub(helpers, 'initDevice');

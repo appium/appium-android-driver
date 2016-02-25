@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { AndroidDriver } from '../../../..';
+import AndroidDriver from '../../../..';
 import sampleApps from 'sample-apps';
 
 chai.should();
@@ -21,7 +21,7 @@ describe('Localization - language and country @skip-ci @skip-real-device', funct
   after(async () => {
     await driver.deleteSession();
   });
-  it('should set language to FR', async () => {    
+  it('should set language to FR', async () => {
     await driver.adb.setDeviceLanguage('FR');
     await driver.adb.getDeviceLanguage().should.eventually.equal('fr');
   });

@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { AndroidDriver } from '../../../..';
+import AndroidDriver from '../../../..';
 import sampleApps from 'sample-apps';
 
 chai.should();
@@ -59,7 +59,7 @@ describe('apidemo - touch', function () {
                       {"action": "moveTo", "options": {"element": endEle.ELEMENT}},
                       {"action": "release", "options": {}}];
       await driver.performTouch(gestures);
-      let resultEle = await driver.findElement("id","io.appium.android.apis:id/drag_result_text");
+      let resultEle = await driver.findElement("id", "io.appium.android.apis:id/drag_result_text");
       await driver.getText(resultEle.ELEMENT).should.eventually.equal("Dropped!");
     });
     it('should drag by element by offset', async () => {
@@ -69,9 +69,9 @@ describe('apidemo - touch', function () {
                        "options": {"element": startEle.ELEMENT, "x": 5, "y": 5}},
                       {"action": "moveTo", "options":
                       {"element": endEle.ELEMENT, "x": 5, "y": 5}},
-                      {"action": "release","options":{}}];
+                      {"action": "release", "options":{}}];
       await driver.performTouch(gestures);
-      let element3 = await driver.findElement("id","io.appium.android.apis:id/drag_result_text");
+      let element3 = await driver.findElement("id", "io.appium.android.apis:id/drag_result_text");
       await driver.getText(element3.ELEMENT).should.eventually.equal("Dropped!");
     });
     it('should drag by absolute position', async () => {
@@ -87,9 +87,9 @@ describe('apidemo - touch', function () {
                       {"action": "moveTo",
                        "options": {"x": endLoc.x + (endSize.width / 2),
                                    "y": endLoc.y + (endSize.height / 2)}},
-                      {"action": "release","options":{}}];
+                      {"action": "release", "options":{}}];
       await driver.performTouch(gestures);
-      let resultEle = await driver.findElement("id","io.appium.android.apis:id/drag_result_text");
+      let resultEle = await driver.findElement("id", "io.appium.android.apis:id/drag_result_text");
       await driver.getText(resultEle.ELEMENT).should.eventually.equal("Dropped!");
     });
   });

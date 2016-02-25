@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { AndroidDriver } from '../..';
+import AndroidDriver from '../..';
 import sampleApps from 'sample-apps';
 
 chai.should();
