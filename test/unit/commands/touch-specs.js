@@ -46,7 +46,7 @@ describe('Touch', () => {
       });
     });
 
-  describe.only('doTouchDrag', withMocks({driver, adb}, (mocks) => {
+  describe('doTouchDrag', withMocks({driver, adb}, (mocks) => {
     let tests = async (apiLevel, defaultDuration) => {
       it('should handle longPress not having duration', async () => {
         let expectedDuration = defaultDuration;
