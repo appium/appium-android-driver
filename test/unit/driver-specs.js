@@ -221,6 +221,11 @@ describe('driver', () => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
       }).to.not.throw(/must include/);
     });
+    it('should not be sentivie to platform name casing', () => {
+      expect(() => {
+        driver.validateDesiredCaps({platformName: 'AnDrOiD', deviceName: 'device', app: '/path/to/some.apk'});
+      }).to.not.throw(Error);
+    });
     it('should throw an error if caps contain both an app and browser', () => {
       expect(() => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk', browserName: 'Chrome'});
