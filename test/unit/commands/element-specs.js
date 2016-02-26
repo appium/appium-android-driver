@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import Bootstrap from 'appium-android-bootstrap';
-import { AndroidDriver } from '../../..';
+import AndroidDriver from '../../..';
 
 let driver;
 let sandbox = sinon.sandbox.create();

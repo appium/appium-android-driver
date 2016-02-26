@@ -10,8 +10,8 @@ import { path as settingsApkPath } from 'io.appium.settings';
 import { path as unlockApkPath } from 'appium-unlock';
 import _ from 'lodash';
 
-const should = chai.should(),
-      REMOTE_TEMP_PATH = "/data/local/tmp";
+const should = chai.should();
+const REMOTE_TEMP_PATH = "/data/local/tmp";
 chai.use(chaiAsPromised);
 
 describe('Android Helpers', () => {
@@ -145,12 +145,11 @@ describe('Android Helpers', () => {
       await helpers.getLaunchInfo(adb, {});
       mocks.adb.verify();
     });
-    it('should return when appPackage & appActivity are already present',
-      async () => {
-        mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-        await helpers.getLaunchInfo(adb, {app: "foo", appPackage: "bar",
-          appActivity: "act"});
-        mocks.adb.verify();
+    it('should return when appPackage & appActivity are already present', async () => {
+      mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
+      await helpers.getLaunchInfo(adb, {app: "foo", appPackage: "bar",
+        appActivity: "act"});
+      mocks.adb.verify();
     });
     it('should return package and launch activity from manifest', async () => {
       mocks.adb.expects('packageAndLaunchActivityFromManifest').withExactArgs('foo')
@@ -168,8 +167,8 @@ describe('Android Helpers', () => {
     });
   });
   describe('resetApp', withMocks({adb, fs, helpers}, (mocks) => {
-    const localApkPath = 'local',
-          pkg = 'pkg';
+    const localApkPath = 'local';
+    const pkg = 'pkg';
     it('should throw error if remote file does not exist', async () => {
       mocks.fs.expects('md5').withExactArgs(localApkPath).returns('apkmd5');
       mocks.adb.expects('fileExists').returns(false);
@@ -192,9 +191,9 @@ describe('Android Helpers', () => {
   }));
 
   describe.skip('reinstallRemoteApk', withMocks({adb}, (mocks) => {
-    const localApkPath = 'local',
-          pkg = 'pkg',
-          remotePath = 'remote';
+    const localApkPath = 'local';
+    const pkg = 'pkg';
+    const remotePath = 'remote';
     it('should throw error if remote file does not exist', async () => {
       mocks.adb.expects('uninstallApk').withExactArgs(pkg).returns('');
       // install remote is not defines do we mean installApkRemotely?
@@ -205,8 +204,8 @@ describe('Android Helpers', () => {
     });
   }));
   describe('installApkRemotely', withMocks({adb, fs, helpers}, (mocks) => {
-    const localApkPath = 'local',
-          pkg = 'pkg';
+    const localApkPath = 'local';
+    const pkg = 'pkg';
     it('should reset app if already installed', async () => {
       mocks.fs.expects('md5').withExactArgs(localApkPath).returns('apkmd5');
       mocks.helpers.expects('getRemoteApkPath').returns(false);

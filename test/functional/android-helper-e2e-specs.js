@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import helpers from '../../../build/lib/android-helpers';
+import helpers from '../../lib/android-helpers';
 import sampleApps from 'sample-apps';
 import ADB from 'appium-adb';
 
