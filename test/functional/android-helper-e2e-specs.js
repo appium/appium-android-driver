@@ -21,4 +21,14 @@ describe('android-helpers e2e', () => {
       await adb.isAppInstalled(appPackage).should.eventually.be.true;
     });
   });
+  describe('ensureDeviceLocale', () => {
+    it('should set device language and country', async function () {
+      var adb = await ADB.createADB();
+      await helpers.ensureDeviceLocale(adb, 'fr', 'FR');
+      await adb.getDeviceLanguage().should.eventually.equal('fr');
+      await adb.getDeviceCountry().should.eventually.equal('FR');
+      // cleanup
+      await helpers.ensureDeviceLocale(adb, 'en', 'US');
+    });
+  });
 });
