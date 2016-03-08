@@ -140,7 +140,12 @@ describe('Android Helpers', () => {
           },
           getPortFromEmulatorString: () => {
             return 1234;
-          }
+          },
+          getRunningAVD: () => {
+            return {'udid': 'emulator-1234', 'port': 1234};
+          },
+          curDeviceId: 'emulator-1234',
+          emulatorPort: 1234
         };
       });
     });
@@ -167,6 +172,14 @@ describe('Android Helpers', () => {
     });
     it('should get first deviceId and emPort by default', async () => {
       let {udid, emPort} = await helpers.getDeviceInfoFromCaps();
+      udid.should.equal('emulator-1234');
+      emPort.should.equal(1234);
+    });
+    it('should get deviceId and emPort when avd is present', async () => {
+      let caps = {
+        avd: 'AVD_NAME'
+      };
+      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
       udid.should.equal('emulator-1234');
       emPort.should.equal(1234);
     });
