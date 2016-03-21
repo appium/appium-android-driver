@@ -13,7 +13,7 @@ let defaultCaps = {
   platformName: 'Android'
 };
 
-describe('Find - accessibility ID', function(){
+describe('Find - ID', function(){
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);
@@ -21,15 +21,13 @@ describe('Find - accessibility ID', function(){
   after(async () => {
     await driver.deleteSession();
   });
-  it('should find an element by name', async () => {
-    await driver.findElOrEls('accessibility id', 'Animation', false).should.eventually.exist;
+  it('should find an element by id', async () => {
+    await driver.findElOrEls('id', 'android:id/text1', false).should.eventually.exist;
   });
   it('should return an array of one element if the `multi` param is true', async () => {
-    let els = await driver.findElOrEls('accessibility id', 'Animation', true);
+    // TODO: this returns an object instead of an array. Investigate.
+    let els = await driver.findElOrEls('id', 'android:id/text1', true);
     els.should.be.an.instanceof(Array);
-    els.should.have.length(1);
-  });
-  it('should find an element with a content-desc property containing an apostrophe', async () => {
-    await driver.findElOrEls('accessibility id', "Access'ibility", false).should.eventually.exist;
+    els.should.have.length.above(1);
   });
 });
