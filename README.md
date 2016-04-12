@@ -6,8 +6,7 @@
 [![Build Status](https://travis-ci.org/appium/appium-android-driver.svg?branch=master)](https://travis-ci.org/appium/appium-android-driver)
 [![Coverage Status](https://coveralls.io/repos/appium/appium-android-driver/badge.svg?branch=master)](https://coveralls.io/r/appium/appium-android-driver?branch=master)
 
-Appium Android Driver
-===================
+# Appium Android Driver
 
 Appium Android Driver is a test automation tool for Android devices. Appium Android Driver automates native, hybrid and mobile web apps, tested on simulators, emulators and real devices. Appium Android Driver is part of the [Appium](https://github.com/appium/appium) mobile test automation tool.
 
