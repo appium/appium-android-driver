@@ -42,6 +42,39 @@ describe('Touch', () => {
     });
   });
 
+  describe('fixRelease', withMocks({driver, adb}, (mocks) => {
+    it('should be able to get the correct release coordinates', async () => {
+      let actions = [{action: 'press', options: {x: 20, y: 21}},
+                     {action: 'moveTo', options: {x: 10, y: 11}},
+                     {action: 'release'}];
+      let release = await driver.fixRelease(actions, false);
+      release.options.should.eql({x: 10, y: 11});
+    });
+    it('should be able to get the correct element release offset', async () => {
+      mocks.driver.expects('getLocationInView')
+        .withExactArgs(2)
+        .returns({x: 100, y: 101});
+      let actions = [{action: 'press', options: {element: 1, x: 20, y: 21}},
+                     {action: 'moveTo', options: {element: 2, x: 10, y: 11}},
+                     {action: 'release'}];
+      let release = await driver.fixRelease(actions, false);
+      release.options.should.eql({x: 110, y: 112});
+    });
+    it('should be able to get the correct element release', async () => {
+      mocks.driver.expects('getLocationInView')
+        .withExactArgs(2)
+        .returns({x: 100, y: 101});
+      mocks.driver.expects('getSize')
+        .withExactArgs(2)
+        .returns({width: 5, height: 6});
+      let actions = [{action: 'press', options: {element: 1, x: 20, y: 21}},
+                     {action: 'moveTo', options: {element: 2}},
+                     {action: 'release'}];
+      let release = await driver.fixRelease(actions, false);
+      release.options.should.eql({x: 102.5, y: 104});
+    });
+  }));
+
   describe('doTouchDrag', withMocks({driver, adb}, (mocks) => {
     let tests = async (apiLevel, defaultDuration) => {
       it('should handle longPress not having duration', async () => {
