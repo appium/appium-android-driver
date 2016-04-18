@@ -29,13 +29,13 @@ describe('Actions', () => {
     });
   });
   describe('Flick', () => {
-    it('should flick an element', () => {
-      driver.flick(0, 0, 1, 1, 1, 'someElementId');
-      driver.bootstrap.sendAction.calledWith('element:swipe').should.be.true;
+    it('should flick an element', async () => {
+      await driver.flick('someElementId', 0, 0, 1, 1, 1);
+      driver.bootstrap.sendAction.calledWith('element:flick').should.be.true;
     });
-    it('should flick without an element', () => {
-      driver.flick(0, 0, 1, 1, 1, null);
-      driver.bootstrap.sendAction.calledWith('swipe').should.be.true;
+    it('should flick without an element', async () => {
+      await driver.flick(null, 0, 0, 1, 1, 1);
+      driver.bootstrap.sendAction.calledWith('flick').should.be.true;
     });
   });
   describe('Drag', () => {
