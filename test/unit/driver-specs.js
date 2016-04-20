@@ -5,6 +5,8 @@ import sinon from 'sinon';
 import helpers from '../../lib/android-helpers';
 import AndroidDriver from '../..';
 import ADB from 'appium-adb';
+import { errors } from 'mobile-json-wire-protocol';
+
 
 let driver;
 let sandbox = sinon.sandbox.create();
@@ -191,6 +193,32 @@ describe('driver', () => {
       await driver.startAndroidSession();
       driver.defaultWebviewName.calledOnce.should.be.true;
       driver.setContext.calledOnce.should.be.true;
+    });
+    it('should set the context if autoWebview is requested using timeout', async () => {
+      driver.setContext.onCall(0).throws(errors.NoSuchContextError);
+      driver.setContext.onCall(1).returns();
+
+      driver.opts.autoWebview = true;
+      driver.opts.autoWebviewTimeout = 5000;
+      await driver.startAndroidSession();
+      driver.defaultWebviewName.calledOnce.should.be.true;
+      driver.setContext.calledTwice.should.be.true;
+    });
+    it('should respect timeout if autoWebview is requested', async () => {
+      driver.setContext.throws(new errors.NoSuchContextError());
+
+      let begin = Date.now();
+
+      driver.opts.autoWebview = true;
+      driver.opts.autoWebviewTimeout = 5000;
+      await driver.startAndroidSession().should.eventually.be.rejected;
+      driver.defaultWebviewName.calledOnce.should.be.true;
+
+      // we have a timeout of 5000ms, retrying on 500ms, so expect 10 times
+      driver.setContext.callCount.should.equal(10);
+
+      let end = Date.now();
+      (end - begin).should.be.above(5000);
     });
     it('should not set the context if autoWebview is not requested', async () => {
       await driver.startAndroidSession();
