@@ -91,6 +91,14 @@ describe('driver', () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', adbPort: 1111});
       driver.adb.adbPort.should.equal(1111);
     });
+    it('should proxy screenshot if nativeWebScreenshot is off', async () => {
+      await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: false});
+      driver.getProxyAvoidList().should.have.length(8);
+    });
+    it('should not proxy screenshot if nativeWebScreenshot is on', async () => {
+      await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: true});
+      driver.getProxyAvoidList().should.have.length(9);
+    });
   });
   describe('deleteSession', () => {
     beforeEach(async () => {
