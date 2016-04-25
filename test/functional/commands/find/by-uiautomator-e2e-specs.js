@@ -128,4 +128,10 @@ describe('Find - uiautomator', function () {
     await driver.findElOrEls('-android uiautomator', selector, false)
       .should.eventually.be.rejectedWith(/resource could not be found/);
   });
+  it('should allow UiScrollable with unicode string', async () => {
+    await driver.startActivity('io.appium.android.apis', '.text.Unicode');
+    let selector = 'new UiSelector().text("عربي").instance(0);';
+    let el = await driver.findElOrEls('-android uiautomator', selector, false);
+    await driver.getText(el.ELEMENT).should.eventually.equal('عربي');
+  });
 });

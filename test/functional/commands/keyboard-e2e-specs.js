@@ -43,21 +43,34 @@ async function runTextEditTest (driver, testText, keys = false) {
 }
 
 async function runCombinationKeyEventTest (driver) {
-  await driver.pressKeyCode(29, 193);
+  let runTest = async function () {
+    await driver.pressKeyCode(29, 193);
+    let el = _.last(await driver.findElOrEls('class name', 'android.widget.TextView', true));
+    el = el.ELEMENT;
+    return await driver.getText(el);
+  };
 
-  let el = _.last(await driver.findElOrEls('class name', 'android.widget.TextView', true));
-  el = el.ELEMENT;
-  let text = await driver.getText(el);
+  let text = await runTest();
+  if (text === '') {
+    // the test is flakey... try again
+    text = await runTest();
+  }
   text.should.include('keyCode=KEYCODE_A');
   text.should.include('metaState=META_SHIFT_ON');
 }
 
 async function runKeyEventTest (driver) {
-  await driver.pressKeyCode(82);
-
-  let el = _.last(await driver.findElOrEls('class name', 'android.widget.TextView', true));
-  el = el.ELEMENT;
-  let text = await driver.getText(el);
+  let runTest = async function () {
+    await driver.pressKeyCode(82);
+    let el = _.last(await driver.findElOrEls('class name', 'android.widget.TextView', true));
+    el = el.ELEMENT;
+    return await driver.getText(el);
+  };
+  let text = await runTest();
+  if (text === '') {
+    // the test is flakey... try again
+    text = await runTest();
+  }
   text.should.include('[keycode=82]');
   text.should.include('keyCode=KEYCODE_MENU');
 }
