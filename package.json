@@ -60,7 +60,7 @@
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "gulp": "^3.8.11",
-    "sample-apps": "2.0.3",
+    "sample-apps": "2.0.4",
     "sinon": "^1.16.1",
     "unzip": "^0.1.11",
     "xmldom": "^0.1.19",
