@@ -244,7 +244,7 @@ describe('driver', () => {
       }).to.throw(/must include/);
       expect(() => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', browserName: 'Netscape Navigator'});
-      }).to.throw(/Netscape Navigator/);
+      }).to.throw(/must include/);
     });
     it('should not throw an error if caps contain an app, package or valid browser', () => {
       expect(() => {
@@ -257,15 +257,15 @@ describe('driver', () => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
       }).to.not.throw(/must include/);
     });
-    it('should not be sentivie to platform name casing', () => {
+    it('should not be sensitive to platform name casing', () => {
       expect(() => {
         driver.validateDesiredCaps({platformName: 'AnDrOiD', deviceName: 'device', app: '/path/to/some.apk'});
       }).to.not.throw(Error);
     });
-    it('should throw an error if caps contain both an app and browser', () => {
+    it('should not throw an error if caps contain both an app and browser, for grid compatibility', () => {
       expect(() => {
-        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk', browserName: 'Chrome'});
-      }).to.throw(/should not include both/);
+        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk', browserName: 'iPhone'});
+      }).to.not.throw(Error);
     });
   });
   describe('proxying', () => {
