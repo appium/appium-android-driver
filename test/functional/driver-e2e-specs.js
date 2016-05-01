@@ -47,11 +47,6 @@ describe('createSession', function () {
     caps.app = '';
     await driver.createSession(caps).should.eventually.be.rejectedWith(/include/);
   });
-  it('should error out if both an app and a browser is defined', async () => {
-    let caps = Object.assign({}, defaultCaps);
-    caps.browserName = 'Chrome';
-    await driver.createSession(caps).should.eventually.be.rejectedWith(/both/);
-  });
   it('should error out for invalid app path', async () => {
     let caps = Object.assign({}, defaultCaps);
     caps.app = 'foo.apk';
