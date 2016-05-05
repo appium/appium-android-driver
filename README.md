@@ -36,6 +36,17 @@ await driver.setOrientation('LANDSCAPE');
 console.log(await driver.getOrientation()); // -> 'LANDSCAPE'
 ```
 
+### Specifying and selecting devices/emulators
+The driver will attempt to connect to a device/emulator based on these properties in the `desiredCapabilities` object:
+
+1. `avd`: Launch or connect to the emulator with the given name.
+1. `udid`: Connect to the device with the given UDID.
+1. `platformVersion`: Connect to the first device or active emulator whose OS begins with the desired OS. This means `platformVersion: 5` will take the first `5x` device from the output of `adb devices` if there are multiple available.
+
+If none of these capabilities are given, the driver will connect to the first device or active emulator returned from the output of `adb devices`.
+
+If more than one of these capabilities are given, the driver will only use first the capability in the order above. That is, `avd` takes priority over `udid`, which takes priority over `platformVersion`.
+
 ## Commands
 |          Command           |
 |----------------------------|

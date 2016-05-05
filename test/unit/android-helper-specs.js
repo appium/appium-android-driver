@@ -129,20 +129,36 @@ describe('Android Helpers', () => {
   }));
 
   describe('getDeviceInfoFromCaps', () => {
+    // list of device/emu udids to their os versions
+    // using list instead of map to preserve order
+    let devices = [
+      {udid: 'emulator-1234', os: '4.9.2'},
+      {udid: 'rotalume-1339', os: '5.1.5'},
+      {udid: 'rotalume-1338', os: '5.0.1'},
+      {udid: 'rotalume-1337', os: '5.0.1'},
+      {udid: 'roamulet-9000', os: '6.0'},
+      {udid: 'roamulet-0', os: '2.3'},
+      {udid: '0123456789', os: 'wellhellothere'}
+    ];
+    let curDeviceId = '';
+
     before(() => {
       sinon.stub(ADB, 'createADB', async () => {
         return {
           getDevicesWithRetry: async () => {
-            return [
-              {udid: 'emulator-1234'},
-              {udid: 'rotalume-1337'}
-            ];
+            return _.map(devices, (device) => { return {udid: device.udid}; });
           },
           getPortFromEmulatorString: () => {
             return 1234;
           },
           getRunningAVD: () => {
             return {'udid': 'emulator-1234', 'port': 1234};
+          },
+          setDeviceId: (udid) => {
+            curDeviceId = udid;
+          },
+          getPlatformVersion: () => {
+            return _.filter(devices, {udid: curDeviceId})[0].os;
           },
           curDeviceId: 'emulator-1234',
           emulatorPort: 1234
@@ -170,7 +186,7 @@ describe('Android Helpers', () => {
       udid.should.equal('emulator-1234');
       emPort.should.equal(1234);
     });
-    it('should get first deviceId and emPort by default', async () => {
+    it('should get first deviceId and emPort if avd, platformVersion, and udid aren\'t given', async () => {
       let {udid, emPort} = await helpers.getDeviceInfoFromCaps();
       udid.should.equal('emulator-1234');
       emPort.should.equal(1234);
@@ -181,6 +197,46 @@ describe('Android Helpers', () => {
       };
       let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
       udid.should.equal('emulator-1234');
+      emPort.should.equal(1234);
+    });
+    it('should fail if the given platformVersion is not found', async () => {
+      let caps = {
+        platformVersion: '1234567890'
+      };
+      await helpers.getDeviceInfoFromCaps(caps)
+        .should.be.rejectedWith('Unable to find an active device or emulator with OS 1234567890');
+    });
+    it('should get deviceId and emPort if platformVersion is found and unique', async () => {
+      let caps = {
+        platformVersion: '6.0'
+      };
+      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      udid.should.equal('roamulet-9000');
+      emPort.should.equal(1234);
+    });
+    it('should get the first deviceId and emPort if platformVersion is found multiple times', async () => {
+      let caps = {
+        platformVersion: '5.0.1'
+      };
+      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      udid.should.equal('rotalume-1338');
+      emPort.should.equal(1234);
+    });
+    it('should get the first deviceId and emPort if platformVersion is found multiple times and is a partial match', async () => {
+      let caps = {
+        platformVersion: '5.0'
+      };
+      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      udid.should.equal('rotalume-1338');
+      emPort.should.equal(1234);
+    });
+    it('should get deviceId and emPort by udid if udid and platformVersion are given', async () => {
+      let caps = {
+        udid: '0123456789',
+        platformVersion: '2.3'
+      };
+      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      udid.should.equal('0123456789');
       emPort.should.equal(1234);
     });
   });
