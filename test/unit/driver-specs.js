@@ -233,6 +233,13 @@ describe('driver', () => {
       driver.defaultWebviewName.calledOnce.should.be.false;
       driver.setContext.calledOnce.should.be.false;
     });
+    it('should set ignoreUnimportantViews cap', async () => {
+      driver.opts.ignoreUnimportantViews = true;
+
+      await driver.startAndroidSession();
+      driver.settings.update.calledOnce.should.be.true;
+      driver.settings.update.firstCall.args[0].ignoreUnimportantViews.should.be.true;
+    });
   });
   describe('validateDesiredCaps', () => {
     before(() => {
