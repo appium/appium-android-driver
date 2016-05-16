@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import helpers from '../../lib/android-helpers';
 import AndroidDriver from '../..';
 import ADB from 'appium-adb';
-import { errors } from 'mobile-json-wire-protocol';
+import { errors } from 'appium-base-driver';
 
 
 let driver;
