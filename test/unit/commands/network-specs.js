@@ -76,8 +76,8 @@ describe('Network', () => {
       await driver.setNetworkConnection(1);
       driver.adb.setAirplaneMode.calledWithExactly(1).should.be.true;
       driver.adb.broadcastAirplaneMode.calledWithExactly(1).should.be.true;
-      driver.adb.setWifiState.calledWithExactly(1).should.be.true;
-      driver.adb.setDataState.calledWithExactly(1).should.be.true;
+      driver.adb.setWifiState.called.should.be.false;
+      driver.adb.setDataState.called.should.be.false;
     });
     it('should turn on wifi', async () => {
       await driver.setNetworkConnection(2);
