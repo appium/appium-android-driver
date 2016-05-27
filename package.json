@@ -36,7 +36,7 @@
     "appium-chromedriver": "^2.9.0",
     "appium-logger": "^2.1.0",
     "appium-support": "^2.0.9",
-    "appium-unlock": "^0.0.2",
+    "appium-unlock": "^0.1.0",
     "asyncbox": "^2.0.4",
     "babel-runtime": "=5.8.24",
     "bluebird": "^2.9.32",

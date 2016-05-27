@@ -132,6 +132,11 @@ describe('driver', () => {
     });
     it('should force stop non-Chrome sessions', async () => {
       await driver.deleteSession();
+      driver.adb.forceStop.calledTwice.should.be.true;
+    });
+    it('should force stop unlocker in Chrome sessions', async () => {
+      driver.opts.browserName = 'Chrome';
+      await driver.deleteSession();
       driver.adb.forceStop.calledOnce.should.be.true;
     });
     it('should uninstall APK if required', async () => {
