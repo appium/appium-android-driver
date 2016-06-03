@@ -97,6 +97,18 @@ describe('createSession', function () {
     let serverCaps = await driver.getSession();
     serverCaps.takesScreenshot.should.exist;
   });
+  it('should get device name and udid in session details', async () => {
+    let caps = Object.assign({}, defaultCaps);
+    caps.appPackage = 'io.appium.android.apis';
+    caps.appActivity = '.view.SplitTouchView';
+    let session = await driver.createSession(caps);
+    session[1].deviceName.should.exist;
+    session[1].deviceUDID.should.exist;
+
+    let serverCaps = await driver.getSession();
+    serverCaps.deviceName.should.exist;
+    serverCaps.deviceUDID.should.exist;
+  });
 });
 
 describe('close', function () {
