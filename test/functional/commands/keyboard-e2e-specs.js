@@ -3,16 +3,26 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import sampleApps from 'sample-apps';
 import AndroidDriver from '../../..';
-
+import B from 'bluebird';
 
 chai.should();
 chai.use(chaiAsPromised);
+
+const BUTTON_CLASS = 'android.widget.Button';
+const EDITTEXT_CLASS = 'android.widget.EditText';
+const TEXTVIEW_CLASS = 'android.widget.TextView';
+
+const PACKAGE = 'io.appium.android.apis';
+const TEXTFIELD_ACTIVITY = '.view.TextFields';
+const KEYEVENT_ACTIVITY = '.text.KeyEventText';
 
 let defaultAsciiCaps = {
   app: sampleApps('ApiDemos-debug'),
   deviceName: 'Android',
   platformName: 'Android',
-  newCommandTimeout: 90
+  newCommandTimeout: 90,
+  appPackage: PACKAGE,
+  appActivity: TEXTFIELD_ACTIVITY
 };
 
 let defaultUnicodeCaps = _.defaults({
@@ -26,7 +36,7 @@ function deSamsungify (text) {
 }
 
 async function runTextEditTest (driver, testText, keys = false) {
-  let el = _.last(await driver.findElOrEls('class name', 'android.widget.EditText', true));
+  let el = _.last(await driver.findElOrEls('class name', EDITTEXT_CLASS, true));
   el = el.ELEMENT;
   await driver.clear(el);
 
@@ -42,13 +52,28 @@ async function runTextEditTest (driver, testText, keys = false) {
   return el;
 }
 
+/*
+ * The key event page needs to be cleared between runs, or else we get false
+ * positives from previously run tests. The page has a single button that
+ * removes all text from within the main TextView.
+ */
+async function clearKeyEvents (driver) {
+  let el = _.last(await driver.findElOrEls('class name', BUTTON_CLASS, true));
+  driver.click(el.ELEMENT);
+
+  // wait a moment for the clearing to occur, lest we too quickly try to enter more text
+  await B.delay(500);
+}
+
 async function runCombinationKeyEventTest (driver) {
   let runTest = async function () {
     await driver.pressKeyCode(29, 193);
-    let el = _.last(await driver.findElOrEls('class name', 'android.widget.TextView', true));
+    let el = _.last(await driver.findElOrEls('class name', TEXTVIEW_CLASS, true));
     el = el.ELEMENT;
     return await driver.getText(el);
   };
+
+  await clearKeyEvents(driver);
 
   let text = await runTest();
   if (text === '') {
@@ -62,10 +87,13 @@ async function runCombinationKeyEventTest (driver) {
 async function runKeyEventTest (driver) {
   let runTest = async function () {
     await driver.pressKeyCode(82);
-    let el = _.last(await driver.findElOrEls('class name', 'android.widget.TextView', true));
+    let el = _.last(await driver.findElOrEls('class name', TEXTVIEW_CLASS, true));
     el = el.ELEMENT;
     return await driver.getText(el);
   };
+
+  await clearKeyEvents(driver);
+
   let text = await runTest();
   if (text === '') {
     // the test is flakey... try again
@@ -83,22 +111,21 @@ let tests = [
   { label: 'sending numbers', text: '0123456789'},
 ];
 
-let unicodeTests = _.union(tests, [
+let unicodeTests = [
   { label: 'should be able to send \'-\' in unicode text', text: 'परीक्षा-परीक्षण' },
   { label: 'should be able to send \'&\' in text', text: 'Fish & chips' },
   { label: 'should be able to send \'&\' in unicode text', text: 'Mīna & chips' },
   { label: 'should be able to send roman characters with diacritics', text: 'Áé Œ ù ḍ' },
   { label: 'should be able to send a \'u\' with an umlaut', text: 'ü' },
-]);
+];
 
 let languageTests = [
   { label: 'should be able to send Tamil', text: 'சோதனை' },
   { label: 'should be able to send Gujarati', text: 'પરીક્ષણ' },
   { label: 'should be able to send Chinese', text: '测试' },
   { label: 'should be able to send Russian', text: 'тестирование' },
-  // skip rtl languages, which don't clear correctly atm
-  // { label: 'should be able to send Arabic', 'تجريب'],
-  // { label: 'should be able to send Hebrew', 'בדיקות'],
+  { label: 'should be able to send Arabic', text: 'تجريب' },
+  { label: 'should be able to send Hebrew', text: 'בדיקות' },
 ];
 
 describe('keyboard', () => {
@@ -110,16 +137,22 @@ describe('keyboard', () => {
 
       // sometimes the default ime is not what we are using
       let engines = await driver.availableIMEEngines();
-      await driver.activateIMEEngine(_.first(engines));
-      console.log(engines);
+      let selectedEngine = _.first(engines);
+      for(let engine of engines) {
+        // it seems that the latin ime has `android.inputmethod` in its package name
+        if (engine.indexOf('android.inputmethod') !== -1) {
+          selectedEngine = engine;
+        }
+      }
+      await driver.activateIMEEngine(selectedEngine);
     });
     after(async () => {
       await driver.deleteSession();
     });
 
     describe('editing a text field', () => {
-      beforeEach(async () => {
-        await driver.startActivity('io.appium.android.apis', '.view.TextFields');
+      before(async () => {
+        await driver.startActivity(PACKAGE, TEXTFIELD_ACTIVITY);
       });
 
       for (let test of tests) {
@@ -132,11 +165,23 @@ describe('keyboard', () => {
           });
         });
       }
+
+      it('should be able to clear a password field', async () => {
+        // there is currently no way to assert anything about the contents
+        // of a password field, since there is no way to access the contents
+        // but this should, at the very least, not fail
+        let els = await driver.findElOrEls('class name', EDITTEXT_CLASS, true);
+        let el = els[1].ELEMENT;
+
+        await driver.setValue('super-duper password', el);
+        await driver.clear(el);
+      });
     });
 
     describe('sending a key event', () => {
-      beforeEach(async () => {
-        await driver.startActivity('io.appium.android.apis', '.text.KeyEventText');
+      before(async () => {
+        await driver.startActivity(PACKAGE, KEYEVENT_ACTIVITY);
+        await B.delay(500);
       });
 
       it('should be able to send combination keyevents', async () => {
@@ -159,8 +204,8 @@ describe('keyboard', () => {
     });
 
     describe('editing a text field', () => {
-      beforeEach(async () => {
-        await driver.startActivity('io.appium.android.apis', '.view.TextFields');
+      before(async () => {
+        await driver.startActivity(PACKAGE, TEXTFIELD_ACTIVITY);
       });
 
       for (let testSet of [tests, unicodeTests, languageTests]) {
@@ -178,8 +223,8 @@ describe('keyboard', () => {
     });
 
     describe('sending a key event', () => {
-      beforeEach(async () => {
-        await driver.startActivity('io.appium.android.apis', '.text.KeyEventText');
+      before(async () => {
+        await driver.startActivity(PACKAGE, KEYEVENT_ACTIVITY);
       });
 
       it('should be able to send combination keyevents', async () => {
