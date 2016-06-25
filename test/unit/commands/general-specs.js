@@ -26,6 +26,31 @@ describe('General', () => {
       await driver.installApp('non/existent/app.apk').should.be.rejectedWith(/Could not find/);
     });
   });
+  describe('Run installed App', withMocks({helpers}, (mocks) => {
+    it('should throw error if run with full reset', async () => {
+      driver = new AndroidDriver();
+      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: true};
+      driver.caps = {};
+      await driver.initAUT().should.be.rejectedWith(/Full reset requires an app capability/);
+    });
+    it('should reset if run with fast reset', async () => {
+      driver = new AndroidDriver();
+      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: true};
+      driver.caps = {};
+      driver.adb = "mock_adb";
+      mocks.helpers.expects("resetApp").withExactArgs("mock_adb", undefined, "app.package", true);
+      await driver.initAUT();
+      mocks.helpers.verify();
+    });
+    it('should keep data if run without reset', async () => {
+      driver = new AndroidDriver();
+      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: false};
+      driver.caps = {};
+      mocks.helpers.expects("resetApp").never();
+      await driver.initAUT();
+      mocks.helpers.verify();
+    });
+  }));
   describe('getStrings', withMocks({helpers}, (mocks) => {
     it('should return app strings', async () => {
       driver = new AndroidDriver();
