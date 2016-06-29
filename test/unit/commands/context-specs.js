@@ -29,7 +29,7 @@ describe('Context', () => {
   describe('setContext', () => {
     beforeEach(() => {
       driver = new AndroidDriver();
-      sandbox.stub(driver, 'getContexts', function(){ return ['CHROMIUM', 'ANOTHER']; });
+      sandbox.stub(driver, 'getContexts', () => { return ['CHROMIUM', 'ANOTHER']; });
     });
     afterEach(() => {
       sandbox.restore();

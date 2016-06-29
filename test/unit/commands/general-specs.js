@@ -13,7 +13,7 @@ describe('General', () => {
     it('should throw an error if no keyboard is present', async () => {
       driver = new AndroidDriver();
       driver.adb = {};
-      driver.adb.isSoftKeyboardPresent = function(){ return false; };
+      driver.adb.isSoftKeyboardPresent = () => { return false; };
       await driver.hideKeyboard().should.be.rejectedWith(/not present/);
     });
     it('should throw an error if there is no selector', () => {
@@ -30,7 +30,7 @@ describe('General', () => {
     it('should return app strings', async () => {
       driver = new AndroidDriver();
       driver.bootstrap = {};
-      driver.bootstrap.sendAction = function(){ return ''; };
+      driver.bootstrap.sendAction = () => { return ''; };
       mocks.helpers.expects("pushStrings")
           .returns({'test': 'en_value'});
       let strings = await driver.getStrings('en');
@@ -40,7 +40,7 @@ describe('General', () => {
     it('should return cached app strings for the specified language', async () => {
       driver = new AndroidDriver();
       driver.adb = {};
-      driver.adb.getDeviceLanguage = function(){ return 'en'; };
+      driver.adb.getDeviceLanguage = () => { return 'en'; };
       driver.apkStrings.en = {'test': 'en_value'};
       driver.apkStrings.fr = {'test': 'fr_value'};
       let strings = await driver.getStrings('fr');
@@ -49,7 +49,7 @@ describe('General', () => {
     it('should return cached app strings for the device language', async () => {
       driver = new AndroidDriver();
       driver.adb = {};
-      driver.adb.getDeviceLanguage = function(){ return 'en'; };
+      driver.adb.getDeviceLanguage = () => { return 'en'; };
       driver.apkStrings.en = {'test': 'en_value'};
       driver.apkStrings.fr = {'test': 'fr_value'};
       let strings = await driver.getStrings();
