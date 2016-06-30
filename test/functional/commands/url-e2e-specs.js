@@ -13,7 +13,7 @@ let defaultCaps = {
   platformName: 'Android'
 };
 
-describe('setUrl', function(){
+describe('setUrl', function (){
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);

@@ -31,7 +31,7 @@ describe('Localization - language and country @skip-ci @skip-real-device', funct
   });
 });
 
-describe('Localization - locale @skip-ci @skip-real-device', function() {
+describe('Localization - locale @skip-ci @skip-real-device', function () {
   // Stalls on API 23, works in CI
   beforeEach(async () => {
     driver = new AndroidDriver();
