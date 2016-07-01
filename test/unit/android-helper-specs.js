@@ -308,14 +308,15 @@ describe('Android Helpers', () => {
     });
   }));
   describe('installApkRemotely', withMocks({adb, fs, helpers}, (mocks) => {
+    //use mock appium capabilities for this test
     const opts = {
-      localApkPath : 'local',
-      pkg : 'pkg',
+      app : 'local',
+      appPackage : 'pkg',
       fastReset : true,
       androidInstallTimeout : 90000
     };
     it('should reset app if already installed', async () => {
-      mocks.fs.expects('md5').withExactArgs(opts.localApkPath).returns('apkmd5');
+      mocks.fs.expects('md5').withExactArgs(opts.app).returns('apkmd5');
       mocks.helpers.expects('getRemoteApkPath').returns(false);
       mocks.adb.expects('fileExists').returns(true);
       mocks.adb.expects('isAppInstalled').returns(true);
@@ -326,7 +327,7 @@ describe('Android Helpers', () => {
       mocks.helpers.verify();
     });
     it.skip('should push and reinstall apk when apk is not installed', async () => {
-      mocks.fs.expects('md5').withExactArgs(opts.localApkPath).returns('apkmd5');
+      mocks.fs.expects('md5').withExactArgs(opts.app).returns('apkmd5');
       mocks.helpers.expects('getRemoteApkPath').returns(true);
       mocks.adb.expects('fileExists').returns(true);
       mocks.adb.expects('isAppInstalled').returns(true);

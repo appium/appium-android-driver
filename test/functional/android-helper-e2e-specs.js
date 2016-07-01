@@ -5,8 +5,8 @@ import sampleApps from 'sample-apps';
 import ADB from 'appium-adb';
 
 let opts = {
-  localApkPath : sampleApps('ApiDemos-debug'),
-  pkg : 'io.appium.android.apis',
+  app : sampleApps('ApiDemos-debug'),
+  appPackage : 'io.appium.android.apis',
   androidInstallTimeout : 90000
 };
 
@@ -18,10 +18,10 @@ describe('android-helpers e2e', () => {
     it('installs an apk by pushing it to the device then installing it from within', async function () {
       this.timeout(15000);
       var adb = await ADB.createADB();
-      await adb.uninstallApk(opts.pkg);
-      await adb.isAppInstalled(opts.pkg).should.eventually.be.false;
+      await adb.uninstallApk(opts.appPackage);
+      await adb.isAppInstalled(opts.appPackage).should.eventually.be.false;
       await helpers.installApkRemotely(adb, opts);
-      await adb.isAppInstalled(opts.pkg).should.eventually.be.true;
+      await adb.isAppInstalled(opts.appPackage).should.eventually.be.true;
     });
   });
   describe('ensureDeviceLocale', () => {
