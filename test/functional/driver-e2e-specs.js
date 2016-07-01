@@ -10,7 +10,8 @@ let driver;
 let defaultCaps = {
   app: sampleApps('ApiDemos-debug'),
   deviceName: 'Android',
-  platformName: 'Android'
+  platformName: 'Android',
+  androidInstallTimeout: '90000'
 };
 
 describe('createSession', function () {
