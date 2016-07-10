@@ -279,6 +279,11 @@ describe('driver', () => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk', browserName: 'iPhone'});
       }).to.not.throw(Error);
     });
+    it('should not throw an error if caps contain androidScreenshotPath capability', () => {
+      expect(() => {
+        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk', androidScreenshotPath: '/path/to/screenshotdir'});
+      }).to.not.throw(Error);
+    });
   });
   describe('proxying', () => {
     before(() => {
