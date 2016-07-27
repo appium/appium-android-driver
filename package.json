@@ -30,7 +30,7 @@
   "dependencies": {
     "adm-zip": "^0.4.7",
     "appium-adb": "^2.5.0",
-    "appium-android-bootstrap": "^2.6.0",
+    "appium-android-bootstrap": "^2.7.5",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^2.0.0",
     "appium-chromedriver": "^2.9.0",
