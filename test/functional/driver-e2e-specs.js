@@ -110,6 +110,12 @@ describe('createSession', function () {
     serverCaps.deviceName.should.exist;
     serverCaps.deviceUDID.should.exist;
   });
+  it('should error out for activity that fails to load after app wait activity timeout', async () => {
+    let caps = Object.assign({}, defaultCaps);
+    caps.appWaitActivity = 'non.existent.activity';
+    caps.appWaitDuration = 1000; // 1 second
+    await driver.createSession(caps).should.eventually.be.rejectedWith(/never started/);
+  });
 });
 
 describe('close', function () {
