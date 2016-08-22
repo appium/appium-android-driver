@@ -112,7 +112,7 @@ describe('driver', () => {
       sandbox.stub(driver.adb, 'uninstallApk');
       sandbox.stub(driver.adb, 'stopLogcat');
       sandbox.stub(driver.bootstrap, 'shutdown');
-      sandbox.spy(log, 'warn');
+      sandbox.spy(log, 'debug');
     });
     afterEach(() => {
       sandbox.restore();
@@ -120,8 +120,9 @@ describe('driver', () => {
     it('should not do anything if Android Driver has already shut down', async () => {
       driver.bootstrap = null;
       await driver.deleteSession();
-      log.warn.calledOnce.should.be.true;
+      log.debug.calledTwice.should.be.true;
       driver.stopChromedriverProxies.called.should.be.false;
+      driver.adb.stopLogcat.called.should.be.true;
     });
     it('should reset keyboard to default IME', async () => {
       driver.opts.unicodeKeyboard = true;
