@@ -150,4 +150,21 @@ describe('Touch', () => {
       tests(4.4, 1);
     });
   }));
+
+  describe('parseTouch', () => {
+    it('should handle actions starting with wait', async () => {
+      let actions = [{action: 'wait', options: {ms: 500}},
+                     {action: 'tap', options: {x: 100, y: 101}}];
+
+      let touchStateObject = await driver.parseTouch(actions, true);
+      touchStateObject.should.eql([{
+        action: 'wait',
+        time: 0.5,
+      }, {
+        action: 'tap',
+        touch: {x: 100, y: 101},
+        time: 0.505,
+      }]);
+    });
+  });
 });
