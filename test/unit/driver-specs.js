@@ -120,7 +120,7 @@ describe('driver', () => {
     it('should not do anything if Android Driver has already shut down', async () => {
       driver.bootstrap = null;
       await driver.deleteSession();
-      log.debug.calledTwice.should.be.true;
+      log.debug.callCount.should.eql(3);
       driver.stopChromedriverProxies.called.should.be.false;
       driver.adb.stopLogcat.called.should.be.true;
     });
