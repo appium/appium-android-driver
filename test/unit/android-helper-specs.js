@@ -315,6 +315,10 @@ describe('Android Helpers', () => {
       fastReset : true,
       androidInstallTimeout : 90000
     };
+    it('should complain if opts arent passed correctly', async () => {
+      await helpers.installApkRemotely(adb, {})
+              .should.eventually.be.rejectedWith(/app.+appPackage/);
+    });
     it('should reset app if already installed', async () => {
       mocks.fs.expects('md5').withExactArgs(opts.app).returns('apkmd5');
       mocks.helpers.expects('getRemoteApkPath').returns(false);
