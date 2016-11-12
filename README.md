@@ -79,6 +79,7 @@ If more than one of these capabilities are given, the driver will only use first
 | `getCurrentActivity`       |
 | `getCurrentContext`        |
 | `getDeviceTime`            |
+| `getDisplayDensity`        |
 | `getLocationInView`        |
 | `getLog`                   |
 | `getLogTypes`              |
@@ -89,12 +90,14 @@ If more than one of these capabilities are given, the driver will only use first
 | `getScreenshot`            |
 | `getSize`                  |
 | `getStrings`               |
+| `getSystemBars`            |
 | `getText`                  |
 | `getWindowSize`            |
 | `hideKeyboard`             |
 | `installApp`               |
 | `isAppInstalled`           |
 | `isIMEActivated`           |
+| `isKeyboardShown`          |
 | `isLocked`                 |
 | `isWebContext`             |
 | `keyevent`                 |
