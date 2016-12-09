@@ -13,6 +13,7 @@ let defaultCaps = {
   platformName: 'Android',
   androidInstallTimeout: '90000'
 };
+let expect = chai.expect;
 
 describe('createSession', function () {
   before(() => {
@@ -115,6 +116,15 @@ describe('createSession', function () {
     caps.appWaitActivity = 'non.existent.activity';
     caps.appWaitDuration = 1000; // 1 second
     await driver.createSession(caps).should.eventually.be.rejectedWith(/never started/);
+  });
+  it('should be able grant permissions', async () => {
+    let caps = Object.assign({}, defaultCaps);
+    caps.appPackage = 'io.appium.android.apis';
+    caps.appActivity = 'io.appium.android.apis.app.HelloWorld';
+    caps.intentCategory = 'appium.android.intent.category.SAMPLE_CODE';
+    caps.autoGrantPermissions = true;
+    await driver.createSession(caps);
+    expect(await driver.adb.getGrantedPermissions('io.appium.android.apis')).to.include.members(['android.permission.RECEIVE_SMS']);
   });
 });
 
