@@ -1,19 +1,18 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import _ from 'lodash';
 import AndroidDriver from '../../..';
-import sampleApps from 'sample-apps';
+import DEFAULT_CAPS from '../desired';
+
 
 chai.should();
 chai.use(chaiAsPromised);
 
 let driver;
-let defaultCaps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android',
+let defaultCaps = _.defaults({
   unicodeKeyboard: true,
   resetKeyboard: true
-};
+}, DEFAULT_CAPS);
 let unicodeImeId = 'io.appium.android.ime/.UnicodeIME';
 
 describe('apidemo - IME', function () {

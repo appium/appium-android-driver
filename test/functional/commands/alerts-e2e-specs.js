@@ -1,19 +1,14 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../..';
-import sampleApps from 'sample-apps';
+import DEFAULT_CAPS from '../desired';
+
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let driver;
-let defaultCaps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android'
-};
-
 describe('Commands', function () {
+  let driver;
   before(() => {
     driver = new AndroidDriver();
   });
@@ -22,7 +17,7 @@ describe('Commands', function () {
   });
   describe('Alerts', async () => {
     it('should throw a notYetImplemented error for alert methods', async () => {
-      await driver.createSession(defaultCaps);
+      await driver.createSession(DEFAULT_CAPS);
       await driver.getAlertText().should.eventually.be.rejectedWith(/implemented/);
       await driver.setAlertText('new text').should.eventually.be.rejectedWith(/implemented/);
       await driver.postAcceptAlert().should.eventually.be.rejectedWith(/implemented/);

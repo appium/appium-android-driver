@@ -2,23 +2,17 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { retryInterval } from 'asyncbox';
 import AndroidDriver from '../../..';
-import sampleApps from 'sample-apps';
+import DEFAULT_CAPS from '../desired';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let driver;
-let caps = {
-  app: sampleApps('gpsDemo-debug'),
-  deviceName: 'Android',
-  platformName: 'Android'
-};
-
 describe.skip("geo-location", function () {
+  let driver;
   before(async () => {
     driver = new AndroidDriver();
-    await driver.createSession(caps);
+    await driver.createSession(DEFAULT_CAPS);
   });
   after(async () => {
     await driver.deleteSession();

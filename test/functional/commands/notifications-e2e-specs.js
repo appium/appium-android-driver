@@ -1,19 +1,18 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../..';
-import sampleApps from 'sample-apps';
 import B from 'bluebird';
+import _ from 'lodash';
+import DEFAULT_CAPS from '../desired';
+
 
 chai.should();
 chai.use(chaiAsPromised);
 
 let driver;
-let defaultCaps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android',
+let defaultCaps = _.defaults({
   appActivity: '.app.StatusBarNotifications'
-};
+}, DEFAULT_CAPS);
 
 describe('apidemo - notifications', function () {
   before(async () => {

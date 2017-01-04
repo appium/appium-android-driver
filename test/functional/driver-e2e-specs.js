@@ -1,21 +1,20 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import _ from 'lodash';
 import AndroidDriver from '../..';
-import sampleApps from 'sample-apps';
+import DEFAULT_CAPS from './desired';
+
 
 chai.should();
 chai.use(chaiAsPromised);
-
-let driver;
-let defaultCaps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android',
-  androidInstallTimeout: '90000'
-};
 let expect = chai.expect;
 
+let defaultCaps = _.defaults({
+  androidInstallTimeout: 90000
+}, DEFAULT_CAPS);
+
 describe('createSession', function () {
+  let driver;
   before(() => {
     driver = new AndroidDriver();
   });
@@ -63,8 +62,8 @@ describe('createSession', function () {
     caps.autoLaunch = false;
     await driver.createSession(caps);
     let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
-    appPackage.should.not.equal(caps.appPackage);
-    appActivity.should.not.equal(caps.appActivity);
+    expect(appPackage).to.not.equal(caps.appPackage);
+    expect(appActivity).to.not.equal(caps.appActivity);
   });
   it('should be able to launch activity with custom intent parameter category', async () => {
     let caps = Object.assign({}, defaultCaps);
@@ -129,6 +128,7 @@ describe('createSession', function () {
 });
 
 describe('close', function () {
+  let driver;
   before(() => {
     driver = new AndroidDriver();
   });

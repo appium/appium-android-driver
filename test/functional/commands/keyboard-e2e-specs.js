@@ -1,9 +1,10 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
-import sampleApps from 'sample-apps';
 import AndroidDriver from '../../..';
 import B from 'bluebird';
+import DEFAULT_CAPS from '../desired';
+
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -16,14 +17,11 @@ const PACKAGE = 'io.appium.android.apis';
 const TEXTFIELD_ACTIVITY = '.view.TextFields';
 const KEYEVENT_ACTIVITY = '.text.KeyEventText';
 
-let defaultAsciiCaps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android',
+let defaultAsciiCaps = _.defaults({
   newCommandTimeout: 90,
   appPackage: PACKAGE,
   appActivity: TEXTFIELD_ACTIVITY
-};
+}, DEFAULT_CAPS);
 
 let defaultUnicodeCaps = _.defaults({
   unicodeKeyboard: true,
