@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "adm-zip": "^0.4.7",
-    "appium-adb": "^2.9.2",
+    "appium-adb": "^2.9.6",
     "appium-android-bootstrap": "^2.7.5",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^2.0.0",
@@ -62,7 +62,7 @@
     "test"
   ],
   "devDependencies": {
-    "android-apidemos": "^1.1.2",
+    "android-apidemos": "^2.0.0",
     "appium-gulp-plugins": "^1.3.12",
     "appium-test-support": "0.0.5",
     "babel-eslint": "^6.1.0",

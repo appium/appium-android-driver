@@ -27,8 +27,11 @@ describe('android-helpers e2e', () => {
   });
   describe('ensureDeviceLocale', () => {
     let adb;
-    before(async () => {
+    before(async function () {
       adb = await ADB.createADB();
+
+      // restarting doesn't work on Android 7
+      if (await adb.getApiLevel() > 23) this.skip();
     });
     after(async () => {
       await helpers.ensureDeviceLocale(adb, 'en', 'US');
