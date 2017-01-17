@@ -1,5 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import ADB from 'appium-adb';
 import AndroidDriver from '../../../..';
 import DEFAULT_CAPS from '../../desired';
 
@@ -9,13 +10,19 @@ chai.use(chaiAsPromised);
 
 describe('Localization - locale @skip-ci @skip-real-device', function () {
   let driver;
-  beforeEach(async () => {
+  beforeEach(async function () {
+    // restarting doesn't work on Android 7
+    let adb = new ADB();
+    if (await adb.getApiLevel() > 23) this.skip();
+
     driver = new AndroidDriver();
   });
   after(async () => {
-    await driver.adb.setDeviceCountry('US');
+    if (driver) {
+      await driver.adb.setDeviceCountry('US');
 
-    await driver.deleteSession();
+      await driver.deleteSession();
+    }
   });
 
   async function getLocale (adb) {
