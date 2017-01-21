@@ -64,10 +64,10 @@ describe('driver', () => {
       driver.unlocker.isValidKey('pattern', '1234').should.equal(true);
       driver.unlocker.isValidKey('pattern', '1abc').should.equal(false);
       driver.unlocker.isValidKey('pattern', '121c3').should.equal(false);
-      // driver.unlocker.isValidKey('password', '121c3').should.equal(true);
-      // driver.unlocker.isValidKey('password', 'appium').should.equal(true);
-      // driver.unlocker.isValidKey('password', 'appium-android-driver').should.equal(true);
-      // driver.unlocker.isValidKey('password', '*-_\\(').should.equal(false);    
+      driver.unlocker.isValidKey('password', '121c3').should.equal(true);
+      driver.unlocker.isValidKey('password', 'appium').should.equal(true);
+      driver.unlocker.isValidKey('password', 'appium-android-driver').should.equal(true);
+      driver.unlocker.isValidKey('password', '*-_\\(').should.equal(false);
     });
     it('should get java version if none is provided', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
