@@ -7,7 +7,6 @@ import { withMocks } from 'appium-test-support';
 import * as teen_process from 'teen_process';
 import { fs } from 'appium-support';
 import { path as settingsApkPath } from 'io.appium.settings';
-import { path as unlockApkPath } from 'appium-unlock';
 import _ from 'lodash';
 
 const should = chai.should();
@@ -383,6 +382,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
   }));
+  /*
   describe('pushUnlock', withMocks({adb}, (mocks) => {
     it('should install unlockApp', async () => {
       mocks.adb.expects('install').withExactArgs(unlockApkPath, false).once()
@@ -390,6 +390,7 @@ describe('Android Helpers', () => {
       await helpers.pushUnlock(adb);
       mocks.adb.verify();
     });
+
   }));
   describe('unlock', withMocks({adb}, (mocks) => {
     it('should return if screen is already unlocked', async () => {
@@ -408,6 +409,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
   }));
+  */
   describe('removeNullProperties', () => {
     it('should ignore null properties', async () => {
       let test = {foo: null, bar: true};
