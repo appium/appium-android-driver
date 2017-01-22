@@ -23,9 +23,10 @@ describe('createSession', function () {
     await driver.deleteSession();
   });
   it('should unlock the device', async () => {
-    await driver.createSession(defaultCaps);
+    let caps = _.extend(defaultCaps, {unlockType: "pin", unlockKey: "0123456789"});
+    await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
-    expect(isLock).to.be(false);
+    expect(isLock).to.equal(false);
   });
   /*
   it('should start android session focusing on default pkg and act', async () => {

@@ -180,7 +180,7 @@ describe('driver', () => {
                           };
 
       sandbox.stub(helpers, 'initDevice');
-      sandbox.stub(helpers, 'unlock');
+      // sandbox.stub(helpers, 'unlock');
       sandbox.stub(helpers, 'bootstrap').returns(fakeBootstrap);
       sandbox.stub(driver, 'initAUT');
       sandbox.stub(driver, 'startAUT');
@@ -207,10 +207,12 @@ describe('driver', () => {
       await driver.startAndroidSession();
       driver.startChromeSession.calledOnce.should.be.true;
     });
+    /*
     it('should unlock the device', async () => {
       await driver.startAndroidSession();
       helpers.unlock.calledOnce.should.be.true;
     });
+    */
     it('should start AUT if auto lauching', async () => {
       driver.opts.autoLaunch = true;
       await driver.startAndroidSession();
