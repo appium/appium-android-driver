@@ -22,8 +22,16 @@ describe('createSession', function () {
   afterEach(async () => {
     await driver.deleteSession();
   });
-  it('should unlock the device', async () => {
+  /*
+  it('should unlock the device using PIN', async () => {
     let caps = _.extend(defaultCaps, {unlockType: "pin", unlockKey: "0123456789"});
+    await driver.createSession(caps);
+    let isLock = await driver.adb.isScreenLocked();
+    expect(isLock).to.equal(false);
+  });
+  */
+  it('should unlock the device using PASSWORD', async () => {
+    let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "appium1234"});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     expect(isLock).to.equal(false);

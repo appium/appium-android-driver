@@ -180,7 +180,7 @@ describe('driver', () => {
                           };
 
       sandbox.stub(helpers, 'initDevice');
-      // sandbox.stub(helpers, 'unlock');
+      sandbox.stub(helpers, 'unlock');
       sandbox.stub(helpers, 'bootstrap').returns(fakeBootstrap);
       sandbox.stub(driver, 'initAUT');
       sandbox.stub(driver, 'startAUT');
