@@ -31,7 +31,7 @@ describe('createSession', function () {
   });
   */
   it('should unlock the device using PASSWORD', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "appium1234"});
+    let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "a x "});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     expect(isLock).to.equal(false);
