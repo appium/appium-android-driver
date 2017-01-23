@@ -82,10 +82,8 @@ describe('driver', () => {
       driver.unlocker.encodePassword('a p p i u m').should.equal("a%sp%sp%si%su%sm");
     });
     it('should verify pattern pin is aproximatelly to its position', async () => {
-      let pos0 = {x: 33, y:323};
-      let piece = 137.6;
       let pins = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((pin) => {
-        return driver.unlocker.getPatternKeyPosition(pin, pos0, piece);
+        return driver.unlocker.getPatternKeyPosition(pin, {x: 33, y:323}, 137.6);
       });
       let cols = [101, 238, 375];
       let rows = [391, 528, 665];
