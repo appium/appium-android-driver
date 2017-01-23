@@ -59,6 +59,8 @@ describe('driver', () => {
       driver.unlocker.isValidUnlockType('pattern').should.equal(true);
       driver.unlocker.isValidUnlockType('password').should.equal(true);
       driver.unlocker.isValidUnlockType('fingerprint').should.equal(false);
+    });
+    it('should verify the unlock keys for eahc type', async () => {
       driver.unlocker.isValidKey('pin').should.equal(false);
       driver.unlocker.isValidKey('pin', ' ').should.equal(false);
       driver.unlocker.isValidKey('pin', '1111').should.equal(true);
@@ -68,7 +70,6 @@ describe('driver', () => {
       driver.unlocker.isValidKey('pattern', ' ').should.equal(false);
       driver.unlocker.isValidKey('pattern', '1abc').should.equal(false);
       driver.unlocker.isValidKey('pattern', '1213').should.equal(false);
-      driver.unlocker.encodePassword('a p p i u m').should.equal("a%sp%sp%si%su%sm");
       driver.unlocker.isValidKey('password', '121c3').should.equal(true);
       driver.unlocker.isValidKey('password', 'appium').should.equal(true);
       driver.unlocker.isValidKey('password', 'appium-android-driver').should.equal(true);
@@ -76,6 +77,36 @@ describe('driver', () => {
       driver.unlocker.isValidKey('password', '123').should.equal(false);
       driver.unlocker.isValidKey('password').should.equal(false);
       driver.unlocker.isValidKey('password', '   ').should.equal(false);
+    });
+    it('should verify the password with blank space is encoded', async () => {
+      driver.unlocker.encodePassword('a p p i u m').should.equal("a%sp%sp%si%su%sm");
+    });
+    it('should verify pattern pin is aproximatelly to its position', async () => {
+      let pos0 = {x: 33, y:323};
+      let piece = 137.6;
+      let pins = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((pin) => {
+        return driver.unlocker.getPatternKeyPosition(pin, pos0, piece);
+      });
+      let cols = [101, 238, 375];
+      let rows = [391, 528, 665];
+      expect(pins[0].x).to.be.within(cols[0] - 5, cols[0] + 5);
+      expect(pins[1].x).to.be.within(cols[1] - 5, cols[1] + 5);
+      expect(pins[2].x).to.be.within(cols[2] - 5, cols[2] + 5);
+      expect(pins[3].x).to.be.within(cols[0] - 5, cols[0] + 5);
+      expect(pins[4].x).to.be.within(cols[1] - 5, cols[1] + 5);
+      expect(pins[5].x).to.be.within(cols[2] - 5, cols[2] + 5);
+      expect(pins[6].x).to.be.within(cols[0] - 5, cols[0] + 5);
+      expect(pins[7].x).to.be.within(cols[1] - 5, cols[1] + 5);
+      expect(pins[8].x).to.be.within(cols[2] - 5, cols[2] + 5);
+      expect(pins[0].y).to.be.within(rows[0] - 5, rows[0] + 5);
+      expect(pins[1].y).to.be.within(rows[0] - 5, rows[0] + 5);
+      expect(pins[2].y).to.be.within(rows[0] - 5, rows[0] + 5);
+      expect(pins[3].y).to.be.within(rows[1] - 5, rows[1] + 5);
+      expect(pins[4].y).to.be.within(rows[1] - 5, rows[1] + 5);
+      expect(pins[5].y).to.be.within(rows[1] - 5, rows[1] + 5);
+      expect(pins[6].y).to.be.within(rows[2] - 5, rows[2] + 5);
+      expect(pins[7].y).to.be.within(rows[2] - 5, rows[2] + 5);
+      expect(pins[8].y).to.be.within(rows[2] - 5, rows[2] + 5);
     });
     it('should get java version if none is provided', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
