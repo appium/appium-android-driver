@@ -10,8 +10,7 @@ chai.use(chaiAsPromised);
 let expect = chai.expect;
 
 let defaultCaps = _.defaults({
-  androidInstallTimeout: 90000,
-  avd: "Nexus_S_API_24"
+  androidInstallTimeout: 90000
 }, DEFAULT_CAPS);
 
 describe('createSession', function () {
@@ -24,7 +23,7 @@ describe('createSession', function () {
   });
   /*
   it('should unlock the device using a PIN', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "pin", unlockKey: "0123456789"});
+    let caps = _.extend(defaultCaps, {unlockType: "pin", unlockKey: "0123456789", avd: "Nexus_S_API_24"});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     expect(isLock).to.equal(false);
@@ -32,14 +31,14 @@ describe('createSession', function () {
   */
   /*
   it('should unlock the device using a PASSWORD', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "a x "});
+    let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "a x ", avd: "Nexus_S_API_24"});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     expect(isLock).to.equal(false);
   });
   */
   it('should unlock the device using a PATTERN', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "159874236"});
+    let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "159874236", avd: "Nexus_S_API_24"});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     expect(isLock).to.equal(false);
