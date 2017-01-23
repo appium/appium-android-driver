@@ -99,7 +99,7 @@ describe('createSession', function () {
     let serverCaps = await driver.getSession();
     serverCaps.takesScreenshot.should.exist;
   });
-  it('should get device name and udid in session details', async () => {
+  it('should get device name, udid, model, manufacturer and screen size in session details', async () => {
     let caps = Object.assign({}, defaultCaps);
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
@@ -110,6 +110,9 @@ describe('createSession', function () {
     let serverCaps = await driver.getSession();
     serverCaps.deviceName.should.exist;
     serverCaps.deviceUDID.should.exist;
+    serverCaps.deviceScreenSize.should.exist;
+    serverCaps.deviceModel.should.exist;
+    serverCaps.deviceManufacturer.should.exist;
   });
   it('should error out for activity that fails to load after app wait activity timeout', async () => {
     let caps = Object.assign({}, defaultCaps);
