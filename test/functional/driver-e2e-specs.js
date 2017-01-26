@@ -28,24 +28,19 @@ describe('createSession', function () {
     let isLock = await driver.adb.isScreenLocked();
     expect(isLock).to.equal(false);
   });
-  */
-  /*
   it('should unlock the device using a PASSWORD', async () => {
     let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "a x ", avd: "Nexus_S_API_24"});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     expect(isLock).to.equal(false);
   });
-  */
   it('should unlock the device using a PATTERN', async () => {
-    //let avd = "Nexus_S_API_24";
-    let avd = "Nexus_S_API_19";
-    let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "159874236", avd: avd});
+    let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "159874236", avd: "Nexus_S_API_19"});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     expect(isLock).to.equal(false);
   });
-  /*
+  */
   it('should start android session focusing on default pkg and act', async () => {
     await driver.createSession(defaultCaps);
     let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
@@ -150,9 +145,8 @@ describe('createSession', function () {
     await driver.createSession(caps);
     expect(await driver.adb.getGrantedPermissions('io.appium.android.apis')).to.include.members(['android.permission.RECEIVE_SMS']);
   });
-  */
 });
-/*
+
 describe('close', function () {
   let driver;
   before(() => {
@@ -170,4 +164,3 @@ describe('close', function () {
     }
   });
 });
-*/
