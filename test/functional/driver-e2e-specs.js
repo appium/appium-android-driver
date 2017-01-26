@@ -38,7 +38,9 @@ describe('createSession', function () {
   });
   */
   it('should unlock the device using a PATTERN', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "159874236", avd: "Nexus_S_API_24"});
+    //let avd = "Nexus_S_API_24";
+    let avd = "Nexus_S_API_19";
+    let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "159874236", avd: avd});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     expect(isLock).to.equal(false);
