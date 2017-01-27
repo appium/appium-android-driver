@@ -21,30 +21,6 @@ describe('createSession', function () {
   afterEach(async () => {
     await driver.deleteSession();
   });
-  /*
-  ------------------------------------------------------------------------------
-  TODO - In order to run the unlock2 e2e tests we need to create specific
-  emulators avds each one of them setted with the current unlock type to test
-  ------------------------------------------------------------------------------
-  it('should unlock the device using a PIN', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "pin", unlockKey: "0123456789", avd: "Nexus_S_API_24"});
-    await driver.createSession(caps);
-    let isLock = await driver.adb.isScreenLocked();
-    expect(isLock).to.equal(false);
-  });
-  it('should unlock the device using a PASSWORD', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "a x ", avd: "Nexus_S_API_24"});
-    await driver.createSession(caps);
-    let isLock = await driver.adb.isScreenLocked();
-    expect(isLock).to.equal(false);
-  });
-  it('should unlock the device using a PATTERN', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "159874236", avd: "Nexus_S_API_19"});
-    await driver.createSession(caps);
-    let isLock = await driver.adb.isScreenLocked();
-    expect(isLock).to.equal(false);
-  });
-  */
   it('should start android session focusing on default pkg and act', async () => {
     await driver.createSession(defaultCaps);
     let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
