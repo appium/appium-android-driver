@@ -22,6 +22,10 @@ describe('createSession', function () {
     await driver.deleteSession();
   });
   /*
+  ------------------------------------------------------------------------------
+  TODO - In order to run the unlock2 e2e tests we need to create specific
+  emulators avds each one of them setted with the current unlock type to test
+  ------------------------------------------------------------------------------
   it('should unlock the device using a PIN', async () => {
     let caps = _.extend(defaultCaps, {unlockType: "pin", unlockKey: "0123456789", avd: "Nexus_S_API_24"});
     await driver.createSession(caps);
