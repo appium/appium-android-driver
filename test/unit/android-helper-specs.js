@@ -7,7 +7,7 @@ import { withMocks } from 'appium-test-support';
 import * as teen_process from 'teen_process';
 import { fs } from 'appium-support';
 import { path as settingsApkPath } from 'io.appium.settings';
-import { unlockApkPath as unlockApkPath } from 'appium-unlock';
+import { path as unlockApkPath } from 'appium-unlock';
 import unlocker from '../../lib/unlock-helpers';
 import _ from 'lodash';
 
@@ -405,7 +405,7 @@ describe('Android Helpers', () => {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.adb.expects('forceStop').once().returns('');
-      mocks.adb.expects('startApp').once().returns('');
+      mocks.adb.expects('startApp').twice().returns('');
       await helpers.unlock(helpers, adb, {});
       mocks.adb.verify();
       mocks.helpers.verify();
