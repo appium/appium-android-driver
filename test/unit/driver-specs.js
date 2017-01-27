@@ -184,12 +184,10 @@ describe('driver', () => {
       await driver.deleteSession();
       driver.adb.setIME.calledOnce.should.be.true;
     });
-    /*
     it('should force stop non-Chrome sessions', async () => {
       await driver.deleteSession();
-      driver.adb.forceStop.calledTwice.should.be.true;
+      driver.adb.forceStop.calledOnce.should.be.true;
     });
-    */
     it('should uninstall APK if required', async () => {
       driver.opts.fullReset = true;
       await driver.deleteSession();
@@ -238,12 +236,10 @@ describe('driver', () => {
       await driver.startAndroidSession();
       driver.startChromeSession.calledOnce.should.be.true;
     });
-    /*
     it('should unlock the device', async () => {
       await driver.startAndroidSession();
       helpers.unlock.calledOnce.should.be.true;
     });
-    */
     it('should start AUT if auto lauching', async () => {
       driver.opts.autoLaunch = true;
       await driver.startAndroidSession();
