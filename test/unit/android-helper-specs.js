@@ -403,8 +403,6 @@ describe('Android Helpers', () => {
     });
     it('should start unlock app', async () => {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
-      mocks.adb.expects('getApiLevel').once().returns(21);
-      mocks.unlocker.expects('dismissKeyguard').once();
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.adb.expects('forceStop').once().returns('');
       mocks.adb.expects('startApp').once().returns('');
@@ -414,7 +412,6 @@ describe('Android Helpers', () => {
     });
     it('should raise an error on undefined unlockKey when unlockType is defined', async () => {
       mocks.adb.expects('isScreenLocked').once().returns(true);
-      mocks.adb.expects('getApiLevel').once().returns(21);
       mocks.unlocker.expects('isValidKey').once();
       await helpers.unlock(helpers, adb, {unlockType: "pin"}).should.be.rejectedWith('unlockKey');
       mocks.adb.verify();
@@ -424,7 +421,6 @@ describe('Android Helpers', () => {
     it('should call pinUnlock if unlockType is pin', async () => {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
-      mocks.adb.expects('getApiLevel').once().returns(21);
       mocks.unlocker.expects('pinUnlock').once();
       await helpers.unlock(helpers, adb, {unlockType: "pin", unlockKey: "1111"});
       mocks.adb.verify();
@@ -433,7 +429,6 @@ describe('Android Helpers', () => {
     it('should call passwordUnlock if unlockType is password', async () => {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
-      mocks.adb.expects('getApiLevel').once().returns(21);
       mocks.unlocker.expects('passwordUnlock').once();
       await helpers.unlock(helpers, adb, {unlockType: "password", unlockKey: "appium"});
       mocks.adb.verify();
@@ -442,7 +437,6 @@ describe('Android Helpers', () => {
     it('should call patternUnlock if unlockType is pattern', async () => {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
-      mocks.adb.expects('getApiLevel').once().returns(21);
       mocks.unlocker.expects('patternUnlock').once();
       await helpers.unlock(helpers, adb, {unlockType: "pattern", unlockKey: "123456789"});
       mocks.adb.verify();
