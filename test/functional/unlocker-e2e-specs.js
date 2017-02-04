@@ -11,9 +11,7 @@ let defaultCaps = _.defaults({
   androidInstallTimeout: 90000
 }, DEFAULT_CAPS);
 
-const PIN_UNLOCK_AVD = "Nexus_S_API_19_PIN";
-const PASSWORD_UNLOCK_AVD = "Nexus_S_API_19_PASSWORD";
-const PATTERN_UNLOCK_AVD = "Nexus_S_API_19_PATTERN";
+const AVD = "ANDROID_API_21";
 
 /*
 ------------------------------------------------------------------------------
@@ -29,24 +27,26 @@ describe('unlock tests', function () {
   afterEach(async () => {
     await driver.deleteSession();
   });
+  /*
   it('should unlock the device using a PIN', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "pin", unlockKey: "1111", avd: PIN_UNLOCK_AVD});
+    let caps = _.extend(defaultCaps, {unlockType: "pin", unlockKey: "1111", avd: AVD});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     isLock.should.equal(false);
   });
-
+  */
+  /*
   it('should unlock the device using a PASSWORD', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "appium", avd: PASSWORD_UNLOCK_AVD});
+    let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "appium", avd: AVD});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     isLock.should.equal(false);
   });
+  */
   it('should unlock the device using a PATTERN', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "159874236", avd: PATTERN_UNLOCK_AVD});
+    let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "159874236", avd: AVD});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     isLock.should.equal(false);
   });
-
 });
