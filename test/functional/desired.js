@@ -7,6 +7,7 @@ const DEFAULT_CAPS = {
   app,
   deviceName: 'Android',
   platformName: 'Android',
+  bundleId: 'io.appium.android.apis',
 };
 
 const CONTACT_MANAGER_CAPS = {

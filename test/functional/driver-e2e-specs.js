@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
+import ADB from 'appium-adb';
 import AndroidDriver from '../..';
 import DEFAULT_CAPS from './desired';
 
@@ -98,7 +99,7 @@ describe('createSession', function () {
     let serverCaps = await driver.getSession();
     serverCaps.takesScreenshot.should.exist;
   });
-  it('should get device name and udid in session details', async () => {
+  it('should get device name, udid, model, manufacturer and screen size in session details', async () => {
     let caps = Object.assign({}, defaultCaps);
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
@@ -109,6 +110,9 @@ describe('createSession', function () {
     let serverCaps = await driver.getSession();
     serverCaps.deviceName.should.exist;
     serverCaps.deviceUDID.should.exist;
+    serverCaps.deviceScreenSize.should.exist;
+    serverCaps.deviceModel.should.exist;
+    serverCaps.deviceManufacturer.should.exist;
   });
   it('should error out for activity that fails to load after app wait activity timeout', async () => {
     let caps = Object.assign({}, defaultCaps);
@@ -116,7 +120,14 @@ describe('createSession', function () {
     caps.appWaitDuration = 1000; // 1 second
     await driver.createSession(caps).should.eventually.be.rejectedWith(/never started/);
   });
-  it('should be able grant permissions', async () => {
+  it('should be able to grant permissions', async function () {
+    // TODO: why is there no entry for 5.1?
+    let adb = new ADB();
+    let apiLevel = await adb.getApiLevel();
+    if (apiLevel === '22' || apiLevel === '19' || apiLevel === '18') {
+      this.skip();
+      return;
+    }
     let caps = Object.assign({}, defaultCaps);
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = 'io.appium.android.apis.app.HelloWorld';

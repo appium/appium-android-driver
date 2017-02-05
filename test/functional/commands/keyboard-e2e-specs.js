@@ -155,10 +155,10 @@ describe('keyboard', () => {
 
       for (let test of tests) {
         describe(test.label, () => {
-          it('should work with setValue', async () => {
+          it(`should work with setValue: '${test.text}'`, async () => {
             await runTextEditTest(driver, test.text);
           });
-          it('should work with keys', async () => {
+          it(`should work with keys: '${test.text}'`, async () => {
             await runTextEditTest(driver, test.text, true);
           });
         });
@@ -209,10 +209,10 @@ describe('keyboard', () => {
       for (let testSet of [tests, unicodeTests, languageTests]) {
         for (let test of testSet) {
           describe(test.label, () => {
-            it('should work with setValue', async () => {
+            it(`should work with setValue: '${test.text}'`, async () => {
               await runTextEditTest(driver, test.text);
             });
-            it('should work with keys', async () => {
+            it(`should work with keys: '${test.text}'`, async () => {
               await runTextEditTest(driver, test.text, true);
             });
           });

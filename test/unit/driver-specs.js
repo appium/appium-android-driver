@@ -218,6 +218,9 @@ describe('driver', () => {
       sandbox.stub(driver, 'startChromeSession');
       sandbox.stub(driver.settings, 'update');
       sandbox.stub(driver.adb, 'getPlatformVersion');
+      sandbox.stub(driver.adb, 'getScreenSize');
+      sandbox.stub(driver.adb, 'getModel');
+      sandbox.stub(driver.adb, 'getManufacturer');
     });
     afterEach(() => {
       sandbox.restore();
