@@ -35,6 +35,7 @@ describe('apidemo - touch', function () {
         {options: {element: dot2.ELEMENT}}
       ];
       await driver.doTouchDrag(gestures);
+
       let results = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_result_text', false);
       await driver.getText(results.ELEMENT).should.eventually.include('Dropped');
     });
