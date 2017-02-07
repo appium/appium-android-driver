@@ -81,6 +81,7 @@ describe('driver', () => {
     });
     it('should verify the password with blank space is encoded', async () => {
       driver.unlocker.encodePassword('a p p i u m').should.equal("a%sp%sp%si%su%sm");
+      driver.unlocker.encodePassword('   ').should.equal("%s%s%s");
     });
     it('should verify pattern pin is aproximatelly to its position', async () => {
       let pins = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((pin) => {
