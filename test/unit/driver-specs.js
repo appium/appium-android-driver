@@ -60,7 +60,7 @@ describe('driver', () => {
       driver.unlocker.isValidUnlockType('password').should.equal(true);
       driver.unlocker.isValidUnlockType('fingerprint').should.equal(false);
     });
-    it('should verify the unlock keys for eahc type', async () => {
+    it('should verify the unlock keys for each type', async () => {
       driver.unlocker.isValidKey('pin').should.equal(false);
       driver.unlocker.isValidKey('pin', ' ').should.equal(false);
       driver.unlocker.isValidKey('pin', '1111').should.equal(true);
