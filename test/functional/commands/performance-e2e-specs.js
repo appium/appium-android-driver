@@ -31,7 +31,7 @@ describe('performance', () => {
     });
 
     it('should throw an Error for unsupported capability data type ', async  () => {
-      await driver.getPerformanceData(caps.bundleId, 'randominfo', 2).should.be.rejected;
+      await driver.getPerformanceData(caps.appPackage, 'randominfo', 2).should.be.rejected;
     });
 
     it('should get the amount of cpu by user and kernel process', async function () {
@@ -41,7 +41,7 @@ describe('performance', () => {
         this.skip();
         return;
       }
-      let cpu = await driver.getPerformanceData(caps.bundleId, 'cpuinfo', 50);
+      let cpu = await driver.getPerformanceData(caps.appPackage, 'cpuinfo', 50);
 
       Array.isArray(cpu).should.be.true;
       cpu.length.should.be.above(1);
@@ -53,7 +53,7 @@ describe('performance', () => {
       }
     });
     it('should get the amount of memory used by the process', async () => {
-      let memory = await driver.getPerformanceData(caps.bundleId, 'memoryinfo', 2);
+      let memory = await driver.getPerformanceData(caps.appPackage, 'memoryinfo', 2);
 
       Array.isArray(memory).should.be.true;
       memory.length.should.be.above(1);
@@ -65,7 +65,7 @@ describe('performance', () => {
       }
     });
     it('should get the remaining battery power', async () => {
-      let battery = await driver.getPerformanceData(caps.bundleId, 'batteryinfo', 2);
+      let battery = await driver.getPerformanceData(caps.appPackage, 'batteryinfo', 2);
 
       Array.isArray(battery).should.be.true;
       battery.length.should.be.above(1);
@@ -82,7 +82,7 @@ describe('performance', () => {
         this.skip();
         return;
       }
-      let network = await driver.getPerformanceData(caps.bundleId, 'networkinfo', 2);
+      let network = await driver.getPerformanceData(caps.appPackage, 'networkinfo', 2);
 
       Array.isArray(network).should.be.true;
       network.length.should.be.above(1);
