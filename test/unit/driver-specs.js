@@ -53,6 +53,7 @@ describe('driver', () => {
     afterEach(() => {
       sandbox.restore();
     });
+    /*
     it('should verify the unlock types', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
       driver.unlocker.isValidUnlockType('pin').should.equal(true);
@@ -108,6 +109,7 @@ describe('driver', () => {
       expect(pins[7].y).to.be.within(rows[2] - 5, rows[2] + 5);
       expect(pins[8].y).to.be.within(rows[2] - 5, rows[2] + 5);
     });
+    */
     it('should get java version if none is provided', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
       driver.opts.javaVersion.should.exist;
