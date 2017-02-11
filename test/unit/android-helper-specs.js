@@ -441,7 +441,7 @@ describe('Android Helpers', () => {
       await helpers.unlock(helpers, adb, {unlockType: "pattern", unlockKey: "123456789"});
       mocks.adb.verify();
       mocks.helpers.verify();
-    });
+    });    
   }));
   describe('removeNullProperties', () => {
     it('should ignore null properties', async () => {
