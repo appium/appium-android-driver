@@ -60,6 +60,11 @@ describe('driver', () => {
       driver.unlocker.isValidUnlockType('password').should.equal(true);
       driver.unlocker.isValidUnlockType('fingerprint').should.equal(false);
     });
+    it('should cast string keys to array', async () => {
+      driver.unlocker.stringKeyToArr('1234').should.eql(['1', '2', '3', '4']);
+      driver.unlocker.stringKeyToArr(' 1234 ').should.eql(['1', '2', '3', '4']);
+      driver.unlocker.stringKeyToArr('1 2 3 4').should.eql(['1', '2', '3', '4']);
+    });
     it('should verify the unlock keys for each type', async () => {
       driver.unlocker.isValidKey('pin').should.equal(false);
       driver.unlocker.isValidKey('pin', ' ').should.equal(false);
