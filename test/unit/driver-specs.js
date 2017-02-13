@@ -113,6 +113,19 @@ describe('driver', () => {
       expect(pins[7].y).to.be.within(rows[2] - 5, rows[2] + 5);
       expect(pins[8].y).to.be.within(rows[2] - 5, rows[2] + 5);
     });
+    it('should generate correct gesture actions scheme to unlock by pattern', async () => {
+      let keys = ["1", "2", "3", "4", "6", "7", "8", "9"];
+      let actions = driver.unlocker.getPatternActions(keys, {x: 0, y:0}, 1);
+      actions.map((action, i) => {
+        if (i === 0){
+          action.action.should.equal('press');
+        } else if (i === keys.length) {
+          action.action.should.equal('release');
+        } else {
+          action.action.should.equal('moveTo');
+        }
+      });
+    });
     it('should get java version if none is provided', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
       driver.opts.javaVersion.should.exist;
