@@ -71,7 +71,9 @@ describe('driver', () => {
       driver.unlocker.isValidKey('pin', ' ').should.equal(false);
       driver.unlocker.isValidKey('pin', '1111').should.equal(true);
       driver.unlocker.isValidKey('pin', '1abc').should.equal(false);
+      driver.unlocker.isValidKey('pattern', '1').should.equal(false);
       driver.unlocker.isValidKey('pattern', '1234').should.equal(true);
+      driver.unlocker.isValidKey('pattern', '123456789').should.equal(true);
       driver.unlocker.isValidKey('pattern', '01234').should.equal(false);
       driver.unlocker.isValidKey('pattern').should.equal(false);
       driver.unlocker.isValidKey('pattern', ' ').should.equal(false);
