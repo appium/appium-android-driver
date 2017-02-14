@@ -11,7 +11,7 @@ let defaultCaps = _.defaults({
   androidInstallTimeout: 90000
 }, DEFAULT_CAPS);
 
-const AVD = "ANDROID_API_25";
+const AVD = "ANDROID_API_19";
 
 /*
 ------------------------------------------------------------------------------
@@ -34,18 +34,17 @@ describe('unlock tests', function () {
     let isLock = await driver.adb.isScreenLocked();
     isLock.should.equal(false);
   });
-  */
-  ///*
+
+
   it('should unlock the device using a PASSWORD', async () => {
     let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "appium", avd: AVD});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     isLock.should.equal(false);
   });
-  /*
-  // * /
+  */
   it('should unlock the device using a PATTERN', async () => {
-    let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "159874236", avd: AVD});
+    let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "729856143", avd: AVD});
     await driver.createSession(caps);
     let isLock = await driver.adb.isScreenLocked();
     isLock.should.equal(false);
