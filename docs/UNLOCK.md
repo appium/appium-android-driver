@@ -15,7 +15,9 @@ depending on which lock you defined for your device.
 In case the *unlockType*  capability is not defined, *Appium* will continue working as it is using the Unlock Helper App, this new capabilities are optionals.
 
 `Options:`
-* unlockType: ['pin',  'password', 'pattern']
+* unlockType: ['pin',  'password', 'pattern', 'fingerprint']
+
+*fingerprint unlock only works for Android 6+ emulators*
 
 
 `Example:`
@@ -35,6 +37,3 @@ And the capabilities would be:
   "unlockKey": "729854163"
 }
 ```
-
-`TODO`
-* Add unlock with fingerprint for Android 6+ Emulators
