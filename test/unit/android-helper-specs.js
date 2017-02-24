@@ -8,6 +8,7 @@ import * as teen_process from 'teen_process';
 import { fs } from 'appium-support';
 import { path as settingsApkPath } from 'io.appium.settings';
 import { path as unlockApkPath } from 'appium-unlock';
+import unlocker from '../../lib/unlock-helpers';
 import _ from 'lodash';
 
 const should = chai.should();
@@ -407,12 +408,13 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
   }));
-  describe('unlock', withMocks({adb}, (mocks) => {
+  describe('unlock', withMocks({adb, helpers, unlocker}, (mocks) => {
     it('should return if screen is already unlocked', async () => {
       mocks.adb.expects('isScreenLocked').withExactArgs().once()
         .returns(false);
+      mocks.adb.expects('getApiLevel').never();
       mocks.adb.expects('startApp').never();
-      await helpers.unlock(adb);
+      await helpers.unlock(helpers, adb, {});
       mocks.adb.verify();
     });
     it('should start unlock app', async () => {
@@ -420,8 +422,57 @@ describe('Android Helpers', () => {
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.adb.expects('forceStop').once().returns('');
       mocks.adb.expects('startApp').twice().returns('');
-      await helpers.unlock(adb);
+      await helpers.unlock(helpers, adb, {});
       mocks.adb.verify();
+      mocks.helpers.verify();
+    });
+    it('should raise an error on undefined unlockKey when unlockType is defined', async () => {
+      mocks.adb.expects('isScreenLocked').once().returns(true);
+      mocks.unlocker.expects('isValidKey').once();
+      await helpers.unlock(helpers, adb, {unlockType: "pin"}).should.be.rejectedWith('unlockKey');
+      mocks.adb.verify();
+      mocks.unlocker.verify();
+      mocks.helpers.verify();
+    });
+    it('should call pinUnlock if unlockType is pin', async () => {
+      mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
+      mocks.adb.expects('isScreenLocked').returns(false);
+      mocks.unlocker.expects('pinUnlock').once();
+      await helpers.unlock(helpers, adb, {unlockType: "pin", unlockKey: "1111"});
+      mocks.adb.verify();
+      mocks.helpers.verify();
+    });
+    it('should call passwordUnlock if unlockType is password', async () => {
+      mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
+      mocks.adb.expects('isScreenLocked').returns(false);
+      mocks.unlocker.expects('passwordUnlock').once();
+      await helpers.unlock(helpers, adb, {unlockType: "password", unlockKey: "appium"});
+      mocks.adb.verify();
+      mocks.helpers.verify();
+    });
+    it('should call patternUnlock if unlockType is pattern', async () => {
+      mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
+      mocks.adb.expects('isScreenLocked').returns(false);
+      mocks.unlocker.expects('patternUnlock').once();
+      await helpers.unlock(helpers, adb, {unlockType: "pattern", unlockKey: "123456789"});
+      mocks.adb.verify();
+      mocks.helpers.verify();
+    });
+    it('should call fingerprintUnlock if unlockType is fingerprint', async () => {
+      mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
+      mocks.adb.expects('isScreenLocked').returns(false);
+      mocks.unlocker.expects('fingerprintUnlock').once();
+      await helpers.unlock(helpers, adb, {unlockType: "fingerprint", unlockKey: "1111"});
+      mocks.adb.verify();
+      mocks.unlocker.verify();
+    });
+    it('should throw an error is api is lower than 23 and trying to use fingerprintUnlock', async () => {
+      mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
+      mocks.adb.expects('isScreenLocked').returns(false);
+      mocks.adb.expects('getApiLevel').once().returns(21);
+      await helpers.unlock(helpers, adb, {unlockType: "fingerprint", unlockKey: "1111"}).should.eventually
+        .be.rejectedWith('Fingerprint');
+      mocks.helpers.verify();
     });
   }));
   describe('removeNullProperties', () => {

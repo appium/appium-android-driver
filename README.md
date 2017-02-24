@@ -148,6 +148,8 @@ If more than one of these capabilities are given, the driver will only use first
 | `touchMove`                |
 | `touchUp`                  |
 | `unlock`                   |
+| `unlockWithHelperApp`      |
+| `unlockWithUIAutomation`   |
 | `wrapBootstrapDisconnect`  |
 
 
