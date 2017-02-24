@@ -58,7 +58,8 @@ describe('driver', () => {
       driver.unlocker.isValidUnlockType('pin').should.equal(true);
       driver.unlocker.isValidUnlockType('pattern').should.equal(true);
       driver.unlocker.isValidUnlockType('password').should.equal(true);
-      driver.unlocker.isValidUnlockType('fingerprint').should.equal(false);
+      driver.unlocker.isValidUnlockType('fingerprint').should.equal(true);
+      driver.unlocker.isValidUnlockType('telepathy').should.equal(false);
     });
     it('should cast string keys to array', async () => {
       driver.unlocker.stringKeyToArr('1234').should.eql(['1', '2', '3', '4']);
@@ -71,6 +72,10 @@ describe('driver', () => {
       driver.unlocker.isValidKey('pin', ' ').should.equal(false);
       driver.unlocker.isValidKey('pin', '1111').should.equal(true);
       driver.unlocker.isValidKey('pin', '1abc').should.equal(false);
+      driver.unlocker.isValidKey('fingerprint').should.equal(false);
+      driver.unlocker.isValidKey('fingerprint', ' ').should.equal(false);
+      driver.unlocker.isValidKey('fingerprint', '1111').should.equal(true);
+      driver.unlocker.isValidKey('fingerprint', '1abc').should.equal(false);
       driver.unlocker.isValidKey('pattern', '1').should.equal(false);
       driver.unlocker.isValidKey('pattern', '1234').should.equal(true);
       driver.unlocker.isValidKey('pattern', '123456789').should.equal(true);

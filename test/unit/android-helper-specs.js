@@ -441,7 +441,23 @@ describe('Android Helpers', () => {
       await helpers.unlock(helpers, adb, {unlockType: "pattern", unlockKey: "123456789"});
       mocks.adb.verify();
       mocks.helpers.verify();
-    });    
+    });
+    it('should call fingerprintUnlock if unlockType is fingerprint', async () => {
+      mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
+      mocks.adb.expects('isScreenLocked').returns(false);
+      mocks.unlocker.expects('fingerprintUnlock').once();
+      await helpers.unlock(helpers, adb, {unlockType: "fingerprint", unlockKey: "1111"});
+      mocks.adb.verify();
+      mocks.unlocker.verify();
+    });
+    it('should throw an error is api is lower than 23 and trying to use fingerprintUnlock', async () => {
+      mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
+      mocks.adb.expects('isScreenLocked').returns(false);
+      mocks.adb.expects('getApiLevel').once().returns(21);
+      await helpers.unlock(helpers, adb, {unlockType: "fingerprint", unlockKey: "1111"}).should.eventually
+        .be.rejectedWith('Fingerprint');
+      mocks.helpers.verify();
+    });
   }));
   describe('removeNullProperties', () => {
     it('should ignore null properties', async () => {
