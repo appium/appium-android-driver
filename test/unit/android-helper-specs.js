@@ -383,6 +383,22 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
   }));
+  describe('setMockLocationApp', withMocks({adb}, (mocks) => {
+    it('should enable mock location for api level below 23', async () => {
+      mocks.adb.expects('getApiLevel').returns(Promise.resolve("18"));
+      mocks.adb.expects('shell').withExactArgs(['settings', 'put', 'secure', 'mock_location', '1']).once()
+        .returns('');
+      await helpers.setMockLocationApp(adb, 'io.appium.settings');
+      mocks.adb.verify();
+    });
+    it('should enable mock location for api level 23 and above', async () => {
+      mocks.adb.expects('getApiLevel').returns(Promise.resolve("23"));
+      mocks.adb.expects('shell').withExactArgs(['appops', 'set', 'io.appium.settings', 'android:mock_location', 'allow']).once()
+        .returns('');
+      await helpers.setMockLocationApp(adb, 'io.appium.settings');
+      mocks.adb.verify();
+    });
+  }));
   describe('pushUnlock', withMocks({adb}, (mocks) => {
     it('should install unlockApp', async () => {
       mocks.adb.expects('install').withExactArgs(unlockApkPath, false).once()
