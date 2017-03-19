@@ -17,7 +17,7 @@ const capabilities = {
   "chromedriverExecutable": path.join(process.cwd(), "chromedriver")
 };
 
-describe('createSession', function () {
+describe.skip('createSession', function () {
   let driver;
   before(() => {
     driver = new AndroidDriver();
