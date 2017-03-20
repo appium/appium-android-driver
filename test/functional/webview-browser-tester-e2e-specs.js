@@ -18,10 +18,10 @@ const capabilities = {
 };
 
 describe('Android 7 Webview Browser tester', function () {
-  let driver, test = this;
-  before(() => {
+  let driver;
+  before(function () {
     if (process.env.REAL_DEVICE) {
-      test.pending = true;
+      return this.skip();
     }
   });
   beforeEach(async () => {
