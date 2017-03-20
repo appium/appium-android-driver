@@ -17,16 +17,23 @@ const capabilities = {
   "chromedriverExecutable": path.join(process.cwd(), "chromedriver")
 };
 
-describe.skip('createSession', function () {
-  let driver;
+describe('Android 7 Webview Browser tester', function () {
+  let driver, test = this;
   before(() => {
+    if (process.env.REAL_DEVICE) {
+      test.pending = true;
+    }
+  });
+  beforeEach(async () => {
     driver = new AndroidDriver();
+    await driver.createSession(capabilities);
   });
   afterEach(async () => {
-    await driver.deleteSession();
+    if (driver) {
+      await driver.deleteSession();
+    }
   });
-  it('should start android session using webview browser tester on android 7', async () => {
-    await driver.createSession(capabilities);
+  it('should start android session using webview browser tester', async () => {
     await driver.setUrl("http://google.com");
     await sleep(1500);
     let contexts = await driver.getContexts();
