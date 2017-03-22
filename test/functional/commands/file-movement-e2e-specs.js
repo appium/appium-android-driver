@@ -1,25 +1,22 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../..';
-import sampleApps from 'sample-apps';
 import _ from 'lodash';
 import B from 'bluebird';
 import stream from 'stream';
 import Unzip from 'unzip';
+import DEFAULT_CAPS from '../desired';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let driver;
-let caps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android',
+let caps = _.defaults({
   autoLaunch: false
-};
+}, DEFAULT_CAPS);
 
 describe('file movement', function () {
+  let driver;
   before(async () => {
     driver = new AndroidDriver();
     await driver.createSession(caps);

@@ -10,6 +10,8 @@
 
 Appium Android Driver is a test automation tool for Android devices. Appium Android Driver automates native, hybrid and mobile web apps, tested on simulators, emulators and real devices. Appium Android Driver is part of the [Appium](https://github.com/appium/appium) mobile test automation tool.
 
+*Note*: Issue tracking for this repo has been disabled. Please use the [main Appium issue tracker](https://github.com/appium/appium/issues) instead.
+
 ## Installation
 ```
 npm install appium-android-driver
@@ -79,6 +81,7 @@ If more than one of these capabilities are given, the driver will only use first
 | `getCurrentActivity`       |
 | `getCurrentContext`        |
 | `getDeviceTime`            |
+| `getDisplayDensity`        |
 | `getLocationInView`        |
 | `getLog`                   |
 | `getLogTypes`              |
@@ -89,12 +92,14 @@ If more than one of these capabilities are given, the driver will only use first
 | `getScreenshot`            |
 | `getSize`                  |
 | `getStrings`               |
+| `getSystemBars`            |
 | `getText`                  |
 | `getWindowSize`            |
 | `hideKeyboard`             |
 | `installApp`               |
 | `isAppInstalled`           |
 | `isIMEActivated`           |
+| `isKeyboardShown`          |
 | `isLocked`                 |
 | `isWebContext`             |
 | `keyevent`                 |
@@ -143,6 +148,8 @@ If more than one of these capabilities are given, the driver will only use first
 | `touchMove`                |
 | `touchUp`                  |
 | `unlock`                   |
+| `unlockWithHelperApp`      |
+| `unlockWithUIAutomation`   |
 | `wrapBootstrapDisconnect`  |
 
 

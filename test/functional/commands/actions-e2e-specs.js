@@ -1,21 +1,18 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../..';
-import sampleApps from 'sample-apps';
 import _ from 'lodash';
+import DEFAULT_CAPS from '../desired';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 let driver;
-let caps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android',
+let caps = _.defaults({
   appPackage: 'io.appium.android.apis',
   appActivity: '.view.TextFields'
-};
+}, DEFAULT_CAPS);
 
 
 describe('actions', () => {
