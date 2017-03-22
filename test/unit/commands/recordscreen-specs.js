@@ -20,7 +20,7 @@ describe('recording the screen', () => {
       cmd = ['ls', '/sdcard/test.mp4', '|', 'grep', '\'No such file\''];
       mocks.adb.expects('shell').withExactArgs(cmd).returns("/sdcard/test.mp4: No such file or directory");
 
-      data = await adb.shell(cmd); 
+      data = await driver.adb.shell(cmd); 
 
       length = _.size(data);
       // the same file is exist, then delete the file
