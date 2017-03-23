@@ -1,23 +1,22 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import _ from 'lodash';
 import AndroidDriver from '../../../..';
-import sampleApps from 'sample-apps';
+import DEFAULT_CAPS from '../../desired';
+
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let driver;
-let defaultCaps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android',
+let caps = _.defaults({
   appActivity: '.view.SplitTouchView'
-};
+}, DEFAULT_CAPS);
 
 describe('apidemo - touch - multi-actions', function () {
+  let driver;
   before(async () => {
     driver = new AndroidDriver();
-    await driver.createSession(defaultCaps);
+    await driver.createSession(caps);
   });
   after(async () => {
     await driver.deleteSession();

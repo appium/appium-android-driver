@@ -1,22 +1,17 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../../..';
-import sampleApps from 'sample-apps';
+import DEFAULT_CAPS from '../../desired';
+
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let driver;
-let defaultCaps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android'
-};
-
 describe('Find - invalid strategy', function () {
+  let driver;
   before(async () => {
     driver = new AndroidDriver();
-    await driver.createSession(defaultCaps);
+    await driver.createSession(DEFAULT_CAPS);
   });
   after(async () => {
     await driver.deleteSession();

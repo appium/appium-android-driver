@@ -1,9 +1,10 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
-import sampleApps from 'sample-apps';
 import AndroidDriver from '../../..';
 import B from 'bluebird';
+import DEFAULT_CAPS from '../desired';
+
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -16,14 +17,11 @@ const PACKAGE = 'io.appium.android.apis';
 const TEXTFIELD_ACTIVITY = '.view.TextFields';
 const KEYEVENT_ACTIVITY = '.text.KeyEventText';
 
-let defaultAsciiCaps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android',
+let defaultAsciiCaps = _.defaults({
   newCommandTimeout: 90,
   appPackage: PACKAGE,
   appActivity: TEXTFIELD_ACTIVITY
-};
+}, DEFAULT_CAPS);
 
 let defaultUnicodeCaps = _.defaults({
   unicodeKeyboard: true,
@@ -157,10 +155,10 @@ describe('keyboard', () => {
 
       for (let test of tests) {
         describe(test.label, () => {
-          it('should work with setValue', async () => {
+          it(`should work with setValue: '${test.text}'`, async () => {
             await runTextEditTest(driver, test.text);
           });
-          it('should work with keys', async () => {
+          it(`should work with keys: '${test.text}'`, async () => {
             await runTextEditTest(driver, test.text, true);
           });
         });
@@ -211,10 +209,10 @@ describe('keyboard', () => {
       for (let testSet of [tests, unicodeTests, languageTests]) {
         for (let test of testSet) {
           describe(test.label, () => {
-            it('should work with setValue', async () => {
+            it(`should work with setValue: '${test.text}'`, async () => {
               await runTextEditTest(driver, test.text);
             });
-            it('should work with keys', async () => {
+            it(`should work with keys: '${test.text}'`, async () => {
               await runTextEditTest(driver, test.text, true);
             });
           });

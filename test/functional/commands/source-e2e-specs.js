@@ -1,19 +1,14 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../..';
-import sampleApps from 'sample-apps';
 import { DOMParser } from 'xmldom';
 import xpath from 'xpath';
+import DEFAULT_CAPS from '../desired';
+
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let driver;
-let defaultCaps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android'
-};
 let assertSource = async (source) => {
   source.should.exist;
   let dom = new DOMParser().parseFromString(source);
@@ -22,9 +17,10 @@ let assertSource = async (source) => {
 };
 
 describe('apidemo - source', function () {
+  let driver;
   before(async () => {
     driver = new AndroidDriver();
-    await driver.createSession(defaultCaps);
+    await driver.createSession(DEFAULT_CAPS);
   });
   after(async () => {
     await driver.deleteSession();

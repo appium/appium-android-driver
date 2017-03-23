@@ -1,32 +1,30 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import _ from 'lodash';
 import AndroidDriver from '../../../..';
-import sampleApps from 'sample-apps';
+import DEFAULT_CAPS from '../../desired';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let driver;
-let defaultCaps = {
-  app: sampleApps('ApiDemos-debug'),
-  deviceName: 'Android',
-  platformName: 'Android',
+let caps = _.defaults({
   appPackage: 'io.appium.android.apis',
   appActivity: '.view.DragAndDropDemo'
-};
+}, DEFAULT_CAPS);
 
 describe('apidemo - touch', function () {
+  let driver;
   before(async () => {
     driver = new AndroidDriver();
-    await driver.createSession(defaultCaps);
+    await driver.createSession(caps);
   });
   after(async () => {
     await driver.deleteSession();
   });
   afterEach(async () => {
     // reset the view by restarting the activity
-    await driver.startActivity(defaultCaps.appPackage, defaultCaps.appActivity);
+    await driver.startActivity(caps.appPackage, caps.appActivity);
   });
   describe('drag', function () {
     it('should drag by element', async () => {
@@ -37,6 +35,7 @@ describe('apidemo - touch', function () {
         {options: {element: dot2.ELEMENT}}
       ];
       await driver.doTouchDrag(gestures);
+
       let results = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_result_text', false);
       await driver.getText(results.ELEMENT).should.eventually.include('Dropped');
     });
