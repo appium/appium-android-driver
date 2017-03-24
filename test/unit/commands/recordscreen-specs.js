@@ -15,25 +15,18 @@ describe('recording the screen', () => {
 
   describe('recording the screen', withMocks({adb}, (mocks) => {
     it('should start and stop recording the screen', async () => {
-      let cmd, data, length, arrayList2, availableDataIndex, fileSizeBefore, fileSizeAfter;
+      let cmd, data, length, result_ls_al_testfile_toArray, availableDataIndex, fileSizeBefore, fileSizeAfter;
 
-      cmd = ['ls', '/sdcard/test.mp4', '|', 'grep', '\'No such file\''];
-      mocks.adb.expects('shell').withExactArgs(cmd).returns("/sdcard/test.mp4: No such file or directory");
+      // the test file is already exist, then delete the file
+      cmd = ['rm', '/sdcard/test.mp4'];   
+      mocks.adb.expects('shell').withExactArgs(cmd).returns("");     
       data = await adb.shell(cmd); 
 
-      length = _.size(data);
-      // the same file is exist, then delete the file
-      if (length <= 0){
-        cmd = ['rm', '/sdcard/test.mp4'];   
-        mocks.adb.expects('shell').withExactArgs(cmd).returns("");     
-        data = await adb.shell(cmd); 
-      }
-
       // start recording the screen
-      await driver.startRecordingScreen('/sdcard/test.mp4', "default", -1, -1);
+      await driver.startRecordingScreen('/sdcard/test.mp4', 'default', -1, -1);
 
       // check the file is created
-      cmd = ['ls', '/sdcard/test.mp4', '|', 'grep', '\'No such file\''];
+      cmd = ['ls', '/sdcard/test.mp4', '|', 'grep', 'No such file'];
       mocks.adb.expects('shell').withExactArgs(cmd).returns("");
       data = await adb.shell(cmd); 
 
@@ -44,16 +37,16 @@ describe('recording the screen', () => {
       mocks.adb.expects('shell').withExactArgs(cmd).returns("-rw-rw---- root     sdcard_rw   109135 2017-03-20 21:37 test.mp4");
       data = await adb.shell(cmd); 
 
-      arrayList2 = data.split(" ");
-      length = _.size(arrayList2);
+      result_ls_al_testfile_toArray = data.split(" ");
+      length = _.size(result_ls_al_testfile_toArray);
       availableDataIndex = 0;
       
       for (let i = 0 ; i < length ; ++ i){
-        if ( _.size(arrayList2[i]) > 0 ){
+        if ( _.size(result_ls_al_testfile_toArray[i]) > 0 ){
           availableDataIndex++;
           //check it is started to capture the screen
           if (availableDataIndex === 4){
-            fileSizeBefore = arrayList2[i] * 1;
+            fileSizeBefore = result_ls_al_testfile_toArray[i] * 1;
             break;
           }
         }
@@ -67,16 +60,16 @@ describe('recording the screen', () => {
       mocks.adb.expects('shell').withExactArgs(cmd).returns("-rw-rw---- root     sdcard_rw   209135 2017-03-20 21:37 test.mp4");
       data = await adb.shell(cmd); 
 
-      arrayList2 = data.split(" ");
-      length = _.size(arrayList2);
+      result_ls_al_testfile_toArray = data.split(" ");
+      length = _.size(result_ls_al_testfile_toArray);
       availableDataIndex = 0;
       
       for (let i = 0 ; i < length ; ++ i){
-        if ( _.size(arrayList2[i]) > 0 ){
+        if ( _.size(result_ls_al_testfile_toArray[i]) > 0 ){
           availableDataIndex++;
           //check it is started to capture the screen
           if (availableDataIndex === 4){
-            fileSizeAfter = arrayList2[i] * 1;
+            fileSizeAfter = result_ls_al_testfile_toArray[i] * 1;
             break;
           }
         }
@@ -93,16 +86,16 @@ describe('recording the screen', () => {
       mocks.adb.expects('shell').withExactArgs(cmd).returns("-rw-rw---- root     sdcard_rw   309135 2017-03-20 21:37 test.mp4");
       data = await adb.shell(cmd); 
 
-      arrayList2 = data.split(" ");
-      length = _.size(arrayList2);
+      result_ls_al_testfile_toArray = data.split(" ");
+      length = _.size(result_ls_al_testfile_toArray);
       availableDataIndex = 0;
       
       for (let i = 0 ; i < length ; ++ i){
-        if ( _.size(arrayList2[i]) > 0 ){
+        if ( _.size(result_ls_al_testfile_toArray[i]) > 0 ){
           availableDataIndex++;
           //check it is started to capture the screen
           if (availableDataIndex === 4){
-            fileSizeBefore = arrayList2[i] * 1;
+            fileSizeBefore = result_ls_al_testfile_toArray[i] * 1;
             break;
           }
         }
@@ -116,16 +109,16 @@ describe('recording the screen', () => {
       mocks.adb.expects('shell').withExactArgs(cmd).returns("-rw-rw---- root     sdcard_rw   309135 2017-03-20 21:37 test.mp4");
       data = await adb.shell(cmd); 
 
-      arrayList2 = data.split(" ");
-      length = _.size(arrayList2);
+      result_ls_al_testfile_toArray = data.split(" ");
+      length = _.size(result_ls_al_testfile_toArray);
       availableDataIndex = 0;
       
       for (let i = 0 ; i < length ; ++ i){
-        if ( _.size(arrayList2[i]) > 0 ){
+        if ( _.size(result_ls_al_testfile_toArray[i]) > 0 ){
           availableDataIndex++;
           //check it is started to capture the screen
           if (availableDataIndex === 4){
-            fileSizeAfter = arrayList2[i] * 1;
+            fileSizeAfter = result_ls_al_testfile_toArray[i] * 1;
             break;
           }
         }
