@@ -10,6 +10,7 @@ chai.use(chaiAsPromised);
 
 let driver;
 let caps = _.defaults({
+  appPackage: 'io.appium.android.apis',
   appActivity: '.view.TextFields'
 }, DEFAULT_CAPS);
 
