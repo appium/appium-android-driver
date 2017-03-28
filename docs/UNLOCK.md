@@ -24,11 +24,11 @@ In case the *unlockType*  capability is not defined, *Appium* will continue work
 
 Lets say you have a device that is locked with a pattern  as the image below and you want to run a test over that device.
 
-<img src="https://dl.dropboxusercontent.com/u/8655269/Screen%20Shot%202017-02-23%20at%2011.06.10%20AM.png" />
+<img src="https://github.com/appium/appium-android-driver/raw/add-unlock-screenshots/docs/screen1.png" />
 
 We treat the pattern pins as the numbers of a phone dial. So in this case the *unlockKey* would be `729854163`
 
-<img src="https://dl.dropboxusercontent.com/u/8655269/Screen%20Shot%202017-02-23%20at%2011.06.20%20AM.png" />
+<img src="https://github.com/appium/appium-android-driver/raw/add-unlock-screenshots/docs/screen2.png" />
 
 And the capabilities would be:
 ```json
