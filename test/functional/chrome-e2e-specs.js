@@ -13,8 +13,7 @@ const capabilities = {
   "deviceName": "Android Emulator",
   "chromeOptions": {
     "args": ["--no-first-run"]
-  },
-  "chromedriverExecutable": "/Users/vruno/Sauce/appium-android-driver/chromedriver"
+  }  
 };
 
 describe('createSession', function () {
