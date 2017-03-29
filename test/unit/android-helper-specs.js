@@ -378,7 +378,7 @@ describe('Android Helpers', () => {
   }));
   describe('pushSettingsApp', withMocks({adb}, (mocks) => {
     it('should install settingsApp for real device', async () => {
-      mocks.adb.expects('installOrUpgrade').withExactArgs(settingsApkPath, 'io.appium.settings').once()
+      mocks.adb.expects('installOrUpgrade').once()
         .returns(true);
       mocks.adb.expects('grantAllPermissions').withExactArgs('io.appium.settings').once()
         .returns(true);
