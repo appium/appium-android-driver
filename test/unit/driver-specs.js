@@ -255,12 +255,18 @@ describe('driver', () => {
       driver = new AndroidDriver();
     });
     it('should verify chromeOptions args', () => {
-      driver.shouldDismissChromeWelcome({}).should.be.false;
-      driver.shouldDismissChromeWelcome({"chromeOptions":{}}).should.be.false;
-      driver.shouldDismissChromeWelcome({"chromeOptions":{"args":[]}}).should.be.false;
-      driver.shouldDismissChromeWelcome({"chromeOptions":{"args":"--no-first-run"}}).should.be.false;
-      driver.shouldDismissChromeWelcome({"chromeOptions":{"args":["--disable-dinosaur-easter-egg"]}}).should.be.false;
-      driver.shouldDismissChromeWelcome({"chromeOptions":{"args":["--no-first-run"]}}).should.be.true;
+      driver.opts = {};
+      driver.shouldDismissChromeWelcome().should.be.false;
+      driver.opts = {"chromeOptions":{}};
+      driver.shouldDismissChromeWelcome().should.be.false;
+      driver.opts = {"chromeOptions":{"args":[]}};
+      driver.shouldDismissChromeWelcome().should.be.false;
+      driver.opts = {"chromeOptions":{"args":"--no-first-run"}};
+      driver.shouldDismissChromeWelcome().should.be.false;
+      driver.opts = {"chromeOptions":{"args":["--disable-dinosaur-easter-egg"]}};
+      driver.shouldDismissChromeWelcome().should.be.false;
+      driver.opts = {"chromeOptions":{"args":["--no-first-run"]}};
+      driver.shouldDismissChromeWelcome().should.be.true;
     });
   });
   describe('startAndroidSession', () => {
