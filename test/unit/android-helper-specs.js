@@ -377,10 +377,17 @@ describe('Android Helpers', () => {
     });
   }));
   describe('pushSettingsApp', withMocks({adb}, (mocks) => {
-    it('should install settingsApp', async () => {
-      mocks.adb.expects('install').withExactArgs(settingsApkPath, false).once()
-        .returns('');
+    it('should install settingsApp for real device', async () => {
+      mocks.adb.expects('installOrUpgrade').withExactArgs(settingsApkPath, 'io.appium.settings').once()
+        .returns(true);
+      mocks.adb.expects('grantAllPermissions').withExactArgs('io.appium.settings').once()
+        .returns(true);
       await helpers.pushSettingsApp(adb);
+      mocks.adb.verify();
+    });
+    it('should not install settingsApp for simulator', async () => {
+      mocks.adb.expects('installOrUpgrade').never();
+      await helpers.pushSettingsApp(adb, {avd: 'defined'});
       mocks.adb.verify();
     });
   }));
