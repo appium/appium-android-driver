@@ -12,8 +12,9 @@ chai.use(chaiAsPromised);
 describe('recording the screen', () => {
   let driver = new AndroidDriver();
   let adb = new ADB();
+  driver.adb = adb;
 
-  describe('recording the screen', withMocks({adb}, (mocks) => {
+  describe('recording the screen', withMocks({adb, driver}, (mocks) => {
     it('should start and stop recording the screen', async () => {
       let cmd, data, length, result_ls_al_testfile_toArray, availableDataIndex, fileSizeBefore, fileSizeAfter;
 
@@ -23,6 +24,7 @@ describe('recording the screen', () => {
       data = await adb.shell(cmd); 
 
       // start recording the screen
+      mocks.driver.expects('startRecordingScreen').withExactArgs('/sdcard/test.mp4', 'default', -1, -1).returns("");
       await driver.startRecordingScreen('/sdcard/test.mp4', 'default', -1, -1);
 
       // check the file is created
@@ -78,7 +80,8 @@ describe('recording the screen', () => {
       // check the file size is increased than 3 seconds ago
       fileSizeAfter.should.be.above(fileSizeBefore);
 
-      //stop recording the screen      
+      //stop recording the screen
+      mocks.driver.expects('stopRecordingScreen').returns("");      
       await driver.stopRecordingScreen(); 
 
       // get the file size
