@@ -255,11 +255,12 @@ describe('driver', () => {
       driver = new AndroidDriver();
     });
     it('should verify chromeOptions args', () => {
-      driver.shouldDismissChromeWelcome({}).should.equal(false);
-      driver.shouldDismissChromeWelcome({"chromeOptions":{}}).should.equal(false);
-      driver.shouldDismissChromeWelcome({"chromeOptions":{"args":[]}}).should.equal(false);
-      driver.shouldDismissChromeWelcome({"chromeOptions":{"args":["--disable-dinosaur-easter-egg"]}}).should.equal(false);
-      driver.shouldDismissChromeWelcome({"chromeOptions":{"args":["--no-first-run"]}}).should.equal(true);
+      driver.shouldDismissChromeWelcome({}).should.be.false;
+      driver.shouldDismissChromeWelcome({"chromeOptions":{}}).should.be.false;
+      driver.shouldDismissChromeWelcome({"chromeOptions":{"args":[]}}).should.be.false;
+      driver.shouldDismissChromeWelcome({"chromeOptions":{"args":"--no-first-run"}}).should.be.false;
+      driver.shouldDismissChromeWelcome({"chromeOptions":{"args":["--disable-dinosaur-easter-egg"]}}).should.be.false;
+      driver.shouldDismissChromeWelcome({"chromeOptions":{"args":["--no-first-run"]}}).should.be.true;
     });
   });
   describe('startAndroidSession', () => {
