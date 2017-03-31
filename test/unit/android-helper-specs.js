@@ -6,7 +6,6 @@ import ADB from 'appium-adb';
 import { withMocks } from 'appium-test-support';
 import * as teen_process from 'teen_process';
 import { fs } from 'appium-support';
-import { path as settingsApkPath } from 'io.appium.settings';
 import { path as unlockApkPath } from 'appium-unlock';
 import unlocker from '../../lib/unlock-helpers';
 import _ from 'lodash';
@@ -378,8 +377,10 @@ describe('Android Helpers', () => {
   }));
   describe('pushSettingsApp', withMocks({adb}, (mocks) => {
     it('should install settingsApp', async () => {
-      mocks.adb.expects('install').withExactArgs(settingsApkPath, false).once()
-        .returns('');
+      mocks.adb.expects('installOrUpgrade').once()
+        .returns(true);
+      mocks.adb.expects('grantAllPermissions').withExactArgs('io.appium.settings').once()
+        .returns(true);
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
     });

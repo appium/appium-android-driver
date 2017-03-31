@@ -69,8 +69,8 @@ describe('Network', () => {
       await driver.setNetworkConnection(0);
       driver.adb.setAirplaneMode.calledWithExactly(0).should.be.true;
       driver.adb.broadcastAirplaneMode.calledWithExactly(0).should.be.true;
-      driver.adb.setWifiState.calledWithExactly(0).should.be.true;
-      driver.adb.setDataState.calledWithExactly(0).should.be.true;
+      driver.adb.setWifiState.calledWithExactly(0, false).should.be.true;
+      driver.adb.setDataState.calledWithExactly(0, false).should.be.true;
     });
     it('should turn on and broadcast airplane mode', async () => {
       await driver.setNetworkConnection(1);
@@ -83,22 +83,22 @@ describe('Network', () => {
       await driver.setNetworkConnection(2);
       driver.adb.setAirplaneMode.calledWithExactly(0).should.be.true;
       driver.adb.broadcastAirplaneMode.calledWithExactly(0).should.be.true;
-      driver.adb.setWifiState.calledWithExactly(1).should.be.true;
-      driver.adb.setDataState.calledWithExactly(0).should.be.true;
+      driver.adb.setWifiState.calledWithExactly(1, false).should.be.true;
+      driver.adb.setDataState.calledWithExactly(0, false).should.be.true;
     });
     it('should turn on data', async () => {
       await driver.setNetworkConnection(4);
       driver.adb.setAirplaneMode.calledWithExactly(0).should.be.true;
       driver.adb.broadcastAirplaneMode.calledWithExactly(0).should.be.true;
-      driver.adb.setWifiState.calledWithExactly(0).should.be.true;
-      driver.adb.setDataState.calledWithExactly(1).should.be.true;
+      driver.adb.setWifiState.calledWithExactly(0, false).should.be.true;
+      driver.adb.setDataState.calledWithExactly(1, false).should.be.true;
     });
     it('should turn on data and wifi', async () => {
       await driver.setNetworkConnection(6);
       driver.adb.setAirplaneMode.calledWithExactly(0).should.be.true;
       driver.adb.broadcastAirplaneMode.calledWithExactly(0).should.be.true;
-      driver.adb.setWifiState.calledWithExactly(1).should.be.true;
-      driver.adb.setDataState.calledWithExactly(1).should.be.true;
+      driver.adb.setWifiState.calledWithExactly(1, false).should.be.true;
+      driver.adb.setDataState.calledWithExactly(1, false).should.be.true;
     });
   });
   describe('ToggleLocationSettings', () => {
