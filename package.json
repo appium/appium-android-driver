@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "adm-zip": "^0.4.7",
-    "appium-adb": "^2.11.1",
+    "appium-adb": "^2.16.0",
     "appium-android-bootstrap": "^2.7.5",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^2.0.0",
@@ -39,7 +39,7 @@
     "asyncbox": "^2.0.4",
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.4.7",
-    "io.appium.settings": "^2.1.0",
+    "io.appium.settings": "^2.2.0",
     "jimp": "^0.2.24",
     "lodash": "^3.10.0",
     "portfinder": "^1.0.6",
