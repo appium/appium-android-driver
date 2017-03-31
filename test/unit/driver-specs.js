@@ -250,6 +250,25 @@ describe('driver', () => {
       driver.adb.uninstallApk.calledOnce.should.be.true;
     });
   });
+  describe('shouldDismissChromeWelcome', () => {
+    before(async () => {
+      driver = new AndroidDriver();
+    });
+    it('should verify chromeOptions args', () => {
+      driver.opts = {};
+      driver.shouldDismissChromeWelcome().should.be.false;
+      driver.opts = {"chromeOptions":{}};
+      driver.shouldDismissChromeWelcome().should.be.false;
+      driver.opts = {"chromeOptions":{"args":[]}};
+      driver.shouldDismissChromeWelcome().should.be.false;
+      driver.opts = {"chromeOptions":{"args":"--no-first-run"}};
+      driver.shouldDismissChromeWelcome().should.be.false;
+      driver.opts = {"chromeOptions":{"args":["--disable-dinosaur-easter-egg"]}};
+      driver.shouldDismissChromeWelcome().should.be.false;
+      driver.opts = {"chromeOptions":{"args":["--no-first-run"]}};
+      driver.shouldDismissChromeWelcome().should.be.true;
+    });
+  });
   describe('startAndroidSession', () => {
     beforeEach(async () => {
       driver = new AndroidDriver();
@@ -272,6 +291,7 @@ describe('driver', () => {
       sandbox.stub(driver, 'defaultWebviewName');
       sandbox.stub(driver, 'setContext');
       sandbox.stub(driver, 'startChromeSession');
+      sandbox.stub(driver, 'dismissChromeWelcome');
       sandbox.stub(driver.settings, 'update');
       sandbox.stub(driver.adb, 'getPlatformVersion');
       sandbox.stub(driver.adb, 'getScreenSize');
@@ -352,6 +372,19 @@ describe('driver', () => {
       await driver.startAndroidSession();
       driver.settings.update.calledOnce.should.be.true;
       driver.settings.update.firstCall.args[0].ignoreUnimportantViews.should.be.true;
+    });
+    it('should not call dismissChromeWelcome on missing chromeOptions', async () => {
+      driver.opts.browserName = 'Chrome';
+      await driver.startAndroidSession();
+      driver.dismissChromeWelcome.calledOnce.should.be.false;
+    });
+    it('should call dismissChromeWelcome', async () => {
+      driver.opts.browserName = 'Chrome';
+      driver.opts.chromeOptions = {
+        "args" : ["--no-first-run"]
+      };
+      await driver.startAndroidSession();
+      driver.dismissChromeWelcome.calledOnce.should.be.true;
     });
   });
   describe('validateDesiredCaps', () => {
