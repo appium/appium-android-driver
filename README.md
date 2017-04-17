@@ -158,14 +158,28 @@ If more than one of these capabilities are given, the driver will only use first
 `lock` behaves differently in Android than it does in iOS. In Android it does not take any arguments, and locks the screen and returns immediately.
 
 
-## Watch
+## Development
+
+### Transpile ES2015 code
+
+```
+gulp transpile
+```
+
+### Watch
 
 ```
 npm run watch
 ```
 
-## Test
+### Test
 
 ```
 npm test
 ```
+
+Some tests need particular emulators. Currently they are twofold:
+1. API level 25: either set `ANDROID_25_AVD` environment variable to the name of
+  avd, or defaults to `"Nexus_5_API_25"`. If neither exist, the tests are skipped.
+2. API level 24: either set `ANDROID_24_NO_GMS_AVD` environment variable to the name of
+  avd, or defaults to `"Nexus_5_API_24"`. If neither exist, the tests are skipped.

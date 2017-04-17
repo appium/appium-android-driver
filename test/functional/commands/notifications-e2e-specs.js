@@ -22,8 +22,7 @@ describe('apidemo - notifications', function () {
     let adb = new ADB();
     let apiLevel = await adb.getApiLevel();
     if (apiLevel === '22' || apiLevel === '21') {
-      this.skip();
-      return;
+      return this.skip();
     }
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);

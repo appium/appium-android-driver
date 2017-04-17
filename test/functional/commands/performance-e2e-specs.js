@@ -38,8 +38,7 @@ describe('performance', () => {
       // TODO: why does this fail?
       let apiLevel = await driver.adb.getApiLevel();
       if (apiLevel === '25' || apiLevel === '24' || apiLevel === '21') {
-        this.skip();
-        return;
+        return this.skip();
       }
       let cpu = await driver.getPerformanceData(caps.appPackage, 'cpuinfo', 50);
 
@@ -79,8 +78,7 @@ describe('performance', () => {
     it('should get the network statistics', async function () {
       // TODO: why does adb fail with a null pointer exception on 5.1
       if (await driver.adb.getApiLevel() === '22') {
-        this.skip();
-        return;
+        return this.skip();
       }
       let network = await driver.getPerformanceData(caps.appPackage, 'networkinfo', 2);
 
