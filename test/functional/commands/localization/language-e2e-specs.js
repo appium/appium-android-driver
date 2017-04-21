@@ -13,7 +13,7 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
   beforeEach(async function () {
     // restarting doesn't work on Android 7
     let adb = new ADB();
-    if (await adb.getApiLevel() > 23) this.skip();
+    if (await adb.getApiLevel() > 23) return this.skip();
 
     driver = new AndroidDriver();
   });

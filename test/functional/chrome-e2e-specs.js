@@ -1,24 +1,30 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../..';
+import { ensureAVDExists } from './helpers';
+import { CHROME_CAPS } from './desired';
+import _ from 'lodash';
+
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const capabilities = {
-  "browserName": "chrome",
-  "avd": "Nexus_5_API_25",
-  "platformName": "Android",
-  "platformVersion": "7.1",
-  "deviceName": "Android Emulator",
-  "chromeOptions": {
-    "args": ["--no-first-run"]
-  }  
-};
+const avd = process.env.ANDROID_25_AVD || 'Nexus_5_API_25';
+const capabilities = _.defaults({
+  avd,
+  platformVersion: "7.1",
+  chromeOptions: {
+    args: ["--no-first-run"]
+  }
+}, CHROME_CAPS);
 
 describe('createSession', function () {
   let driver;
-  before(() => {
+  before(async function () {
+    if (!await ensureAVDExists(this, capabilities.avd)) {
+      return;
+    }
+
     driver = new AndroidDriver();
   });
   afterEach(async () => {
