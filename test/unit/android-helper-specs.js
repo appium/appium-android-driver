@@ -293,7 +293,7 @@ describe('Android Helpers', () => {
     });
   }));
 
-  describe.skip('reinstallRemoteApk', withMocks({adb}, (mocks) => {
+  describe('reinstallRemoteApk', withMocks({adb, helpers}, (mocks) => {
     const localApkPath = 'local';
     const pkg = 'pkg';
     const remotePath = 'remote';
@@ -301,10 +301,14 @@ describe('Android Helpers', () => {
     it('should throw error if remote file does not exist', async () => {
       mocks.adb.expects('uninstallApk').withExactArgs(pkg).returns('');
       // install remote is not defines do we mean installApkRemotely?
-      mocks.adb.expects('installRemote').withExactArgs(remotePath)
-        .returns('');
-      await helpers.reinstallRemoteApk(adb, localApkPath, pkg, remotePath, androidInstallTimeout);
+      mocks.adb.expects('installFromDevicePath').withExactArgs(remotePath, {timeout: 90000})
+        .throws('');
+      mocks.helpers.expects('removeRemoteApks').withExactArgs(adb);
+
+      await helpers.reinstallRemoteApk(adb, localApkPath, pkg, remotePath, androidInstallTimeout, 1)
+        .should.eventually.be.rejected;
       mocks.adb.verify();
+      mocks.helpers.verify();
     });
   }));
   describe('installApkRemotely', withMocks({adb, fs, helpers}, (mocks) => {
@@ -330,16 +334,17 @@ describe('Android Helpers', () => {
       mocks.fs.verify();
       mocks.helpers.verify();
     });
-    it.skip('should push and reinstall apk when apk is not installed', async () => {
+    it('should push and reinstall apk when apk is not installed', async () => {
       mocks.fs.expects('md5').withExactArgs(opts.app).returns('apkmd5');
       mocks.helpers.expects('getRemoteApkPath').returns(true);
       mocks.adb.expects('fileExists').returns(true);
-      mocks.adb.expects('isAppInstalled').returns(true);
-      mocks.helpers.expects('resetApp').once().returns("");
-      mocks.helpers.expects('reinstallRemoteApk').once().returns("");
-      mocks.helpers.expects('removeTempApks').once().returns(true);
+      mocks.adb.expects('isAppInstalled').returns(false);
       mocks.adb.expects('mkdir').once().returns("");
+      mocks.helpers.expects('removeRemoteApks').once().returns('');
+      mocks.helpers.expects('reinstallRemoteApk').once().returns("");
+
       await helpers.installApkRemotely(adb, opts);
+
       mocks.adb.verify();
       mocks.fs.verify();
       mocks.helpers.verify();
