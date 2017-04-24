@@ -17,7 +17,7 @@ let adb = new ADB();
 let driver = new AndroidDriver();
 driver.adb = adb;
 
-describe('getperformancedata', withMocks({adb}, (mocks) => {
+describe('getperformancedata', withMocks({adb, driver}, (mocks) => {
   it('should get the list of available getPerformance data type', () => {
     let types = driver.getPerformanceDataTypes();
     types.should.eql(_.keys(SUPPORTED_PERFORMANCE_DATA_TYPES));
@@ -127,12 +127,16 @@ describe('getperformancedata', withMocks({adb}, (mocks) => {
     });
   }
 
-  describe.skip('networkinfo', () => {
+  describe('networkinfo', () => {
     it('should get the network statistics', () => {
-      let returnValue = [['bucketStart', 'activeTime', 'rxBytes', 'rxPackets', 'txBytes', 'txPackets', 'operations', 'bucketDuration'], [1478091600000, 1099075, 610947, 928, 114362, 769, 0, 3600000], [1478095200000, 1306300, 405997, 509, 46359, 370, 0, 3600000]];
+      let returnValue = [
+        ['bucketStart', 'activeTime', 'rxBytes', 'rxPackets', 'txBytes', 'txPackets', 'operations', 'bucketDuration'],
+        [1478091600000, 1099075, 610947, 928, 114362, 769, 0, 3600000],
+        [1478095200000, 1306300, 405997, 509, 46359, 370, 0, 3600000],
+      ];
       mocks.driver.expects('getPerformanceData').withExactArgs('io.appium.android.apis', 'networkinfo', 1000).returns(returnValue);
       let network = driver.getPerformanceData('io.appium.android.apis', 'networkinfo', 1000);
-      network.length.should.be.above(0);
+      network.length.should.eql(3);
       let compare = false;
 
       for ( let j= 0 ; j < NETWORK_KEYS.length ; ++ j){
@@ -148,6 +152,7 @@ describe('getperformancedata', withMocks({adb}, (mocks) => {
           network[0].length.should.equal(network[i].length);
         }
       }
+      mocks.driver.verify();
     });
   });
 }));
