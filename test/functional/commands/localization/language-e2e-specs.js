@@ -3,12 +3,19 @@ import chaiAsPromised from 'chai-as-promised';
 import ADB from 'appium-adb';
 import AndroidDriver from '../../../..';
 import DEFAULT_CAPS from '../../desired';
+import { MOCHA_TIMEOUT } from '../../helpers';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('Localization - locale @skip-ci @skip-real-device', function () {
+  this.timeout(MOCHA_TIMEOUT);
+
+  before(function () {
+    if (process.env.TRAVIS) return this.skip();
+  });
+
   let driver;
   beforeEach(async function () {
     // restarting doesn't work on Android 7

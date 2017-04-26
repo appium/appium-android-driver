@@ -18,6 +18,10 @@ android:
 env:
   - _FORCE_LOGS=1 TEST=unit
   - _FORCE_LOGS=1 TEST=functional
+  - _FORCE_LOGS=1 TEST=functional/commands
+  - _FORCE_LOGS=1 TEST=functional/commands/find
+  - _FORCE_LOGS=1 TEST=functional/commands/localization
+  - _FORCE_LOGS=1 TEST=functional/commands/touch
 before_script:
   # node stuff
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
