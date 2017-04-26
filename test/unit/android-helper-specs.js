@@ -267,6 +267,9 @@ describe('Android Helpers', () => {
     it('should return remote path', () => {
       helpers.getRemoteApkPath('foo').should.equal(`${REMOTE_TEMP_PATH}/foo.apk`);
     });
+    it('should return custom install path', () => {
+      helpers.getRemoteApkPath('foo', '/sdcard/Download/').should.equal(`/sdcard/Download/foo.apk`);
+    });
   });
   describe('resetApp', withMocks({adb, fs, helpers}, (mocks) => {
     const localApkPath = 'local';
