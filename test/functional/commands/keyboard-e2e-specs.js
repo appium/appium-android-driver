@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
+import { retryInterval } from 'asyncbox';
 import AndroidDriver from '../../..';
 import B from 'bluebird';
 import DEFAULT_CAPS from '../desired';
@@ -33,9 +34,15 @@ function deSamsungify (text) {
   return text.replace(". Editing.", "");
 }
 
+async function getElement (driver, className) {
+  return await retryInterval(10, 1000, async () => {
+    let el = _.last(await driver.findElOrEls('class name', className, true));
+    return el.ELEMENT;
+  });
+}
+
 async function runTextEditTest (driver, testText, keys = false) {
-  let el = _.last(await driver.findElOrEls('class name', EDITTEXT_CLASS, true));
-  el = el.ELEMENT;
+  let el = await getElement(driver, EDITTEXT_CLASS);
   await driver.clear(el);
 
   if (keys) {
@@ -56,8 +63,8 @@ async function runTextEditTest (driver, testText, keys = false) {
  * removes all text from within the main TextView.
  */
 async function clearKeyEvents (driver) {
-  let el = _.last(await driver.findElOrEls('class name', BUTTON_CLASS, true));
-  driver.click(el.ELEMENT);
+  let el = await getElement(driver, BUTTON_CLASS);
+  driver.click(el);
 
   // wait a moment for the clearing to occur, lest we too quickly try to enter more text
   await B.delay(500);
@@ -66,8 +73,7 @@ async function clearKeyEvents (driver) {
 async function runCombinationKeyEventTest (driver) {
   let runTest = async function () {
     await driver.pressKeyCode(29, 193);
-    let el = _.last(await driver.findElOrEls('class name', TEXTVIEW_CLASS, true));
-    el = el.ELEMENT;
+    let el = await getElement(driver, TEXTVIEW_CLASS);
     return await driver.getText(el);
   };
 
@@ -85,8 +91,7 @@ async function runCombinationKeyEventTest (driver) {
 async function runKeyEventTest (driver) {
   let runTest = async function () {
     await driver.pressKeyCode(82);
-    let el = _.last(await driver.findElOrEls('class name', TEXTVIEW_CLASS, true));
-    el = el.ELEMENT;
+    let el = await getElement(driver, TEXTVIEW_CLASS);
     return await driver.getText(el);
   };
 
