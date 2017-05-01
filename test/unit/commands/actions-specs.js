@@ -57,9 +57,9 @@ describe('Actions', () => {
 
     before(() => {
       // Create in-memory mock file system for file writes
-      zippedDir = 'mock/path/to/zipped';
-      unzippedDir = 'mock/path/to/unzipped';
-      tempDir = 'mock/path/to/temp-dir';
+      zippedDir = '/mock/path/to/zipped';
+      unzippedDir = '/mock/path/to/unzipped';
+      tempDir = '/mock/path/to/temp-dir';
       mockFS({
         [zippedDir]: {},
         [unzippedDir]: {},
@@ -92,12 +92,12 @@ describe('Actions', () => {
       const zippedBase64 = await driver.pullFolder('/does/not/matter');
       (typeof(zippedBase64)).should.equal('string');
       await fs.writeFile(path.resolve(zippedDir, 'zipped.zip'), zippedBase64, {encoding: 'base64', flags: 'w'});
-      
+
       // Extract the zip file and verify it's contents
       await zip.extractAllTo(path.resolve(zippedDir, 'zipped.zip'), unzippedDir);
       await fs.readFile(path.resolve(unzippedDir, 'a.txt'), 'utf8').should.eventually.equal('hello world');
       await fs.readFile(path.resolve(unzippedDir, 'b.txt'), 'utf8').should.eventually.equal('foobar');
-      
+
       // Restore stub
       if (adbPullStub) {
         adbPullStub.restore();
