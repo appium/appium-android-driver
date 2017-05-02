@@ -8,8 +8,8 @@ import DEFAULT_CAPS from '../desired';
 chai.should();
 chai.use(chaiAsPromised);
 
-const PNG_MAGIC = 'efbfbd504e47';
-const PNG_MAGIC_LENGTH = 6;
+const PNG_MAGIC = '89504e47';
+const PNG_MAGIC_LENGTH = 4;
 
 let driver;
 let caps = _.defaults({
