@@ -8,6 +8,9 @@ import DEFAULT_CAPS from '../desired';
 chai.should();
 chai.use(chaiAsPromised);
 
+const PNG_MAGIC = '89504e47';
+const PNG_MAGIC_LENGTH = 4;
+
 let driver;
 let caps = _.defaults({
   appPackage: 'io.appium.android.apis',
@@ -52,6 +55,14 @@ describe('actions', () => {
     });
     it('should long press key code 3 with metastate', async () => {
       await driver.longPressKeyCode(3, 193).should.not.be.rejected;
+    });
+  });
+
+  describe('getScreenshot', function () {
+    it('should return valid base64-encoded screenshot', async () => {
+      const base64screenshot = await driver.getScreenshot();
+      const imageMagic = new Buffer(base64screenshot, 'base64').toString('hex', 0, PNG_MAGIC_LENGTH);
+      imageMagic.should.be.equal(PNG_MAGIC);
     });
   });
 });
