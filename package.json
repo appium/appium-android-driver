@@ -28,7 +28,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-adb": "^2.16.0",
+    "appium-adb": "^2.20.0",
     "appium-android-bootstrap": "^2.7.5",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^2.0.0",
