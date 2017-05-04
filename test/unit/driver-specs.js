@@ -162,6 +162,14 @@ describe('driver', () => {
       actions[8].options.x.should.equal(2);
       actions[8].options.y.should.equal(-1);
     });
+    it('fingerprint should be rejected if avd is not defined', () => {
+      driver.opts = {};
+      driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
+    });
+    it('sendSMS should be rejected if avd is not defined', () => {
+      driver.opts = {};
+      driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
+    });
     it('should get java version if none is provided', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
       driver.opts.javaVersion.should.exist;
