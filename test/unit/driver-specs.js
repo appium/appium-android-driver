@@ -171,12 +171,14 @@ describe('driver', () => {
       driver.opts.udid = "01234567889";
       driver.isEmulator().should.equal(false);
     });
-    it('fingerprint should be rejected if avd is not defined', () => {
-      driver.opts = {};
+    it('fingerprint should be rejected if isEmulator is false', () => {
+      driver.opts.avd = undefined;
+      driver.opts.udid = "0123456789";
       driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
     });
-    it('sendSMS should be rejected if avd is not defined', () => {
-      driver.opts = {};
+    it('sendSMS should be rejected if isEmulator is false', () => {
+      driver.opts.avd = undefined;
+      driver.opts.udid = "0123456789";
       driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
     });
     it('should get java version if none is provided', async () => {
