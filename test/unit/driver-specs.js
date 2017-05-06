@@ -162,6 +162,15 @@ describe('driver', () => {
       actions[8].options.x.should.equal(2);
       actions[8].options.y.should.equal(-1);
     });
+    it('should verify device is an emulator', async () => {
+      driver.opts.avd = "Nexus_5X_Api_23";
+      driver.isEmulator().should.equal(true);
+      driver.opts.avd = undefined;
+      driver.opts.udid = "emulator-5554";
+      driver.isEmulator().should.equal(true);
+      driver.opts.udid = "01234567889";
+      driver.isEmulator().should.equal(false);
+    });
     it('fingerprint should be rejected if avd is not defined', () => {
       driver.opts = {};
       driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
