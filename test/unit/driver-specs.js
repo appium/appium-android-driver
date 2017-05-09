@@ -3,6 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import log from '../../lib/logger';
 import sinon from 'sinon';
 import helpers from '../../lib/android-helpers';
+import { withMocks } from 'appium-test-support';
 import AndroidDriver from '../..';
 import ADB from 'appium-adb';
 import { errors } from 'appium-base-driver';
@@ -26,6 +27,25 @@ describe('driver', () => {
       driver.findElOrEls.should.exist;
       driver.findElOrEls.should.be.a('function');
     });
+  });
+  describe('emulator methods', () => {
+    driver = new AndroidDriver();
+    describe('fingerprint', withMocks({driver}, (mocks) => {
+      it('fingerprint should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('fingerprint', withMocks({driver}, (mocks) => {
+      it('sendSMS should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
   });
   describe('createSession', () => {
     beforeEach(() => {
@@ -170,16 +190,6 @@ describe('driver', () => {
       driver.isEmulator().should.equal(true);
       driver.opts.udid = "01234567889";
       driver.isEmulator().should.equal(false);
-    });
-    it('fingerprint should be rejected if isEmulator is false', () => {
-      driver.opts.avd = undefined;
-      driver.opts.udid = "0123456789";
-      driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
-    });
-    it('sendSMS should be rejected if isEmulator is false', () => {
-      driver.opts.avd = undefined;
-      driver.opts.udid = "0123456789";
-      driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
     });
     it('should get java version if none is provided', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
