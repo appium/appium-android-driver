@@ -31,18 +31,58 @@ describe('driver', () => {
   describe('emulator methods', () => {
     driver = new AndroidDriver();
     describe('fingerprint', withMocks({driver}, (mocks) => {
-      it('fingerprint should be rejected if isEmulator is false', () => {
+      it('should be rejected if isEmulator is false', () => {
         mocks.driver.expects('isEmulator')
           .once().returns(false);
         driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
         mocks.driver.verify();
       });
     }));
-    describe('fingerprint', withMocks({driver}, (mocks) => {
-      it('sendSMS should be rejected if isEmulator is false', () => {
+    describe('sendSMS', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
         mocks.driver.expects('isEmulator')
           .once().returns(false);
         driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('powerAC', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.powerAC('off').should.eventually.be.rejectedWith("powerAC method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('powerCapacity', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.powerCapacity(0).should.eventually.be.rejectedWith("powerCapacity method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('gsmCall', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.gsmCall(4509, 'call').should.eventually.be.rejectedWith("gsmCall method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('gsmVoice', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.gsmVoice('roaming').should.eventually.be.rejectedWith("gsmVoice method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('gsmSignal', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.gsmSignal(3).should.eventually.be.rejectedWith("gsmSignal method is only available for emulators");
         mocks.driver.verify();
       });
     }));
