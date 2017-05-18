@@ -96,6 +96,71 @@ describe('Webview Helpers', () => {
       });
     });
 
+    describe('and crosswalk webviews exist', () => {
+      let webViews;
+      
+      beforeEach(() => {
+        sandbox.stub(adb, 'shell', () => {
+          return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
+                '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
+                '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
+                '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @com.application.myapp_devtools_remote\n' +
+                '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n';
+        });
+      });
+
+      afterEach(() => {
+        sandbox.restore();
+      });
+
+      describe('and the device socket is not specified', async () => {
+        beforeEach(async () => {
+          webViews = await helpers.getWebviews(adb);
+        });
+
+        it('then the unix sockets are queried', () => {
+          adb.shell.calledOnce.should.be.true;
+          adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+        });
+
+        it('then the webview is returned', () => {
+          webViews.length.should.equal(1);
+          webViews.should.deep.equal(['WEBVIEW_com.application.myapp']);
+        });
+      });
+
+      describe('and the device socket is specified', async () => {
+        beforeEach(async () => {
+          webViews = await helpers.getWebviews(adb, 'com.application.myapp_devtools_remote');
+        });
+
+        it('then the unix sockets are queried', () => {
+          adb.shell.calledOnce.should.be.true;
+          adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+        });
+
+        it('then the webview is returned', () => {
+          webViews.length.should.equal(1);
+          webViews.should.deep.equal(['WEBVIEW_com.application.myapp']);
+        });
+      });
+
+      describe('and the device socket is specified but is not found', async () => {
+        beforeEach(async () => {
+          webViews = await helpers.getWebviews(adb, 'com.application.myotherapp_devtools_remote');
+        });
+
+        it('then the unix sockets are queried', () => {
+          adb.shell.calledOnce.should.be.true;
+          adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+        });
+
+        it('then no webviews are returned', () => {
+          webViews.length.should.equal(0);
+        });
+      });
+    });
+
     describe('and webviews exist', async () => {
       let webViews;
 
