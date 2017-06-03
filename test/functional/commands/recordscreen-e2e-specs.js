@@ -30,6 +30,7 @@ describe('recording the screen', () => {
     });
 
     it('should start and stop recording the screen', async () => {
+
       let cmd, data, length, result_ls_testmp4_toArray, availableDataIndex, fileSizeBefore, fileSizeAfter;
       cmd = ['ls', '/sdcard/test.mp4', '|', 'grep', 'No such file'];
       data = await driver.adb.shell(cmd); 
@@ -41,106 +42,109 @@ describe('recording the screen', () => {
         data = await driver.adb.shell(cmd); 
       }
 
-      // start recording the screen
-      await driver.startRecordingScreen('/sdcard/test.mp4', 'default', -1, -1);
+      if (this.isEmulator())
+        await driver.startRecordingScreen('/sdcard/test.mp4', 'default', -1, -1).should.eventually.be.rejectedWith(/Android screen recording does not work on emulators/);
+      else {
+        // start recording the screen
+        await driver.startRecordingScreen('/sdcard/test.mp4', 'default', -1, -1);
 
-      // check the file is created
-      cmd = ['ls', '/sdcard/test.mp4', '|', 'grep', 'No such file'];
-      data = await driver.adb.shell(cmd); 
+        // check the file is created
+        cmd = ['ls', '/sdcard/test.mp4', '|', 'grep', 'No such file'];
+        data = await driver.adb.shell(cmd); 
 
-      data.length.should.equal(0);
+        data.length.should.equal(0);
 
-      // get the file size
-      cmd = ['ls', '-al', '/sdcard/test.mp4'];
-      data = await driver.adb.shell(cmd); 
+        // get the file size
+        cmd = ['ls', '-al', '/sdcard/test.mp4'];
+        data = await driver.adb.shell(cmd); 
 
-      result_ls_testmp4_toArray = data.split(" ");
-      length = _.size(result_ls_testmp4_toArray);
-      availableDataIndex = 0;
-      
-      for (let i = 0 ; i < length ; ++ i){
-        if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
-          availableDataIndex++;
-          //check it is started to capture the screen
-          if (availableDataIndex === 4){
-            fileSizeBefore = result_ls_testmp4_toArray[i] * 1;
-            break;
+        result_ls_testmp4_toArray = data.split(" ");
+        length = _.size(result_ls_testmp4_toArray);
+        availableDataIndex = 0;
+        
+        for (let i = 0 ; i < length ; ++ i){
+          if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
+            availableDataIndex++;
+            //check it is started to capture the screen
+            if (availableDataIndex === 4){
+              fileSizeBefore = result_ls_testmp4_toArray[i] * 1;
+              break;
+            }
           }
         }
-      }
 
-      // wait for 3 seconds
-      await sleep(3000);  
-      
-      // get the file size
-      cmd = ['ls', '-al', '/sdcard/test.mp4'];
-      data = await driver.adb.shell(cmd); 
+        // wait for 3 seconds
+        await sleep(3000);  
+        
+        // get the file size
+        cmd = ['ls', '-al', '/sdcard/test.mp4'];
+        data = await driver.adb.shell(cmd); 
 
-      result_ls_testmp4_toArray = data.split(" ");
-      length = _.size(result_ls_testmp4_toArray);
-      availableDataIndex = 0;
-      
-      for (let i = 0 ; i < length ; ++ i){
-        if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
-          availableDataIndex++;
-          //check it is started to capture the screen
-          if (availableDataIndex === 4){
-            fileSizeAfter = result_ls_testmp4_toArray[i] * 1;
-            break;
+        result_ls_testmp4_toArray = data.split(" ");
+        length = _.size(result_ls_testmp4_toArray);
+        availableDataIndex = 0;
+        
+        for (let i = 0 ; i < length ; ++ i){
+          if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
+            availableDataIndex++;
+            //check it is started to capture the screen
+            if (availableDataIndex === 4){
+              fileSizeAfter = result_ls_testmp4_toArray[i] * 1;
+              break;
+            }
           }
         }
-      }
 
-      // check the file size is increased than 3 seconds ago
-      fileSizeAfter.should.be.above(fileSizeBefore);
+        // check the file size is increased than 3 seconds ago
+        fileSizeAfter.should.be.above(fileSizeBefore);
 
-      //stop recording the screen      
-      await driver.stopRecordingScreen(); 
+        //stop recording the screen      
+        await driver.stopRecordingScreen(); 
 
-      // get the file size
-      cmd = ['ls', '-al', '/sdcard/test.mp4'];
-      data = await driver.adb.shell(cmd); 
+        // get the file size
+        cmd = ['ls', '-al', '/sdcard/test.mp4'];
+        data = await driver.adb.shell(cmd); 
 
-      result_ls_testmp4_toArray = data.split(" ");
-      length = _.size(result_ls_testmp4_toArray);
-      availableDataIndex = 0;
-      
-      for (let i = 0 ; i < length ; ++ i){
-        if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
-          availableDataIndex++;
-          //check it is started to capture the screen
-          if (availableDataIndex === 4){
-            fileSizeBefore = result_ls_testmp4_toArray[i] * 1;
-            break;
+        result_ls_testmp4_toArray = data.split(" ");
+        length = _.size(result_ls_testmp4_toArray);
+        availableDataIndex = 0;
+        
+        for (let i = 0 ; i < length ; ++ i){
+          if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
+            availableDataIndex++;
+            //check it is started to capture the screen
+            if (availableDataIndex === 4){
+              fileSizeBefore = result_ls_testmp4_toArray[i] * 1;
+              break;
+            }
           }
         }
-      }
 
-      // wait for 3 seconds
-      await sleep(3000);
+        // wait for 3 seconds
+        await sleep(3000);
 
-      // get the file size
-      cmd = ['ls', '-al', '/sdcard/test.mp4'];
-      data = await driver.adb.shell(cmd); 
+        // get the file size
+        cmd = ['ls', '-al', '/sdcard/test.mp4'];
+        data = await driver.adb.shell(cmd); 
 
-      result_ls_testmp4_toArray = data.split(" ");
-      length = _.size(result_ls_testmp4_toArray);
-      availableDataIndex = 0;
-      
-      for (let i = 0 ; i < length ; ++ i){
-        if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
-          availableDataIndex++;
-          //check it is started to capture the screen
-          if (availableDataIndex === 4){
-            fileSizeAfter = result_ls_testmp4_toArray[i] * 1;
-            break;
+        result_ls_testmp4_toArray = data.split(" ");
+        length = _.size(result_ls_testmp4_toArray);
+        availableDataIndex = 0;
+        
+        for (let i = 0 ; i < length ; ++ i){
+          if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
+            availableDataIndex++;
+            //check it is started to capture the screen
+            if (availableDataIndex === 4){
+              fileSizeAfter = result_ls_testmp4_toArray[i] * 1;
+              break;
+            }
           }
         }
+
+        // check the file size is increased than 3 seconds ago
+        fileSizeAfter.should.be.eql(fileSizeBefore);
       }
-
-      // check the file size is increased than 3 seconds ago
-      fileSizeAfter.should.be.eql(fileSizeBefore);
-
     });
   });
 });
