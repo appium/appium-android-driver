@@ -34,14 +34,20 @@ describe('Android Helpers', () => {
   describe('getJavaVersion', withMocks({teen_process}, (mocks) => {
     it('should correctly get java version', async () => {
       mocks.teen_process.expects('exec').withExactArgs('java', ['-version'])
-        .returns({stderr: 'java version "1.8.0_40"'});
+        .returns({code: 0, stderr: 'java version "1.8.0_40"'});
       (await helpers.getJavaVersion()).should.equal('1.8.0_40');
       mocks.teen_process.verify();
     });
-    it('should return null if it cannot parse java verstion', async () => {
+    it('should be rejected if cannot parse java verstion', async () => {
       mocks.teen_process.expects('exec').withExactArgs('java', ['-version'])
-        .returns({stderr: 'foo bar'});
-      await helpers.getJavaVersion().should.eventually.be.rejectedWith('Java');
+        .returns({code: 0, stderr: 'foo bar'});
+      await helpers.getJavaVersion().should.eventually.be.rejectedWith('Cannot parse Java version');
+      mocks.teen_process.verify();
+    });
+    it('should be rejected if `java -version` command returns non-zero code', async () => {
+      mocks.teen_process.expects('exec').withExactArgs('java', ['-version'])
+        .returns({code: 1});
+      await helpers.getJavaVersion().should.eventually.be.rejectedWith('Cannot get the Java version');
       mocks.teen_process.verify();
     });
   }));
