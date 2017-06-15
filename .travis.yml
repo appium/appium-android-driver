@@ -20,13 +20,13 @@ env:
     - _FORCE_LOGS=1
     - DEVICE=android
   matrix:
-    - TEST=unit RECURSIVE=1
-    - TEST=functional
-    - TEST=functional/commands
+    # - TEST=unit RECURSIVE=1
+    # - TEST=functional
+    # - TEST=functional/commands
     - TEST=functional/commands/basic
-    - TEST=functional/commands/find
-    - TEST=functional/commands/localization
-    - TEST=functional/commands/touch
+    # - TEST=functional/commands/find
+    # - TEST=functional/commands/localization
+    # - TEST=functional/commands/touch
 before_script:
   # node stuff
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
