@@ -16,12 +16,18 @@ android:
     - sys-img-armeabi-v7a-android-22
     - sys-img-armeabi-v7a-android-17
 env:
-  - _FORCE_LOGS=1 DEVICE=android TEST=unit RECURSIVE=1
-  - _FORCE_LOGS=1 DEVICE=android TEST=functional
-  - _FORCE_LOGS=1 DEVICE=android TEST=functional/commands
-  - _FORCE_LOGS=1 DEVICE=android TEST=functional/commands/find
-  - _FORCE_LOGS=1 DEVICE=android TEST=functional/commands/localization
-  - _FORCE_LOGS=1 DEVICE=android TEST=functional/commands/touch
+  global:
+    - _FORCE_LOGS=1
+    - DEVICE=android
+    - MOCHA_TIMEOUT=360000
+  matrix:
+    - TEST=unit RECURSIVE=1
+    - TEST=functional
+    - TEST=functional/commands
+    - TEST=functional/commands/basic
+    - TEST=functional/commands/find
+    - TEST=functional/commands/localization
+    - TEST=functional/commands/touch
 before_script:
   # node stuff
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
@@ -37,6 +43,6 @@ before_script:
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
 script:
-  - gulp eslint && if [ -n "$RECURSIVE" ]; then mocha -t 240000--recursive build/test/$TEST -g @skip-ci -i; else mocha -t 240000 build/test/$TEST -g @skip-ci -i; fi
+  - gulp eslint && if [ -n "$RECURSIVE" ]; then mocha -t $MOCHA_TIMEOUT --recursive build/test/$TEST -g @skip-ci -i; else mocha -t $MOCHA_TIMEOUT build/test/$TEST -g @skip-ci -i; fi
 after_success:
   - gulp coveralls
