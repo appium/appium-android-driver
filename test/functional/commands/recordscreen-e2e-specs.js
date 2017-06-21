@@ -42,7 +42,7 @@ describe('recording the screen', () => {
         data = await driver.adb.shell(cmd); 
       }
       
-      isEmulated = await driver.adb.isEmulatorConnected('emulator-5554');
+      isEmulated = driver.adb.isEmulatorConnected('emulator-5554');
 
       if (isEmulated)
         await driver.startRecordingScreen('/sdcard/test.mp4', 'default', -1, -1).should.eventually.be.rejectedWith(/Android screen recording does not work on emulators/);
