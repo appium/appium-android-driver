@@ -31,7 +31,7 @@ describe('recording the screen', () => {
 
     it('should start and stop recording the screen', async () => {
 
-      let cmd, data, length, result_ls_testmp4_toArray, availableDataIndex, fileSizeBefore, fileSizeAfter;
+      let cmd, data, length, result_ls_testmp4_toArray, availableDataIndex, fileSizeBefore, fileSizeAfter, isEmulated;
       cmd = ['ls', '/sdcard/test.mp4', '|', 'grep', 'No such file'];
       data = await driver.adb.shell(cmd); 
 
@@ -41,8 +41,10 @@ describe('recording the screen', () => {
         cmd = ['rm', '/sdcard/test.mp4'];
         data = await driver.adb.shell(cmd); 
       }
+      
+      isEmulated = await driver.adb.isEmulatorConnected('emulator-5554');
 
-      if (await driver.adb.isEmulatorConnected('emulator-5554'))
+      if (isEmulated)
         await driver.startRecordingScreen('/sdcard/test.mp4', 'default', -1, -1).should.eventually.be.rejectedWith(/Android screen recording does not work on emulators/);
       else {
         // start recording the screen
