@@ -1,9 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../..';
-import { sleep } from 'asyncbox';
 import _ from 'lodash';
 import DEFAULT_CAPS from '../desired';
+
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -24,129 +24,29 @@ describe('recording the screen', () => {
     await driver.deleteSession();
   });
 
-  describe('recording the screen', function () {
-    beforeEach(async () => {
-      await driver.startActivity(caps.appPackage, caps.appActivity);
-    });
+  it('should start and stop recording the screen', async function () {
+    if (await driver.isEmulator() || await driver.adb.getApiLevel() < 19) {
+      return this.skip();
+    }
 
-    it('should start and stop recording the screen', async () => {
+    let remoteFile = '/sdcard/test.mp4';
 
-      let cmd, data, length, result_ls_testmp4_toArray, availableDataIndex, fileSizeBefore, fileSizeAfter, isEmulated;
-      cmd = ['ls', '/sdcard/test.mp4', '|', 'grep', 'No such file'];
-      data = await driver.adb.shell(cmd); 
+    // make sure we don't already have the file on the device
+    if (await driver.adb.fileExists(remoteFile)) {
+      await driver.adb.shell(['rm', remoteFile]);
+    }
 
-      length = _.size(data);
-      // the same file is exist, then delete the file
-      if (length <= 0){
-        cmd = ['rm', '/sdcard/test.mp4'];
-        data = await driver.adb.shell(cmd); 
-      }
-      
-      isEmulated = await driver.adb.isEmulatorConnected('emulator-5554');
+    await driver.startRecordingScreen(remoteFile);
 
-      if (isEmulated)
-        await driver.startRecordingScreen('/sdcard/test.mp4', 'default', -1, -1).should.eventually.be.rejectedWith(/Android screen recording does not work on emulators/);
-      else {
-        // start recording the screen
-        await driver.startRecordingScreen('/sdcard/test.mp4', 'default', -1, -1);
+    // do some interacting, to take some time
+    let el = await driver.findElOrEls('class name', 'android.widget.EditText', false);
+    el = el.ELEMENT;
+    await driver.setValue('Recording the screen!', el);
+    let text = await driver.getText(el);
+    text.should.eql('Recording the screen!');
 
-        // check the file is created
-        cmd = ['ls', '/sdcard/test.mp4', '|', 'grep', 'No such file'];
-        data = await driver.adb.shell(cmd); 
+    await driver.stopRecordingScreen();
 
-        data.length.should.equal(0);
-
-        // get the file size
-        cmd = ['ls', '-al', '/sdcard/test.mp4'];
-        data = await driver.adb.shell(cmd); 
-
-        result_ls_testmp4_toArray = data.split(" ");
-        length = _.size(result_ls_testmp4_toArray);
-        availableDataIndex = 0;
-        
-        for (let i = 0 ; i < length ; ++ i){
-          if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
-            availableDataIndex++;
-            //check it is started to capture the screen
-            if (availableDataIndex === 4){
-              fileSizeBefore = result_ls_testmp4_toArray[i] * 1;
-              break;
-            }
-          }
-        }
-
-        // wait for 3 seconds
-        await sleep(3000);  
-        
-        // get the file size
-        cmd = ['ls', '-al', '/sdcard/test.mp4'];
-        data = await driver.adb.shell(cmd); 
-
-        result_ls_testmp4_toArray = data.split(" ");
-        length = _.size(result_ls_testmp4_toArray);
-        availableDataIndex = 0;
-        
-        for (let i = 0 ; i < length ; ++ i){
-          if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
-            availableDataIndex++;
-            //check it is started to capture the screen
-            if (availableDataIndex === 4){
-              fileSizeAfter = result_ls_testmp4_toArray[i] * 1;
-              break;
-            }
-          }
-        }
-
-        // check the file size is increased than 3 seconds ago
-        fileSizeAfter.should.be.above(fileSizeBefore);
-
-        //stop recording the screen      
-        await driver.stopRecordingScreen(); 
-
-        // get the file size
-        cmd = ['ls', '-al', '/sdcard/test.mp4'];
-        data = await driver.adb.shell(cmd); 
-
-        result_ls_testmp4_toArray = data.split(" ");
-        length = _.size(result_ls_testmp4_toArray);
-        availableDataIndex = 0;
-        
-        for (let i = 0 ; i < length ; ++ i){
-          if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
-            availableDataIndex++;
-            //check it is started to capture the screen
-            if (availableDataIndex === 4){
-              fileSizeBefore = result_ls_testmp4_toArray[i] * 1;
-              break;
-            }
-          }
-        }
-
-        // wait for 3 seconds
-        await sleep(3000);
-
-        // get the file size
-        cmd = ['ls', '-al', '/sdcard/test.mp4'];
-        data = await driver.adb.shell(cmd); 
-
-        result_ls_testmp4_toArray = data.split(" ");
-        length = _.size(result_ls_testmp4_toArray);
-        availableDataIndex = 0;
-        
-        for (let i = 0 ; i < length ; ++ i){
-          if ( _.size(result_ls_testmp4_toArray[i]) > 0 ){
-            availableDataIndex++;
-            //check it is started to capture the screen
-            if (availableDataIndex === 4){
-              fileSizeAfter = result_ls_testmp4_toArray[i] * 1;
-              break;
-            }
-          }
-        }
-
-        // check the file size is increased than 3 seconds ago
-        fileSizeAfter.should.be.eql(fileSizeBefore);
-      }
-    });
+    (await driver.adb.fileExists(remoteFile)).should.be.true;
   });
 });
