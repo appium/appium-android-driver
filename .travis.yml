@@ -26,6 +26,7 @@ env:
     - TEST=functional/commands
     - TEST=functional/commands/basic
     - TEST=functional/commands/find
+    - TEST=functional/commands/keyboard
     - TEST=functional/commands/localization
     - TEST=functional/commands/touch
 before_script:
