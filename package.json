@@ -43,7 +43,7 @@
     "lodash": "^3.10.0",
     "portfinder": "^1.0.6",
     "source-map-support": "^0.3.1",
-    "teen_process": "^1.4.0",
+    "teen_process": "^1.9.0",
     "temp": "^0.8.3",
     "yargs": "^6.6.0"
   },
