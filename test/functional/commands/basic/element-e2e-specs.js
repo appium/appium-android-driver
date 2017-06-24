@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../../..';
 import _ from 'lodash';
 import DEFAULT_CAPS from '../../desired';
-import B from 'bluebird';
+import { retryInterval } from 'asyncbox';
 
 
 chai.should();
@@ -32,15 +32,17 @@ describe('element', function () {
   describe('setValueImmediate', () => {
     it('should set the text on the element', async () => {
       await driver.setValueImmediate('original value', el.ELEMENT);
-      if (process.env.TRAVIS) await B.delay(1000); // eslint-disable-line curly
-      await driver.getText(el.ELEMENT).should.eventually.equal('original value');
+      await retryInterval(10, 1000, async () => {
+        await driver.getText(el.ELEMENT).should.eventually.equal('original value');
+      });
     });
   });
   describe('setValue', () => {
     it('should set the text on the element', async () => {
       await driver.setValue('original value', el.ELEMENT);
-      if (process.env.TRAVIS) await B.delay(1000); // eslint-disable-line curly
-      await driver.getText(el.ELEMENT).should.eventually.equal('original value');
+      await retryInterval(10, 1000, async () => {
+        await driver.getText(el.ELEMENT).should.eventually.equal('original value');
+      });
     });
   });
 });
