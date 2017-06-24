@@ -153,7 +153,7 @@ describe('keyboard', () => {
       await driver.deleteSession();
     });
 
-    describe('editing a text field', () => {
+    describe.only('editing a text field', () => { // eslint-disable-line
       before(async () => {
         await driver.startActivity(PACKAGE, TEXTFIELD_ACTIVITY);
       });
