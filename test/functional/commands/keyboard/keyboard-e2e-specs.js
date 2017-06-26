@@ -124,9 +124,7 @@ let unicodeTests = [
 
 let languageTests = [
   { label: 'should be able to send Tamil', text: 'சோதனை' },
-  { label: 'should be able to send Gujarati', text: 'પરીક્ષણ' },
   { label: 'should be able to send Chinese', text: '测试' },
-  { label: 'should be able to send Russian', text: 'тестирование' },
   { label: 'should be able to send Arabic', text: 'تجريب' },
   { label: 'should be able to send Hebrew', text: 'בדיקות' },
 ];
