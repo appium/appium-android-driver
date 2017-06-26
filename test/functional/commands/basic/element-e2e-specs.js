@@ -31,8 +31,9 @@ describe('element', function () {
 
   describe('setValueImmediate', () => {
     it('should set the text on the element', async () => {
-      await driver.setValueImmediate('original value', el.ELEMENT);
-      await retryInterval(10, 1000, async () => {
+      let retries = process.env.TRAVIS ? 10 : 1;
+      await retryInterval(retries, 1000, async () => {
+        await driver.setValueImmediate('original value', el.ELEMENT);
         await driver.getText(el.ELEMENT).should.eventually.equal('original value');
       });
     });
@@ -40,9 +41,7 @@ describe('element', function () {
   describe('setValue', () => {
     it('should set the text on the element', async () => {
       await driver.setValue('original value', el.ELEMENT);
-      await retryInterval(10, 1000, async () => {
-        await driver.getText(el.ELEMENT).should.eventually.equal('original value');
-      });
+      await driver.getText(el.ELEMENT).should.eventually.equal('original value');
     });
   });
 });
