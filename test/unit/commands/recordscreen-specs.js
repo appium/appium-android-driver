@@ -35,7 +35,7 @@ describe('recording the screen', withMocks({adb, driver}, (mocks) => {
     await driver.startRecordingScreen(remoteFile).should.eventually.be.rejectedWith(`Screen recording failed: '${remoteFile}' already exists.`);
   });
 
-  describe('running adb', function () {
+  describe('beginning the recording', function () {
     beforeEach(function () {
       mocks.driver.expects('isEmulator').returns(false);
       mocks.adb.expects('getApiLevel').returns(19);
@@ -48,8 +48,8 @@ describe('recording the screen', withMocks({adb, driver}, (mocks) => {
     it('should call adb to start screen recording', async function () {
       mocks.adb.expects('shell').once()
         .withExactArgs(['screenrecord', remoteFile]).returns(new B(() => {}));
-      mocks.adb.expects('shell').once()
-        .withExactArgs(['ls', '-al', remoteFile]).returns('-rw-rw---- 1 root sdcard_rw 39571 2017-06-23 07:33 /sdcard/test.mp4');
+      mocks.adb.expects('fileSize').once()
+        .withExactArgs(remoteFile).returns(39571);
 
       await driver.startRecordingScreen(remoteFile);
     });
@@ -57,8 +57,8 @@ describe('recording the screen', withMocks({adb, driver}, (mocks) => {
     it('should call adb to start screen recording with non-default videoSize', async function () {
       mocks.adb.expects('shell').once()
         .withExactArgs(['screenrecord', remoteFile, '--size', 100]).returns(new B(() => {}));
-      mocks.adb.expects('shell').once()
-        .withExactArgs(['ls', '-al', remoteFile]).returns('-rw-rw---- 1 root sdcard_rw 39571 2017-06-23 07:33 /sdcard/test.mp4');
+      mocks.adb.expects('fileSize').once()
+        .withExactArgs(remoteFile).returns(39571);
 
       await driver.startRecordingScreen(remoteFile, 100);
     });
@@ -66,8 +66,8 @@ describe('recording the screen', withMocks({adb, driver}, (mocks) => {
     it('should call adb to start screen recording with non-default timeLimit', async function () {
       mocks.adb.expects('shell').once()
         .withExactArgs(['screenrecord', remoteFile, '--time-limit', 100]).returns(new B(() => {}));
-      mocks.adb.expects('shell').once()
-        .withExactArgs(['ls', '-al', remoteFile]).returns('-rw-rw---- 1 root sdcard_rw 39571 2017-06-23 07:33 /sdcard/test.mp4');
+      mocks.adb.expects('fileSize').once()
+        .withExactArgs(remoteFile).returns(39571);
 
       await driver.startRecordingScreen(remoteFile, null, 100);
     });
@@ -75,13 +75,15 @@ describe('recording the screen', withMocks({adb, driver}, (mocks) => {
     it('should call adb to start screen recording with non-default bitRate', async function () {
       mocks.adb.expects('shell').once()
         .withExactArgs(['screenrecord', remoteFile, '--bit-rate', 100]).returns(new B(() => {}));
-      mocks.adb.expects('shell').once()
-        .withExactArgs(['ls', '-al', remoteFile]).returns('-rw-rw---- 1 root sdcard_rw 39571 2017-06-23 07:33 /sdcard/test.mp4');
+      mocks.adb.expects('fileSize').once()
+        .withExactArgs(remoteFile).returns(39571);
 
       await driver.startRecordingScreen(remoteFile, null, null, 100);
     });
 
     it('should fail if adb screen recording errors out', async function () {
+      mocks.adb.expects('fileSize')
+        .withExactArgs(remoteFile).returns(31);
       let shellStub = sinon.stub(adb, 'shell');
       shellStub
         .returns(B.reject(new Error('shell command failed')));
@@ -92,42 +94,30 @@ describe('recording the screen', withMocks({adb, driver}, (mocks) => {
     });
 
     it('should call ls multiple times until size is big enough', async function () {
-      let shellStub = sinon.stub(adb, 'shell');
-      shellStub
-        .withArgs(['screenrecord', remoteFile]).returns(new B(() => {}))
-        .withArgs(['ls', '-al', remoteFile])
+      mocks.adb.expects('shell').once()
+        .withExactArgs(['screenrecord', remoteFile]).returns(new B(() => {}));
+      let fileSizeStub = sinon.stub(adb, 'fileSize');
+      fileSizeStub
+        .withArgs(remoteFile)
           .onCall(0)
-            .returns('-rw-rw---- 1 root sdcard_rw 31 2017-06-23 07:33 /sdcard/test.mp4')
+            .returns(31)
           .onCall(1)
-            .returns('-rw-rw---- 1 root sdcard_rw 42 2017-06-23 07:33 /sdcard/test.mp4');
+            .returns(42);
 
       await driver.startRecordingScreen(remoteFile);
 
-      shellStub.restore();
+      fileSizeStub.restore();
     });
 
     it('should call ls multiple times and fail if size never gets big enough', async function () {
-      let shellStub = sinon.stub(adb, 'shell');
-      shellStub
-        .withArgs(['screenrecord', remoteFile]).returns(new B(() => {}))
-        .withArgs(['ls', '-al', remoteFile])
-            .returns('-rw-rw---- 1 root sdcard_rw 31 2017-06-23 07:33 /sdcard/test.mp4');
+      mocks.adb.expects('shell').once()
+        .withExactArgs(['screenrecord', remoteFile]).returns(new B(() => {}));
+      let fileSizeStub = sinon.stub(adb, 'fileSize');
+      fileSizeStub.withArgs(remoteFile).returns(31);
 
       await driver.startRecordingScreen(remoteFile).should.eventually.be.rejectedWith(`Remote file '${remoteFile}' found but it is still too small: 31 bytes`);
 
-      shellStub.restore();
-    });
-
-    it('should call ls multiple times and fail if ls returns something unparsable', async function () {
-      let shellStub = sinon.stub(adb, 'shell');
-      shellStub
-        .withArgs(['screenrecord', remoteFile]).returns(new B(() => {}))
-        .withArgs(['ls', '-al', remoteFile])
-            .returns('-rw-rw---- 1 sdfd 2017-06-23 07:33 /sdcard/test.mp4');
-
-      await driver.startRecordingScreen(remoteFile).should.eventually.be.rejectedWith(`Remote file '${remoteFile}' found but unable to parse size: '-rw-rw---- 1 sdfd 2017-06-23 07:33 /sdcard/test.mp4'`);
-
-      shellStub.restore();
+      fileSizeStub.restore();
     });
   });
 
