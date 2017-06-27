@@ -33,6 +33,7 @@ describe('element', function () {
     it('should set the text on the element', async () => {
       let retries = process.env.TRAVIS ? 10 : 1;
       await retryInterval(retries, 1000, async () => {
+        await driver.clear(el.ELEMENT);
         await driver.setValueImmediate('original value', el.ELEMENT);
         await driver.getText(el.ELEMENT).should.eventually.equal('original value');
       });
