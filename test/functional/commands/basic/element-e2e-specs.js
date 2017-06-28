@@ -3,6 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../../..';
 import _ from 'lodash';
 import DEFAULT_CAPS from '../../desired';
+import { retryInterval } from 'asyncbox';
 
 
 chai.should();
@@ -30,8 +31,12 @@ describe('element', function () {
 
   describe('setValueImmediate', () => {
     it('should set the text on the element', async () => {
-      await driver.setValueImmediate('original value', el.ELEMENT);
-      await driver.getText(el.ELEMENT).should.eventually.equal('original value');
+      let retries = process.env.TRAVIS ? 10 : 1;
+      await retryInterval(retries, 1000, async () => {
+        await driver.clear(el.ELEMENT);
+        await driver.setValueImmediate('original value', el.ELEMENT);
+        await driver.getText(el.ELEMENT).should.eventually.equal('original value');
+      });
     });
   });
   describe('setValue', () => {

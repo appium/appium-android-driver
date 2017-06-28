@@ -1,5 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { retryInterval } from 'asyncbox';
 import helpers from '../../lib/android-helpers';
 import ADB from 'appium-adb';
 import { app } from './desired';
@@ -21,7 +22,12 @@ describe('android-helpers e2e', () => {
       this.timeout(MOCHA_TIMEOUT);
 
       let adb = await ADB.createADB();
-      await adb.uninstallApk(opts.appPackage);
+      await retryInterval(10, 500, async function () {
+        if (await adb.isAppInstalled(opts.appPackage)) {
+          // this sometimes times out on Travis, so retry
+          await adb.uninstallApk(opts.appPackage);
+        }
+      });
       await adb.isAppInstalled(opts.appPackage).should.eventually.be.false;
       await helpers.installApkRemotely(adb, opts);
       await adb.isAppInstalled(opts.appPackage).should.eventually.be.true;

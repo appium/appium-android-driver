@@ -14,21 +14,26 @@ android:
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
     - sys-img-armeabi-v7a-android-22
-    - sys-img-armeabi-v7a-android-17
 env:
   global:
     - _FORCE_LOGS=1
     - DEVICE=android
     - MOCHA_TIMEOUT=360000
+    - RECURSIVE=
+    - START_EMU=1
   matrix:
-    - TEST=unit RECURSIVE=1
+    - TEST=unit RECURSIVE=--recursive START_EMU=0
     - TEST=functional
     - TEST=functional/commands
     - TEST=functional/commands/basic
     - TEST=functional/commands/find
-    - TEST=functional/commands/localization
+    - TEST=functional/commands/keyboard
     - TEST=functional/commands/touch
 before_script:
+  # android stuff
+  - android list targets
+  - FIRST_CALL=1 SECOND_CALL=0 ./travis.sh
+
   # node stuff
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
   - nvm install 6
@@ -36,13 +41,9 @@ before_script:
   - npm install -g mocha
   - npm install
 
-  # android stuff
-  - android list targets
-  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
+  # make sure emulator started
+  - FIRST_CALL=0 SECOND_CALL=1 ./travis.sh
 script:
-  - gulp eslint && if [ -n "$RECURSIVE" ]; then mocha -t $MOCHA_TIMEOUT --recursive build/test/$TEST -g @skip-ci -i; else mocha -t $MOCHA_TIMEOUT build/test/$TEST -g @skip-ci -i; fi
+  - gulp eslint && mocha -t $MOCHA_TIMEOUT $RECURSIVE build/test/$TEST -g @skip-ci -i
 after_success:
   - gulp coveralls
