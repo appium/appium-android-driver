@@ -33,13 +33,18 @@ env:
     - TEST=functional/commands/keyboard
     - TEST=functional/commands/touch
 before_script:
+  # node stuff
+  - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
+  - nvm install 4
+  - node --version
+  - npm --version
+  - npm install appium-test-support # get the travis emu scripts
+
   # android stuff
   - android list targets
   - $(npm bin)/android-emu-travis-pre
 
-  # node stuff
-  - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
-  - nvm install 6
+  # npm stuff
   - npm install -g gulp
   - npm install -g mocha
   - npm install
