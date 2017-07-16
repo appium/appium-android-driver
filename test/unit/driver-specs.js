@@ -7,6 +7,8 @@ import { withMocks } from 'appium-test-support';
 import AndroidDriver from '../..';
 import ADB from 'appium-adb';
 import { errors } from 'appium-base-driver';
+import { fs } from 'appium-support';
+import { SharedPrefsBuilder } from 'shared-preferences-builder';
 
 
 let driver;
@@ -28,6 +30,7 @@ describe('driver', () => {
       driver.findElOrEls.should.be.a('function');
     });
   });
+  /*
   describe('emulator methods', () => {
     driver = new AndroidDriver();
     describe('fingerprint', withMocks({driver}, (mocks) => {
@@ -44,6 +47,48 @@ describe('driver', () => {
           .once().returns(false);
         driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
         mocks.driver.verify();
+      });
+    }));
+  });
+  */
+  describe('sharedPreferences', () => {
+    driver = new AndroidDriver();
+    let adb = new ADB();
+    let builder = new SharedPrefsBuilder();
+    driver.adb = adb;
+    driver.prefsBuilder = builder;
+    describe('should skip setting sharedPreferences', withMocks({driver}, (mocks) => {
+      it('on undefined name', async () => {
+        driver.opts.sharedPreferences = {};
+        (await driver.setSharedPreferences()).should.be.false;
+        mocks.driver.verify();
+      });
+    }));
+    describe('should set sharedPreferences', withMocks({driver, adb, builder, fs}, (mocks) => {
+      it('', async () => {
+        driver.opts.appPackage = 'io.appium.test';
+        driver.opts.sharedPreferences = {
+          name: 'com.appium.prefs',
+          prefs: [{type: 'string', name: 'mystr', value:'appium rocks!'}]
+        };
+        mocks.driver.expects('getPrefsBuilder').once()
+          .returns(builder);
+        mocks.builder.expects('build').once();
+        mocks.builder.expects('toFile').once();
+        mocks.adb.expects('shell').once()
+          .withExactArgs(['mkdir', '-p', '/data/data/io.appium.test/shared_prefs']);
+        mocks.adb.expects('push').once()
+          .withExactArgs('/tmp/com.appium.prefs.xml', '/data/data/io.appium.test/shared_prefs/com.appium.prefs.xml');
+        mocks.fs.expects('exists').once()
+          .withExactArgs('/tmp/com.appium.prefs.xml')
+          .returns(true);
+        mocks.fs.expects('unlink').once()
+          .withExactArgs('/tmp/com.appium.prefs.xml');
+        await driver.setSharedPreferences();
+        mocks.driver.verify();
+        mocks.adb.verify();
+        mocks.builder.verify();
+        mocks.fs.verify();
       });
     }));
   });
