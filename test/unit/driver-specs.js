@@ -30,27 +30,24 @@ describe('driver', () => {
       driver.findElOrEls.should.be.a('function');
     });
   });
-  /*
   describe('emulator methods', () => {
-    driver = new AndroidDriver();
-    describe('fingerprint', withMocks({driver}, (mocks) => {
-      it('fingerprint should be rejected if isEmulator is false', () => {
-        mocks.driver.expects('isEmulator')
-          .once().returns(false);
+    describe('fingerprint', () => {
+      it('should be rejected if isEmulator is false', () => {
+        let driver = new AndroidDriver();
+        sandbox.stub(driver, 'isEmulator').returns(false);
         driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
-        mocks.driver.verify();
+        driver.isEmulator.calledOnce.should.be.true;
       });
-    }));
-    describe('fingerprint', withMocks({driver}, (mocks) => {
+    });
+    describe('sendSMS', () => {
       it('sendSMS should be rejected if isEmulator is false', () => {
-        mocks.driver.expects('isEmulator')
-          .once().returns(false);
+        let driver = new AndroidDriver();
+        sandbox.stub(driver, 'isEmulator').returns(false);
         driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
-        mocks.driver.verify();
+        driver.isEmulator.calledOnce.should.be.true;
       });
-    }));
+    });
   });
-  */
   describe('sharedPreferences', () => {
     driver = new AndroidDriver();
     let adb = new ADB();
@@ -65,7 +62,7 @@ describe('driver', () => {
       });
     }));
     describe('should set sharedPreferences', withMocks({driver, adb, builder, fs}, (mocks) => {
-      it('', async () => {
+      it('on defined sharedPreferences object', async () => {
         driver.opts.appPackage = 'io.appium.test';
         driver.opts.sharedPreferences = {
           name: 'com.appium.prefs',
