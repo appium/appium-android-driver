@@ -3,7 +3,7 @@ import path from 'path';
 import { system } from 'appium-support';
 
 
-const MOCHA_TIMEOUT = process.env.TRAVIS ? 120000 : 15000;
+const MOCHA_TIMEOUT = process.env.MOCHA_TIMEOUT ? process.env.MOCHA_TIMEOUT : (process.env.TRAVIS ? 120000 : 15000);
 
 const CHROMEDRIVER_2_20_ASSET_MAP = {
   windows: ['windows', 'chromedriver.exe'],

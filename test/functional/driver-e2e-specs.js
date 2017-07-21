@@ -22,9 +22,16 @@ describe('createSession', function () {
   afterEach(async () => {
     await driver.deleteSession();
   });
+
+  async function getPackageAndActivity (driver) {
+    let appPackage = await driver.getCurrentPackage();
+    let appActivity = await driver.getCurrentActivity();
+    return {appPackage, appActivity};
+  }
+
   it('should start android session focusing on default pkg and act', async () => {
     await driver.createSession(defaultCaps);
-    let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
+    let {appPackage, appActivity} = await getPackageAndActivity(driver);
     appPackage.should.equal('io.appium.android.apis');
     appActivity.should.equal('.ApiDemos');
   });
@@ -33,7 +40,7 @@ describe('createSession', function () {
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
     await driver.createSession(caps);
-    let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
+    let {appPackage, appActivity} = await getPackageAndActivity(driver);
     appPackage.should.equal(caps.appPackage);
     appActivity.should.equal(caps.appActivity);
   });
@@ -62,7 +69,7 @@ describe('createSession', function () {
     caps.appActivity = '.view.SplitTouchView';
     caps.autoLaunch = false;
     await driver.createSession(caps);
-    let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
+    let {appPackage, appActivity} = await getPackageAndActivity(driver);
     expect(appPackage).to.not.equal(caps.appPackage);
     expect(appActivity).to.not.equal(caps.appActivity);
   });
@@ -72,7 +79,7 @@ describe('createSession', function () {
     caps.appActivity = 'io.appium.android.apis.app.HelloWorld';
     caps.intentCategory = 'appium.android.intent.category.SAMPLE_CODE';
     await driver.createSession(caps);
-    let {appActivity} = await driver.adb.getFocusedPackageAndActivity();
+    let appActivity = await driver.getCurrentActivity();
     appActivity.should.include('HelloWorld');
   });
   it('should be able to load an app via package', async () => {
@@ -81,7 +88,7 @@ describe('createSession', function () {
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.ApiDemos';
     await driver.createSession(caps);
-    let {appPackage} = await driver.adb.getFocusedPackageAndActivity();
+    let appPackage = await driver.getCurrentPackage();
     appPackage.should.include('io.appium.android.apis');
   });
   it('should error out if package is not on the device', async () => {
@@ -148,7 +155,7 @@ describe('close', function () {
   it('should close application', async () => {
     await driver.createSession(defaultCaps);
     await driver.closeApp();
-    let {appPackage} = await driver.adb.getFocusedPackageAndActivity();
+    let appPackage = await driver.getCurrentPackage();
     if (appPackage) {
       appPackage.should.not.equal("io.appium.android.apis");
     }

@@ -12,21 +12,25 @@ chai.use(chaiAsPromised);
 describe('Localization - locale @skip-ci @skip-real-device', function () {
   this.timeout(MOCHA_TIMEOUT);
 
-  before(function () {
-    if (process.env.TRAVIS) return this.skip();
-  });
+  let initialLocale;
 
-  let driver;
-  beforeEach(async function () {
+  before(async function () {
+    if (process.env.TRAVIS) return this.skip();
+
     // restarting doesn't work on Android 7
     let adb = new ADB();
     if (await adb.getApiLevel() > 23) return this.skip();
 
+    initialLocale = await getLocale(adb);
+  });
+
+  let driver;
+  beforeEach(async function () {
     driver = new AndroidDriver();
   });
-  after(async () => {
+  after(async function () {
     if (driver) {
-      await driver.adb.setDeviceCountry('US');
+      await driver.adb.setDeviceCountry(initialLocale);
 
       await driver.deleteSession();
     }
@@ -36,7 +40,7 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
     if (await adb.getApiLevel() < 23) {
       return await adb.getDeviceCountry();
     } else {
-      return await driver.adb.getDeviceLocale();
+      return await adb.getDeviceLocale();
     }
   }
 
