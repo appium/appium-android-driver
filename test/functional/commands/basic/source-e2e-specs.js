@@ -1,9 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../..';
+import AndroidDriver from '../../../..';
 import { DOMParser } from 'xmldom';
 import xpath from 'xpath';
-import DEFAULT_CAPS from '../desired';
+import DEFAULT_CAPS from '../../desired';
 
 
 chai.should();

@@ -1,8 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../..';
+import AndroidDriver from '../../../..';
 import B from 'bluebird';
-import DEFAULT_CAPS from '../desired';
+import DEFAULT_CAPS from '../../desired';
 
 
 chai.should();
