@@ -86,6 +86,14 @@ describe('driver', () => {
         mocks.driver.verify();
       });
     }));
+    describe('networkSpeed', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.networkSpeed("gsm").should.eventually.be.rejectedWith("network speed method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
   });
   describe('createSession', () => {
     beforeEach(() => {
