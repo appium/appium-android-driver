@@ -51,9 +51,8 @@ describe('driver', () => {
   describe('sharedPreferences', () => {
     driver = new AndroidDriver();
     let adb = new ADB();
-    let builder = new SharedPrefsBuilder();
     driver.adb = adb;
-    driver.prefsBuilder = builder;
+    let builder = new SharedPrefsBuilder();
     describe('should skip setting sharedPreferences', withMocks({driver}, (mocks) => {
       it('on undefined name', async () => {
         driver.opts.sharedPreferences = {};
@@ -68,8 +67,7 @@ describe('driver', () => {
           name: 'com.appium.prefs',
           prefs: [{type: 'string', name: 'mystr', value:'appium rocks!'}]
         };
-        mocks.driver.expects('getPrefsBuilder').once()
-          .returns(builder);
+        mocks.driver.expects('getPrefsBuilder').once().returns(builder);
         mocks.builder.expects('build').once();
         mocks.builder.expects('toFile').once();
         mocks.adb.expects('shell').once()
