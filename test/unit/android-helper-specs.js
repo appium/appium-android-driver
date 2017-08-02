@@ -58,7 +58,7 @@ describe('Android Helpers', () => {
     it('should launch avd if one is already running', async () => {
       mocks.adb.expects('getRunningAVD').withExactArgs('foobar')
         .returns(null);
-      mocks.adb.expects('launchAVD').withExactArgs('foo@bar', ['-netspeed', 'edge'], 'en', 'us',
+      mocks.adb.expects('launchAVD').withExactArgs('foo@bar', ' -netspeed edge', 'en', 'us',
         undefined, undefined)
         .returns("");
       await helpers.prepareEmulator(adb, opts);
