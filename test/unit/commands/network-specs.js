@@ -131,13 +131,12 @@ describe('Network', () => {
       driver.adb.keyevent.calledWithExactly(19).should.be.true;
       driver.toggleSetting.calledWith('LOCATION_SOURCE_SETTINGS', sequence).should.be.true;
     });
-    /*
     it('should set gps for emulators', async () => {
       sandbox.stub(driver.adb, 'getApiLevel').returns(19);
       sandbox.stub(driver, 'isEmulator').returns(true);
       sandbox.stub(driver.adb, 'getLocationProviders').returns(['gps', 'wifi']);
-      driver.adb.toggleGPSLocationProvider.calledWith(true);
+      sandbox.stub(driver.adb, 'toggleGPSLocationProvider');
+      driver.adb.toggleGPSLocationProvider.calledWithExactly(true);
     });
-    */
   });
 });
