@@ -112,21 +112,31 @@ describe('Network', () => {
     });
     it('should throw an error for API<16', async () => {
       sandbox.stub(driver.adb, 'getApiLevel').returns(15);
+      sandbox.stub(driver, 'isEmulator').returns(false);
       await driver.toggleLocationServices().should.eventually.be.rejectedWith(/implemented/);
     });
     it('should generate the correct sequence of keys for API 16', async () => {
       let sequence = [19, 19, 20];
       sandbox.stub(driver.adb, 'getApiLevel').returns(16);
+      sandbox.stub(driver, 'isEmulator').returns(false);
       await driver.toggleLocationServices();
       driver.toggleSetting.calledWith('LOCATION_SOURCE_SETTINGS', sequence).should.be.true;
     });
     it('should generate the correct sequence of keys for API >= 19', async () => {
       let sequence = [22, 22, 19];
       sandbox.stub(driver.adb, 'getApiLevel').returns(19);
+      sandbox.stub(driver, 'isEmulator').returns(false);
       sandbox.stub(driver.adb, 'keyevent');
       await driver.toggleLocationServices();
       driver.adb.keyevent.calledWithExactly(19).should.be.true;
       driver.toggleSetting.calledWith('LOCATION_SOURCE_SETTINGS', sequence).should.be.true;
+    });
+    it('should set gps for emulators', async () => {
+      sandbox.stub(driver.adb, 'getApiLevel').returns(19);
+      sandbox.stub(driver, 'isEmulator').returns(true);
+      sandbox.stub(driver.adb, 'getLocationProviders').returns(['gps', 'wifi']);
+      sandbox.stub(driver.adb, 'toggleGPSLocationProvider');
+      driver.adb.toggleGPSLocationProvider.calledWithExactly(true);
     });
   });
 });
