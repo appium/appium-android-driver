@@ -374,7 +374,8 @@ describe('driver', () => {
       driver.defaultWebviewName.calledOnce.should.be.true;
       driver.setContext.calledTwice.should.be.true;
     });
-    it('should respect timeout if autoWebview is requested', async () => {
+    it('should respect timeout if autoWebview is requested', async function () {
+      this.timeout(10000);
       driver.setContext.throws(new errors.NoSuchContextError());
 
       let begin = Date.now();

@@ -20,9 +20,6 @@ describe('Find', () => {
     sandbox.restore();
   });
   describe('findElorEls', () => {
-    it('should throw an error if both strategy and context are defined', () => {
-      driver.findElOrEls('xpath', 'selector', false, 'some context').should.be.rejectedWith(/from an element/);
-    });
     it('should throw an error if there is no selector', () => {
       driver.findElOrEls('xpath', null, false, 'some context').should.be.rejectedWith(/provide a selector/);
     });

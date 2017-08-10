@@ -69,8 +69,8 @@ describe('Find - uiautomator', function () {
   });
   it('should find an element with recursive UiSelectors', async function () {
     // TODO: figure out why this fails with 7.1.1
-    if (await driver.adb.getApiLevel() >= '24') return this.skip();
-    
+    if (await driver.adb.getApiLevel() >= '24') return this.skip(); //eslint-disable-line curly
+
     await driver.findElOrEls('-android uiautomator', 'new UiSelector().childSelector(new UiSelector().clickable(true)).clickable(true)', true)
       .should.eventually.have.length(1);
   });

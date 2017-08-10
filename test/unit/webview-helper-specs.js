@@ -10,7 +10,7 @@ describe('Webview Helpers', () => {
   describe('When the webviews are obtained', () => {
     describe('for an app that embeds Chromium', () => {
       let webViews;
-      
+
       beforeEach(async () => {
         sandbox.stub(adb, 'shell', () => {
           return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
@@ -18,7 +18,7 @@ describe('Webview Helpers', () => {
                 '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @webview_devtools_remote_123\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n';
-        });  
+        });
 
         webViews = await helpers.getWebviews(adb, 'webview_devtools_remote_123');
       });
@@ -40,7 +40,7 @@ describe('Webview Helpers', () => {
 
     describe('for a Chromium webview', () => {
       let webViews;
-      
+
       beforeEach(async () => {
         sandbox.stub(adb, 'shell', () => {
           return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
@@ -48,7 +48,7 @@ describe('Webview Helpers', () => {
                 '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @chrome_devtools_remote\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n';
-        });  
+        });
 
         webViews = await helpers.getWebviews(adb, 'chrome_devtools_remote');
       });
@@ -70,14 +70,14 @@ describe('Webview Helpers', () => {
 
     describe('and no webviews exist', () => {
       let webViews;
-      
+
       beforeEach(async () => {
         sandbox.stub(adb, 'shell', () => {
           return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n';
-        });  
+        });
 
         webViews = await helpers.getWebviews(adb);
       });
@@ -98,7 +98,7 @@ describe('Webview Helpers', () => {
 
     describe('and crosswalk webviews exist', () => {
       let webViews;
-      
+
       beforeEach(() => {
         sandbox.stub(adb, 'shell', () => {
           return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
@@ -166,7 +166,7 @@ describe('Webview Helpers', () => {
 
       beforeEach(async () => {
         let shellStub = sandbox.stub(adb, 'shell');
-        
+
         shellStub.onCall(0).returns('Num       RefCount Protocol Flags    Type St Inode Path\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
