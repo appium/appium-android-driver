@@ -21,7 +21,7 @@ const KEYEVENT_ACTIVITY = '.text.KeyEventText';
 let defaultAsciiCaps = _.defaults({
   newCommandTimeout: 90,
   appPackage: PACKAGE,
-  appActivity: TEXTFIELD_ACTIVITY
+  appActivity: TEXTFIELD_ACTIVITY,
 }, DEFAULT_CAPS);
 
 let defaultUnicodeCaps = _.defaults({
@@ -168,16 +168,20 @@ describe('keyboard', () => {
       }
 
       it('should be able to clear a password field', async function () {
-        if (process.env.TRAVIS) return this.skip(); // eslint-disable-line curly
-
-        // there is currently no way to assert anything about the contents
-        // of a password field, since there is no way to access the contents
-        // but this should, at the very least, not fail
         let els = await driver.findElOrEls('class name', EDITTEXT_CLASS, true);
         let el = els[1].ELEMENT;
 
         await driver.setValue('super-duper password', el);
+
+        // the text is printed into a text field, so we can retrieve and assert
+        let textEl = await driver.findElOrEls('id', 'edit1Text', false);
+        let text = await driver.getText(textEl.ELEMENT);
+        text.should.eql('super-duper password');
+
         await driver.clear(el);
+
+        text = await driver.getText(textEl.ELEMENT);
+        text.should.eql('');
       });
     });
 
