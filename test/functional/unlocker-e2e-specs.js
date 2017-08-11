@@ -21,7 +21,7 @@ const AVD_ANDROID_23_FINGERPRINT_UNLOCK = "ANDROID_API_23_FINGERPRINT_UNLOCK";
 
 describe('unlock tests', () => {
   let driver;
-  
+
   describe.skip('functional', () => {
     before(() => {
       driver = new AndroidDriver();

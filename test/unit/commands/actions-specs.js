@@ -90,7 +90,7 @@ describe('Actions', () => {
 
       // Call 'driver.pullFolder' and zip the base64 contents to a .zip file
       const zippedBase64 = await driver.pullFolder('/does/not/matter');
-      (typeof(zippedBase64)).should.equal('string');
+      (typeof zippedBase64).should.equal('string');
       await fs.writeFile(path.resolve(zippedDir, 'zipped.zip'), zippedBase64, {encoding: 'base64', flags: 'w'});
 
       // Extract the zip file and verify it's contents
