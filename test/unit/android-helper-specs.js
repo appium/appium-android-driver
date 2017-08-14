@@ -14,6 +14,7 @@ import B from 'bluebird';
 
 const should = chai.should();
 const REMOTE_TEMP_PATH = "/data/local/tmp";
+const REMOTE_INSTALL_TIMEOUT = 90000;
 chai.use(chaiAsPromised);
 
 describe('Android Helpers', () => {
@@ -52,6 +53,8 @@ describe('Android Helpers', () => {
     it('should not launch avd if one is already running', async () => {
       mocks.adb.expects('getRunningAVD').withExactArgs('foobar')
         .returns("foo");
+      mocks.adb.expects('launchAVD').never();
+      mocks.adb.expects('killEmulator').never();
       await helpers.prepareEmulator(adb, opts);
       mocks.adb.verify();
     });
@@ -63,6 +66,17 @@ describe('Android Helpers', () => {
         .returns("");
       await helpers.prepareEmulator(adb, opts);
       mocks.adb.verify();
+    });
+    it('should kill emulator if avdArgs contains -wipe-data', async () => {
+      const opts = {avd: "foo@bar", avdArgs: "-wipe-data"};
+      mocks.adb.expects('getRunningAVD').withExactArgs('foobar').returns('foo');
+      mocks.adb.expects('killEmulator').withExactArgs('foobar').once();
+      mocks.adb.expects('launchAVD').once();
+      await helpers.prepareEmulator(adb, opts);
+      mocks.adb.verify();
+    });
+    it('should fail if avd name is not specified', async () => {
+      await helpers.prepareEmulator(adb, {}).should.eventually.be.rejected;
     });
   }));
   describe('ensureDeviceLocale', withMocks({adb}, (mocks) => {
@@ -126,6 +140,22 @@ describe('Android Helpers', () => {
         .returns("");
       mocks.adb.expects('reboot').returns(null);
       await helpers.ensureDeviceLocale(adb, 'en', 'us');
+      mocks.adb.verify();
+    });
+    it('should set locale to country only if language is not passed when API = 23', async () => {
+      mocks.adb.expects('getApiLevel').returns("23");
+      mocks.adb.expects('getDeviceLocale').returns('fr-FR');
+      mocks.adb.expects('setDeviceLocale').withExactArgs('en').returns("");
+      mocks.adb.expects('reboot').returns(null);
+      await helpers.ensureDeviceLocale(adb, 'en');
+      mocks.adb.verify();
+    });
+    it('should set locale to language only if country is not passed when API = 23', async () => {
+      mocks.adb.expects('getApiLevel').returns("23");
+      mocks.adb.expects('getDeviceLocale').returns('fr-FR');
+      mocks.adb.expects('setDeviceLocale').withExactArgs('US').returns("");
+      mocks.adb.expects('reboot').returns(null);
+      await helpers.ensureDeviceLocale(adb, null, 'US');
       mocks.adb.verify();
     });
   }));
@@ -242,7 +272,33 @@ describe('Android Helpers', () => {
       emPort.should.equal(1234);
     });
   });
-
+  describe('createADB', () => {
+    let curDeviceId = '';
+    let emulatorPort = -1;
+    before(() => {
+      sinon.stub(ADB, 'createADB', async () => {
+        return {
+          setDeviceId: (udid) => { curDeviceId = udid; },
+          setEmulatorPort: (emPort) => { emulatorPort=emPort; }
+        };
+      });
+    });
+    after(() => {
+      ADB.createADB.restore();
+    });
+    it('should create adb and set device id and emulator port', async () => {
+      await helpers.createADB("1.7", "111222", "111", "222", true, "remote_host");
+      ADB.createADB.calledWithExactly({javaVersion: "1.7", adbPort: "222",
+        suppressKillServer: true, remoteAdbHost: "remote_host"}).should.be.true;
+      curDeviceId.should.equal("111222");
+      emulatorPort.should.equal("111");
+    });
+    it('should not set emulator port if emPort is undefined', async () => {
+      emulatorPort = 5555;
+      await helpers.createADB();
+      emulatorPort.should.equal(5555);
+    });
+  });
   describe('getLaunchInfoFromManifest', withMocks({adb}, (mocks) => {
     it('should return when no app present', async () => {
       mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
@@ -264,6 +320,21 @@ describe('Android Helpers', () => {
         .equal(result);
       mocks.adb.verify();
     });
+    it('should not override appPackage, appWaitPackage, appActivity, appWaitActivity ' +
+       'from manifest if they are allready defined in opts', async () => {
+      let optsFromManifest = { apkPackage: 'mpkg', apkActivity: 'mack' };
+      mocks.adb.expects('packageAndLaunchActivityFromManifest')
+        .withExactArgs('foo').twice().returns(optsFromManifest);
+
+      let inOpts = { app: 'foo', appActivity: 'ack', appWaitPackage: 'wpkg', appWaitActivity: 'wack' };
+      let outOpts = { appPackage: 'mpkg', appActivity: 'ack', appWaitPackage: 'wpkg', appWaitActivity: 'wack' };
+      (await helpers.getLaunchInfo(adb, inOpts)).should.deep.equal(outOpts);
+
+      inOpts = { app: 'foo', appPackage: 'pkg', appWaitPackage: 'wpkg', appWaitActivity: 'wack' };
+      outOpts = { appPackage: 'pkg', appActivity: 'mack', appWaitPackage: 'wpkg', appWaitActivity: 'wack' };
+      (await helpers.getLaunchInfo(adb, inOpts)).should.deep.equal(outOpts);
+      mocks.adb.verify();
+    })
   }));
   describe('getRemoteApkPath', () => {
     it('should return remote path', () => {
@@ -287,11 +358,28 @@ describe('Android Helpers', () => {
       mocks.fs.verify();
       mocks.helpers.verify();
     });
-    it('should throw error if remote file does not exist', async () => {
+    it('should reinstall apk', async () => {
       mocks.fs.expects('md5').withExactArgs(localApkPath).returns('apkmd5');
       mocks.adb.expects('fileExists').returns(true);
       mocks.helpers.expects('reinstallRemoteApk').once().returns('');
       await helpers.resetApp(adb, localApkPath, pkg, false, androidInstallTimeout);
+      mocks.adb.verify();
+      mocks.fs.verify();
+      mocks.helpers.verify();
+    });
+    it('should be able to do fast reset', async () =>{
+      mocks.adb.expects('stopAndClear').withExactArgs(pkg).once();
+      await helpers.resetApp(adb, localApkPath, pkg, true);
+      mocks.adb.verify();
+    });
+    it('should use default timeout and remote temp path', async () => {
+      mocks.fs.expects('md5').withExactArgs(localApkPath).returns('apkmd5');
+      mocks.adb.expects('fileExists').returns(true);
+      mocks.helpers.expects('getRemoteApkPath')
+        .withExactArgs('apkmd5', REMOTE_TEMP_PATH).returns('remote_path');
+      mocks.helpers.expects('reinstallRemoteApk')
+        .withExactArgs(adb, localApkPath, pkg, 'remote_path', REMOTE_INSTALL_TIMEOUT).returns('');
+      await helpers.resetApp(adb, localApkPath, pkg, false);
       mocks.adb.verify();
       mocks.fs.verify();
       mocks.helpers.verify();
@@ -314,6 +402,19 @@ describe('Android Helpers', () => {
         .should.eventually.be.rejected;
       mocks.adb.verify();
       mocks.helpers.verify();
+    });
+    it('should skip exception if uninstallApk failed', async () => {
+      mocks.adb.expects('uninstallApk').throws();
+      mocks.adb.expects('installFromDevicePath').withExactArgs(remotePath, {timeout: 90000});
+      await helpers.reinstallRemoteApk(adb, localApkPath, pkg, remotePath, androidInstallTimeout, 1);
+      mocks.adb.verify();
+    });
+    it('should do double tries by default', async () => {
+      mocks.adb.expects('uninstallApk').twice();
+      mocks.adb.expects('installFromDevicePath').twice().throws();
+      await helpers.reinstallRemoteApk(adb, localApkPath, pkg, remotePath, androidInstallTimeout)
+        .should.be.rejected;
+      mocks.adb.verify();
     });
   }));
   describe('installApkRemotely', withMocks({adb, fs, helpers}, (mocks) => {
@@ -341,12 +442,31 @@ describe('Android Helpers', () => {
     });
     it('should push and reinstall apk when apk is not installed', async () => {
       mocks.fs.expects('md5').withExactArgs(opts.app).returns('apkmd5');
-      mocks.helpers.expects('getRemoteApkPath').returns(true);
-      mocks.adb.expects('fileExists').returns(true);
+      mocks.helpers.expects('getRemoteApkPath').returns('remote_path');
+      mocks.adb.expects('fileExists').returns(false);
       mocks.adb.expects('isAppInstalled').returns(false);
-      mocks.adb.expects('mkdir').once().returns("");
-      mocks.helpers.expects('removeRemoteApks').once().returns('');
-      mocks.helpers.expects('reinstallRemoteApk').once().returns("");
+      mocks.adb.expects('mkdir').withExactArgs(REMOTE_TEMP_PATH).returns("");
+      mocks.helpers.expects('removeRemoteApks').withExactArgs(adb, ['apkmd5']).returns('');
+      mocks.adb.expects('push')
+        .withExactArgs(opts.app, 'remote_path', {timeout: opts.androidInstallTimeout});
+      mocks.helpers.expects('reinstallRemoteApk')
+        .withExactArgs(adb, opts.app, opts.appPackage, 'remote_path', opts.androidInstallTimeout).returns("");
+
+      await helpers.installApkRemotely(adb, opts);
+
+      mocks.adb.verify();
+      mocks.fs.verify();
+      mocks.helpers.verify();
+    });
+    it('should push apk if app is installed and remote apk is not exist', async () => {
+      mocks.fs.expects('md5').withExactArgs(opts.app).returns('apkmd5');
+      mocks.helpers.expects('getRemoteApkPath').returns('remote_path');
+      mocks.adb.expects('fileExists').returns(false);
+      mocks.adb.expects('isAppInstalled').returns(true);
+      mocks.adb.expects('mkdir').once();
+      mocks.helpers.expects('removeRemoteApks').once();
+      mocks.adb.expects('push').once();
+      mocks.helpers.expects('reinstallRemoteApk').once();
 
       await helpers.installApkRemotely(adb, opts);
 
@@ -370,7 +490,7 @@ describe('Android Helpers', () => {
     });
     it('should remove all remote apks', async () => {
       mocks.adb.expects('ls').returns(['foo']);
-      mocks.adb.expects('shell').once().returns('');
+      mocks.adb.expects('shell').withExactArgs(["rm", "-f", "foo"]).once();
       await helpers.removeRemoteApks(adb, ['bar']);
       mocks.adb.verify();
     });
@@ -393,6 +513,11 @@ describe('Android Helpers', () => {
         .returns(true);
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
+    });
+    it('should skip exception if installOrUpgrade or grantAllPermissions failed', async () => {
+      mocks.adb.expects('installOrUpgrade').throws();
+      mocks.adb.expects('grantAllPermissions').throws();
+      await helpers.pushSettingsApp(adb).should.be.fulfilled;
     });
   }));
   describe('setMockLocationApp', withMocks({adb}, (mocks) => {
@@ -417,6 +542,32 @@ describe('Android Helpers', () => {
         .returns('');
       await helpers.pushUnlock(adb);
       mocks.adb.verify();
+    });
+  }));
+  describe('pushStrings', withMocks({adb, fs}, (mocks) => {
+    const opts = { app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
+    it('should extracts string.xml and converts it to string.json and pushes it', async () => {
+      mocks.adb.expects('extractStringsFromApk').withArgs(opts.app, 'en')
+        .returns({apkStrings: 'apk_strings', localPath: 'local_path'});
+      mocks.adb.expects('push').withExactArgs('local_path', REMOTE_TEMP_PATH).once();
+      await helpers.pushStrings('en', adb, opts).should.become('apk_strings');
+      mocks.adb.verify();
+    });
+    it('should delete remote strings.json if app is not present', async () => {
+      mocks.adb.expects('extractStringsFromApk').throws();
+      mocks.fs.expects('exists').withExactArgs(opts.app).returns(false);
+      mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`);
+      await helpers.pushStrings('en', adb, opts).should.be.deep.equal({});
+      mocks.adb.verify();
+      mocks.fs.verify();
+    });
+    it('should push an empty json object if app does not have strings.xml', async () => {
+      mocks.adb.expects('extractStringsFromApk').throws();
+      mocks.fs.expects('exists').withExactArgs(opts.app).returns(true);
+      mocks.adb.expects('shell').withExactArgs('echo', [`'{}' > ${REMOTE_TEMP_PATH}/strings.json`]);
+      await helpers.pushStrings('en', adb, opts).should.be.deep.equal({});
+      mocks.adb.verify();
+      mocks.fs.verify();
     });
   }));
   describe('unlock', withMocks({adb, helpers, unlocker}, (mocks) => {
@@ -486,6 +637,71 @@ describe('Android Helpers', () => {
       mocks.helpers.verify();
     });
   }));
+  describe('initDevice', withMocks({helpers, adb}, (mocks) => {
+    it('should init device', async () => {
+      const opts = { language: "en", locale: "us" };
+      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('startLogcat').once();
+      mocks.helpers.expects('pushSettingsApp').once();
+      mocks.helpers.expects('ensureDeviceLocale').withExactArgs(adb, opts.language, opts.locale).once();
+      mocks.helpers.expects('setMockLocationApp').withExactArgs(adb, 'io.appium.settings').once();
+      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
+      await helpers.initDevice(adb, opts);
+      mocks.helpers.verify();
+      mocks.adb.verify();
+    });
+    it('should not install settings app and mock location on emulator', async () => {
+      const opts = { avd: "avd" };
+      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('startLogcat').once();
+      mocks.helpers.expects('pushSettingsApp').never();
+      mocks.helpers.expects('ensureDeviceLocale').withArgs(adb).once();
+      mocks.helpers.expects('setMockLocationApp').never();
+      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
+      await helpers.initDevice(adb, opts);
+      mocks.helpers.verify();
+      mocks.adb.verify();
+    });
+    it('should return defaultIME if unicodeKeyboard is setted to true', async () => {
+      const opts = { unicodeKeyboard : true };
+      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('startLogcat').once();
+      mocks.helpers.expects('pushSettingsApp').once();
+      mocks.helpers.expects('ensureDeviceLocale').once();
+      mocks.helpers.expects('setMockLocationApp').once();
+      mocks.helpers.expects('initUnicodeKeyboard').withExactArgs(adb).once().returns("defaultIME");
+      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
+      await helpers.initDevice(adb, opts).should.become("defaultIME");
+      mocks.helpers.verify();
+      mocks.adb.verify();
+    });
+    it('should return undefined if unicodeKeyboard is setted to false', async () => {
+      const opts = { unicodeKeyboard : false };
+      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('startLogcat').once();
+      mocks.helpers.expects('pushSettingsApp').once();
+      mocks.helpers.expects('ensureDeviceLocale').once();
+      mocks.helpers.expects('setMockLocationApp').once();
+      mocks.helpers.expects('initUnicodeKeyboard').never();
+      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
+      should.not.exist(await helpers.initDevice(adb, opts));
+      mocks.helpers.verify();
+      mocks.adb.verify();
+    });
+    it('should not push unlock app if unlockType is defined', async () => {
+      const opts = { unlockType: "unlock_type"};
+      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('startLogcat').once();
+      mocks.helpers.expects('pushSettingsApp').once();
+      mocks.helpers.expects('ensureDeviceLocale').once();
+      mocks.helpers.expects('setMockLocationApp').once();
+      mocks.helpers.expects('initUnicodeKeyboard').never();
+      mocks.helpers.expects('pushUnlock').never();
+      await helpers.initDevice(adb, opts);
+      mocks.helpers.verify();
+      mocks.adb.verify();
+    });
+  }));
   describe('removeNullProperties', () => {
     it('should ignore null properties', async () => {
       let test = {foo: null, bar: true};
@@ -501,6 +717,36 @@ describe('Android Helpers', () => {
       let test = {foo: false, bar: true, zero: 0};
       helpers.removeNullProperties(test);
       _.keys(test).length.should.equal(3);
+    });
+  });
+  describe('truncateDecimals', () => {
+    it('should use floor when number is positive', async () => {
+      helpers.truncateDecimals(12.345, 2).should.equal(12.34);
+    });
+    it('should use ceil when number is negative', async () => {
+      helpers.truncateDecimals(-12.345, 2).should.equal(-12.34);
+    });
+  });
+  describe('getChromePkg', () => {
+    it('should return pakage for chromium', async () => {
+      helpers.getChromePkg('chromium').should.deep.equal(
+        {pkg: 'org.chromium.chrome.shell', activity: '.ChromeShellActivity'});
+    });
+    it('should return pakage for chromebeta', async () => {
+      helpers.getChromePkg('chromebeta').should.deep.equal(
+        {pkg: 'com.chrome.beta', activity: 'com.google.android.apps.chrome.Main'});
+    });
+    it('should return pakage for browser', async () => {
+      helpers.getChromePkg('browser').should.deep.equal(
+        {pkg: 'com.android.browser', activity: 'com.android.browser.BrowserActivity'});
+    });
+    it('should return pakage for chromium-browser', async () => {
+      helpers.getChromePkg('chromium-browser').should.deep.equal(
+        {pkg: 'org.chromium.chrome', activity: 'com.google.android.apps.chrome.Main'});
+    });
+    it('should return pakage for chromium-webview', async () => {
+      helpers.getChromePkg('chromium-webview').should.deep.equal(
+        {pkg: 'org.chromium.webview_shell', activity: 'org.chromium.webview_shell.WebViewBrowserActivity'});
     });
   });
 });
