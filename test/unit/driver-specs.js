@@ -90,7 +90,7 @@ describe('driver', () => {
       it('should be rejected if isEmulator is false', () => {
         mocks.driver.expects('isEmulator')
           .once().returns(false);
-        driver.networkSpeed("gsm").should.eventually.be.rejectedWith("network speed method is only available for emulators");
+        driver.networkSpeed("gsm").should.eventually.be.rejectedWith("networkSpeed method is only available for emulators");
         mocks.driver.verify();
       });
     }));
@@ -114,7 +114,8 @@ describe('driver', () => {
           },
           setDeviceId: () => {},
           setEmulatorPort: () => {},
-          adbPort: opts.adbPort
+          adbPort: opts.adbPort,
+          networkSpeed: () => {}
         };
       });
     });
@@ -284,6 +285,13 @@ describe('driver', () => {
     it('should not proxy screenshot if nativeWebScreenshot is on', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: true});
       driver.getProxyAvoidList().should.have.length(9);
+    });
+    it('should set networkSpeed before launching app', async () => {
+      sandbox.stub(driver, 'isEmulator').returns(true);
+      sandbox.stub(helpers, 'ensureNetworkSpeed').returns('full');
+      await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', networkSpeed: 'edge'});
+      driver.isEmulator.calledOnce.should.be.true;
+      helpers.ensureNetworkSpeed.calledOnce.should.be.true;      
     });
   });
   describe('deleteSession', () => {
