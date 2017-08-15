@@ -19,10 +19,45 @@ describe('Unlock Helpers', () => {
   let adb = new ADB();
   let driver = new AndroidDriver();
   let sandbox = sinon.sandbox.create();
-  let assert = chai.assert;
+  let expect = chai.expect;
+  describe('isValidUnlockType', () => {
+    it('should verify the unlock types', async () => {
+      helpers.isValidUnlockType('pin').should.equal(true);
+      helpers.isValidUnlockType('pattern').should.equal(true);
+      helpers.isValidUnlockType('password').should.equal(true);
+      helpers.isValidUnlockType('fingerprint').should.equal(true);
+      helpers.isValidUnlockType('telepathy').should.equal(false);
+    });
+  });
   describe('isValidKey',  () => {
+    it('should verify the unlock keys for each type', async () => {
+      helpers.isValidKey('pin').should.equal(false);
+      helpers.isValidKey('pin', ' ').should.equal(false);
+      helpers.isValidKey('pin', '1111').should.equal(true);
+      helpers.isValidKey('pin', '1abc').should.equal(false);
+      helpers.isValidKey('fingerprint').should.equal(false);
+      helpers.isValidKey('fingerprint', ' ').should.equal(false);
+      helpers.isValidKey('fingerprint', '1111').should.equal(true);
+      helpers.isValidKey('fingerprint', '1abc').should.equal(false);
+      helpers.isValidKey('pattern', '1').should.equal(false);
+      helpers.isValidKey('pattern', '1234').should.equal(true);
+      helpers.isValidKey('pattern', '123456789').should.equal(true);
+      helpers.isValidKey('pattern', '01234').should.equal(false);
+      helpers.isValidKey('pattern').should.equal(false);
+      helpers.isValidKey('pattern', ' ').should.equal(false);
+      helpers.isValidKey('pattern', '1abc').should.equal(false);
+      helpers.isValidKey('pattern', '1213').should.equal(false);
+      helpers.isValidKey('password', '121c3').should.equal(true);
+      helpers.isValidKey('password', 'appium').should.equal(true);
+      helpers.isValidKey('password', 'appium-android-driver').should.equal(true);
+      helpers.isValidKey('password', '@#$%&-+()*"\':;!?,_ ./~`|={}\\[]').should.equal(true);
+      helpers.isValidKey('password', '123').should.equal(false);
+      helpers.isValidKey('password').should.equal(false);
+      helpers.isValidKey('password', '   ').should.equal(false);
+    });
     it('should throw error if unlock type is invalid', async () => {
-      assert.throws(() => helpers.isValidKey('invalid_unlock_type', '1'), 'Invalid unlock type');
+      expect(() => helpers.isValidKey('invalid_unlock_type', '1'))
+        .to.throw('Invalid unlock type');
     });
   });
   describe('dismissKeyguard', withMocks({driver,  adb, asyncbox, helpers}, (mocks) => {
@@ -78,6 +113,20 @@ describe('Unlock Helpers', () => {
       mocks.driver.verify();
     });
   }));
+  describe('encodePassword', () => {
+    it('should verify the password with blank space is encoded', async () => {
+      helpers.encodePassword('a p p i u m').should.equal("a%sp%sp%si%su%sm");
+      helpers.encodePassword('   ').should.equal("%s%s%s");
+    });
+  });
+  describe('stringKeyToArr', () => {
+    it('should cast string keys to array', async () => {
+      helpers.stringKeyToArr('1234').should.eql(['1', '2', '3', '4']);
+      helpers.stringKeyToArr(' 1234 ').should.eql(['1', '2', '3', '4']);
+      helpers.stringKeyToArr('1 2 3 4').should.eql(['1', '2', '3', '4']);
+      helpers.stringKeyToArr('1  2  3  4').should.eql(['1', '2', '3', '4']);
+    });
+  });
   describe('fingerprintUnlock', withMocks({adb, asyncbox}, (mocks) => {
     it('should be able to unlock device via fingerprint if API level >= 23', async () => {
       let caps = {unlockKey: '123'};
@@ -207,6 +256,76 @@ describe('Unlock Helpers', () => {
       mocks.asyncbox.verify();
     });
   }));
+  describe('getPatternKeyPosition', () => {
+    it('should verify pattern pin is aproximatelly to its position', async () => {
+      let pins = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((pin) => {
+        return helpers.getPatternKeyPosition(pin, {x: 33, y:323}, 137.6);
+      });
+      let cols = [101, 238, 375];
+      let rows = [391, 528, 665];
+      expect(pins[0].x).to.be.within(cols[0] - 5, cols[0] + 5);
+      expect(pins[1].x).to.be.within(cols[1] - 5, cols[1] + 5);
+      expect(pins[2].x).to.be.within(cols[2] - 5, cols[2] + 5);
+      expect(pins[3].x).to.be.within(cols[0] - 5, cols[0] + 5);
+      expect(pins[4].x).to.be.within(cols[1] - 5, cols[1] + 5);
+      expect(pins[5].x).to.be.within(cols[2] - 5, cols[2] + 5);
+      expect(pins[6].x).to.be.within(cols[0] - 5, cols[0] + 5);
+      expect(pins[7].x).to.be.within(cols[1] - 5, cols[1] + 5);
+      expect(pins[8].x).to.be.within(cols[2] - 5, cols[2] + 5);
+      expect(pins[0].y).to.be.within(rows[0] - 5, rows[0] + 5);
+      expect(pins[1].y).to.be.within(rows[0] - 5, rows[0] + 5);
+      expect(pins[2].y).to.be.within(rows[0] - 5, rows[0] + 5);
+      expect(pins[3].y).to.be.within(rows[1] - 5, rows[1] + 5);
+      expect(pins[4].y).to.be.within(rows[1] - 5, rows[1] + 5);
+      expect(pins[5].y).to.be.within(rows[1] - 5, rows[1] + 5);
+      expect(pins[6].y).to.be.within(rows[2] - 5, rows[2] + 5);
+      expect(pins[7].y).to.be.within(rows[2] - 5, rows[2] + 5);
+      expect(pins[8].y).to.be.within(rows[2] - 5, rows[2] + 5);
+    });
+  });
+  describe('getPatternActions', () => {
+    it('should generate press, moveTo, relase gesture scheme to unlock by pattern', async () => {
+      let keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+      let actions = helpers.getPatternActions(keys, {x: 0, y:0}, 1);
+      actions.map((action, i) => {
+        if (i === 0) {
+          action.action.should.equal('press');
+        } else if (i === keys.length) {
+          action.action.should.equal('release');
+        } else {
+          action.action.should.equal('moveTo');
+        }
+      });
+    });
+    it('should verify pattern gestures moves to non consecutives pins', async () => {
+      let keys = ["7", "2", "9", "8", "5", "6", "1", "4", "3"];
+      let actions = helpers.getPatternActions(keys, {x: 0, y:0}, 1);
+      // Move from pin 7 to pin 2
+      actions[1].options.x.should.equal(1);
+      actions[1].options.y.should.equal(-2);
+      // Move from pin 2 to pin 9
+      actions[2].options.x.should.equal(1);
+      actions[2].options.y.should.equal(2);
+      // Move from pin 9 to pin 8
+      actions[3].options.x.should.equal(-1);
+      actions[3].options.y.should.equal(0);
+      // Move from pin 8 to pin 5
+      actions[4].options.x.should.equal(0);
+      actions[4].options.y.should.equal(-1);
+      // Move from pin 5 to pin 6
+      actions[5].options.x.should.equal(1);
+      actions[5].options.y.should.equal(0);
+      // Move from pin 6 to pin 1
+      actions[6].options.x.should.equal(-2);
+      actions[6].options.y.should.equal(-1);
+      // Move from pin 1 to pin 4
+      actions[7].options.x.should.equal(0);
+      actions[7].options.y.should.equal(1);
+      // Move from pin 4 to pin 3
+      actions[8].options.x.should.equal(2);
+      actions[8].options.y.should.equal(-1);
+    });
+  });
   describe('patternUnlock', withMocks({driver, helpers, adb, asyncbox}, (mocks) => {
     const el = {ELEMENT: 1};
     const pos = {x: 10, y: 20};
