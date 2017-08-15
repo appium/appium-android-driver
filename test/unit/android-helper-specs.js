@@ -279,7 +279,7 @@ describe('Android Helpers', () => {
       sinon.stub(ADB, 'createADB', async () => {
         return {
           setDeviceId: (udid) => { curDeviceId = udid; },
-          setEmulatorPort: (emPort) => { emulatorPort=emPort; }
+          setEmulatorPort: (emPort) => { emulatorPort = emPort; }
         };
       });
     });
