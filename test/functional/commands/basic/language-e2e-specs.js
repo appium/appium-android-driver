@@ -15,11 +15,11 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
   let initialLocale;
 
   before(async function () {
-    if (process.env.TRAVIS) return this.skip();
+    if (process.env.TRAVIS) return this.skip(); //eslint-disable-line curly
 
     // restarting doesn't work on Android 7
     let adb = new ADB();
-    if (await adb.getApiLevel() > 23) return this.skip();
+    if (await adb.getApiLevel() > 23) return this.skip(); //eslint-disable-line curly
 
     initialLocale = await getLocale(adb);
   });

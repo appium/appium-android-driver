@@ -38,7 +38,7 @@ describe('android-helpers e2e', () => {
     before(async function () {
       adb = await ADB.createADB();
 
-      if (process.env.TRAVIS) return this.skip();
+      if (process.env.TRAVIS) return this.skip(); //eslint-disable-line curly
     });
     after(async () => {
       await helpers.ensureDeviceLocale(adb, 'en', 'US');

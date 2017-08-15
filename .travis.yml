@@ -35,7 +35,7 @@ env:
 before_script:
   # node stuff
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
-  - nvm install 4
+  - nvm install 6
   - node --version
   - npm --version
   - npm install appium-test-support # get the travis emu scripts
@@ -45,13 +45,11 @@ before_script:
   - $(npm bin)/android-emu-travis-pre
 
   # npm stuff
-  - npm install -g gulp
-  - npm install -g mocha
   - npm install
 
   # make sure emulator started
   - $(npm bin)/android-emu-travis-post
 script:
-  - gulp eslint && mocha -t $MOCHA_TIMEOUT $RECURSIVE build/test/$TEST -g @skip-ci -i
+  - npm run lint && npm run mocha -- -t $MOCHA_TIMEOUT $RECURSIVE build/test/$TEST -g @skip-ci -i
 after_success:
   - gulp coveralls
