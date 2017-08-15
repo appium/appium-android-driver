@@ -194,7 +194,7 @@ describe('Unlock Helpers', () => {
       for (let pin of keys) {
         mocks.driver.expects('findElOrEls')
           .withExactArgs("id", `com.android.keyguard:id/key${pin}`, false)
-          .returns({ELEMENT: parseInt(pin)});
+          .returns({ELEMENT: parseInt(pin, 10)});
       }
       mocks.driver.expects('findElOrEls')
         .withExactArgs("id", "com.android.keyguard:id/key_enter", false)
