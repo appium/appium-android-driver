@@ -525,7 +525,7 @@ describe('Android Helpers', () => {
       mocks.adb.expects('grantAllPermissions')
         .withExactArgs('io.appium.settings').once()
         .returns(true);
-      mocks.adb.expects('getApiLevel').once().returns(24);
+      mocks.adb.expects('getApiLevel').once().returns(23);
       mocks.adb.expects('startApp').once();
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
