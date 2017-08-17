@@ -13,11 +13,17 @@ let defaultCaps = _.defaults({
   browserName: 'chrome'
 }, DEFAULT_CAPS);
 
-describe.skip('toggle wifi tests', () => {
+describe('toggle wifi tests', () => {
   let driver;
 
   describe('functional', () => {
     before(() => {
+      if (process.env.TRAVIS) {
+        return this.skip();
+      }
+      if (!process.env.REAL_DEVICE) {
+        return this.skip();
+      }
       driver = new AndroidDriver();
     });
     afterEach(async () => {
