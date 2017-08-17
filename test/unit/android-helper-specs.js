@@ -511,12 +511,16 @@ describe('Android Helpers', () => {
         .returns(true);
       mocks.adb.expects('grantAllPermissions').withExactArgs('io.appium.settings').once()
         .returns(true);
+      mocks.adb.expects('getApiLevel').once()
+        .returns(19);
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
     });
     it('should skip exception if installOrUpgrade or grantAllPermissions failed', async () => {
       mocks.adb.expects('installOrUpgrade').throws();
       mocks.adb.expects('grantAllPermissions').throws();
+      mocks.adb.expects('getApiLevel').once()
+        .returns(19);
       await helpers.pushSettingsApp(adb).should.be.fulfilled;
     });
     it('should launch settings app on android 7+', async () => {
