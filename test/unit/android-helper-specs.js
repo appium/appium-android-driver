@@ -519,6 +519,17 @@ describe('Android Helpers', () => {
       mocks.adb.expects('grantAllPermissions').throws();
       await helpers.pushSettingsApp(adb).should.be.fulfilled;
     });
+    it('should launch settings app on android 7+', async () => {
+      mocks.adb.expects('installOrUpgrade').once()
+        .returns(true);
+      mocks.adb.expects('grantAllPermissions')
+        .withExactArgs('io.appium.settings').once()
+        .returns(true);
+      mocks.adb.expects('getApiLevel').once().returns(24);
+      mocks.adb.expects('startApp').once();
+      await helpers.pushSettingsApp(adb);
+      mocks.adb.verify();
+    });
   }));
   describe('setMockLocationApp', withMocks({adb}, (mocks) => {
     it('should enable mock location for api level below 23', async () => {
