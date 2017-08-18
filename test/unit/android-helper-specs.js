@@ -17,9 +17,9 @@ const REMOTE_TEMP_PATH = "/data/local/tmp";
 const REMOTE_INSTALL_TIMEOUT = 90000;
 chai.use(chaiAsPromised);
 
+
 describe('Android Helpers', () => {
   let adb = new ADB();
-
   describe('parseJavaVersion', () => {
     it('should correctly parse java version', () => {
       helpers.parseJavaVersion(`java version "1.8.0_40"
@@ -48,9 +48,11 @@ describe('Android Helpers', () => {
       mocks.teen_process.verify();
     });
   }));
-  describe('prepareEmulator', withMocks({adb}, (mocks) => {
-    const opts = {avd: "foo@bar", avdArgs: "", language: "en", locale: "us"};
+  describe('prepareEmulator', withMocks({adb, helpers}, (mocks) => {
+    const opts = {avd: "foo@bar", avdArgs: "", language: "en", locale: "us", networkSpeed: "edge"};
     it('should not launch avd if one is already running', async () => {
+      mocks.helpers.expects('ensureNetworkSpeed').once()
+        .returns('edge');
       mocks.adb.expects('getRunningAVD').withExactArgs('foobar')
         .returns("foo");
       mocks.adb.expects('launchAVD').never();
@@ -61,7 +63,7 @@ describe('Android Helpers', () => {
     it('should launch avd if one is already running', async () => {
       mocks.adb.expects('getRunningAVD').withExactArgs('foobar')
         .returns(null);
-      mocks.adb.expects('launchAVD').withExactArgs('foo@bar', '', 'en', 'us',
+      mocks.adb.expects('launchAVD').withExactArgs('foo@bar', ' -netspeed edge', 'en', 'us',
         undefined, undefined)
         .returns("");
       await helpers.prepareEmulator(adb, opts);

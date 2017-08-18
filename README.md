@@ -151,6 +151,14 @@ If more than one of these capabilities are given, the driver will only use first
 | `unlockWithHelperApp`      |
 | `unlockWithUIAutomation`   |
 | `wrapBootstrapDisconnect`  |
+| `fingerprint`              |
+| `sendSMS`                  |
+| `gsmCall`                  |
+| `gsmSignal`                |
+| `gsmVoice`                 |
+| `powerAC`                  |
+| `powerCapacity`            |
+| `networkSpeed`             |
 
 
 ## API Notes

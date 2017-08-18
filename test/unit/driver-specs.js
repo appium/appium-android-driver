@@ -31,18 +31,66 @@ describe('driver', () => {
   describe('emulator methods', () => {
     driver = new AndroidDriver();
     describe('fingerprint', withMocks({driver}, (mocks) => {
-      it('fingerprint should be rejected if isEmulator is false', () => {
+      it('should be rejected if isEmulator is false', () => {
         mocks.driver.expects('isEmulator')
           .once().returns(false);
         driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
         mocks.driver.verify();
       });
     }));
-    describe('fingerprint', withMocks({driver}, (mocks) => {
-      it('sendSMS should be rejected if isEmulator is false', () => {
+    describe('sendSMS', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
         mocks.driver.expects('isEmulator')
           .once().returns(false);
         driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('powerAC', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.powerAC('off').should.eventually.be.rejectedWith("powerAC method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('powerCapacity', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.powerCapacity(0).should.eventually.be.rejectedWith("powerCapacity method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('gsmCall', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.gsmCall(4509, 'call').should.eventually.be.rejectedWith("gsmCall method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('gsmVoice', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.gsmVoice('roaming').should.eventually.be.rejectedWith("gsmVoice method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('gsmSignal', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.gsmSignal(3).should.eventually.be.rejectedWith("gsmSignal method is only available for emulators");
+        mocks.driver.verify();
+      });
+    }));
+    describe('networkSpeed', withMocks({driver}, (mocks) => {
+      it('should be rejected if isEmulator is false', () => {
+        mocks.driver.expects('isEmulator')
+          .once().returns(false);
+        driver.networkSpeed("gsm").should.eventually.be.rejectedWith("networkSpeed method is only available for emulators");
         mocks.driver.verify();
       });
     }));
@@ -66,7 +114,8 @@ describe('driver', () => {
           },
           setDeviceId: () => {},
           setEmulatorPort: () => {},
-          adbPort: opts.adbPort
+          adbPort: opts.adbPort,
+          networkSpeed: () => {}
         };
       });
     });
@@ -127,6 +176,13 @@ describe('driver', () => {
     it('should not proxy screenshot if nativeWebScreenshot is on', async () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: true});
       driver.getProxyAvoidList().should.have.length(9);
+    });
+    it('should set networkSpeed before launching app', async () => {
+      sandbox.stub(driver, 'isEmulator').returns(true);
+      sandbox.stub(helpers, 'ensureNetworkSpeed').returns('full');
+      await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', networkSpeed: 'edge'});
+      driver.isEmulator.calledOnce.should.be.true;
+      helpers.ensureNetworkSpeed.calledOnce.should.be.true;
     });
   });
   describe('deleteSession', () => {
