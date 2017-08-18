@@ -523,7 +523,7 @@ describe('Android Helpers', () => {
       mocks.adb.expects('processExists').throws();
       await helpers.pushSettingsApp(adb).should.be.fulfilled;
     });
-    it('should launch settings app on android 7+', async () => {
+    it('should launch settings app if it isnt running', async () => {
       mocks.adb.expects('installOrUpgrade').once()
         .returns(true);
       mocks.adb.expects('grantAllPermissions')
