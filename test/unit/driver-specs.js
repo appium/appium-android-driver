@@ -291,7 +291,7 @@ describe('driver', () => {
       sandbox.stub(helpers, 'ensureNetworkSpeed').returns('full');
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', networkSpeed: 'edge'});
       driver.isEmulator.calledOnce.should.be.true;
-      helpers.ensureNetworkSpeed.calledOnce.should.be.true;      
+      helpers.ensureNetworkSpeed.calledOnce.should.be.true;
     });
   });
   describe('deleteSession', () => {
