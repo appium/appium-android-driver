@@ -49,10 +49,8 @@ describe('Android Helpers', () => {
     });
   }));
   describe('prepareEmulator', withMocks({adb, helpers}, (mocks) => {
-    const opts = {avd: "foo@bar", avdArgs: "", language: "en", locale: "us", networkSpeed: "edge"};
+    const opts = {avd: "foo@bar", avdArgs: "", language: "en", locale: "us"};
     it('should not launch avd if one is already running', async () => {
-      mocks.helpers.expects('ensureNetworkSpeed').once()
-        .returns('edge');
       mocks.adb.expects('getRunningAVD').withExactArgs('foobar')
         .returns("foo");
       mocks.adb.expects('launchAVD').never();
@@ -63,7 +61,7 @@ describe('Android Helpers', () => {
     it('should launch avd if one is already running', async () => {
       mocks.adb.expects('getRunningAVD').withExactArgs('foobar')
         .returns(null);
-      mocks.adb.expects('launchAVD').withExactArgs('foo@bar', ' -netspeed edge', 'en', 'us',
+      mocks.adb.expects('launchAVD').withExactArgs('foo@bar', '', 'en', 'us',
         undefined, undefined)
         .returns("");
       await helpers.prepareEmulator(adb, opts);
@@ -79,6 +77,15 @@ describe('Android Helpers', () => {
     });
     it('should fail if avd name is not specified', async () => {
       await helpers.prepareEmulator(adb, {}).should.eventually.be.rejected;
+    });
+    it('should set the correct avdArgs', async () => {
+      let avdArgs = '-wipe-data';
+      (helpers.prepareAVDArgs({}, adb, avdArgs)).should.equal(avdArgs);
+      (helpers.prepareAVDArgs({isHeadless: true}, adb, avdArgs)).should.have.string('-no-window');
+      mocks.helpers.expects('ensureNetworkSpeed').once()
+        .returns('edge');
+      (helpers.prepareAVDArgs({networkSpeed: 'edge'}, adb, avdArgs)).should.have.string('-netspeed edge');
+      mocks.adb.verify();
     });
   }));
   describe('ensureDeviceLocale', withMocks({adb}, (mocks) => {
