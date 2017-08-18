@@ -17,7 +17,7 @@ describe('toggle wifi tests', () => {
   let driver;
 
   describe('functional', () => {
-    before(() => {
+    before(function () {
       if (process.env.TRAVIS) {
         return this.skip();
       }
