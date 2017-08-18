@@ -513,13 +513,29 @@ describe('Android Helpers', () => {
         .returns(true);
       mocks.adb.expects('grantAllPermissions').withExactArgs('io.appium.settings').once()
         .returns(true);
+      mocks.adb.expects('processExists')
+          .withExactArgs('io.appium.settings').once()
+          .returns(true);
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
     });
     it('should skip exception if installOrUpgrade or grantAllPermissions failed', async () => {
       mocks.adb.expects('installOrUpgrade').throws();
       mocks.adb.expects('grantAllPermissions').throws();
+      mocks.adb.expects('processExists').throws();
       await helpers.pushSettingsApp(adb).should.be.fulfilled;
+    });
+    it('should launch settings app if it isnt running', async () => {
+      mocks.adb.expects('installOrUpgrade').once()
+        .returns(true);
+      mocks.adb.expects('grantAllPermissions')
+        .withExactArgs('io.appium.settings').once()
+        .returns(true);
+      mocks.adb.expects('processExists').once()
+        .returns(false);
+      mocks.adb.expects('startApp').once();
+      await helpers.pushSettingsApp(adb);
+      mocks.adb.verify();
     });
   }));
   describe('setMockLocationApp', withMocks({adb}, (mocks) => {
