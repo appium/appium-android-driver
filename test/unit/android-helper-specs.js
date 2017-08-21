@@ -78,6 +78,8 @@ describe('Android Helpers', () => {
     it('should fail if avd name is not specified', async () => {
       await helpers.prepareEmulator(adb, {}).should.eventually.be.rejected;
     });
+  }));
+  describe('prepareAVDArgs', withMocks({adb, helpers}, (mocks) => {
     it('should set the correct avdArgs', async () => {
       let avdArgs = '-wipe-data';
       (helpers.prepareAVDArgs({}, adb, avdArgs)).should.equal(avdArgs);
