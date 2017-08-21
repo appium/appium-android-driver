@@ -81,6 +81,16 @@ describe('Android Helpers', () => {
       await helpers.prepareEmulator(adb, {}).should.eventually.be.rejected;
     });
   }));
+  describe('ensureNetworkSpeed', withMocks({adb}, (mocks) => {
+    it('should return value if network speed is valid', async () => {
+      adb.NETWORK_SPEED = { GSM: 'gsm' };
+      await helpers.ensureNetworkSpeed(adb, 'gsm').should.be.equal('gsm');
+    });
+    it('should return ADB.NETWORK_SPEED.FULL if network speed is invalid', async () => {
+      adb.NETWORK_SPEED = { FULL: 'full' };
+      await helpers.ensureNetworkSpeed(adb, 'invalid').should.be.equal('full');
+    });
+  }));
   describe('ensureDeviceLocale', withMocks({adb}, (mocks) => {
     it('should return if language and country are not passed', async () => {
       mocks.adb.expects('getDeviceLanguage').never();
