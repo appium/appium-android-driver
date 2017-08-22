@@ -107,26 +107,26 @@ async function runKeyEventTest (driver) {
 }
 
 let tests = [
-  { label: 'editing a text field', text: 'Life, the Universe and Everything.' },
-  { label: 'sending \'&-\'', text: '&-' },
-  { label: 'sending \'&\' and \'-\' in other text', text: 'In the mid-1990s he ate fish & chips as mayor-elect.' },
-  { label: 'sending \'-\' in text', text: 'Super-test.' },
-  { label: 'sending numbers', text: '0123456789'},
+  {label: 'editing a text field', text: 'Life, the Universe and Everything.'},
+  {label: 'sending \'&-\'', text: '&-'},
+  {label: 'sending \'&\' and \'-\' in other text', text: 'In the mid-1990s he ate fish & chips as mayor-elect.'},
+  {label: 'sending \'-\' in text', text: 'Super-test.'},
+  {label: 'sending numbers', text: '0123456789'},
 ];
 
 let unicodeTests = [
-  { label: 'should be able to send \'-\' in unicode text', text: 'परीक्षा-परीक्षण' },
-  { label: 'should be able to send \'&\' in text', text: 'Fish & chips' },
-  { label: 'should be able to send \'&\' in unicode text', text: 'Mīna & chips' },
-  { label: 'should be able to send roman characters with diacritics', text: 'Áé Œ ù ḍ' },
-  { label: 'should be able to send a \'u\' with an umlaut', text: 'ü' },
+  {label: 'should be able to send \'-\' in unicode text', text: 'परीक्षा-परीक्षण'},
+  {label: 'should be able to send \'&\' in text', text: 'Fish & chips'},
+  {label: 'should be able to send \'&\' in unicode text', text: 'Mīna & chips'},
+  {label: 'should be able to send roman characters with diacritics', text: 'Áé Œ ù ḍ'},
+  {label: 'should be able to send a \'u\' with an umlaut', text: 'ü'},
 ];
 
 let languageTests = [
-  { label: 'should be able to send Tamil', text: 'சோதனை' },
-  { label: 'should be able to send Chinese', text: '测试' },
-  { label: 'should be able to send Arabic', text: 'تجريب' },
-  { label: 'should be able to send Hebrew', text: 'בדיקות' },
+  {label: 'should be able to send Tamil', text: 'சோதனை'},
+  {label: 'should be able to send Chinese', text: '测试'},
+  {label: 'should be able to send Arabic', text: 'تجريب'},
+  {label: 'should be able to send Hebrew', text: 'בדיקות'},
 ];
 
 describe('keyboard', () => {

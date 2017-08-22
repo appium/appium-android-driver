@@ -97,8 +97,8 @@ describe('Actions', () => {
     it('shoudle be able to do fake flick on element', async () => {
       await driver.fakeFlickElement(5000, 56, 78, 1.32);
       driver.bootstrap.sendAction
-        .calledWithExactly('element:flick', { xoffset: 56, yoffset: 78,
-                                              speed: 1.32, elementId: 5000 })
+        .calledWithExactly('element:flick',
+          {xoffset: 56, yoffset: 78, speed: 1.32, elementId: 5000})
         .should.be.true;
     });
   });

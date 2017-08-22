@@ -74,24 +74,24 @@ describe('General', () => {
   });
   describe('isKeyboardShown', () => {
     it('should return true if the keyboard is shown', async () => {
-      driver.adb.isSoftKeyboardPresent = () => { return { isKeyboardShown: true, canCloseKeyboard: true }; };
+      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: true, canCloseKeyboard: true}; };
       (await driver.isKeyboardShown()).should.equal(true);
     });
     it('should return false if the keyboard is not shown', async () => {
-      driver.adb.isSoftKeyboardPresent = () => { return { isKeyboardShown: false, canCloseKeyboard: true }; };
+      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: false, canCloseKeyboard: true}; };
       (await driver.isKeyboardShown()).should.equal(false);
     });
   });
   describe('hideKeyboard', () => {
     it('should hide keyboard via back command', async () => {
       sandbox.stub(driver, 'back');
-      driver.adb.isSoftKeyboardPresent = () => { return { isKeyboardShown: true, canCloseKeyboard: true }; };
+      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: true, canCloseKeyboard: true}; };
       await driver.hideKeyboard();
       driver.back.calledOnce.should.be.true;
     });
     it('should not call back command if can\'t close keyboard', async () => {
       sandbox.stub(driver, 'back');
-      driver.adb.isSoftKeyboardPresent = () => { return { isKeyboardShown: true, canCloseKeyboard: false }; };
+      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: true, canCloseKeyboard: false}; };
       await driver.hideKeyboard();
       driver.back.notCalled.should.be.true;
     });
@@ -103,7 +103,7 @@ describe('General', () => {
   describe('openSettingsActivity', () => {
     it('should open settings activity', async () => {
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
-        .returns({ appPackage: 'pkg', appActivity: 'act' });
+        .returns({appPackage: 'pkg', appActivity: 'act'});
       sandbox.stub(driver.adb, 'shell');
       sandbox.stub(driver.adb, 'waitForNotActivity');
       await driver.openSettingsActivity('set1');
@@ -165,12 +165,12 @@ describe('General', () => {
     it('should install app', async () => {
       driver.opts.fastReset = 'fastReset';
       let app = 'app.apk';
-      let opts = { app: 'app.apk', appPackage: 'pkg', fastReset: 'fastReset' };
+      let opts = {app: 'app.apk', appPackage: 'pkg', fastReset: 'fastReset'};
       sandbox.stub(driver.helpers, 'configureApp').withArgs('app', '.apk')
         .returns(app);
       sandbox.stub(fs, 'exists').withArgs(app).returns(true);
       sandbox.stub(driver.adb, 'packageAndLaunchActivityFromManifest')
-        .withArgs(app).returns({ apkPackage: 'pkg' });
+        .withArgs(app).returns({apkPackage: 'pkg'});
       sandbox.stub(helpers, 'installApkRemotely')
         .returns(true);
       await driver.installApp('app').should.eventually.be.true;
@@ -186,15 +186,15 @@ describe('General', () => {
   });
   describe('background', () => {
     it('should bring app to background', async () => {
-      driver.opts = { appPackage: 'pkg', appActivity: 'acv', intentAction: 'act',
-                      intentCategory: 'cat', intentFlags: 'flgs',
-                      optionalIntentArguments: 'opt' };
-      let params = { pkg: 'pkg', activity: 'acv', action: 'act', category: 'cat',
-                     flags: 'flgs', waitPkg: 'wpkg', waitActivity: 'wacv',
-                     optionalIntentArguments: 'opt', stopApp: false };
+      driver.opts = {appPackage: 'pkg', appActivity: 'acv', intentAction: 'act',
+                     intentCategory: 'cat', intentFlags: 'flgs',
+                     optionalIntentArguments: 'opt'};
+      let params = {pkg: 'pkg', activity: 'acv', action: 'act', category: 'cat',
+                    flags: 'flgs', waitPkg: 'wpkg', waitActivity: 'wacv',
+                    optionalIntentArguments: 'opt', stopApp: false};
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
-        .returns({ appPackage: 'wpkg', appActivity: 'wacv' });
+        .returns({appPackage: 'wpkg', appActivity: 'wacv'});
       sandbox.stub(B, 'delay');
       sandbox.stub(driver.adb, 'startApp');
       await driver.background(10);
@@ -247,8 +247,8 @@ describe('General', () => {
   describe('startActivity', () => {
     let params;
     beforeEach(() => {
-      params = { pkg: 'pkg', activity: 'act', waitPkg: 'wpkg', waitActivity: 'wact',
-                 action: 'act', category: 'cat', flags: 'flgs', optionalIntentArguments: 'opt' };
+      params = {pkg: 'pkg', activity: 'act', waitPkg: 'wpkg', waitActivity: 'wact',
+                action: 'act', category: 'cat', flags: 'flgs', optionalIntentArguments: 'opt'};
       sandbox.stub(driver.adb, 'startApp');
     });
     it('should start activity', async () => {
@@ -303,13 +303,13 @@ describe('General', () => {
   });
   describe('startAUT', () => {
     it('should start AUT', async () => {
-      driver.opts = { appPackage: 'pkg', appActivity: 'act', intentAction: 'actn',
-                      intentCategory: 'cat', intentFlags: 'flgs', appWaitPackage: 'wpkg',
-                      appWaitActivity: 'wact', appWaitDuration: 'wdur',
-                      optionalIntentArguments: 'opt' };
-      let params = { pkg: 'pkg', activity: 'act', action: 'actn', category: 'cat',
-                     flags: 'flgs', waitPkg: 'wpkg', waitActivity: 'wact',
-                     waitDuration: 'wdur', optionalIntentArguments: 'opt', stopApp: false };
+      driver.opts = {appPackage: 'pkg', appActivity: 'act', intentAction: 'actn',
+                     intentCategory: 'cat', intentFlags: 'flgs', appWaitPackage: 'wpkg',
+                     appWaitActivity: 'wact', appWaitDuration: 'wdur',
+                     optionalIntentArguments: 'opt'};
+      let params = {pkg: 'pkg', activity: 'act', action: 'actn', category: 'cat',
+                    flags: 'flgs', waitPkg: 'wpkg', waitActivity: 'wact',
+                    waitDuration: 'wdur', optionalIntentArguments: 'opt', stopApp: false};
       driver.opts.dontStopAppOnReset = true;
       params.stopApp = false;
       sandbox.stub(driver.adb, 'startApp');
@@ -319,7 +319,7 @@ describe('General', () => {
   });
   describe('setUrl', () => {
     it('should set url', async () => {
-      driver.opts = { appPackage: 'pkg' };
+      driver.opts = {appPackage: 'pkg'};
       sandbox.stub(driver.adb, 'startUri');
       await driver.setUrl('url');
       driver.adb.startUri.calledWithExactly('url', 'pkg').should.be.true;
@@ -327,7 +327,7 @@ describe('General', () => {
   });
   describe('closeApp', () => {
     it('should close app', async () => {
-      driver.opts = { appPackage: 'pkg' };
+      driver.opts = {appPackage: 'pkg'};
       sandbox.stub(driver.adb, 'forceStop');
       await driver.closeApp();
       driver.adb.forceStop.calledWithExactly('pkg').should.be.true;

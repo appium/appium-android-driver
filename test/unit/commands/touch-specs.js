@@ -17,10 +17,10 @@ describe('Touch', () => {
     describe('given a touch sequence with absolute coordinates', () => {
       it('should use offsets for moveTo', async () => {
         // let driver = new AndroidDriver({foo: 'bar'});
-        let actions = [{action: 'press', options: { x: 100, y: 101 }},
-                       {action: 'moveTo', options: { x: 50, y: 51 }},
-                       {action: 'wait', options: { ms: 5000 }},
-                       {action: 'moveTo', options: { x: -40, y: -41 }},
+        let actions = [{action: 'press', options: {x: 100, y: 101}},
+                       {action: 'moveTo', options: {x: 50, y: 51}},
+                       {action: 'wait', options: {ms: 5000}},
+                       {action: 'moveTo', options: {x: -40, y: -41}},
                        {action: 'release', options: {}}];
         let touchStates = await driver.parseTouch(actions, false);
         touchStates.length.should.equal(5);
