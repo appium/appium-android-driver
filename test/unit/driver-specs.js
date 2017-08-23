@@ -28,73 +28,6 @@ describe('driver', () => {
       driver.findElOrEls.should.be.a('function');
     });
   });
-  describe('emulator methods', () => {
-    driver = new AndroidDriver();
-    describe('fingerprint', withMocks({driver}, (mocks) => {
-      it('should be rejected if isEmulator is false', () => {
-        mocks.driver.expects('isEmulator')
-          .once().returns(false);
-        driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
-        mocks.driver.verify();
-      });
-    }));
-    describe('sendSMS', withMocks({driver}, (mocks) => {
-      it('should be rejected if isEmulator is false', () => {
-        mocks.driver.expects('isEmulator')
-          .once().returns(false);
-        driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
-        mocks.driver.verify();
-      });
-    }));
-    describe('powerAC', withMocks({driver}, (mocks) => {
-      it('should be rejected if isEmulator is false', () => {
-        mocks.driver.expects('isEmulator')
-          .once().returns(false);
-        driver.powerAC('off').should.eventually.be.rejectedWith("powerAC method is only available for emulators");
-        mocks.driver.verify();
-      });
-    }));
-    describe('powerCapacity', withMocks({driver}, (mocks) => {
-      it('should be rejected if isEmulator is false', () => {
-        mocks.driver.expects('isEmulator')
-          .once().returns(false);
-        driver.powerCapacity(0).should.eventually.be.rejectedWith("powerCapacity method is only available for emulators");
-        mocks.driver.verify();
-      });
-    }));
-    describe('gsmCall', withMocks({driver}, (mocks) => {
-      it('should be rejected if isEmulator is false', () => {
-        mocks.driver.expects('isEmulator')
-          .once().returns(false);
-        driver.gsmCall(4509, 'call').should.eventually.be.rejectedWith("gsmCall method is only available for emulators");
-        mocks.driver.verify();
-      });
-    }));
-    describe('gsmVoice', withMocks({driver}, (mocks) => {
-      it('should be rejected if isEmulator is false', () => {
-        mocks.driver.expects('isEmulator')
-          .once().returns(false);
-        driver.gsmVoice('roaming').should.eventually.be.rejectedWith("gsmVoice method is only available for emulators");
-        mocks.driver.verify();
-      });
-    }));
-    describe('gsmSignal', withMocks({driver}, (mocks) => {
-      it('should be rejected if isEmulator is false', () => {
-        mocks.driver.expects('isEmulator')
-          .once().returns(false);
-        driver.gsmSignal(3).should.eventually.be.rejectedWith("gsmSignal method is only available for emulators");
-        mocks.driver.verify();
-      });
-    }));
-    describe('networkSpeed', withMocks({driver}, (mocks) => {
-      it('should be rejected if isEmulator is false', () => {
-        mocks.driver.expects('isEmulator')
-          .once().returns(false);
-        driver.networkSpeed("gsm").should.eventually.be.rejectedWith("networkSpeed method is only available for emulators");
-        mocks.driver.verify();
-      });
-    }));
-  });
   describe('createSession', () => {
     beforeEach(() => {
       driver = new AndroidDriver();
@@ -226,7 +159,7 @@ describe('driver', () => {
       driver.adb.uninstallApk.calledOnce.should.be.true;
     });
   });
-  describe('shouldDismissChromeWelcome', () => {
+  describe('dismissChromeWelcome', () => {
     before(async () => {
       driver = new AndroidDriver();
     });
@@ -245,6 +178,29 @@ describe('driver', () => {
       driver.shouldDismissChromeWelcome().should.be.true;
     });
   });
+  describe('initAUT', withMocks({helpers}, (mocks) => {
+    beforeEach(async () => {
+      driver = new AndroidDriver();
+      driver.caps = {};
+    });
+    it('should throw error if run with full reset', async () => {
+      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: true};
+      await driver.initAUT().should.be.rejectedWith(/Full reset requires an app capability/);
+    });
+    it('should reset if run with fast reset', async () => {
+      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: true};
+      driver.adb = "mock_adb";
+      mocks.helpers.expects("resetApp").withExactArgs("mock_adb", undefined, "app.package", true);
+      await driver.initAUT();
+      mocks.helpers.verify();
+    });
+    it('should keep data if run without reset', async () => {
+      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: false};
+      mocks.helpers.expects("resetApp").never();
+      await driver.initAUT();
+      mocks.helpers.verify();
+    });
+  }));
   describe('startAndroidSession', () => {
     beforeEach(async () => {
       driver = new AndroidDriver();

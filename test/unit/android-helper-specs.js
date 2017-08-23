@@ -90,6 +90,16 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
   }));
+  describe('ensureNetworkSpeed', () => {
+    it('should return value if network speed is valid', async () => {
+      adb.NETWORK_SPEED = {GSM: 'gsm'};
+      await helpers.ensureNetworkSpeed(adb, 'gsm').should.be.equal('gsm');
+    });
+    it('should return ADB.NETWORK_SPEED.FULL if network speed is invalid', async () => {
+      adb.NETWORK_SPEED = {FULL: 'full'};
+      await helpers.ensureNetworkSpeed(adb, 'invalid').should.be.equal('full');
+    });
+  });
   describe('ensureDeviceLocale', withMocks({adb}, (mocks) => {
     it('should return if language and country are not passed', async () => {
       mocks.adb.expects('getDeviceLanguage').never();
@@ -325,24 +335,24 @@ describe('Android Helpers', () => {
     it('should return package and launch activity from manifest', async () => {
       mocks.adb.expects('packageAndLaunchActivityFromManifest').withExactArgs('foo')
         .returns({apkPackage: 'pkg', apkActivity: 'ack'});
-      const result = { appPackage: 'pkg', appWaitPackage: 'pkg',
-                       appActivity: 'ack', appWaitActivity: 'ack' };
+      const result = {appPackage: 'pkg', appWaitPackage: 'pkg',
+                      appActivity: 'ack', appWaitActivity: 'ack'};
       (await helpers.getLaunchInfo(adb, {app: "foo"})).should.deep
         .equal(result);
       mocks.adb.verify();
     });
     it('should not override appPackage, appWaitPackage, appActivity, appWaitActivity ' +
        'from manifest if they are allready defined in opts', async () => {
-      let optsFromManifest = { apkPackage: 'mpkg', apkActivity: 'mack' };
+      let optsFromManifest = {apkPackage: 'mpkg', apkActivity: 'mack'};
       mocks.adb.expects('packageAndLaunchActivityFromManifest')
         .withExactArgs('foo').twice().returns(optsFromManifest);
 
-      let inOpts = { app: 'foo', appActivity: 'ack', appWaitPackage: 'wpkg', appWaitActivity: 'wack' };
-      let outOpts = { appPackage: 'mpkg', appActivity: 'ack', appWaitPackage: 'wpkg', appWaitActivity: 'wack' };
+      let inOpts = {app: 'foo', appActivity: 'ack', appWaitPackage: 'wpkg', appWaitActivity: 'wack' };
+      let outOpts = {appPackage: 'mpkg', appActivity: 'ack', appWaitPackage: 'wpkg', appWaitActivity: 'wack'};
       (await helpers.getLaunchInfo(adb, inOpts)).should.deep.equal(outOpts);
 
-      inOpts = { app: 'foo', appPackage: 'pkg', appWaitPackage: 'wpkg', appWaitActivity: 'wack' };
-      outOpts = { appPackage: 'pkg', appActivity: 'mack', appWaitPackage: 'wpkg', appWaitActivity: 'wack' };
+      inOpts = {app: 'foo', appPackage: 'pkg', appWaitPackage: 'wpkg', appWaitActivity: 'wack'};
+      outOpts = {appPackage: 'pkg', appActivity: 'mack', appWaitPackage: 'wpkg', appWaitActivity: 'wack'};
       (await helpers.getLaunchInfo(adb, inOpts)).should.deep.equal(outOpts);
       mocks.adb.verify();
     });
@@ -572,7 +582,7 @@ describe('Android Helpers', () => {
     });
   }));
   describe('pushStrings', withMocks({adb, fs}, (mocks) => {
-    const opts = { app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
+    const opts = {app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
     it('should extracts string.xml and converts it to string.json and pushes it', async () => {
       mocks.adb.expects('extractStringsFromApk').withArgs(opts.app, 'en')
         .returns({apkStrings: 'apk_strings', localPath: 'local_path'});
@@ -666,7 +676,7 @@ describe('Android Helpers', () => {
   }));
   describe('initDevice', withMocks({helpers, adb}, (mocks) => {
     it('should init device', async () => {
-      const opts = { language: "en", locale: "us" };
+      const opts = {language: "en", locale: "us"};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
@@ -678,7 +688,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
     it('should not install settings app and mock location on emulator', async () => {
-      const opts = { avd: "avd" };
+      const opts = {avd: "avd"};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').never();
@@ -690,7 +700,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
     it('should return defaultIME if unicodeKeyboard is setted to true', async () => {
-      const opts = { unicodeKeyboard : true };
+      const opts = {unicodeKeyboard : true};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
@@ -703,7 +713,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
     it('should return undefined if unicodeKeyboard is setted to false', async () => {
-      const opts = { unicodeKeyboard : false };
+      const opts = {unicodeKeyboard : false};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
@@ -716,7 +726,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
     it('should not push unlock app if unlockType is defined', async () => {
-      const opts = { unlockType: "unlock_type"};
+      const opts = {unlockType: "unlock_type"};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
