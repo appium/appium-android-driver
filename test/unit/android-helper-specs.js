@@ -205,7 +205,7 @@ describe('Android Helpers', () => {
             return 1234;
           },
           getRunningAVD: () => {
-            return {'udid': 'emulator-1234', 'port': 1234};
+            return {udid: 'emulator-1234', port: 1234};
           },
           setDeviceId: (udid) => {
             curDeviceId = udid;

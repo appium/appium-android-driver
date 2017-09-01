@@ -182,14 +182,14 @@ describe('Context', () => {
     });
     it('should reconnect if session already exists', async () => {
       stubbedChromedriver.hasWorkingWebview = sinon.stub().returns(true);
-      driver.sessionChromedrivers = {'WEBVIEW_1': stubbedChromedriver};
+      driver.sessionChromedrivers = {WEBVIEW_1: stubbedChromedriver};
       await driver.startChromedriverProxy('WEBVIEW_1');
       driver.chromedriver.restart.notCalled.should.be.true;
       driver.chromedriver.should.be.equal(stubbedChromedriver);
     });
     it('should restart if chromedriver has not working web view', async () => {
       stubbedChromedriver.hasWorkingWebview = sinon.stub().returns(false);
-      driver.sessionChromedrivers = {'WEBVIEW_1': stubbedChromedriver};
+      driver.sessionChromedrivers = {WEBVIEW_1: stubbedChromedriver};
       await driver.startChromedriverProxy('WEBVIEW_1');
       driver.chromedriver.restart.calledOnce.should.be.true;
     });
@@ -213,14 +213,14 @@ describe('Context', () => {
     });
     it('should delete session if chromedriver in non-active context', async () => {
       driver.curContext = 'WEBVIEW_1';
-      driver.sessionChromedrivers = {'WEBVIEW_2': 'CHROMIUM'};
+      driver.sessionChromedrivers = {WEBVIEW_2: 'CHROMIUM'};
       await driver.onChromedriverStop('WEBVIEW_2');
       driver.sessionChromedrivers.should.be.empty;
     });
   });
   describe('stopChromedriverProxies', () => {
     it('should stop all chromedriver', async () => {
-      driver.sessionChromedrivers = {'WEBVIEW_1': stubbedChromedriver, 'WEBVIEW_2': stubbedChromedriver};
+      driver.sessionChromedrivers = {WEBVIEW_1: stubbedChromedriver, WEBVIEW_2: stubbedChromedriver};
       sandbox.stub(driver, 'suspendChromedriverProxy');
       await driver.stopChromedriverProxies();
       driver.suspendChromedriverProxy.calledOnce.should.be.true;

@@ -215,22 +215,22 @@ describe('General', () => {
     it('should return app strings', async () => {
       driver.bootstrap.sendAction = () => { return ''; };
       mocks.helpers.expects("pushStrings")
-          .returns({'test': 'en_value'});
+          .returns({test: 'en_value'});
       let strings = await driver.getStrings('en');
       strings.test.should.equal('en_value');
       mocks.helpers.verify();
     });
     it('should return cached app strings for the specified language', async () => {
       driver.adb.getDeviceLanguage = () => { return 'en'; };
-      driver.apkStrings.en = {'test': 'en_value'};
-      driver.apkStrings.fr = {'test': 'fr_value'};
+      driver.apkStrings.en = {test: 'en_value'};
+      driver.apkStrings.fr = {test: 'fr_value'};
       let strings = await driver.getStrings('fr');
       strings.test.should.equal('fr_value');
     });
     it('should return cached app strings for the device language', async () => {
       driver.adb.getDeviceLanguage = () => { return 'en'; };
-      driver.apkStrings.en = {'test': 'en_value'};
-      driver.apkStrings.fr = {'test': 'fr_value'};
+      driver.apkStrings.en = {test: 'en_value'};
+      driver.apkStrings.fr = {test: 'fr_value'};
       let strings = await driver.getStrings();
       strings.test.should.equal('en_value');
     });
