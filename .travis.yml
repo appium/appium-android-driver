@@ -25,13 +25,13 @@ env:
     - ANDROID_EMU_TARGET=android-21
     - ANDROID_EMU_ABI=armeabi-v7a
   matrix:
-    - TEST=unit RECURSIVE=--recursive START_EMU=0
+    # - TEST=unit RECURSIVE=--recursive START_EMU=0
     - TEST=functional
-    - TEST=functional/commands
-    - TEST=functional/commands/basic
-    - TEST=functional/commands/find
-    - TEST=functional/commands/keyboard
-    - TEST=functional/commands/touch
+    # - TEST=functional/commands
+    # - TEST=functional/commands/basic
+    # - TEST=functional/commands/find
+    # - TEST=functional/commands/keyboard
+    # - TEST=functional/commands/touch
 before_script:
   # node stuff
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
@@ -41,6 +41,7 @@ before_script:
   - npm install appium-test-support # get the travis emu scripts
 
   # android stuff
+  - android list sdk --extended --no-ui --all
   - android list targets
   - $(npm bin)/android-emu-travis-pre
 
