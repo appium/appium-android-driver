@@ -11,6 +11,7 @@ let defaultCaps = _.defaults({
   androidInstallTimeout: 90000
 }, DEFAULT_CAPS);
 
+// const AVD_ANDROID_18_SWIPE_UNLOCK = "Nexus_5X_API_23";
 const AVD_ANDROID_19_PIN_UNLOCK = "ANDROID_API_19_PIN_UNLOCK";
 const AVD_ANDROID_23_PIN_UNLOCK = "ANDROID_API_23_PIN_UNLOCK";
 const AVD_ANDROID_19_PASSWORD_UNLOCK = "ANDROID_API_19_PASSWORD_UNLOCK";
@@ -22,13 +23,21 @@ const AVD_ANDROID_23_FINGERPRINT_UNLOCK = "ANDROID_API_23_FINGERPRINT_UNLOCK";
 describe('unlock tests', () => {
   let driver;
 
-  describe.skip('functional', () => {
+  describe('functional', () => {
     before(() => {
       driver = new AndroidDriver();
     });
     afterEach(async () => {
       await driver.deleteSession();
     });
+    /*
+    it('should unlock an Android 18 device using swipe', async () => {
+      let caps = _.extend(defaultCaps, {unlockType: "swipe", avd: AVD_ANDROID_18_SWIPE_UNLOCK});
+      await driver.createSession(caps);
+      let isLock = await driver.adb.isScreenLocked();
+      isLock.should.equal(false);
+    });
+    */
     it('should unlock an Android 19 device using a PIN', async () => {
       let caps = _.extend(defaultCaps, {unlockType: "pin", unlockKey: "1111", avd: AVD_ANDROID_19_PIN_UNLOCK});
       await driver.createSession(caps);
