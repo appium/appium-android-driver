@@ -26,13 +26,13 @@ env:
     - ANDROID_EMU_TARGET=android-21
     - ANDROID_EMU_ABI=armeabi-v7a
   matrix:
-    # - TEST=unit RECURSIVE=--recursive START_EMU=0
+    - TEST=unit RECURSIVE=--recursive START_EMU=0
     - TEST=functional
-    # - TEST=functional/commands
-    # - TEST=functional/commands/basic
-    # - TEST=functional/commands/find
-    # - TEST=functional/commands/keyboard
-    # - TEST=functional/commands/touch
+    - TEST=functional/commands
+    - TEST=functional/commands/basic
+    - TEST=functional/commands/find
+    - TEST=functional/commands/keyboard
+    - TEST=functional/commands/touch
 before_script:
   # node stuff
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
@@ -54,4 +54,4 @@ before_script:
 script:
   - npm run lint && npm run mocha -- -t $MOCHA_TIMEOUT $RECURSIVE build/test/$TEST -g @skip-ci -i
 after_success:
-  - gulp coveralls
+  - _FORCE_LOGS=0 npm run coverage
