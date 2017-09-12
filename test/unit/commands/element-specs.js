@@ -160,7 +160,9 @@ describe('Element', () => {
       driver.adb.clearTextField.getCall(1).args[0].should.be.equal(50);
       driver.adb.clearTextField.getCall(2).args[0].should.be.equal(10);
     });
-    it('should do five reties and than fails if clearTextField throws error', async () => {
+    it('should do five retries and then fail if clearTextField throws error', async function () {
+      this.timeout(10000);
+
       sandbox.stub(driver, 'getText');
       sandbox.stub(driver, 'click');
       sandbox.stub(driver.adb, 'clearTextField');

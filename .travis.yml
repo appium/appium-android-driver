@@ -1,4 +1,5 @@
 language: android
+dist: precise
 android:
   components:
     # use the latest revision of Android SDK Tools
@@ -41,6 +42,7 @@ before_script:
   - npm install appium-test-support # get the travis emu scripts
 
   # android stuff
+  - android list sdk --extended --no-ui --all
   - android list targets
   - $(npm bin)/android-emu-travis-pre
 
@@ -52,4 +54,4 @@ before_script:
 script:
   - npm run lint && npm run mocha -- -t $MOCHA_TIMEOUT $RECURSIVE build/test/$TEST -g @skip-ci -i
 after_success:
-  - gulp coveralls
+  - _FORCE_LOGS=0 npm run coverage
