@@ -85,6 +85,34 @@ describe('Webview Helpers', () => {
       let name = await helpers.procFromWebview(adb, webview);
       name.should.eql(pkg);
     });
+    it('should get package name when pid is smaller than three characters long', async function () {
+      sandbox.stub(adb, 'shell', function () {
+        return 'USER           PID  PPID     VSZ    RSS WCHAN            ADDR   NAME\n' +
+               'root             1     0    9948   2344 SyS_epoll_wait      0 S init\n' +
+               'root             2     0       0      0 kthreadd            0 S [kthreadd]\n' +
+               'root             3     2       0      0 smpboot_thread_fn   0 S [ksoftirqd/0]\n' +
+               'root             5     2       0      0 worker_thread       0 S [kworker/0:0H]\n' +
+               'root             7     2       0      0 rcu_gp_kthread      0 S [rcu_preempt]\n' +
+               'u0_a88          12  1313 1513968 135756                     0 R io.appium.android.apis\n';
+      });
+
+      let name = await helpers.procFromWebview(adb, 'WEBVIEW_12');
+      name.should.eql(pkg);
+    });
+    it('should get package name when name is smaller than four characters long', async function () {
+      sandbox.stub(adb, 'shell', function () {
+        return 'USER           PID  PPID     VSZ    RSS WCHAN            ADDR   NAME\n' +
+               'root             1     0    9948   2344 SyS_epoll_wait      0 S init\n' +
+               'root             2     0       0      0 kthreadd            0 S [kthreadd]\n' +
+               'root             3     2       0      0 smpboot_thread_fn   0 S [ksoftirqd/0]\n' +
+               'root             5     2       0      0 worker_thread       0 S [kworker/0:0H]\n' +
+               'root             7     2       0      0 rcu_gp_kthread      0 S [rcu_preempt]\n' +
+               'u0_a88         123  1313 1513968 135756                     0 R i.o\n';
+      });
+
+      let name = await helpers.procFromWebview(adb, webview);
+      name.should.eql('i.o');
+    });
   });
 
   describe('When the webviews are obtained', function () {
