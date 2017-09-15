@@ -28,7 +28,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-adb": "^2.28.2",
+    "appium-adb": "^2.28.3",
     "appium-android-bootstrap": "^2.7.5",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^2.0.0",
@@ -38,7 +38,7 @@
     "asyncbox": "^2.0.4",
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.4.7",
-    "io.appium.settings": "^2.2.0",
+    "io.appium.settings": "^2.3.0",
     "jimp": "^0.2.24",
     "lodash": "^3.10.0",
     "portfinder": "^1.0.6",
