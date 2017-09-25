@@ -224,16 +224,10 @@ describe('Actions', () => {
       sandbox.stub(temp, 'path').returns(localFile);
       sandbox.stub(support, 'mkdirp');
       sandbox.stub(driver.adb, 'push');
-      sandbox.stub(support.fs, 'open').returns('fd');
-      sandbox.stub(support.fs, 'write');
-      sandbox.stub(support.fs, 'close');
+      sandbox.stub(support.fs, 'writeFile');
       await driver.pushFile('remote_path', 'YXBwaXVt');
-      support.fs.open.calledWithExactly(localFile, 'w').should.be.true;
+      support.fs.writeFile.calledWithExactly(localFile, content, 'binary').should.be.true;
       driver.adb.push.calledWithExactly(localFile, 'remote_path').should.be.true;
-      support.fs.write.getCall(0).args[0].should.be.equal('fd');
-      support.fs.write.getCall(0).args[1].toString().should.be.equal(content);
-      support.fs.write.getCall(0).args[3].should.be.equal(content.length);
-      support.fs.close.calledWithExactly('fd').should.be.true;
     });
   });
   describe('pullFolder', () => {
