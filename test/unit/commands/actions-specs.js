@@ -456,18 +456,32 @@ describe('Actions', () => {
     it('should be able to take screenshot via exec-out', async () => {
       sandbox.stub(teen_process, 'exec');
       sandbox.stub(jimp, 'read');
-      teen_process.exec.returns({stdout: 'stdout'});
+      teen_process.exec.returns({stdout: 'stdout', stderr: ''});
       driver.adb.executable.path = 'path/to/adb';
       await helpers.getScreenshotDataWithAdbExecOut(driver.adb);
-      teen_process.exec.calledWithExactly('path/to/adb', ['exec-out', '/system/bin/screencap -p']
-        , {encoding: 'binary', isBuffer: true}).should.be.true;
+      teen_process.exec.calledWithExactly(driver.adb.executable.path,
+        driver.adb.executable.defaultArgs
+          .concat(['exec-out', '/system/bin/screencap', '-p']),
+        {encoding: 'binary', isBuffer: true}).should.be.true;
       jimp.read.calledWithExactly('stdout').should.be.true;
     });
     it('should throw error if size of the screenshot is zero', async () => {
       sandbox.stub(teen_process, 'exec');
-      teen_process.exec.returns({stdout: ''});
+      teen_process.exec.returns({stdout: '', stderr: ''});
       await helpers.getScreenshotDataWithAdbExecOut(driver.adb)
-        .should.be.rejectedWith('screenshot equals to zero');
+        .should.be.rejectedWith('Screenshot returned no data');
+    });
+    it('should throw error if code is not 0', async () => {
+      sandbox.stub(teen_process, 'exec');
+      teen_process.exec.returns({code: 1, stdout: '', stderr: ''});
+      await helpers.getScreenshotDataWithAdbExecOut(driver.adb)
+        .should.be.rejectedWith(`Screenshot returned error, code: '1', stderr: ''`);
+    });
+    it('should throw error if stderr is not empty', async () => {
+      sandbox.stub(teen_process, 'exec');
+      teen_process.exec.returns({code: 0, stdout: '', stderr: 'Oops'});
+      await helpers.getScreenshotDataWithAdbExecOut(driver.adb)
+        .should.be.rejectedWith(`Screenshot returned error, code: '0', stderr: 'Oops'`);
     });
   });
   describe('getScreenshot', () => {
