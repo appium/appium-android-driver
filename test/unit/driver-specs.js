@@ -30,6 +30,7 @@ describe('driver', () => {
       driver.findElOrEls.should.be.a('function');
     });
   });
+
   describe('emulator methods', () => {
     describe('fingerprint', () => {
       it('should be rejected if isEmulator is false', () => {
@@ -87,6 +88,7 @@ describe('driver', () => {
       });
     }));
   });
+
   describe('createSession', () => {
     beforeEach(() => {
       driver = new AndroidDriver();
@@ -106,7 +108,8 @@ describe('driver', () => {
           },
           setDeviceId: () => {},
           setEmulatorPort: () => {},
-          adbPort: opts.adbPort
+          adbPort: opts.adbPort,
+          networkSpeed: () => {}
         };
       });
     });
@@ -168,6 +171,13 @@ describe('driver', () => {
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: true});
       driver.getProxyAvoidList().should.have.length(9);
     });
+    it('should set networkSpeed before launching app', async () => {
+      sandbox.stub(driver, 'isEmulator').returns(true);
+      sandbox.stub(helpers, 'ensureNetworkSpeed').returns('full');
+      await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', networkSpeed: 'edge'});
+      driver.isEmulator.calledOnce.should.be.true;
+      helpers.ensureNetworkSpeed.calledOnce.should.be.true;
+    });
   });
   describe('deleteSession', () => {
     beforeEach(async () => {
@@ -210,25 +220,48 @@ describe('driver', () => {
       driver.adb.uninstallApk.calledOnce.should.be.true;
     });
   });
-  describe('shouldDismissChromeWelcome', () => {
+  describe('dismissChromeWelcome', () => {
     before(async () => {
       driver = new AndroidDriver();
     });
     it('should verify chromeOptions args', () => {
       driver.opts = {};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {"chromeOptions":{}};
+      driver.opts = {chromeOptions: {}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {"chromeOptions":{"args":[]}};
+      driver.opts = {chromeOptions: {args: []}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {"chromeOptions":{"args":"--no-first-run"}};
+      driver.opts = {chromeOptions: {args: "--no-first-run"}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {"chromeOptions":{"args":["--disable-dinosaur-easter-egg"]}};
+      driver.opts = {chromeOptions: {args: ["--disable-dinosaur-easter-egg"]}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {"chromeOptions":{"args":["--no-first-run"]}};
+      driver.opts = {chromeOptions: {args: ["--no-first-run"]}};
       driver.shouldDismissChromeWelcome().should.be.true;
     });
   });
+  describe('initAUT', withMocks({helpers}, (mocks) => {
+    beforeEach(async () => {
+      driver = new AndroidDriver();
+      driver.caps = {};
+    });
+    it('should throw error if run with full reset', async () => {
+      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: true};
+      await driver.initAUT().should.be.rejectedWith(/Full reset requires an app capability/);
+    });
+    it('should reset if run with fast reset', async () => {
+      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: true};
+      driver.adb = "mock_adb";
+      mocks.helpers.expects("resetApp").withExactArgs("mock_adb", undefined, "app.package", true);
+      await driver.initAUT();
+      mocks.helpers.verify();
+    });
+    it('should keep data if run without reset', async () => {
+      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: false};
+      mocks.helpers.expects("resetApp").never();
+      await driver.initAUT();
+      mocks.helpers.verify();
+    });
+  }));
   describe('startAndroidSession', () => {
     beforeEach(async () => {
       driver = new AndroidDriver();

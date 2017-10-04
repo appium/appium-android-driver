@@ -9,7 +9,7 @@
     "mobile",
     "mobile testing"
   ],
-  "version": "1.24.3",
+  "version": "1.28.1",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -28,17 +28,17 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-adb": "^2.27.0",
+    "appium-adb": "^3.0.0",
     "appium-android-bootstrap": "^2.7.5",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^2.0.0",
-    "appium-chromedriver": "^2.9.0",
+    "appium-chromedriver": "^3.0.0",
     "appium-support": "^2.8.0",
     "appium-unlock": "^0.1.0",
     "asyncbox": "^2.0.4",
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.4.7",
-    "io.appium.settings": "^2.2.0",
+    "io.appium.settings": "^2.3.0",
     "jimp": "^0.2.24",
     "lodash": "^3.10.0",
     "portfinder": "^1.0.6",
@@ -57,15 +57,16 @@
     "mocha": "mocha",
     "coverage": "gulp coveralls",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
+    "precommit-test": "REPORTER=dot gulp once",
     "lint": "gulp eslint"
   },
   "pre-commit": [
     "precommit-msg",
-    "test"
+    "precommit-test"
   ],
   "devDependencies": {
     "android-apidemos": "^2.1.1",
-    "appium-gulp-plugins": "^2.1.4",
+    "appium-gulp-plugins": "^2.2.0",
     "appium-test-support": "^0.4.0",
     "babel-eslint": "^7.1.1",
     "chai": "^3.0.0",
