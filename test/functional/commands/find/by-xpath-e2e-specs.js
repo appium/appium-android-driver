@@ -68,9 +68,9 @@ describe('Find - xpath', function () {
     el[0].should.exist;
   });
   it('should find less elements with compression turned on', async () => {
-    await driver.updateSettings({"ignoreUnimportantViews": false});
+    await driver.updateSettings({ignoreUnimportantViews: false});
     let elementsWithoutCompression = await driver.findElOrEls('xpath', `//*`, true);
-    await driver.updateSettings({"ignoreUnimportantViews": true});
+    await driver.updateSettings({ignoreUnimportantViews: true});
     let elementsWithCompression = await driver.findElOrEls('xpath', `//*`, true);
     elementsWithoutCompression.length.should.be.greaterThan(elementsWithCompression.length);
   });

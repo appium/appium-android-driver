@@ -1,162 +1,193 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import sinon from 'sinon';
 import AndroidDriver from '../../..';
 import { SUPPORTED_PERFORMANCE_DATA_TYPES, NETWORK_KEYS, CPU_KEYS, BATTERY_KEYS,
          MEMORY_KEYS} from '../../../lib/commands/performance.js';
 import _ from 'lodash';
-import { withMocks } from 'appium-test-support';
 import ADB from 'appium-adb';
-
+import * as asyncbox from 'asyncbox';
 
 chai.should();
 chai.use(chaiAsPromised);
 
 const PACKAGE_NAME = 'io.appium.android.apis';
+const RETRY_PAUSE = 1000;
+const RETRY_COUNT = 2;
 
-let adb = new ADB();
-let driver = new AndroidDriver();
-driver.adb = adb;
+let sandbox = sinon.sandbox.create();
+let adb;
+let driver;
 
-describe('performance data', function () {
-  this.timeout(60000);
-
-  describe('getperformancedata', withMocks({adb, driver}, function (mocks) {
+describe('performance data', () => {
+  beforeEach(async () => {
+    adb = new ADB();
+    driver = new AndroidDriver();
+    driver.adb = adb;
+    sandbox.stub(adb);
+    sandbox.stub(asyncbox, 'retryInterval', async (times, sleepMs, fn) => {
+      return await fn();
+    });
+  });
+  afterEach(async () => {
+    sandbox.restore();
+  });
+  describe('getPerformanceDataTypes', () => {
     it('should get the list of available getPerformance data type', () => {
       let types = driver.getPerformanceDataTypes();
       types.should.eql(_.keys(SUPPORTED_PERFORMANCE_DATA_TYPES));
     });
-
-    async function runTest (type, expectedKeys, expectedData) {
-      let data = await driver.getPerformanceData(PACKAGE_NAME, type);
-
-      // make sure we got something
-      Array.isArray(data).should.be.true;
-      data.length.should.eql(2);
-
-      data[0].should.eql(expectedKeys);
-      data[1].should.eql(expectedData);
-    }
-
-    let types = [
-      {
-        cmd: 'cpuinfo',
-        description: 'the amount of cpu by user and kernel process',
-        args: ['dumpsys', 'cpuinfo', '|', 'grep', `'${PACKAGE_NAME}'`],
-        dumpsysData: ` +0% 2209/io.appium.android.apis: 14% user + 23% kernel`,
-        keys: CPU_KEYS,
-        data: ['14', '23'],
-      },
-      {
-        cmd: 'memoryinfo',
-        description: 'the amount of memory used by the process (API level 19)',
-        args: ['dumpsys', 'meminfo', `'${PACKAGE_NAME}'`, '|', 'grep', '-E', "'Native|Dalvik|EGL|GL|TOTAL'"],
-        dumpsysData: `  Native Heap     2469     2332        0        0    20480    13920     6559
-     Dalvik Heap      873      808        0        0     1526      578      948
-    Dalvik Other      148      148        0        0
-           TOTAL     7757     4012      976        0    22006    14498     7507`,
-        keys: MEMORY_KEYS,
-        data: ['4012', '2332', '808', undefined, undefined,
-               '7757', '2469', '873', undefined, undefined,
-               '13920', '20480'],
-        apiLevel: '19',
-      },
-      {
-        cmd: 'memoryinfo',
-        description: 'the amount of memory used by the process (API level 19)',
-        args: ['dumpsys', 'meminfo', `'${PACKAGE_NAME}'`, '|', 'grep', '-E', "'Native|Dalvik|EGL|GL|TOTAL'"],
-        dumpsysData: `Native|Dalvik|EGL|GL|TOTAL'
-         Native     1050     1236      968     7580     7428       31
-         Dalvik     2637     5592     2288     3960     3453      507
-          TOTAL     6796    11688     4288    11540    10881      538`,
-        keys: MEMORY_KEYS,
-        data: ['4288', '968', '2288', undefined, undefined,
-               '6796', '1050', '2637', undefined, undefined,
-               '7428', '7580'],
-        apiLevel: '18',
-      },
-      {
-        cmd: 'batteryinfo',
-        description: 'the remaining battery power',
-        args: ['dumpsys', 'battery', '|', 'grep', 'level'],
-        dumpsysData: '  level: 47',
-        keys: BATTERY_KEYS,
-        data: ['47'],
-      },
-    ];
-    for (let type of types) {
-      describe(type.cmd, () => {
-        afterEach(() => {
-          mocks.adb.verify();
-        });
-        it(`should get ${type.description}`, async () => {
-          if (type.apiLevel) {
-            mocks.adb
-              .expects('getApiLevel')
-              .returns(type.apiLevel);
-          }
-          mocks.adb
-            .expects('shell')
-            .withExactArgs(type.args)
-            .returns(type.dumpsysData);
-          await runTest(type.cmd, type.keys, type.data);
-        });
-        it('should retry if the data is not initially found', async () => {
-          if (type.apiLevel) {
-            mocks.adb
-              .expects('getApiLevel')
-              .returns(type.apiLevel);
-          }
-          mocks.adb
-            .expects('shell')
-            .twice()
-            .withExactArgs(type.args)
-            .onCall(0)
-              .returns()
-            .onCall(1)
-              .returns(type.dumpsysData);
-          await runTest(type.cmd, type.keys, type.data);
-        });
-        it('should error out if too many failures', async () => {
-          mocks.adb
-            .expects('shell')
-            .twice()
-            .withExactArgs(type.args)
-            .onCall(0)
-              .returns()
-            .onCall(1)
-              .returns();
-          await runTest(type.cmd, type.keys, type.data).should.be.rejected;
-        });
-      });
-    }
-
-    describe('networkinfo', () => {
-      it('should get the network statistics', () => {
-        let returnValue = [
-          ['bucketStart', 'activeTime', 'rxBytes', 'rxPackets', 'txBytes', 'txPackets', 'operations', 'bucketDuration'],
-          [1478091600000, 1099075, 610947, 928, 114362, 769, 0, 3600000],
-          [1478095200000, 1306300, 405997, 509, 46359, 370, 0, 3600000],
-        ];
-        mocks.driver.expects('getPerformanceData').withExactArgs('io.appium.android.apis', 'networkinfo', 1000).returns(returnValue);
-        let network = driver.getPerformanceData('io.appium.android.apis', 'networkinfo', 1000);
-        network.length.should.eql(3);
-        let compare = false;
-
-        for (let j = 0; j < NETWORK_KEYS.length ; ++j) {
-          if (_.isEqual(NETWORK_KEYS[j], network[0])) {
-            compare = true;
-          }
-        }
-
-        compare.should.equal(true);
-
-        if (network.length > 1) {
-          for (let i = 1; i < network.length; ++i) {
-            network[0].length.should.equal(network[i].length);
-          }
-        }
-        mocks.driver.verify();
-      });
+  });
+  describe('getPerformanceData', () => {
+    it('should return battery info', async () => {
+      sandbox.stub(driver, 'getBatteryInfo').returns('data');
+      await driver.getPerformanceData(null, 'batteryinfo').should.become('data');
     });
-  }));
+    it('should return cpu info', async () => {
+      sandbox.stub(driver, 'getCPUInfo').withArgs('pkg').returns('data');
+      await driver.getPerformanceData('pkg', 'cpuinfo').should.become('data');
+    });
+    it('should return memory info', async () => {
+      sandbox.stub(driver, 'getMemoryInfo').withArgs('pkg').returns('data');
+      await driver.getPerformanceData('pkg', 'memoryinfo').should.become('data');
+    });
+    it('should return network info', async () => {
+      sandbox.stub(driver, 'getNetworkTrafficInfo').returns('data');
+      await driver.getPerformanceData(null, 'networkinfo').should.become('data');
+    });
+    it('should throw error if data type is not valid', async () => {
+      await driver.getPerformanceData(null, 'invalid')
+        .should.be.rejectedWith(/No performance data of type 'invalid' found./);
+    });
+  });
+  describe('getCPUInfo', () => {
+    it('should return cpu data', async () => {
+      adb.shell.withArgs(['dumpsys', 'cpuinfo', '|', 'grep', `'${PACKAGE_NAME}'`])
+        .returns(' +0% 2209/io.appium.android.apis: 14% user + 23% kernel');
+      (await driver.getCPUInfo(PACKAGE_NAME)).should.be.deep
+        .equal([CPU_KEYS, ['14', '23']]);
+      asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
+    });
+    it('should throw error if no data', async () => {
+      adb.shell.returns(null);
+      await driver.getCPUInfo(PACKAGE_NAME, 1).should.be
+        .rejectedWith(/No data from dumpsys/);
+    });
+    it('should throw error if cpu data is not in valid format', async () => {
+      adb.shell.returns('invalid data');
+      await driver.getCPUInfo(PACKAGE_NAME, 1).should.be
+        .rejectedWith(/Unable to parse cpu data/);
+    });
+  });
+  describe('getBatteryInfo', () => {
+    it('should return battery info', async () => {
+      adb.shell.withArgs(['dumpsys', 'battery', '|', 'grep', 'level'])
+        .returns('  level: 47');
+      await driver.getBatteryInfo().should.become([BATTERY_KEYS, ['47']]);
+      asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
+    });
+    it('should throw error if data is not valid', async () => {
+      adb.shell.returns('invalid data');
+      await driver.getBatteryInfo(1).should.be
+        .rejectedWith(/Unable to parse battery data/);
+    });
+    it('should throw error if no data', async () => {
+      adb.shell.returns(null);
+      await driver.getBatteryInfo(1).should.be.rejectedWith(/No data from dumpsys/);
+    });
+  });
+  describe('getMemoryInfo', () => {
+    const shellArgs = ['dumpsys', 'meminfo', `'${PACKAGE_NAME}'`, '|', 'grep', '-E', "'Native|Dalvik|EGL|GL|TOTAL'"];
+    const dumpsysDataAPI19 = `
+                          Pss  Private  Private  Swapped     Heap     Heap     Heap
+                        Total    Dirty    Clean    Dirty     Size    Alloc     Free
+                       ------   ------   ------   ------   ------   ------   ------
+         Native Heap      107      102        0        0      112      111      555
+         Dalvik Heap      108      103        0        0      555      555      555
+        Dalvik Other      555      555        0        0
+          EGL mtrack      109      104        0      555        0        0        0
+           GL mtrack      110      105        0      555        0        0        0
+               TOTAL      555      555      555        0               555      555
+               TOTAL      106      101      555        0      555      555      555`;
+    const dumpsysDataAPI18 = `
+                                Shared  Private     Heap     Heap     Heap
+                          Pss    Dirty    Dirty     Size    Alloc     Free
+                       ------   ------   ------   ------   ------   ------
+              Native      107      555      102      112      111      555
+              Dalvik      108      555      103      555      555      555
+                 EGL      109      555      104      555        0        0
+                  GL      110      555      105      555        0        0
+               TOTAL      106      555      101      555      555      555`;
+    const expectedResult = [MEMORY_KEYS,
+      ['101', '102', '103', '104', '105', // private dirty total|native|dalvik|egl|gl
+       '106', '107', '108', '109', '110', // pss           total|native|dalvik|egl|gl
+       '111', '112']];                    // native        heap_alloc|heap_size
+    it('should return memory info for API>18', async () => {
+      adb.getApiLevel.returns('19');
+      adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI19);
+      (await driver.getMemoryInfo(PACKAGE_NAME)).should.be.deep
+        .equal(expectedResult);
+      asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
+    });
+    it('should return memory info for API<=18', async () => {
+      adb.getApiLevel.returns('18');
+      adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI18);
+      (await driver.getMemoryInfo(PACKAGE_NAME)).should.be.deep
+        .equal(expectedResult);
+      asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
+    });
+    it('should throw error if data is not valid', async () => {
+      adb.shell.returns('TOTAL nodex nodex nodex nodex nodex nodex nodex');
+      await driver.getMemoryInfo(PACKAGE_NAME, 1).should.be
+        .rejectedWith(/Unable to parse memory data/);
+    });
+    it('should throw error if no data', async () => {
+      adb.shell.returns(null);
+      await driver.getMemoryInfo(PACKAGE_NAME, 1).should.be
+        .rejectedWith(/No data from dumpsys/);
+    });
+  });
+  describe('getNetworkTrafficInfo', () => {
+    const shellArgs = ['dumpsys', 'netstats'];
+    const header = `
+      Xt stats:
+        Pending bytes: pbytes
+        History since boot:
+        ident=[[type=MOBILE, subType=COMBINED, subscriberId=555]] uid=-1 set=ALL tag=0x0
+          NetworkStatsHistory: bucketDuration=dur`;
+    const data = header + `
+            st=start1 rb=rb1 rp=rp1 tb=tb1 tp=tp1 op=op1
+            st=start2 rb=rb2 rp=rp2 tb=tb2 tp=tp2 op=op2`;
+    const dataInOldFormat = header + `
+            bucketStart=start1 activeTime=time1 rxBytes=rb1 rxPackets=rp1 txBytes=tb1 txPackets=tp1 operations=op1
+            bucketStart=start2 activeTime=time2 rxBytes=rb2 rxPackets=rp2 txBytes=tb2 txPackets=tp2 operations=op2`;
+    it('should return network stats', async () => {
+      adb.shell.withArgs(shellArgs).returns(data);
+      (await driver.getNetworkTrafficInfo()).should.be.deep
+        .equal([NETWORK_KEYS[1], ['start1', undefined, 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
+                                 ['start2', undefined, 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur']]);
+      asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
+    });
+    it('should be able to parse data in old format', async () => {
+      adb.shell.withArgs(shellArgs).returns(dataInOldFormat);
+      (await driver.getNetworkTrafficInfo()).should.be.deep
+        .equal([NETWORK_KEYS[0], ['start1', 'time1', 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
+                                 ['start2', 'time2', 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur']]);
+      asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
+    });
+    it('should be fulfilled if history is empty', async () => {
+      adb.shell.returns(header);
+      (await driver.getNetworkTrafficInfo()).should.be.deep.equal([]);
+    });
+    it('should throw error if data is not valid', async () => {
+      adb.shell.returns('nodex');
+      await driver.getNetworkTrafficInfo(1).should.be
+        .rejectedWith(/Unable to parse network traffic data/);
+    });
+    it('should throw error if no data', async () => {
+      adb.shell.returns(null);
+      await driver.getNetworkTrafficInfo(1).should.be
+        .rejectedWith(/No data from dumpsys/);
+    });
+  });
 });

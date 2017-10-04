@@ -166,15 +166,15 @@ describe('driver', () => {
     it('should verify chromeOptions args', () => {
       driver.opts = {};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {"chromeOptions":{}};
+      driver.opts = {chromeOptions: {}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {"chromeOptions":{"args":[]}};
+      driver.opts = {chromeOptions: {args: []}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {"chromeOptions":{"args":"--no-first-run"}};
+      driver.opts = {chromeOptions: {args: "--no-first-run"}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {"chromeOptions":{"args":["--disable-dinosaur-easter-egg"]}};
+      driver.opts = {chromeOptions: {args: ["--disable-dinosaur-easter-egg"]}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {"chromeOptions":{"args":["--no-first-run"]}};
+      driver.opts = {chromeOptions: {args: ["--no-first-run"]}};
       driver.shouldDismissChromeWelcome().should.be.true;
     });
   });
