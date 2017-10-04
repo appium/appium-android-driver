@@ -145,11 +145,10 @@ describe('Context', () => {
     });
     it('should start new chromedriver session', async () => {
       await driver.startChromedriverProxy('WEBVIEW_1');
-      driver.sessionChromedrivers['WEBVIEW_1'].should.be.equal(driver.chromedriver);  // eslint-disable-line dot-notation
+      driver.sessionChromedrivers.WEBVIEW_1.should.be.equal(driver.chromedriver);
       driver.chromedriver.start.getCall(0).args[0]
         .chromeOptions.androidDeviceSerial.should.be.equal('device_id');
       driver.chromedriver.proxyPort.should.be.equal(4444);
-      driver.chromedriver.adbPort.should.be.equal(5555);
       driver.chromedriver.proxyReq.bind.calledWithExactly(driver.chromedriver);
       driver.proxyReqRes.should.be.equal('proxy');
       driver.jwpProxyActive.should.be.true;
