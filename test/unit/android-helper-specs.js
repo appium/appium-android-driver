@@ -575,7 +575,7 @@ describe('Android Helpers', () => {
   }));
   describe('pushUnlock', withMocks({adb}, (mocks) => {
     it('should install unlockApp', async () => {
-      mocks.adb.expects('install').withExactArgs(unlockApkPath, false).once()
+      mocks.adb.expects('installOrUpgrade').withExactArgs(unlockApkPath, 'io.appium.unlock', true).once()
         .returns('');
       await helpers.pushUnlock(adb);
       mocks.adb.verify();

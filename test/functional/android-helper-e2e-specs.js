@@ -67,4 +67,20 @@ describe('android-helpers e2e', function () {
       await helpers.pushSettingsApp(adb, true);
     });
   });
+  describe('pushUnlock', function () {
+    const unlockPkg = 'appium-unlock';
+    const unlockBundle = 'io.appium.unlock';
+    it('should be able to upgrade from unlock v0.0.1 to latest', async function () {
+      await adb.uninstallApk(unlockBundle);
+
+      // get and install old version of settings app
+      await exec('npm', ['install', `${unlockPkg}@0.0.1`]);
+      await helpers.pushUnlock(adb);
+
+      // get and install latest version of settings app
+      await exec('npm', ['uninstall', unlockPkg]);
+      await exec('npm', ['install', unlockPkg]);
+      await helpers.pushUnlock(adb);
+    });
+  });
 });
