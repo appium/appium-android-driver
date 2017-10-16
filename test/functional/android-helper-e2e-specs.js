@@ -6,6 +6,8 @@ import ADB from 'appium-adb';
 import { app } from './desired';
 import { MOCHA_TIMEOUT } from './helpers';
 import { exec } from 'teen_process';
+import { path as unlockApkPath } from 'appium-unlock';
+import path from 'path';
 
 
 let opts = {
@@ -59,11 +61,18 @@ describe('android-helpers e2e', function () {
 
       // get and install old version of settings app
       await exec('npm', ['install', `${settingsPkg}@2.0.0`]);
-      await helpers.pushSettingsApp(adb, true).should.eventually.be.rejected;
+      // old version has a different apk path, so manually enter
+      // otherwise pushing the app will fail because import will have the old
+      // path cached
+      const settingsApkPath = path.resolve(__dirname, '..', '..', '..',
+        'node_modules', 'io.appium.settings', 'bin', 'settings_apk-debug.apk');
 
-      // get and install latest version of settings app
+      await adb.install(settingsApkPath);
+
+      // get latest version of settings app
       await exec('npm', ['uninstall', settingsPkg]);
       await exec('npm', ['install', settingsPkg]);
+
       await helpers.pushSettingsApp(adb, true);
     });
   });
@@ -75,11 +84,12 @@ describe('android-helpers e2e', function () {
 
       // get and install old version of settings app
       await exec('npm', ['install', `${unlockPkg}@0.0.1`]);
-      await helpers.pushUnlock(adb);
+      await adb.install(unlockApkPath);
 
-      // get and install latest version of settings app
+      // get latest version of settings app
       await exec('npm', ['uninstall', unlockPkg]);
       await exec('npm', ['install', unlockPkg]);
+
       await helpers.pushUnlock(adb);
     });
   });

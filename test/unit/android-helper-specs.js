@@ -575,8 +575,19 @@ describe('Android Helpers', () => {
   }));
   describe('pushUnlock', withMocks({adb}, (mocks) => {
     it('should install unlockApp', async () => {
-      mocks.adb.expects('installOrUpgrade').withExactArgs(unlockApkPath, 'io.appium.unlock', true).once()
+      mocks.adb.expects('install').withExactArgs(unlockApkPath, false).once()
         .returns('');
+      await helpers.pushUnlock(adb);
+      mocks.adb.verify();
+    });
+    it('should uninstall and install unlockApp if original is incompatible', async () => {
+      mocks.adb.expects('install').withExactArgs(unlockApkPath, false).twice()
+        .onFirstCall()
+          .throws(new Error('INSTALL_FAILED_UPDATE_INCOMPATIBLE'))
+        .onSecondCall()
+          .returns();
+      mocks.adb.expects('uninstallApk').withExactArgs('io.appium.unlock').
+        returns(true);
       await helpers.pushUnlock(adb);
       mocks.adb.verify();
     });
