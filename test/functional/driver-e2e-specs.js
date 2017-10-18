@@ -176,6 +176,9 @@ describe('setEmuOrientation', function () {
       avd: 'Pixel_API_26',
       orientation: 'landscape'
     }, DEFAULT_CAPS);
+    caps.appPackage = 'io.appium.android.apis';
+    caps.appActivity = 'io.appium.android.apis.app.HelloWorld';
+    caps.intentCategory = 'appium.android.intent.category.SAMPLE_CODE';
     await driver.createSession(caps);
     let orientation  = await driver.getOrientation();
     orientation.should.equal('landscape');
