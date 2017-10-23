@@ -263,5 +263,10 @@ describe('Context', () => {
       chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity
         .should.be.equal('app_act');
     });
+    it('should be able to set loggingPrefs capability', async () => {
+      let chromedriver = await setupNewChromedriver({pageLoadStrategy: "strategy"});
+      chromedriver.start.getCall(0).args[0].pageLoadStrategy
+        .should.be.equal("strategy");
+    });
   });
 });
