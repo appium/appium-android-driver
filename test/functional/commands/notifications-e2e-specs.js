@@ -21,7 +21,7 @@ describe('apidemo - notifications', function () {
     // TODO: why does this fail?
     let adb = new ADB();
     let apiLevel = await adb.getApiLevel();
-    if (apiLevel === '22' || apiLevel === '21') {
+    if ([21, 22].indexOf(apiLevel) >= 0) {
       return this.skip();
     }
     driver = new AndroidDriver();
