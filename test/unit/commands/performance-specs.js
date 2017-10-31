@@ -123,14 +123,14 @@ describe('performance data', () => {
        '106', '107', '108', '109', '110', // pss           total|native|dalvik|egl|gl
        '111', '112']];                    // native        heap_alloc|heap_size
     it('should return memory info for API>18', async () => {
-      adb.getApiLevel.returns('19');
+      adb.getApiLevel.returns(19);
       adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI19);
       (await driver.getMemoryInfo(PACKAGE_NAME)).should.be.deep
         .equal(expectedResult);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
     it('should return memory info for API<=18', async () => {
-      adb.getApiLevel.returns('18');
+      adb.getApiLevel.returns(18);
       adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI18);
       (await driver.getMemoryInfo(PACKAGE_NAME)).should.be.deep
         .equal(expectedResult);
