@@ -113,7 +113,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
     it('should not set language and country if it does not change when API < 23', async () => {
-      mocks.adb.expects('getApiLevel').returns("18");
+      mocks.adb.expects('getApiLevel').returns(18);
       mocks.adb.expects('getDeviceLanguage').returns('en');
       mocks.adb.expects('getDeviceCountry').returns('us');
       mocks.adb.expects('getDeviceLocale').never();
@@ -125,7 +125,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
     it('should set language and country if they are different when API < 23', async () => {
-      mocks.adb.expects('getApiLevel').returns("18");
+      mocks.adb.expects('getApiLevel').returns(18);
       mocks.adb.expects('getDeviceLanguage').returns('fr');
       mocks.adb.expects('getDeviceCountry').returns('FR');
       mocks.adb.expects('getDeviceLocale').never();
@@ -139,7 +139,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
     it('should not set locale if it does not change when API = 23', async () => {
-      mocks.adb.expects('getApiLevel').returns("23");
+      mocks.adb.expects('getApiLevel').returns(23);
       mocks.adb.expects('getDeviceLanguage').never();
       mocks.adb.expects('getDeviceCountry').never();
       mocks.adb.expects('getDeviceLocale').returns('en-US');
@@ -151,7 +151,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
     it('should set locale if it is different when API = 23', async () => {
-      mocks.adb.expects('getApiLevel').returns("23");
+      mocks.adb.expects('getApiLevel').returns(23);
       mocks.adb.expects('getDeviceLanguage').never();
       mocks.adb.expects('getDeviceCountry').never();
       mocks.adb.expects('getDeviceLocale').returns('fr-FR');
@@ -164,7 +164,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
     it('should set locale to country only if language is not passed when API = 23', async () => {
-      mocks.adb.expects('getApiLevel').returns("23");
+      mocks.adb.expects('getApiLevel').returns(23);
       mocks.adb.expects('getDeviceLocale').returns('fr-FR');
       mocks.adb.expects('setDeviceLocale').withExactArgs('en').returns("");
       mocks.adb.expects('reboot').returns(null);
@@ -172,7 +172,7 @@ describe('Android Helpers', () => {
       mocks.adb.verify();
     });
     it('should set locale to language only if country is not passed when API = 23', async () => {
-      mocks.adb.expects('getApiLevel').returns("23");
+      mocks.adb.expects('getApiLevel').returns(23);
       mocks.adb.expects('getDeviceLocale').returns('fr-FR');
       mocks.adb.expects('setDeviceLocale').withExactArgs('US').returns("");
       mocks.adb.expects('reboot').returns(null);
@@ -559,14 +559,14 @@ describe('Android Helpers', () => {
   }));
   describe('setMockLocationApp', withMocks({adb}, (mocks) => {
     it('should enable mock location for api level below 23', async () => {
-      mocks.adb.expects('getApiLevel').returns(B.resolve("18"));
+      mocks.adb.expects('getApiLevel').returns(B.resolve(18));
       mocks.adb.expects('shell').withExactArgs(['settings', 'put', 'secure', 'mock_location', '1']).once()
         .returns('');
       await helpers.setMockLocationApp(adb, 'io.appium.settings');
       mocks.adb.verify();
     });
     it('should enable mock location for api level 23 and above', async () => {
-      mocks.adb.expects('getApiLevel').returns(B.resolve("23"));
+      mocks.adb.expects('getApiLevel').returns(B.resolve(23));
       mocks.adb.expects('shell').withExactArgs(['appops', 'set', 'io.appium.settings', 'android:mock_location', 'allow']).once()
         .returns('');
       await helpers.setMockLocationApp(adb, 'io.appium.settings');

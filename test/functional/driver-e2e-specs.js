@@ -131,7 +131,7 @@ describe('createSession', function () {
     // TODO: why is there no entry for 5.1?
     let adb = new ADB();
     let apiLevel = await adb.getApiLevel();
-    if (apiLevel === '22' || apiLevel === '21' || apiLevel === '19' || apiLevel === '18') {
+    if (apiLevel < 23) {
       return this.skip();
     }
     let caps = Object.assign({}, defaultCaps);
