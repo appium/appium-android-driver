@@ -54,9 +54,21 @@ describe('General', () => {
       await driver.getDeviceTime().should.become('11:12');
       driver.adb.shell.calledWithExactly(['date']).should.be.true;
     });
-    it('should thorws error if shell command failed', async () => {
+    it('should throw error if shell command failed', async () => {
       sandbox.stub(driver.adb, 'shell').throws();
       await driver.getDeviceTime().should.be.rejectedWith('Could not capture');
+    });
+  });
+  describe('getDeviceTime', () =>{
+    if('should set device date and time', async () => {
+      sandbox.stub(driver.adb, 'shell');
+      driver.adb.shell.returns('Fri Nov 10 20:39:00 EST 2017');
+      await driver.setDeviceTime('111019992017.00').should.become('Fri Nov 10 20:39:00 EST 2017');
+      driver.adb.shell.calledWithExactly(['date', '111019992017.00']).should.equal('Fri Nov 10 20:39:00 EST 2017');
+    });
+    it('should throw error on invalid input', async () => {
+      sandbox.stub(driver.adb, 'shell').throws();
+      await driver.setDeviceTime('bad-format').should.be.rejectedWith('Could not set device date and time');
     });
   });
   describe('getPageSource', () => {
