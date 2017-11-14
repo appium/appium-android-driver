@@ -326,6 +326,21 @@ describe('Unlock Helpers', () => {
       actions[8].options.y.should.equal(-1);
     });
   });
+  describe('swipeUnlock', withMocks({driver, helpers, adb, asyncbox}, (mocks) => {
+    it('should call dismissKeyguard', async () => {
+      mocks.adb.expects('getApiLevel').returns(24);
+      mocks.helpers.expects('dismissKeyguard');
+      await helpers.swipeUnlock(adb, driver);
+      mocks.adb.verify();
+      mocks.helpers.verify();
+    });
+    it('should throw an error on unsupported platform to unlock via swipe', async () => {
+      mocks.adb.expects('getApiLevel').returns(19);
+      await helpers.swipeUnlock(adb, driver).should.eventually.be
+        .rejectedWith(`supported on Android 5.1 and above`);
+      mocks.adb.verify();
+    });
+  }));
   describe('patternUnlock', withMocks({driver, helpers, adb, asyncbox}, (mocks) => {
     const el = {ELEMENT: 1};
     const pos = {x: 10, y: 20};
