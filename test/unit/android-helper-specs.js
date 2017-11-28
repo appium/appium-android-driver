@@ -102,8 +102,18 @@ describe('Android Helpers', () => {
   });
   describe('ensureDeviceLocale', withMocks({adb}, (mocks) => {
     it('should call setDeviceLanguageCountry', async () => {
-      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US').once().returns("");
+      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US').once();
       await helpers.ensureDeviceLocale(adb, 'en', 'US');
+      mocks.adb.verify();
+    });
+    it('should call setDeviceLanguageCountry with undefined', async () => {
+      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs(undefined, undefined).once();
+      await helpers.ensureDeviceLocale(adb);
+      mocks.adb.verify();
+    });
+    it('should call setDeviceLanguageCountry with one argument', async () => {
+      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('US', undefined).once();
+      await helpers.ensureDeviceLocale(adb, 'US');
       mocks.adb.verify();
     });
   }));
