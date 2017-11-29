@@ -103,19 +103,32 @@ describe('Android Helpers', () => {
   describe('ensureDeviceLocale', withMocks({adb}, (mocks) => {
     it('should call setDeviceLanguageCountry', async () => {
       mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US').once();
+      mocks.adb.expects('getApiLevel').withExactArgs().once().returns(24);
+      mocks.adb.expects('getDeviceLocale').withExactArgs().once().returns('en-US');
       await helpers.ensureDeviceLocale(adb, 'en', 'US');
       mocks.adb.verify();
     });
-    it('should call setDeviceLanguageCountry with undefined', async () => {
-      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs(undefined, undefined).once();
+
+    it('should never call setDeviceLanguageCountry', async () => {
+      mocks.adb.expects('setDeviceLanguageCountry').never();
+      mocks.adb.expects('getApiLevel').never();
       await helpers.ensureDeviceLocale(adb);
       mocks.adb.verify();
     });
-    it('should call setDeviceLanguageCountry with one argument', async () => {
-      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('US', undefined).once();
-      await helpers.ensureDeviceLocale(adb, 'US');
-      mocks.adb.verify();
+    it('should call setDeviceLanguageCountry with throw for API 24', async () => {
+      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('fr', 'FR').once();
+      mocks.adb.expects('getApiLevel').withExactArgs().once().returns(24);
+      mocks.adb.expects('getDeviceLocale').withExactArgs().once().returns('en-US');
+      await helpers.ensureDeviceLocale(adb, 'fr', 'FR').should.eventually.be.rejectedWith(Error, `Failed to set language: fr and country: FR`);
     });
+    it('should call setDeviceLanguageCountry with throw for API 22', async () => {
+      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('fr', 'FR').once();
+      mocks.adb.expects('getApiLevel').withExactArgs().once().returns(22);
+      mocks.adb.expects('getDeviceLanguage').withExactArgs().once().returns('en');
+      mocks.adb.expects('getDeviceCountry').withExactArgs().once().returns('US');
+      await helpers.ensureDeviceLocale(adb, 'fr', 'FR').should.eventually.be.rejectedWith(Error, `Failed to set language: fr and country: FR`);
+    });
+
   }));
 
   describe('getDeviceInfoFromCaps', () => {
