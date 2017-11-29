@@ -221,7 +221,7 @@ describe('Actions', () => {
       let localFile = 'local/tmp_file';
       const packageId = 'com.myapp';
       const remotePath = 'path/in/container';
-      const tmpPath = '/data/tmp/container';
+      const tmpPath = '/data/local/tmp/container';
       sandbox.stub(temp, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'pull');
       sandbox.stub(driver.adb, 'shell');
@@ -256,7 +256,7 @@ describe('Actions', () => {
       let content = 'appium';
       const packageId = 'com.myapp';
       const remotePath = 'path/in/container';
-      const tmpPath = '/data/tmp/container';
+      const tmpPath = '/data/local/tmp/container';
       sandbox.stub(temp, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'push');
       sandbox.stub(driver.adb, 'shell');
