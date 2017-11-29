@@ -266,6 +266,7 @@ describe('Actions', () => {
       await driver.pushFile(`@${packageId}/${remotePath}`, 'YXBwaXVt');
       support.fs.writeFile.calledWithExactly(localFile, content, 'binary').should.be.true;
       driver.adb.push.calledWithExactly(localFile, tmpPath).should.be.true;
+      driver.adb.shell.calledWithExactly([`run-as '${packageId}' mkdir -p '/data/data/${packageId}/path/in'`]).should.be.true;
       driver.adb.shell.calledWithExactly([`run-as '${packageId}' cat '${tmpPath}'>'/data/data/${packageId}/${remotePath}'`]).should.be.true;
       support.fs.unlink.calledWithExactly(localFile).should.be.true;
       driver.adb.shell.calledWithExactly(['rm', '-f', tmpPath]).should.be.true;
