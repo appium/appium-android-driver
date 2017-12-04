@@ -101,82 +101,22 @@ describe('Android Helpers', () => {
     });
   });
   describe('ensureDeviceLocale', withMocks({adb}, (mocks) => {
-    it('should return if language and country are not passed', async () => {
-      mocks.adb.expects('getDeviceLanguage').never();
-      mocks.adb.expects('getDeviceCountry').never();
-      mocks.adb.expects('getDeviceLocale').never();
-      mocks.adb.expects('setDeviceLanguage').never();
-      mocks.adb.expects('setDeviceCountry').never();
-      mocks.adb.expects('setDeviceLocale').never();
-      mocks.adb.expects('reboot').never();
+    it('should call setDeviceLanguageCountry', async () => {
+      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US').once();
+      mocks.adb.expects('ensureCurrentLocale').withExactArgs('en', 'US').once().returns(true);
+      await helpers.ensureDeviceLocale(adb, 'en', 'US');
+      mocks.adb.verify();
+    });
+    it('should never call setDeviceLanguageCountry', async () => {
+      mocks.adb.expects('setDeviceLanguageCountry').never();
+      mocks.adb.expects('getApiLevel').never();
       await helpers.ensureDeviceLocale(adb);
       mocks.adb.verify();
     });
-    it('should not set language and country if it does not change when API < 23', async () => {
-      mocks.adb.expects('getApiLevel').returns(18);
-      mocks.adb.expects('getDeviceLanguage').returns('en');
-      mocks.adb.expects('getDeviceCountry').returns('us');
-      mocks.adb.expects('getDeviceLocale').never();
-      mocks.adb.expects('setDeviceLanguage').never();
-      mocks.adb.expects('setDeviceCountry').never();
-      mocks.adb.expects('setDeviceLocale').never();
-      mocks.adb.expects('reboot').never();
-      await helpers.ensureDeviceLocale(adb, 'en', 'us');
-      mocks.adb.verify();
-    });
-    it('should set language and country if they are different when API < 23', async () => {
-      mocks.adb.expects('getApiLevel').returns(18);
-      mocks.adb.expects('getDeviceLanguage').returns('fr');
-      mocks.adb.expects('getDeviceCountry').returns('FR');
-      mocks.adb.expects('getDeviceLocale').never();
-      mocks.adb.expects('setDeviceLanguage').withExactArgs('en')
-        .returns("");
-      mocks.adb.expects('setDeviceCountry').withExactArgs('us')
-        .returns("");
-      mocks.adb.expects('setDeviceLocale').never();
-      mocks.adb.expects('reboot').returns(null);
-      await helpers.ensureDeviceLocale(adb, 'en', 'us');
-      mocks.adb.verify();
-    });
-    it('should not set locale if it does not change when API = 23', async () => {
-      mocks.adb.expects('getApiLevel').returns(23);
-      mocks.adb.expects('getDeviceLanguage').never();
-      mocks.adb.expects('getDeviceCountry').never();
-      mocks.adb.expects('getDeviceLocale').returns('en-US');
-      mocks.adb.expects('setDeviceLanguage').never();
-      mocks.adb.expects('setDeviceCountry').never();
-      mocks.adb.expects('setDeviceLocale').never();
-      mocks.adb.expects('reboot').never();
-      await helpers.ensureDeviceLocale(adb, 'en', 'us');
-      mocks.adb.verify();
-    });
-    it('should set locale if it is different when API = 23', async () => {
-      mocks.adb.expects('getApiLevel').returns(23);
-      mocks.adb.expects('getDeviceLanguage').never();
-      mocks.adb.expects('getDeviceCountry').never();
-      mocks.adb.expects('getDeviceLocale').returns('fr-FR');
-      mocks.adb.expects('setDeviceLanguage').never();
-      mocks.adb.expects('setDeviceCountry').never();
-      mocks.adb.expects('setDeviceLocale').withExactArgs('en-US')
-        .returns("");
-      mocks.adb.expects('reboot').returns(null);
-      await helpers.ensureDeviceLocale(adb, 'en', 'us');
-      mocks.adb.verify();
-    });
-    it('should set locale to country only if language is not passed when API = 23', async () => {
-      mocks.adb.expects('getApiLevel').returns(23);
-      mocks.adb.expects('getDeviceLocale').returns('fr-FR');
-      mocks.adb.expects('setDeviceLocale').withExactArgs('en').returns("");
-      mocks.adb.expects('reboot').returns(null);
-      await helpers.ensureDeviceLocale(adb, 'en');
-      mocks.adb.verify();
-    });
-    it('should set locale to language only if country is not passed when API = 23', async () => {
-      mocks.adb.expects('getApiLevel').returns(23);
-      mocks.adb.expects('getDeviceLocale').returns('fr-FR');
-      mocks.adb.expects('setDeviceLocale').withExactArgs('US').returns("");
-      mocks.adb.expects('reboot').returns(null);
-      await helpers.ensureDeviceLocale(adb, null, 'US');
+    it('should call setDeviceLanguageCountry with throw', async () => {
+      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('fr', 'FR').once();
+      mocks.adb.expects('ensureCurrentLocale').withExactArgs('fr', 'FR').once().returns(false);
+      await helpers.ensureDeviceLocale(adb, 'fr', 'FR').should.eventually.be.rejectedWith(Error, `Failed to set language: fr and country: FR`);
       mocks.adb.verify();
     });
   }));
