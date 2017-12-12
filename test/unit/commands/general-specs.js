@@ -184,17 +184,19 @@ describe('General', () => {
       await driver.installApp('non/existent/app.apk').should.be.rejectedWith(/Could not find/);
     });
   });
-  describe('background', () => {
-    it('should bring app to background', async () => {
-      driver.opts = {appPackage: 'pkg', appActivity: 'acv', intentAction: 'act',
+  describe('background', function () {
+    it('should bring app to background and back', async function () {
+      const appPackage = 'wpkg';
+      const appActivity = 'wacv';
+      driver.opts = {appPackage, appActivity, intentAction: 'act',
                      intentCategory: 'cat', intentFlags: 'flgs',
                      optionalIntentArguments: 'opt'};
-      let params = {pkg: 'pkg', activity: 'acv', action: 'act', category: 'cat',
-                    flags: 'flgs', waitPkg: 'wpkg', waitActivity: 'wacv',
+      let params = {pkg: appPackage, activity: appActivity, action: 'act', category: 'cat',
+                    flags: 'flgs',
                     optionalIntentArguments: 'opt', stopApp: false};
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
-        .returns({appPackage: 'wpkg', appActivity: 'wacv'});
+        .returns({appPackage, appActivity});
       sandbox.stub(B, 'delay');
       sandbox.stub(driver.adb, 'startApp');
       await driver.background(10);
@@ -203,7 +205,28 @@ describe('General', () => {
       B.delay.calledWithExactly(10000).should.be.true;
       driver.adb.startApp.calledWithExactly(params).should.be.true;
     });
-    it('should not bring app back if seconds are negative', async () => {
+    it('should bring app to background and back if started after session init', async function () {
+      const appPackage = 'newpkg';
+      const appActivity = 'newacv';
+      driver.opts = {appPackage: 'pkg', appActivity: 'acv', intentAction: 'act',
+                     intentCategory: 'cat', intentFlags: 'flgs',
+                     optionalIntentArguments: 'opt'};
+      let params = {pkg: appPackage, activity: appActivity, action: 'act', category: 'cat',
+                    flags: 'flgs', waitPkg: 'wpkg', waitActivity: 'wacv',
+                    optionalIntentArguments: 'opt', stopApp: false};
+      driver.opts.startActivityArgs = {[`${appPackage}/${appActivity}`]: params};
+      sandbox.stub(driver.adb, 'goToHome');
+      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
+        .returns({appPackage, appActivity});
+      sandbox.stub(B, 'delay');
+      sandbox.stub(driver.adb, 'startApp');
+      await driver.background(10);
+      driver.adb.getFocusedPackageAndActivity.calledOnce.should.be.true;
+      driver.adb.goToHome.calledOnce.should.be.true;
+      B.delay.calledWithExactly(10000).should.be.true;
+      driver.adb.startApp.calledWithExactly(params).should.be.true;
+    });
+    it('should not bring app back if seconds are negative', async function () {
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'startApp');
       await driver.background(-1);
