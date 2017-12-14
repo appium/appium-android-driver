@@ -35,4 +35,24 @@ describe('execute', function () {
     await driver.execute('mobile: shell', {command: 'pm', args: ['list']})
       .should.eventually.be.rejectedWith(/must have relaxed security flag set/);
   });
+
+  it('should fail if no command argument is provided to shell call', async function () {
+    driver.relaxedSecurityEnabled = true;
+    try {
+      await driver.execute('mobile: shell', {comand: 'pm', args: ['list']})
+        .should.eventually.be.rejectedWith(/argument is mandatory/);
+    } finally {
+      driver.relaxedSecurityEnabled = undefined;
+    }
+  });
+
+  it('should return a result if correct shell command is provided', async function () {
+    driver.relaxedSecurityEnabled = true;
+    try {
+      (await driver.execute('mobile: shell', {command: 'echo', args: 'hello'}))
+        .should.not.be.empty;
+    } finally {
+      driver.relaxedSecurityEnabled = undefined;
+    }
+  });
 });
