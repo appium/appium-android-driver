@@ -31,7 +31,7 @@ describe('execute', function () {
     await driver.execute('mobile: blabla').should.eventually.be.rejectedWith(/Unknown mobile command/);
   });
 
-  it('should fail if one tries to execute an unknown mobile command in native context', async function () {
+  it('should fail if one tries to execute a shell command without relaxed security flag set', async function () {
     await driver.execute('mobile: shell', {command: 'pm', args: ['list']})
       .should.eventually.be.rejectedWith(/must have relaxed security flag set/);
   });
