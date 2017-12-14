@@ -467,4 +467,13 @@ describe('General', () => {
       (await driver.getSystemBars()).should.be.eql(validSystemBars);
     });
   });
+  describe('broadcastIntent', () => {
+    it('should call the adb broadcast method with said intent', async () => {
+      const broadcastSpy = sinon.stub(driver.adb, 'broadcast');
+      driver.broadcastIntent('some intent');
+      broadcastSpy.calledOnce.should.be.true;
+      broadcastSpy.getCalls()[0].args[0].should.equal('some intent');
+      broadcastSpy.restore();
+    });
+  });
 });
