@@ -138,11 +138,6 @@ describe('Context', () => {
     beforeEach(() => {
       sandbox.stub(driver, 'onChromedriverStop');
     });
-    it('should throw an error if a chromedriver instance is already running', async () => {
-      driver.chromedriver = 'CHROMIUM';
-      await driver.startChromedriverProxy('WEBVIEW_1').should.eventually.be
-        .rejectedWith(/instance running/);
-    });
     it('should start new chromedriver session', async () => {
       await driver.startChromedriverProxy('WEBVIEW_1');
       driver.sessionChromedrivers.WEBVIEW_1.should.be.equal(driver.chromedriver);
