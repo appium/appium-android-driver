@@ -237,31 +237,22 @@ describe('Context', function () {
       chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage
         .should.be.equal('apkg');
     });
-    it('should prefer unprefixed chromeOptions', async function () {
+    it('should use prefixed chromeOptions', async function () {
+      let chromedriver = await setupNewChromedriver({
+        'goog:chromeOptions': {
+          androidPackage: 'apkg',
+        },
+      });
+      chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage
+        .should.be.equal('apkg');
+    });
+    it('should merge chromeOptions', async function () {
       let chromedriver = await setupNewChromedriver({
         chromeOptions: {
           androidPackage: 'apkg',
         },
         'goog:chromeOptions': {
-          androidPackage: 'bpkg',
-        },
-      });
-      chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage
-        .should.be.equal('apkg');
-    });
-    it('should use prefixed chromeOptions if necessary', async function () {
-      let chromedriver = await setupNewChromedriver({
-        'goog:chromeOptions': {
-          androidPackage: 'apkg',
-        },
-      });
-      chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage
-        .should.be.equal('apkg');
-    });
-    it('should merge prefixed chromeOptions if necessary', async function () {
-      let chromedriver = await setupNewChromedriver({
-        'goog:chromeOptions': {
-          androidPackage: 'apkg',
+          androidWaitPackage: 'bpkg',
         },
         'appium:chromeOptions': {
           androidActivity: 'aact',
@@ -271,6 +262,8 @@ describe('Context', function () {
         .should.be.equal('apkg');
       chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity
         .should.be.equal('aact');
+      chromedriver.start.getCall(0).args[0].chromeOptions.androidWaitPackage
+        .should.be.equal('bpkg');
     });
     it('should be able to set androidActivity chrome option', async function () {
       let chromedriver = await setupNewChromedriver({chromeAndroidActivity: 'act'});
