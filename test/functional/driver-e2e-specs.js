@@ -142,6 +142,16 @@ describe('createSession', function () {
     await driver.createSession(caps);
     expect(await driver.adb.getGrantedPermissions('io.appium.android.apis')).to.include.members(['android.permission.RECEIVE_SMS']);
   });
+  describe('W3C compliance', function () {
+    it('should accept W3C parameters', async function () {
+      const [sessionId, caps] = await driver.createSession(null, null, {
+        alwaysMatch: Object.assign({}, defaultCaps),
+        firstMatch: [{}],
+      });
+      sessionId.should.exist;
+      caps.should.exist;
+    });
+  });
 });
 
 describe('close', function () {
