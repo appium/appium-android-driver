@@ -49,7 +49,7 @@ describe('createSession', function () {
     caps.app = 'foo';
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
-    await driver.createSession(caps).should.eventually.be.rejectedWith(/apk/);
+    await driver.createSession(caps).should.eventually.be.rejectedWith(/does not exist or is not accessible/);
   });
   it('should error out if neither an app or a browser is defined', async () => {
     let caps = Object.assign({}, defaultCaps);

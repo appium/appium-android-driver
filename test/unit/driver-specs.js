@@ -112,6 +112,9 @@ describe('driver', () => {
           networkSpeed: () => {}
         };
       });
+      sandbox.stub(driver.helpers, 'configureApp')
+        .withArgs('/path/to/some', '.apk')
+        .returns('/path/to/some.apk');
     });
     afterEach(() => {
       sandbox.restore();
@@ -353,7 +356,7 @@ describe('driver', () => {
       driver.setContext.callCount.should.equal(10);
 
       let end = Date.now();
-      (end - begin).should.be.above(5000);
+      (end - begin).should.be.above(4500);
     });
     it('should not set the context if autoWebview is not requested', async () => {
       await driver.startAndroidSession();
