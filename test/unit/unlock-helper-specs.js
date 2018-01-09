@@ -129,11 +129,11 @@ describe('Unlock Helpers', () => {
   });
   describe('fingerprintUnlock', withMocks({adb, asyncbox}, (mocks) => {
     it('should be able to unlock device via fingerprint if API level >= 23', async () => {
-      let caps = {unlockKey: '123'};
+      const unlockKey = '123';
       mocks.adb.expects('getApiLevel').returns(23);
-      mocks.adb.expects('fingerprint').withExactArgs(caps.unlockKey).once();
+      mocks.adb.expects('fingerprint').withExactArgs(unlockKey).once();
       mocks.asyncbox.expects('sleep').withExactArgs(UNLOCK_WAIT_TIME).once();
-      await helpers.fingerprintUnlock(adb, driver, caps).should.be.fulfilled;
+      await helpers.fingerprintUnlock(adb, driver, unlockKey).should.be.fulfilled;
       mocks.adb.verify();
       mocks.asyncbox.verify();
     });
@@ -148,7 +148,7 @@ describe('Unlock Helpers', () => {
     });
   }));
   describe('pinUnlock', withMocks({adb, helpers, driver, asyncbox}, (mocks) => {
-    const caps = {unlockKey: '13579'};
+    const unlockKey = '13579';
     const keys = ['1', '3', '5', '7', '9'];
     const els = [{ELEMENT: 1}, {ELEMENT: 2}, {ELEMENT: 3},
                  {ELEMENT: 4}, {ELEMENT: 5}, {ELEMENT: 6},
@@ -173,7 +173,7 @@ describe('Unlock Helpers', () => {
       mocks.asyncbox.expects('sleep').withExactArgs(UNLOCK_WAIT_TIME).once();
       sandbox.stub(driver, 'click');
 
-      await helpers.pinUnlock(adb, driver, caps);
+      await helpers.pinUnlock(adb, driver, unlockKey);
 
       driver.click.getCall(0).args[0].should.equal(1);
       driver.click.getCall(1).args[0].should.equal(3);
@@ -202,7 +202,7 @@ describe('Unlock Helpers', () => {
       mocks.asyncbox.expects('sleep').withExactArgs(UNLOCK_WAIT_TIME).once();
       sandbox.stub(driver, 'click');
 
-      await helpers.pinUnlock(adb, driver, caps);
+      await helpers.pinUnlock(adb, driver, unlockKey);
 
       driver.click.getCall(0).args[0].should.equal(1);
       driver.click.getCall(1).args[0].should.equal(3);
@@ -221,7 +221,7 @@ describe('Unlock Helpers', () => {
       mocks.helpers.expects('stringKeyToArr').once();
       mocks.adb.expects('getApiLevel').returns(21);
       mocks.driver.expects('findElOrEls').returns(null);
-      await helpers.pinUnlock(adb, driver, caps).should.eventually.be
+      await helpers.pinUnlock(adb, driver, unlockKey).should.eventually.be
         .rejectedWith('Error finding unlock pin buttons!');
       mocks.helpers.verify();
       mocks.driver.verify();
@@ -234,7 +234,7 @@ describe('Unlock Helpers', () => {
       mocks.driver.expects('findElOrEls')
         .withExactArgs('id', 'com.android.keyguard:id/key1', false)
         .returns(null);
-      await helpers.pinUnlock(adb, driver, caps).should.eventually.be
+      await helpers.pinUnlock(adb, driver, unlockKey).should.eventually.be
         .rejectedWith(`Error finding unlock pin '1' button!`);
       mocks.helpers.verify();
       mocks.driver.verify();
@@ -243,14 +243,14 @@ describe('Unlock Helpers', () => {
   }));
   describe('passwordUnlock', withMocks({adb, helpers, asyncbox}, (mocks) => {
     it('should be able to unlock device using password', async () => {
-      let caps = {unlockKey: 'psswrd'};
+      let unlockKey = 'psswrd';
       mocks.helpers.expects('dismissKeyguard').withExactArgs(driver, adb).once();
-      mocks.helpers.expects('encodePassword').withExactArgs(caps.unlockKey).returns(caps.unlockKey);
-      mocks.adb.expects('shell').withExactArgs(['input', 'text', caps.unlockKey]).once();
+      mocks.helpers.expects('encodePassword').withExactArgs(unlockKey).returns(unlockKey);
+      mocks.adb.expects('shell').withExactArgs(['input', 'text', unlockKey]).once();
       mocks.asyncbox.expects('sleep').withExactArgs(INPUT_KEYS_WAIT_TIME).once();
       mocks.adb.expects('shell').withExactArgs(['input', 'keyevent', KEYCODE_NUMPAD_ENTER]);
       mocks.asyncbox.expects('sleep').withExactArgs(UNLOCK_WAIT_TIME).once();
-      await helpers.passwordUnlock(adb, driver, caps);
+      await helpers.passwordUnlock(adb, driver, unlockKey);
       mocks.helpers.verify();
       mocks.adb.verify();
       mocks.asyncbox.verify();
@@ -346,7 +346,7 @@ describe('Unlock Helpers', () => {
     const pos = {x: 10, y: 20};
     const size = {width: 300};
     const keys = ['1', '3', '5', '7', '9'];
-    const caps = {unlockKey: '13579'};
+    const unlockKey = '13579';
     beforeEach(() => {
       mocks.helpers.expects('dismissKeyguard').withExactArgs(driver, adb).once();
       mocks.helpers.expects('stringKeyToArr').returns(keys);
@@ -362,7 +362,7 @@ describe('Unlock Helpers', () => {
       mocks.driver.expects('findElOrEls')
         .withExactArgs('id', 'com.android.systemui:id/lockPatternView', false)
         .returns(el);
-      await helpers.patternUnlock(adb, driver, caps);
+      await helpers.patternUnlock(adb, driver, unlockKey);
       mocks.helpers.verify();
       mocks.driver.verify();
       mocks.asyncbox.verify();
@@ -373,7 +373,7 @@ describe('Unlock Helpers', () => {
       mocks.driver.expects('findElOrEls')
         .withExactArgs('id', 'com.android.keyguard:id/lockPatternView', false)
         .returns(el);
-      await helpers.patternUnlock(adb, driver, caps);
+      await helpers.patternUnlock(adb, driver, unlockKey);
       mocks.helpers.verify();
       mocks.driver.verify();
       mocks.asyncbox.verify();

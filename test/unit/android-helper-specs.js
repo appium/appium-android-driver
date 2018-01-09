@@ -11,7 +11,6 @@ import unlocker from '../../lib/unlock-helpers';
 import _ from 'lodash';
 import B from 'bluebird';
 
-
 const should = chai.should();
 const REMOTE_TEMP_PATH = "/data/local/tmp";
 const REMOTE_INSTALL_TIMEOUT = 90000;
@@ -628,7 +627,7 @@ describe('Android Helpers', () => {
     it('should raise an error on undefined unlockKey when unlockType is defined', async () => {
       mocks.adb.expects('isScreenLocked').once().returns(true);
       mocks.unlocker.expects('isValidKey').once();
-      await helpers.unlock(helpers, adb, {unlockType: "pin"}).should.be.rejectedWith('unlockKey');
+      await helpers.unlock(helpers, adb, {unlockType:"pin"}).should.be.rejectedWith('unlockKey');
       mocks.adb.verify();
       mocks.unlocker.verify();
       mocks.helpers.verify();
@@ -637,7 +636,7 @@ describe('Android Helpers', () => {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.unlocker.expects('pinUnlock').once();
-      await helpers.unlock(helpers, adb, {unlockType: "pin", unlockKey: "1111"});
+      await helpers.unlock(helpers, adb, {unlockType:"pin", unlockKey:"1111"});
       mocks.adb.verify();
       mocks.helpers.verify();
     });
@@ -645,7 +644,7 @@ describe('Android Helpers', () => {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.unlocker.expects('passwordUnlock').once();
-      await helpers.unlock(helpers, adb, {unlockType: "password", unlockKey: "appium"});
+      await helpers.unlock(helpers, adb, {unlockType:"password", unlockKey:"appium"});
       mocks.adb.verify();
       mocks.helpers.verify();
     });
@@ -653,7 +652,15 @@ describe('Android Helpers', () => {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.unlocker.expects('patternUnlock').once();
-      await helpers.unlock(helpers, adb, {unlockType: "pattern", unlockKey: "123456789"});
+      await helpers.unlock(helpers, adb, {unlockType:"pattern", unlockKey:"123456789"});
+      mocks.adb.verify();
+      mocks.helpers.verify();
+    });
+    it('should call swipeUnlock if unlockType is swipe', async () => {
+      mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
+      mocks.adb.expects('isScreenLocked').returns(false);
+      mocks.unlocker.expects('swipeUnlock').once();
+      await helpers.unlock(helpers, adb, {unlockType:"swipe"});
       mocks.adb.verify();
       mocks.helpers.verify();
     });
@@ -661,7 +668,7 @@ describe('Android Helpers', () => {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.unlocker.expects('fingerprintUnlock').once();
-      await helpers.unlock(helpers, adb, {unlockType: "fingerprint", unlockKey: "1111"});
+      await helpers.unlock(helpers, adb, {unlockType:"fingerprint", unlockKey:"1111"});
       mocks.adb.verify();
       mocks.unlocker.verify();
     });
@@ -669,7 +676,7 @@ describe('Android Helpers', () => {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.adb.expects('getApiLevel').once().returns(21);
-      await helpers.unlock(helpers, adb, {unlockType: "fingerprint", unlockKey: "1111"}).should.eventually
+      await helpers.unlock(helpers, adb, {unlockType:"fingerprint", unlockKey:"1111"}).should.eventually
         .be.rejectedWith('Fingerprint');
       mocks.helpers.verify();
     });
