@@ -310,6 +310,7 @@ describe('General', () => {
       helpers.installApkRemotely.calledWithExactly(driver.adb, driver.opts)
         .should.be.true;
       driver.grantPermissions.calledOnce.should.be.true;
+      driver.startAUT.calledOnce.should.be.true;
     });
     it('should do fast reset if fullReset is false', async () => {
       driver.opts.fullReset = false;
