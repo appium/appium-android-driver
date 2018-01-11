@@ -181,7 +181,7 @@ describe('General', () => {
         .should.be.true;
     });
     it('should throw an error if APK does not exist', async () => {
-      await driver.installApp('non/existent/app.apk').should.be.rejectedWith(/does not exist or is not accessible/);
+      await driver.installApp('non/existent/app.apk').should.be.rejectedWith(/Could not find app apk at/);
     });
   });
   describe('background', function () {
@@ -310,7 +310,6 @@ describe('General', () => {
       helpers.installApkRemotely.calledWithExactly(driver.adb, driver.opts)
         .should.be.true;
       driver.grantPermissions.calledOnce.should.be.true;
-      driver.startAUT.calledOnce.should.be.true;
     });
     it('should do fast reset if fullReset is false', async () => {
       driver.opts.fullReset = false;
@@ -322,6 +321,7 @@ describe('General', () => {
       driver.adb.stopAndClear.calledWithExactly('pkg').should.be.true;
       driver.grantPermissions.calledOnce.should.be.true;
       driver.startAUT.calledOnce.should.be.true;
+      expect(driver.curContext).to.be.null;
     });
   });
   describe('startAUT', () => {
