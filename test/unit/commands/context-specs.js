@@ -44,6 +44,10 @@ describe('Context', function () {
       driver.curContext = 'current_context';
       await driver.getCurrentContext().should.become('current_context');
     });
+    it('should return NATIVE_APP if no context is set', async function () {
+      driver.curContext = null;
+      await driver.getCurrentContext().should.become(NATIVE_WIN);
+    });
   });
   describe('getContexts', function () {
     it('should get Chromium context where appropriate', async function () {
