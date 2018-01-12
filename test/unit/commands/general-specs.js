@@ -322,6 +322,7 @@ describe('General', () => {
       driver.adb.stopAndClear.calledWithExactly('pkg').should.be.true;
       driver.grantPermissions.calledOnce.should.be.true;
       driver.startAUT.calledOnce.should.be.true;
+      expect(driver.curContext).to.be.null;
     });
   });
   describe('startAUT', () => {
