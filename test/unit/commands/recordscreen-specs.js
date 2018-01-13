@@ -20,6 +20,7 @@ describe('recording the screen', function () {
 
   describe('basic', withMocks({adb, driver, fs, temp}, (mocks) => {
     const localFile = '/path/to/local.mp4';
+    const mediaContent = new Buffer('appium');
 
     it('should fail to recording the screen on an emulator', async function () {
       mocks.driver.expects('isEmulator').returns(true);
@@ -51,6 +52,25 @@ describe('recording the screen', function () {
         mocks.adb.expects('fileSize').once().returns(39571);
 
         await driver.startRecordingScreen();
+      });
+
+      it('should return previous capture before starting a new recording', async function () {
+        const remotePath = '/sdcard/video.mp4';
+
+        mocks.adb.expects('shell').returns(new B(() => {}));
+        mocks.adb.expects('fileSize').once().returns(39571);
+        mocks.adb.expects('pull').once().withExactArgs(remotePath, localFile);
+        mocks.fs.expects('readFile').once().withExactArgs(localFile).returns(mediaContent);
+        mocks.adb.expects('rimraf').once().withExactArgs(remotePath);
+        mocks.fs.expects('rimraf').withExactArgs(localFile).once();
+        mocks.fs.expects('stat').once().withExactArgs(localFile).returns({size: 100});
+        mocks.temp.expects('path').once().returns(localFile);
+
+        driver._recentScreenRecordingPath = remotePath;
+        (await driver.startRecordingScreen())
+          .should.be.eql(mediaContent.toString('base64'));
+        driver._recentScreenRecordingPath.should.not.be.empty;
+        driver._recentScreenRecordingPath.should.not.be.eql(remotePath);
       });
 
       it('should fail if adb screen recording errors out', async function () {
@@ -123,13 +143,13 @@ describe('recording the screen', function () {
         `});
         mocks.adb.expects('shell').withExactArgs(['kill', '-2', ...pids]);
         mocks.adb.expects('pull').once().withExactArgs(remotePath, localFile);
-        mocks.fs.expects('readFile').once().withExactArgs(localFile).returns(new Buffer('appium'));
+        mocks.fs.expects('readFile').once().withExactArgs(localFile).returns(mediaContent);
         mocks.adb.expects('rimraf').once().withExactArgs(remotePath);
         mocks.fs.expects('rimraf').once().withExactArgs(localFile);
         mocks.fs.expects('stat').once().withExactArgs(localFile).returns({size: 100});
         mocks.temp.expects('path').once().returns(localFile);
 
-        (await driver.stopRecordingScreen()).should.eql(new Buffer('appium').toString('base64'));
+        (await driver.stopRecordingScreen()).should.eql(mediaContent.toString('base64'));
       });
 
       it('should use the remembered file path if present', async function () {
@@ -139,13 +159,13 @@ describe('recording the screen', function () {
           .atLeast(1).returns(pids);
         mocks.adb.expects('shell').withExactArgs(['kill', '-2', ...pids]);
         mocks.adb.expects('pull').once().withExactArgs(driver._recentScreenRecordingPath, localFile);
-        mocks.fs.expects('readFile').once().withExactArgs(localFile).returns(new Buffer('appium'));
+        mocks.fs.expects('readFile').once().withExactArgs(localFile).returns(mediaContent);
         mocks.adb.expects('rimraf').once().withExactArgs(driver._recentScreenRecordingPath);
         mocks.fs.expects('rimraf').withExactArgs(localFile).once();
         mocks.fs.expects('stat').once().withExactArgs(localFile).returns({size: 100});
         mocks.temp.expects('path').once().returns(localFile);
 
-        (await driver.stopRecordingScreen()).should.eql(new Buffer('appium').toString('base64'));
+        (await driver.stopRecordingScreen()).should.eql(mediaContent.toString('base64'));
       });
 
       it('should fail if the recorded file is too large', async function () {
