@@ -38,7 +38,8 @@ describe('recording the screen', function () {
         driver._recentScreenRecordingPath = null;
         mocks.driver.expects('isEmulator').returns(false);
         mocks.adb.expects('getApiLevel').returns(19);
-        mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord').returns([]);
+        mocks.adb.expects('getPIDsByName')
+          .atLeast(1).withExactArgs('screenrecord').returns([]);
       });
       afterEach(function () {
         mocks.driver.verify();
@@ -105,7 +106,8 @@ describe('recording the screen', function () {
         const pids = ['1'];
         driver._recentScreenRecordingPath = null;
         const remotePath = '/sdcard/file.mp4';
-        mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord').returns(pids);
+        mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord')
+          .atLeast(1).returns(pids);
         mocks.adb.expects('shell').withExactArgs(['lsof', '-p', pids.join(',')]).returns({output: `
           screenrec 11328      shell  mem       REG              253,0   1330160        554 /system/bin/linker64
           screenrec 11328      shell    0u     unix                          0t0      99935 socket
@@ -133,7 +135,8 @@ describe('recording the screen', function () {
       it('should use the remembered file path if present', async function () {
         const pids = ['1'];
         driver._recentScreenRecordingPath = '/sdcard/file.mp4';
-        mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord').returns(pids);
+        mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord')
+          .atLeast(1).returns(pids);
         mocks.adb.expects('shell').withExactArgs(['kill', '-2', ...pids]);
         mocks.adb.expects('pull').once().withExactArgs(driver._recentScreenRecordingPath, localFile);
         mocks.fs.expects('readFile').once().withExactArgs(localFile).returns(new Buffer('appium'));
@@ -148,7 +151,8 @@ describe('recording the screen', function () {
       it('should fail if the recorded file is too large', async function () {
         const pids = ['1'];
         driver._recentScreenRecordingPath = '/sdcard/file.mp4';
-        mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord').returns(pids);
+        mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord')
+          .atLeast(1).returns(pids);
         mocks.adb.expects('shell').withExactArgs(['kill', '-2', ...pids]);
         mocks.adb.expects('pull').once().withExactArgs(driver._recentScreenRecordingPath, localFile);
         mocks.adb.expects('rimraf').once().withExactArgs(driver._recentScreenRecordingPath);
@@ -157,12 +161,13 @@ describe('recording the screen', function () {
           .returns({size: process.memoryUsage().heapTotal});
         mocks.temp.expects('path').once().returns(localFile);
 
-        await driver.stopRecordingScreen().should.eventually.be.rejectedWith(/The file is too large/);
+        await driver.stopRecordingScreen().should.eventually.be.rejectedWith(/is too large/);
       });
 
       it('should return empty string if no recording processes are running', async function () {
         driver._recentScreenRecordingPath = null;
-        mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord').returns([]);
+        mocks.adb.expects('getPIDsByName')
+          .atLeast(1).withExactArgs('screenrecord').returns([]);
 
         (await driver.stopRecordingScreen()).should.eql('');
       });
