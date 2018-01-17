@@ -123,8 +123,8 @@ describe('General', () => {
   describe('getWindowRect', () => {
     it('should get window size', async () => {
       sandbox.stub(driver.bootstrap, 'sendAction')
-        .withArgs('getDeviceSize').returns('size');
-      await driver.getWindowRect().should.be.equal('size');
+        .withArgs('getDeviceSize').returns({width: 300, heigh: 400});
+      await driver.getWindowRect().toString().should.be.equal({width: 300, heigh: 400, x: 0, y: 0}.toString());
     });
   });
   describe('getCurrentActivity', () => {
