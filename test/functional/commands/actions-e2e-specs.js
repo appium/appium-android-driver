@@ -18,17 +18,17 @@ let caps = _.defaults({
 }, DEFAULT_CAPS);
 
 
-describe('actions', () => {
-  before(async () => {
+describe('actions', function () {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(caps);
   });
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
 
   describe('replaceValue', function () {
-    it('should replace existing value in a text field', async () => {
+    it('should replace existing value in a text field', async function () {
       let el = _.last(await driver.findElOrEls('class name', 'android.widget.EditText', true));
       el.should.exist;
       await driver.setValue('original value', el.ELEMENT);
@@ -40,26 +40,26 @@ describe('actions', () => {
   });
 
   describe('key codes', function () {
-    beforeEach(async () => {
+    beforeEach(async function () {
       await driver.startActivity(caps.appPackage, caps.appActivity);
     });
 
-    it('should press key code 3 without metastate', async () => {
+    it('should press key code 3 without metastate', async function () {
       await driver.pressKeyCode(3).should.not.be.rejected;
     });
-    it('should press key code 3 with metastate', async () => {
+    it('should press key code 3 with metastate', async function () {
       await driver.pressKeyCode(3, 193).should.not.be.rejected;
     });
-    it('should long press key code 3 without metastate', async () => {
+    it('should long press key code 3 without metastate', async function () {
       await driver.longPressKeyCode(3).should.not.be.rejected;
     });
-    it('should long press key code 3 with metastate', async () => {
+    it('should long press key code 3 with metastate', async function () {
       await driver.longPressKeyCode(3, 193).should.not.be.rejected;
     });
   });
 
   describe('getScreenshot', function () {
-    it('should return valid base64-encoded screenshot', async () => {
+    it('should return valid base64-encoded screenshot', async function () {
       const base64screenshot = await driver.getScreenshot();
       const imageMagic = new Buffer(base64screenshot, 'base64').toString('hex', 0, PNG_MAGIC_LENGTH);
       imageMagic.should.be.equal(PNG_MAGIC);

@@ -11,8 +11,8 @@ let sandbox = sinon.sandbox.create();
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('Element', () => {
-  beforeEach(() => {
+describe('Element', function () {
+  beforeEach(function () {
     driver = new AndroidDriver();
     driver.adb = new ADB();
     driver.bootstrap = new Bootstrap();
@@ -20,11 +20,11 @@ describe('Element', () => {
     sandbox.stub(androidHelpers, 'removeNullProperties');
     driver.opts = {unicodeKeyboard: true};
   });
-  afterEach(() => {
+  afterEach(function () {
     sandbox.restore();
   });
-  describe('getAttribute', () => {
-    it('should get element attribute', async () => {
+  describe('getAttribute', function () {
+    it('should get element attribute', async function () {
       driver.bootstrap.sendAction.withArgs('element:getAttribute').returns('attr_value');
       await driver.getAttribute('attr', 'el1').should.become('attr_value');
       driver.bootstrap.sendAction
@@ -32,114 +32,114 @@ describe('Element', () => {
         .should.be.true;
     });
   });
-  describe('getName', () => {
-    it('should get element name', async () => {
+  describe('getName', function () {
+    it('should get element name', async function () {
       sandbox.stub(driver, 'getAttribute');
       driver.getAttribute.returns('el_name');
       await driver.getName('el1').should.become('el_name');
       driver.getAttribute.calledWithExactly('className', 'el1').should.be.true;
     });
   });
-  describe('elementDisplayed', () => {
-    it('should return true if element displayed', async () => {
+  describe('elementDisplayed', function () {
+    it('should return true if element displayed', async function () {
       sandbox.stub(driver, 'getAttribute');
       driver.getAttribute.returns('true');
       await driver.elementDisplayed('el1').should.become(true);
       driver.getAttribute.calledWithExactly('displayed', 'el1').should.be.true;
     });
-    it('should return false if element not displayed', async () => {
+    it('should return false if element not displayed', async function () {
       sandbox.stub(driver, 'getAttribute');
       driver.getAttribute.returns('false');
       await driver.elementDisplayed('el1').should.become(false);
       driver.getAttribute.calledWithExactly('displayed', 'el1').should.be.true;
     });
   });
-  describe('elementEnabled', () => {
-    it('should return true if element enabled', async () => {
+  describe('elementEnabled', function () {
+    it('should return true if element enabled', async function () {
       sandbox.stub(driver, 'getAttribute');
       driver.getAttribute.returns('true');
       await driver.elementEnabled('el1').should.become(true);
       driver.getAttribute.calledWithExactly('enabled', 'el1').should.be.true;
     });
-    it('should return false if element not enabled', async () => {
+    it('should return false if element not enabled', async function () {
       sandbox.stub(driver, 'getAttribute');
       driver.getAttribute.returns('false');
       await driver.elementEnabled('el1').should.become(false);
       driver.getAttribute.calledWithExactly('enabled', 'el1').should.be.true;
     });
   });
-  describe('elementSelected', () => {
-    it('should return true if element selected', async () => {
+  describe('elementSelected', function () {
+    it('should return true if element selected', async function () {
       sandbox.stub(driver, 'getAttribute');
       driver.getAttribute.returns('true');
       await driver.elementSelected('el1').should.become(true);
       driver.getAttribute.calledWithExactly('selected', 'el1').should.be.true;
     });
-    it('should return false if element not selected', async () => {
+    it('should return false if element not selected', async function () {
       sandbox.stub(driver, 'getAttribute');
       driver.getAttribute.returns('false');
       await driver.elementSelected('el1').should.become(false);
       driver.getAttribute.calledWithExactly('selected', 'el1').should.be.true;
     });
   });
-  describe('setElementValue', () => {
+  describe('setElementValue', function () {
     const params = {elementId: 'el0', text: 'text to set',  replace: true,
                   unicodeKeyboard: true};
-    it('should call doSetElementValue', async () => {
+    it('should call doSetElementValue', async function () {
       sandbox.stub(driver, 'doSetElementValue');
       await driver.setElementValue('text to set', 'el0', true);
       driver.doSetElementValue.calledWithExactly(params).should.be.true;
     });
-    it('should join keys parameter if keys is instance of Array', async () => {
+    it('should join keys parameter if keys is instance of Array', async function () {
       sandbox.stub(driver, 'doSetElementValue');
       await driver.setElementValue(['t', 'ext', ' to ', 'se', 't'], 'el0', true);
       driver.doSetElementValue.calledWithExactly(params).should.be.true;
     });
-    it('should set replace to false by default', async () => {
+    it('should set replace to false by default', async function () {
       params.replace = false;
       sandbox.stub(driver, 'doSetElementValue');
       await driver.setElementValue(['t', 'ext', ' to ', 'se', 't'], 'el0');
       driver.doSetElementValue.calledWithExactly(params).should.be.true;
     });
   });
-  describe('doSetElementValue', () => {
-    it('should call setText to set element value', async () => {
+  describe('doSetElementValue', function () {
+    it('should call setText to set element value', async function () {
       await driver.doSetElementValue('params');
       driver.bootstrap.sendAction.calledWithExactly('element:setText',
         'params').should.be.true;
     });
   });
-  describe('setValue', () => {
-    it('should call setElementValue to set value', async () => {
+  describe('setValue', function () {
+    it('should call setElementValue to set value', async function () {
       sandbox.stub(driver, 'setElementValue');
       await driver.setValue('keys', 'el1');
       driver.setElementValue.calledWithExactly('keys', 'el1', false).should.be.true;
     });
   });
-  describe('replaceValue', () => {
-    it('should call setElementValue to replace value', async () => {
+  describe('replaceValue', function () {
+    it('should call setElementValue to replace value', async function () {
       sandbox.stub(driver, 'setElementValue');
       await driver.replaceValue('keys', 'el1');
       driver.setElementValue.calledWithExactly('keys', 'el1', true).should.be.true;
     });
   });
-  describe('setValueImmediate', () => {
-    it('should set value via adb inputText command', async () => {
+  describe('setValueImmediate', function () {
+    it('should set value via adb inputText command', async function () {
       sandbox.stub(driver, 'click');
       sandbox.stub(driver.adb, 'inputText');
       await driver.setValueImmediate('keys', 'el1');
       driver.click.calledWithExactly('el1').should.be.true;
       driver.adb.inputText.calledWithExactly('keys').should.be.true;
     });
-    it('should join keys parameter if keys is instance of Array', async () => {
+    it('should join keys parameter if keys is instance of Array', async function () {
       sandbox.stub(driver, 'click');
       sandbox.stub(driver.adb, 'inputText');
       await driver.setValueImmediate(['k', 'ey', 's'], 'el1');
       driver.adb.inputText.calledWithExactly('keys').should.be.true;
     });
   });
-  describe('getText', () => {
-    it('should get element text', async () => {
+  describe('getText', function () {
+    it('should get element text', async function () {
       driver.bootstrap.sendAction.withArgs('element:getText').returns('el_text');
       await driver.getText('el1').should.become('el_text');
       driver.bootstrap.sendAction
@@ -147,8 +147,8 @@ describe('Element', () => {
         .should.be.true;
     });
   });
-  describe('clear', () => {
-    it('should clear text of an element', async () => {
+  describe('clear', function () {
+    it('should clear text of an element', async function () {
       sandbox.stub(driver, 'getText');
       sandbox.stub(driver, 'click');
       sandbox.stub(driver.adb, 'clearTextField');
@@ -172,7 +172,7 @@ describe('Element', () => {
       driver.adb.clearTextField.alwaysCalledWith(1).should.be.true;
       driver.adb.clearTextField.callCount.should.be.equal(5);
     });
-    it('it should assume that the text have 100 chars if getText returns empty string', async () => {
+    it('it should assume that the text have 100 chars if getText returns empty string', async function () {
       sandbox.stub(driver, 'getText');
       sandbox.stub(driver, 'click');
       sandbox.stub(driver.adb, 'clearTextField');
@@ -182,15 +182,15 @@ describe('Element', () => {
       driver.adb.clearTextField.getCall(1).args[0].should.be.equal(50);
     });
   });
-  describe('click', () => {
-    it('should click an element', async () => {
+  describe('click', function () {
+    it('should click an element', async function () {
       await driver.click('el1');
       driver.bootstrap.sendAction.calledWithExactly('element:click', {elementId: 'el1'})
         .should.be.true;
     });
   });
-  describe('getLocation', () => {
-    it('should get location of an element', async () => {
+  describe('getLocation', function () {
+    it('should get location of an element', async function () {
       driver.bootstrap.sendAction
         .withArgs('element:getLocation').returns('loc_info');
       await driver.getLocation('el1').should.become('loc_info');
@@ -199,16 +199,16 @@ describe('Element', () => {
         .should.be.true;
     });
   });
-  describe('getLocationInView', () => {
-    it('should get location of an element', async () => {
+  describe('getLocationInView', function () {
+    it('should get location of an element', async function () {
       sandbox.stub(driver, 'getLocation');
       driver.getLocation.returns('loc_info');
       await driver.getLocationInView('el1').should.become('loc_info');
       driver.getLocation.calledWithExactly('el1').should.be.true;
     });
   });
-  describe('getSize', () => {
-    it('should get size of an element', async () => {
+  describe('getSize', function () {
+    it('should get size of an element', async function () {
       driver.bootstrap.sendAction
         .withArgs('element:getSize').returns('size_info');
       await driver.getSize('el1').should.become('size_info');
@@ -217,8 +217,8 @@ describe('Element', () => {
         .should.be.true;
     });
   });
-  describe('touchLongClick', () => {
-    it('should do touch long click on element', async () => {
+  describe('touchLongClick', function () {
+    it('should do touch long click on element', async function () {
       let params = {elementId: 'el1', x: 12, y: 34, duration: 5};
       await driver.touchLongClick('el1', 12, 34, 5);
       androidHelpers.removeNullProperties.calledWithExactly(params)
@@ -227,8 +227,8 @@ describe('Element', () => {
         .should.be.true;
     });
   });
-  describe('touchDown', () => {
-    it('should do touch down on element', async () => {
+  describe('touchDown', function () {
+    it('should do touch down on element', async function () {
       let params = {elementId: 'el1', x: 12, y: 34};
       await driver.touchDown('el1', 12, 34);
       androidHelpers.removeNullProperties.calledWithExactly(params)
@@ -237,8 +237,8 @@ describe('Element', () => {
         .should.be.true;
     });
   });
-  describe('touchUp', () => {
-    it('should do touch up on element', async () => {
+  describe('touchUp', function () {
+    it('should do touch up on element', async function () {
       let params = {elementId: 'el1', x: 12, y: 34};
       await driver.touchUp('el1', 12, 34);
       androidHelpers.removeNullProperties.calledWithExactly(params)
@@ -247,8 +247,8 @@ describe('Element', () => {
         .should.be.true;
     });
   });
-  describe('touchMove', () => {
-    it('should get element attribute', async () => {
+  describe('touchMove', function () {
+    it('should get element attribute', async function () {
       let params = {elementId: 'el1', x: 12, y: 34};
       await driver.touchMove('el1', 12, 34);
       androidHelpers.removeNullProperties.calledWithExactly(params)
@@ -257,27 +257,27 @@ describe('Element', () => {
         .should.be.true;
     });
   });
-  describe('complexTap', () => {
-    it('should tap an element', async () => {
+  describe('complexTap', function () {
+    it('should tap an element', async function () {
       await driver.complexTap(null, null, null, 12, 34);
       driver.bootstrap.sendAction.calledWithExactly('click', {x: 12, y:34})
         .should.be.true;
     });
   });
-  describe('tap', () => {
-    it('shoulde tap an element', async () => {
+  describe('tap', function () {
+    it('shoulde tap an element', async function () {
       await driver.tap('el1', 12, 34, 3);
       driver.bootstrap.sendAction.alwaysCalledWith('element:click',
         {elementId: 'el1', x: 12, y: 34}).should.be.true;
       driver.bootstrap.sendAction.calledThrice.should.be.true;
     });
-    it('should tap without an element', async () => {
+    it('should tap without an element', async function () {
       await driver.tap(null, 12, 34, 3);
       driver.bootstrap.sendAction.alwaysCalledWith('click', {x: 12, y: 34})
         .should.be.true;
       driver.bootstrap.sendAction.calledThrice.should.be.true;
     });
-    it('should perform single tap on element if x, y and count are not passed', async () => {
+    it('should perform single tap on element if x, y and count are not passed', async function () {
       await driver.tap('el1');
       driver.bootstrap.sendAction.alwaysCalledWith('element:click').should.be.true;
       driver.bootstrap.sendAction.calledOnce.should.be.true;

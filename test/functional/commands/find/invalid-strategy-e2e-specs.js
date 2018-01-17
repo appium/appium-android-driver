@@ -9,14 +9,14 @@ chai.use(chaiAsPromised);
 
 describe('Find - invalid strategy', function () {
   let driver;
-  before(async () => {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(DEFAULT_CAPS);
   });
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
-  it('should not accept -ios uiautomation locator strategy', async () => {
+  it('should not accept -ios uiautomation locator strategy', async function () {
     await driver.findElOrEls('-ios uiautomation', '.elements()', false)
       .should.eventually.be.rejectedWith(/not supported/);
   });

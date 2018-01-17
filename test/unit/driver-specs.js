@@ -17,31 +17,31 @@ let expect = chai.expect;
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('driver', () => {
-  describe('constructor', () => {
-    it('should call BaseDriver constructor with opts', () => {
+describe('driver', function () {
+  describe('constructor', function () {
+    it('should call BaseDriver constructor with opts', function () {
       let driver = new AndroidDriver({foo: 'bar'});
       driver.should.exist;
       driver.opts.foo.should.equal('bar');
     });
-    it('should have this.findElOrEls', () => {
+    it('should have this.findElOrEls', function () {
       let driver = new AndroidDriver({foo: 'bar'});
       driver.findElOrEls.should.exist;
       driver.findElOrEls.should.be.a('function');
     });
   });
 
-  describe('emulator methods', () => {
-    describe('fingerprint', () => {
-      it('should be rejected if isEmulator is false', () => {
+  describe('emulator methods', function () {
+    describe('fingerprint', function () {
+      it('should be rejected if isEmulator is false', function () {
         let driver = new AndroidDriver();
         sandbox.stub(driver, 'isEmulator').returns(false);
         driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
-    describe('sendSMS', () => {
-      it('sendSMS should be rejected if isEmulator is false', () => {
+    describe('sendSMS', function () {
+      it('sendSMS should be rejected if isEmulator is false', function () {
         let driver = new AndroidDriver();
         sandbox.stub(driver, 'isEmulator').returns(false);
         driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
@@ -49,20 +49,20 @@ describe('driver', () => {
       });
     });
   });
-  describe('sharedPreferences', () => {
+  describe('sharedPreferences', function () {
     driver = new AndroidDriver();
     let adb = new ADB();
     driver.adb = adb;
     let builder = new SharedPrefsBuilder();
     describe('should skip setting sharedPreferences', withMocks({driver}, (mocks) => {
-      it('on undefined name', async () => {
+      it('on undefined name', async function () {
         driver.opts.sharedPreferences = {};
         (await driver.setSharedPreferences()).should.be.false;
         mocks.driver.verify();
       });
     }));
     describe('should set sharedPreferences', withMocks({driver, adb, builder, fs}, (mocks) => {
-      it('on defined sharedPreferences object', async () => {
+      it('on defined sharedPreferences object', async function () {
         driver.opts.appPackage = 'io.appium.test';
         driver.opts.sharedPreferences = {
           name: 'com.appium.prefs',
@@ -89,8 +89,8 @@ describe('driver', () => {
     }));
   });
 
-  describe('createSession', () => {
-    beforeEach(() => {
+  describe('createSession', function () {
+    beforeEach(function () {
       driver = new AndroidDriver();
       sandbox.stub(driver, 'checkAppPresent');
       sandbox.stub(driver, 'checkPackagePresent');
@@ -116,10 +116,10 @@ describe('driver', () => {
         .withArgs('/path/to/some', '.apk')
         .returns('/path/to/some.apk');
     });
-    afterEach(() => {
+    afterEach(function () {
       sandbox.restore();
     });
-    it('should verify device is an emulator', async () => {
+    it('should verify device is an emulator', async function () {
       driver.opts.avd = "Nexus_5X_Api_23";
       driver.isEmulator().should.equal(true);
       driver.opts.avd = undefined;
@@ -128,32 +128,32 @@ describe('driver', () => {
       driver.opts.udid = "01234567889";
       driver.isEmulator().should.equal(false);
     });
-    it('should get java version if none is provided', async () => {
+    it('should get java version if none is provided', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
       driver.opts.javaVersion.should.exist;
     });
-    it('should get browser package details if browserName is provided', async () => {
+    it('should get browser package details if browserName is provided', async function () {
       sandbox.spy(helpers, 'getChromePkg');
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'Chrome'});
       helpers.getChromePkg.calledOnce.should.be.true;
     });
-    it('should check an app is present', async () => {
+    it('should check an app is present', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
       driver.checkAppPresent.calledOnce.should.be.true;
     });
-    it('should check a package is present', async () => {
+    it('should check a package is present', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
       driver.checkPackagePresent.calledOnce.should.be.true;
     });
-    it('should accept a package via the app capability', async () => {
+    it('should accept a package via the app capability', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', app: 'some.app.package'});
       driver.checkPackagePresent.calledOnce.should.be.true;
     });
-    it('should add server details to caps', async () => {
+    it('should add server details to caps', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
       driver.caps.webStorageEnabled.should.exist;
     });
-    it('should delete a session on failure', async () => {
+    it('should delete a session on failure', async function () {
       // Force an error to make sure deleteSession gets called
       sandbox.stub(helpers, 'getJavaVersion').throws();
       sandbox.stub(driver, 'deleteSession');
@@ -162,19 +162,19 @@ describe('driver', () => {
       } catch (ign) {}
       driver.deleteSession.calledOnce.should.be.true;
     });
-    it('should pass along adbPort capability to ADB', async () => {
+    it('should pass along adbPort capability to ADB', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', adbPort: 1111});
       driver.adb.adbPort.should.equal(1111);
     });
-    it('should proxy screenshot if nativeWebScreenshot is off', async () => {
+    it('should proxy screenshot if nativeWebScreenshot is off', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: false});
       driver.getProxyAvoidList().should.have.length(8);
     });
-    it('should not proxy screenshot if nativeWebScreenshot is on', async () => {
+    it('should not proxy screenshot if nativeWebScreenshot is on', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: true});
       driver.getProxyAvoidList().should.have.length(9);
     });
-    it('should set networkSpeed before launching app', async () => {
+    it('should set networkSpeed before launching app', async function () {
       sandbox.stub(driver, 'isEmulator').returns(true);
       sandbox.stub(helpers, 'ensureNetworkSpeed').returns('full');
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', networkSpeed: 'edge'});
@@ -182,8 +182,8 @@ describe('driver', () => {
       helpers.ensureNetworkSpeed.calledOnce.should.be.true;
     });
   });
-  describe('deleteSession', () => {
-    beforeEach(async () => {
+  describe('deleteSession', function () {
+    beforeEach(async function () {
       driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.bootstrap = new helpers.bootstrap(driver.adb);
@@ -196,38 +196,38 @@ describe('driver', () => {
       sandbox.stub(driver.bootstrap, 'shutdown');
       sandbox.spy(log, 'debug');
     });
-    afterEach(() => {
+    afterEach(function () {
       sandbox.restore();
     });
-    it('should not do anything if Android Driver has already shut down', async () => {
+    it('should not do anything if Android Driver has already shut down', async function () {
       driver.bootstrap = null;
       await driver.deleteSession();
       log.debug.callCount.should.eql(3);
       driver.stopChromedriverProxies.called.should.be.false;
       driver.adb.stopLogcat.called.should.be.true;
     });
-    it('should reset keyboard to default IME', async () => {
+    it('should reset keyboard to default IME', async function () {
       driver.opts.unicodeKeyboard = true;
       driver.opts.resetKeyboard = true;
       driver.defaultIME = 'someDefaultIME';
       await driver.deleteSession();
       driver.adb.setIME.calledOnce.should.be.true;
     });
-    it('should force stop non-Chrome sessions', async () => {
+    it('should force stop non-Chrome sessions', async function () {
       await driver.deleteSession();
       driver.adb.forceStop.calledOnce.should.be.true;
     });
-    it('should uninstall APK if required', async () => {
+    it('should uninstall APK if required', async function () {
       driver.opts.fullReset = true;
       await driver.deleteSession();
       driver.adb.uninstallApk.calledOnce.should.be.true;
     });
   });
-  describe('dismissChromeWelcome', () => {
-    before(async () => {
+  describe('dismissChromeWelcome', function () {
+    before(async function () {
       driver = new AndroidDriver();
     });
-    it('should verify chromeOptions args', () => {
+    it('should verify chromeOptions args', function () {
       driver.opts = {};
       driver.shouldDismissChromeWelcome().should.be.false;
       driver.opts = {chromeOptions: {}};
@@ -243,30 +243,30 @@ describe('driver', () => {
     });
   });
   describe('initAUT', withMocks({helpers}, (mocks) => {
-    beforeEach(async () => {
+    beforeEach(async function () {
       driver = new AndroidDriver();
       driver.caps = {};
     });
-    it('should throw error if run with full reset', async () => {
+    it('should throw error if run with full reset', async function () {
       driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: true};
       await driver.initAUT().should.be.rejectedWith(/Full reset requires an app capability/);
     });
-    it('should reset if run with fast reset', async () => {
+    it('should reset if run with fast reset', async function () {
       driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: true};
       driver.adb = "mock_adb";
       mocks.helpers.expects("resetApp").withExactArgs("mock_adb", undefined, "app.package", true);
       await driver.initAUT();
       mocks.helpers.verify();
     });
-    it('should keep data if run without reset', async () => {
+    it('should keep data if run without reset', async function () {
       driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: false};
       mocks.helpers.expects("resetApp").never();
       await driver.initAUT();
       mocks.helpers.verify();
     });
   }));
-  describe('startAndroidSession', () => {
-    beforeEach(async () => {
+  describe('startAndroidSession', function () {
+    beforeEach(async function () {
       driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.bootstrap = new helpers.bootstrap(driver.adb);
@@ -294,44 +294,44 @@ describe('driver', () => {
       sandbox.stub(driver.adb, 'getModel');
       sandbox.stub(driver.adb, 'getManufacturer');
     });
-    afterEach(() => {
+    afterEach(function () {
       sandbox.restore();
     });
-    it('should set actual platform version', async () => {
+    it('should set actual platform version', async function () {
       await driver.startAndroidSession();
       driver.adb.getPlatformVersion.calledOnce.should.be.true;
     });
-    it('should auto launch app if it is on the device', async () => {
+    it('should auto launch app if it is on the device', async function () {
       driver.opts.autoLaunch = true;
       await driver.startAndroidSession();
       driver.initAUT.calledOnce.should.be.true;
     });
-    it('should handle chrome sessions', async () => {
+    it('should handle chrome sessions', async function () {
       driver.opts.browserName = 'Chrome';
       await driver.startAndroidSession();
       driver.startChromeSession.calledOnce.should.be.true;
     });
-    it('should unlock the device', async () => {
+    it('should unlock the device', async function () {
       await driver.startAndroidSession();
       helpers.unlock.calledOnce.should.be.true;
     });
-    it('should start AUT if auto lauching', async () => {
+    it('should start AUT if auto lauching', async function () {
       driver.opts.autoLaunch = true;
       await driver.startAndroidSession();
       driver.initAUT.calledOnce.should.be.true;
     });
-    it('should not start AUT if not auto lauching', async () => {
+    it('should not start AUT if not auto lauching', async function () {
       driver.opts.autoLaunch = false;
       await driver.startAndroidSession();
       driver.initAUT.calledOnce.should.be.false;
     });
-    it('should set the context if autoWebview is requested', async () => {
+    it('should set the context if autoWebview is requested', async function () {
       driver.opts.autoWebview = true;
       await driver.startAndroidSession();
       driver.defaultWebviewName.calledOnce.should.be.true;
       driver.setContext.calledOnce.should.be.true;
     });
-    it('should set the context if autoWebview is requested using timeout', async () => {
+    it('should set the context if autoWebview is requested using timeout', async function () {
       driver.setContext.onCall(0).throws(errors.NoSuchContextError);
       driver.setContext.onCall(1).returns();
 
@@ -358,24 +358,24 @@ describe('driver', () => {
       let end = Date.now();
       (end - begin).should.be.above(4500);
     });
-    it('should not set the context if autoWebview is not requested', async () => {
+    it('should not set the context if autoWebview is not requested', async function () {
       await driver.startAndroidSession();
       driver.defaultWebviewName.calledOnce.should.be.false;
       driver.setContext.calledOnce.should.be.false;
     });
-    it('should set ignoreUnimportantViews cap', async () => {
+    it('should set ignoreUnimportantViews cap', async function () {
       driver.opts.ignoreUnimportantViews = true;
 
       await driver.startAndroidSession();
       driver.settings.update.calledOnce.should.be.true;
       driver.settings.update.firstCall.args[0].ignoreUnimportantViews.should.be.true;
     });
-    it('should not call dismissChromeWelcome on missing chromeOptions', async () => {
+    it('should not call dismissChromeWelcome on missing chromeOptions', async function () {
       driver.opts.browserName = 'Chrome';
       await driver.startAndroidSession();
       driver.dismissChromeWelcome.calledOnce.should.be.false;
     });
-    it('should call dismissChromeWelcome', async () => {
+    it('should call dismissChromeWelcome', async function () {
       driver.opts.browserName = 'Chrome';
       driver.opts.chromeOptions = {
         "args" : ["--no-first-run"]
@@ -384,11 +384,11 @@ describe('driver', () => {
       driver.dismissChromeWelcome.calledOnce.should.be.true;
     });
   });
-  describe('validateDesiredCaps', () => {
-    before(() => {
+  describe('validateDesiredCaps', function () {
+    before(function () {
       driver = new AndroidDriver();
     });
-    it('should throw an error if caps do not contain an app, package or valid browser', () => {
+    it('should throw an error if caps do not contain an app, package or valid browser', function () {
       expect(() => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device'});
       }).to.throw(/must include/);
@@ -396,7 +396,7 @@ describe('driver', () => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', browserName: 'Netscape Navigator'});
       }).to.throw(/must include/);
     });
-    it('should not throw an error if caps contain an app, package or valid browser', () => {
+    it('should not throw an error if caps contain an app, package or valid browser', function () {
       expect(() => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
       }).to.not.throw(Error);
@@ -407,61 +407,61 @@ describe('driver', () => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
       }).to.not.throw(/must include/);
     });
-    it('should not be sensitive to platform name casing', () => {
+    it('should not be sensitive to platform name casing', function () {
       expect(() => {
         driver.validateDesiredCaps({platformName: 'AnDrOiD', deviceName: 'device', app: '/path/to/some.apk'});
       }).to.not.throw(Error);
     });
-    it('should not throw an error if caps contain both an app and browser, for grid compatibility', () => {
+    it('should not throw an error if caps contain both an app and browser, for grid compatibility', function () {
       expect(() => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk', browserName: 'iPhone'});
       }).to.not.throw(Error);
     });
-    it('should not throw an error if caps contain androidScreenshotPath capability', () => {
+    it('should not throw an error if caps contain androidScreenshotPath capability', function () {
       expect(() => {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk', androidScreenshotPath: '/path/to/screenshotdir'});
       }).to.not.throw(Error);
     });
   });
-  describe('proxying', () => {
-    before(() => {
+  describe('proxying', function () {
+    before(function () {
       driver = new AndroidDriver();
       driver.sessionId = 'abc';
     });
-    describe('#proxyActive', () => {
-      it('should exist', () => {
+    describe('#proxyActive', function () {
+      it('should exist', function () {
         driver.proxyActive.should.be.an.instanceof(Function);
       });
-      it('should return false', () => {
+      it('should return false', function () {
         driver.proxyActive('abc').should.be.false;
       });
-      it('should throw an error if session id is wrong', () => {
+      it('should throw an error if session id is wrong', function () {
         (() => { driver.proxyActive('aaa'); }).should.throw;
       });
     });
 
-    describe('#getProxyAvoidList', () => {
-      it('should exist', () => {
+    describe('#getProxyAvoidList', function () {
+      it('should exist', function () {
         driver.getProxyAvoidList.should.be.an.instanceof(Function);
       });
-      it('should return jwpProxyAvoid array', () => {
+      it('should return jwpProxyAvoid array', function () {
         let avoidList = driver.getProxyAvoidList('abc');
         avoidList.should.be.an.instanceof(Array);
         avoidList.should.eql(driver.jwpProxyAvoid);
       });
-      it('should throw an error if session id is wrong', () => {
+      it('should throw an error if session id is wrong', function () {
         (() => { driver.getProxyAvoidList('aaa'); }).should.throw;
       });
     });
 
-    describe('#canProxy', () => {
-      it('should exist', () => {
+    describe('#canProxy', function () {
+      it('should exist', function () {
         driver.canProxy.should.be.an.instanceof(Function);
       });
-      it('should return false', () => {
+      it('should return false', function () {
         driver.canProxy('abc').should.be.false;
       });
-      it('should throw an error if session id is wrong', () => {
+      it('should throw an error if session id is wrong', function () {
         (() => { driver.canProxy('aaa'); }).should.throw;
       });
     });

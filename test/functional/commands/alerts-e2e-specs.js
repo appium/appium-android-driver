@@ -9,14 +9,14 @@ chai.use(chaiAsPromised);
 
 describe('Commands', function () {
   let driver;
-  before(() => {
+  before(function () {
     driver = new AndroidDriver();
   });
-  afterEach(async () => {
+  afterEach(async function () {
     await driver.deleteSession();
   });
-  describe('Alerts', async () => {
-    it('should throw a notYetImplemented error for alert methods', async () => {
+  describe('Alerts', async function () {
+    it('should throw a notYetImplemented error for alert methods', async function () {
       await driver.createSession(DEFAULT_CAPS);
       await driver.getAlertText().should.eventually.be.rejectedWith(/implemented/);
       await driver.setAlertText('new text').should.eventually.be.rejectedWith(/implemented/);

@@ -14,13 +14,13 @@ let caps = _.defaults({
   appActivity: '.view.TextFields'
 }, DEFAULT_CAPS);
 
-describe('recording the screen', () => {
-  before(async () => {
+describe('recording the screen', function () {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(caps);
   });
 
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
 

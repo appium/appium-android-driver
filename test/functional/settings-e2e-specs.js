@@ -13,10 +13,10 @@ let defaultCaps = _.defaults({
   browserName: 'chrome'
 }, DEFAULT_CAPS);
 
-describe('toggle wifi tests', () => {
+describe('toggle wifi tests', function () {
   let driver;
 
-  describe('functional', () => {
+  describe('functional', function () {
     before(function () {
       if (process.env.TRAVIS) {
         return this.skip();
@@ -26,10 +26,10 @@ describe('toggle wifi tests', () => {
       }
       driver = new AndroidDriver();
     });
-    afterEach(async () => {
+    afterEach(async function () {
       await driver.deleteSession();
     });
-    it('should toggle wifi on real devices', async () => {
+    it('should toggle wifi on real devices', async function () {
       await driver.createSession(defaultCaps);
       let isWifiOn = await driver.isWifiOn();
       if (isWifiOn) {

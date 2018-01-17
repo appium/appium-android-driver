@@ -129,10 +129,10 @@ let languageTests = [
   {label: 'should be able to send Hebrew', text: 'בדיקות'},
 ];
 
-describe('keyboard', () => {
-  describe('ascii', () => {
+describe('keyboard', function () {
+  describe('ascii', function () {
     let driver;
-    before(async () => {
+    before(async function () {
       driver = new AndroidDriver();
       await driver.createSession(defaultAsciiCaps);
 
@@ -147,21 +147,21 @@ describe('keyboard', () => {
       }
       await driver.activateIMEEngine(selectedEngine);
     });
-    after(async () => {
+    after(async function () {
       await driver.deleteSession();
     });
 
-    describe('editing a text field', () => {
-      before(async () => {
+    describe('editing a text field', function () {
+      before(async function () {
         await driver.startActivity(PACKAGE, TEXTFIELD_ACTIVITY);
       });
 
       for (let test of tests) {
-        describe(test.label, () => {
-          it(`should work with setValue: '${test.text}'`, async () => {
+        describe(test.label, function () {
+          it(`should work with setValue: '${test.text}'`, async function () {
             await runTextEditTest(driver, test.text);
           });
-          it(`should work with keys: '${test.text}'`, async () => {
+          it(`should work with keys: '${test.text}'`, async function () {
             await runTextEditTest(driver, test.text, true);
           });
         });
@@ -185,43 +185,43 @@ describe('keyboard', () => {
       });
     });
 
-    describe('sending a key event', () => {
-      before(async () => {
+    describe('sending a key event', function () {
+      before(async function () {
         await driver.startActivity(PACKAGE, KEYEVENT_ACTIVITY);
         await B.delay(500);
       });
 
-      it('should be able to send combination keyevents', async () => {
+      it('should be able to send combination keyevents', async function () {
         await runCombinationKeyEventTest(driver);
       });
-      it('should be able to send keyevents', async () => {
+      it('should be able to send keyevents', async function () {
         await runKeyEventTest(driver);
       });
     });
   });
 
-  describe('unicode', () => {
+  describe('unicode', function () {
     let driver;
-    before(async () => {
+    before(async function () {
       driver = new AndroidDriver();
       await driver.createSession(defaultUnicodeCaps);
     });
-    after(async () => {
+    after(async function () {
       await driver.deleteSession();
     });
 
-    describe('editing a text field', () => {
-      before(async () => {
+    describe('editing a text field', function () {
+      before(async function () {
         await driver.startActivity(PACKAGE, TEXTFIELD_ACTIVITY);
       });
 
       for (let testSet of [tests, unicodeTests, languageTests]) {
         for (let test of testSet) {
-          describe(test.label, () => {
-            it(`should work with setValue: '${test.text}'`, async () => {
+          describe(test.label, function () {
+            it(`should work with setValue: '${test.text}'`, async function () {
               await runTextEditTest(driver, test.text);
             });
-            it(`should work with keys: '${test.text}'`, async () => {
+            it(`should work with keys: '${test.text}'`, async function () {
               await runTextEditTest(driver, test.text, true);
             });
           });
@@ -229,15 +229,15 @@ describe('keyboard', () => {
       }
     });
 
-    describe('sending a key event', () => {
-      before(async () => {
+    describe('sending a key event', function () {
+      before(async function () {
         await driver.startActivity(PACKAGE, KEYEVENT_ACTIVITY);
       });
 
-      it('should be able to send combination keyevents', async () => {
+      it('should be able to send combination keyevents', async function () {
         await runCombinationKeyEventTest(driver);
       });
-      it('should be able to send keyevents', async () => {
+      it('should be able to send keyevents', async function () {
         await runKeyEventTest(driver);
       });
     });

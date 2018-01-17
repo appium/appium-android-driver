@@ -9,7 +9,7 @@ import { getChromedriver220Asset } from '../functional/helpers';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('test helpers', () => {
+describe('test helpers', function () {
   describe('getChromedriver220Asset', withMocks({system}, (mocks) => {
     let basePath = path.resolve(__dirname, '..', '..', '..');
 

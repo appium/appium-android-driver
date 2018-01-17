@@ -19,53 +19,53 @@ const AVD_ANDROID_19_PATTERN_UNLOCK = "ANDROID_API_19_PATTERN_UNLOCK";
 const AVD_ANDROID_23_PATTERN_UNLOCK = "ANDROID_API_23_PATTERN_UNLOCK";
 const AVD_ANDROID_23_FINGERPRINT_UNLOCK = "ANDROID_API_23_FINGERPRINT_UNLOCK";
 
-describe('unlock tests', () => {
+describe('unlock tests', function () {
   let driver;
 
-  describe.skip('functional', () => {
-    before(() => {
+  describe.skip('functional', function () {
+    before(function () {
       driver = new AndroidDriver();
     });
-    afterEach(async () => {
+    afterEach(async function () {
       await driver.deleteSession();
     });
-    it('should unlock an Android 19 device using a PIN', async () => {
+    it('should unlock an Android 19 device using a PIN', async function () {
       let caps = _.extend(defaultCaps, {unlockType: "pin", unlockKey: "1111", avd: AVD_ANDROID_19_PIN_UNLOCK});
       await driver.createSession(caps);
       let isLock = await driver.adb.isScreenLocked();
       isLock.should.equal(false);
     });
-    it('should unlock an Android 23 device using a PIN', async () => {
+    it('should unlock an Android 23 device using a PIN', async function () {
       let caps = _.extend(defaultCaps, {unlockType: "pin", unlockKey: "1111", avd: AVD_ANDROID_23_PIN_UNLOCK});
       await driver.createSession(caps);
       let isLock = await driver.adb.isScreenLocked();
       isLock.should.equal(false);
     });
-    it('should unlock an Android 19 device using a PASSWORD', async () => {
+    it('should unlock an Android 19 device using a PASSWORD', async function () {
       let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "appium", avd: AVD_ANDROID_19_PASSWORD_UNLOCK});
       await driver.createSession(caps);
       let isLock = await driver.adb.isScreenLocked();
       isLock.should.equal(false);
     });
-    it('should unlock an Android 23 device using a PASSWORD', async () => {
+    it('should unlock an Android 23 device using a PASSWORD', async function () {
       let caps = _.extend(defaultCaps, {unlockType: "password", unlockKey: "appium", avd: AVD_ANDROID_23_PASSWORD_UNLOCK});
       await driver.createSession(caps);
       let isLock = await driver.adb.isScreenLocked();
       isLock.should.equal(false);
     });
-    it('should unlock an Android 19 device using a PATTERN', async () => {
+    it('should unlock an Android 19 device using a PATTERN', async function () {
       let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "729856143", avd: AVD_ANDROID_19_PATTERN_UNLOCK});
       await driver.createSession(caps);
       let isLock = await driver.adb.isScreenLocked();
       isLock.should.equal(false);
     });
-    it('should unlock an Android 23 device using a PATTERN', async () => {
+    it('should unlock an Android 23 device using a PATTERN', async function () {
       let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "729856143", avd: AVD_ANDROID_23_PATTERN_UNLOCK});
       await driver.createSession(caps);
       let isLock = await driver.adb.isScreenLocked();
       isLock.should.equal(false);
     });
-    it('should unlock an Android 23 device using FINGERPRINT', async () => {
+    it('should unlock an Android 23 device using FINGERPRINT', async function () {
       let caps = _.extend(defaultCaps, {unlockType: "pattern", unlockKey: "729856143", avd: AVD_ANDROID_23_FINGERPRINT_UNLOCK});
       await driver.createSession(caps);
       let isLock = await driver.adb.isScreenLocked();

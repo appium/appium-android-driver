@@ -15,22 +15,22 @@ let caps = _.defaults({
   appActivity: '.view.TextFields'
 }, DEFAULT_CAPS);
 
-describe('performance', () => {
-  before(async () => {
+describe('performance', function () {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(caps);
   });
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
 
-  describe('getPerformanceData', () => {
-    it('should get the performancedata', async () => {
+  describe('getPerformanceData', function () {
+    it('should get the performancedata', async function () {
       let capability = await driver.getPerformanceDataTypes();
       capability.should.eql(_.keys(SUPPORTED_PERFORMANCE_DATA_TYPES));
     });
 
-    it('should throw an Error for unsupported capability data type ', async  () => {
+    it('should throw an Error for unsupported capability data type ', async function  () {
       await driver.getPerformanceData(caps.appPackage, 'randominfo', 2).should.be.rejected;
     });
 
@@ -51,7 +51,7 @@ describe('performance', () => {
         }
       }
     });
-    it('should get the amount of memory used by the process', async () => {
+    it('should get the amount of memory used by the process', async function () {
       let memory = await driver.getPerformanceData(caps.appPackage, 'memoryinfo', 2);
 
       Array.isArray(memory).should.be.true;
@@ -63,7 +63,7 @@ describe('performance', () => {
         }
       }
     });
-    it('should get the remaining battery power', async () => {
+    it('should get the remaining battery power', async function () {
       let battery = await driver.getPerformanceData(caps.appPackage, 'batteryinfo', 2);
 
       Array.isArray(battery).should.be.true;
