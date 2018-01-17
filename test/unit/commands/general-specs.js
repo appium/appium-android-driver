@@ -120,6 +120,13 @@ describe('General', () => {
       await driver.getWindowSize().should.be.equal('size');
     });
   });
+  describe('getWindowRect', () => {
+    it('should get window size', async () => {
+      sandbox.stub(driver.bootstrap, 'sendAction')
+        .withArgs('getDeviceSize').returns('size');
+      await driver.getWindowRect().should.be.equal('size');
+    });
+  });
   describe('getCurrentActivity', () => {
     it('should get current activity', async () => {
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
