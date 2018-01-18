@@ -180,14 +180,6 @@ describe('Actions', function () {
       driver.adb.isScreenLocked.calledOnce.should.be.true;
     });
   });
-  describe('unlock', function () {
-    it('should call android-helpers.unlock()', async function () {
-      sandbox.stub(androidHelpers, 'unlock');
-      await driver.unlock('caps');
-      androidHelpers.unlock.calledWithExactly(driver, driver.adb, 'caps')
-        .should.be.true;
-    });
-  });
   describe('openNotifications', function () {
     it('should be able to open notifications', async function () {
       await driver.openNotifications();
