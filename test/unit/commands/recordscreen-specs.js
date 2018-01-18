@@ -45,6 +45,8 @@ describe('recording the screen', function () {
       afterEach(function () {
         mocks.driver.verify();
         mocks.adb.verify();
+        mocks.fs.verify();
+        mocks.temp.verify();
       });
 
       it('should call adb to start screen recording', async function () {
@@ -52,6 +54,7 @@ describe('recording the screen', function () {
         mocks.adb.expects('fileSize').once().returns(39571);
 
         await driver.startRecordingScreen();
+        driver._recentScreenRecordingPath.should.not.be.empty;
       });
 
       it('should return previous capture before starting a new recording', async function () {
@@ -70,7 +73,7 @@ describe('recording the screen', function () {
         (await driver.startRecordingScreen())
           .should.be.eql(mediaContent.toString('base64'));
         driver._recentScreenRecordingPath.should.not.be.empty;
-        driver._recentScreenRecordingPath.should.not.be.eql(remotePath);
+        driver._recentScreenRecordingPath.should.not.be.eql(localFile);
       });
 
       it('should fail if adb screen recording errors out', async function () {
@@ -117,6 +120,7 @@ describe('recording the screen', function () {
 
     describe('stopRecordingScreen', function () {
       afterEach(function () {
+        mocks.driver.verify();
         mocks.adb.verify();
         mocks.fs.verify();
         mocks.temp.verify();
