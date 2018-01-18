@@ -8,14 +8,14 @@ import ADB from 'appium-adb';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('Touch', () => {
+describe('Touch', function () {
   let adb = new ADB();
   let driver = new AndroidDriver();
   driver.adb = adb;
 
-  describe('#parseTouch', () => {
-    describe('given a touch sequence with absolute coordinates', () => {
-      it('should use offsets for moveTo', async () => {
+  describe('#parseTouch', function () {
+    describe('given a touch sequence with absolute coordinates', function () {
+      it('should use offsets for moveTo', async function () {
         // let driver = new AndroidDriver({foo: 'bar'});
         let actions = [{action: 'press', options: {x: 100, y: 101}},
                        {action: 'moveTo', options: {x: 50, y: 51}},
@@ -43,14 +43,14 @@ describe('Touch', () => {
   });
 
   describe('fixRelease', withMocks({driver, adb}, (mocks) => {
-    it('should be able to get the correct release coordinates', async () => {
+    it('should be able to get the correct release coordinates', async function () {
       let actions = [{action: 'press', options: {x: 20, y: 21}},
                      {action: 'moveTo', options: {x: 10, y: 11}},
                      {action: 'release'}];
       let release = await driver.fixRelease(actions, false);
       release.options.should.eql({x: 10, y: 11});
     });
-    it('should be able to get the correct element release offset', async () => {
+    it('should be able to get the correct element release offset', async function () {
       mocks.driver.expects('getLocationInView')
         .withExactArgs(2)
         .returns({x: 100, y: 101});
@@ -60,7 +60,7 @@ describe('Touch', () => {
       let release = await driver.fixRelease(actions, false);
       release.options.should.eql({x: 110, y: 112});
     });
-    it('should be able to get the correct element release', async () => {
+    it('should be able to get the correct element release', async function () {
       mocks.driver.expects('getLocationInView')
         .withExactArgs(2)
         .returns({x: 100, y: 101});
@@ -77,7 +77,7 @@ describe('Touch', () => {
 
   describe('doTouchDrag', withMocks({driver, adb}, (mocks) => {
     let tests = async (apiLevel, defaultDuration) => {
-      it('should handle longPress not having duration', async () => {
+      it('should handle longPress not having duration', async function () {
         let expectedDuration = defaultDuration;
         let actions = [{action: 'longPress', options: {x: 100, y: 101}},
                        {action: 'moveTo', options: {x: 50, y: 51}},
@@ -93,7 +93,7 @@ describe('Touch', () => {
 
         mocks.driver.verify();
       });
-      it('should handle longPress having duration', async () => {
+      it('should handle longPress having duration', async function () {
         let expectedDuration = 4;
         let actions = [{action: 'longPress', options: {x: 100, y: 101, duration: expectedDuration * 1000}},
                        {action: 'moveTo', options: {x: 50, y: 51}},
@@ -109,7 +109,7 @@ describe('Touch', () => {
 
         mocks.driver.verify();
       });
-      it('should handle longPress having duration less than minimum', async () => {
+      it('should handle longPress having duration less than minimum', async function () {
         let expectedDuration = defaultDuration;
         let actions = [{action: 'longPress', options: {x: 100, y: 101, duration: 500}},
                        {action: 'moveTo', options: {x: 50, y: 51}},
@@ -127,23 +127,23 @@ describe('Touch', () => {
       });
     };
 
-    describe('android >5', () => {
-      beforeEach(() => {
+    describe('android >5', function () {
+      beforeEach(function () {
         mocks.adb.expects('getApiLevel')
           .returns(5);
       });
-      afterEach(() => {
+      afterEach(function () {
         mocks.adb.verify();
         mocks.adb.restore();
       });
       tests(5, 2);
     });
-    describe('android <5', () => {
-      beforeEach(() => {
+    describe('android <5', function () {
+      beforeEach(function () {
         mocks.adb.expects('getApiLevel')
           .returns(4.4);
       });
-      afterEach(() => {
+      afterEach(function () {
         mocks.adb.verify();
         mocks.adb.restore();
       });
@@ -151,8 +151,8 @@ describe('Touch', () => {
     });
   }));
 
-  describe('parseTouch', () => {
-    it('should handle actions starting with wait', async () => {
+  describe('parseTouch', function () {
+    it('should handle actions starting with wait', async function () {
       let actions = [{action: 'wait', options: {ms: 500}},
                      {action: 'tap', options: {x: 100, y: 101}}];
 

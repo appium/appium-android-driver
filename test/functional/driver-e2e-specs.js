@@ -16,10 +16,10 @@ let defaultCaps = _.defaults({
 
 describe('createSession', function () {
   let driver;
-  before(() => {
+  before(function () {
     driver = new AndroidDriver();
   });
-  afterEach(async () => {
+  afterEach(async function () {
     await driver.deleteSession();
   });
 
@@ -29,13 +29,13 @@ describe('createSession', function () {
     return {appPackage, appActivity};
   }
 
-  it('should start android session focusing on default pkg and act', async () => {
+  it('should start android session focusing on default pkg and act', async function () {
     await driver.createSession(defaultCaps);
     let {appPackage, appActivity} = await getPackageAndActivity(driver);
     appPackage.should.equal('io.appium.android.apis');
     appActivity.should.equal('.ApiDemos');
   });
-  it('should start android session focusing on custom pkg and act', async () => {
+  it('should start android session focusing on custom pkg and act', async function () {
     let caps = Object.assign({}, defaultCaps);
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
@@ -44,26 +44,26 @@ describe('createSession', function () {
     appPackage.should.equal(caps.appPackage);
     appActivity.should.equal(caps.appActivity);
   });
-  it('should error out for not apk extention', async () => {
+  it('should error out for not apk extention', async function () {
     let caps = Object.assign({}, defaultCaps);
     caps.app = 'foo';
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
     await driver.createSession(caps).should.eventually.be.rejectedWith(/does not exist or is not accessible/);
   });
-  it('should error out if neither an app or a browser is defined', async () => {
+  it('should error out if neither an app or a browser is defined', async function () {
     let caps = Object.assign({}, defaultCaps);
     caps.app = '';
     await driver.createSession(caps).should.eventually.be.rejectedWith(/include/);
   });
-  it('should error out for invalid app path', async () => {
+  it('should error out for invalid app path', async function () {
     let caps = Object.assign({}, defaultCaps);
     caps.app = 'foo.apk';
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
     await driver.createSession(caps).should.eventually.be.rejectedWith(/Could not find/);
   });
-  it('should be able to start session without launching or installing app', async () => {
+  it('should be able to start session without launching or installing app', async function () {
     let caps = Object.assign({}, defaultCaps);
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
@@ -73,7 +73,7 @@ describe('createSession', function () {
     expect(appPackage).to.not.equal(caps.appPackage);
     expect(appActivity).to.not.equal(caps.appActivity);
   });
-  it('should be able to launch activity with custom intent parameter category', async () => {
+  it('should be able to launch activity with custom intent parameter category', async function () {
     let caps = Object.assign({}, defaultCaps);
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = 'io.appium.android.apis.app.HelloWorld';
@@ -82,7 +82,7 @@ describe('createSession', function () {
     let appActivity = await driver.getCurrentActivity();
     appActivity.should.include('HelloWorld');
   });
-  it('should be able to load an app via package', async () => {
+  it('should be able to load an app via package', async function () {
     let caps = Object.assign({}, defaultCaps);
     caps.app = '';
     caps.appPackage = 'io.appium.android.apis';
@@ -91,14 +91,14 @@ describe('createSession', function () {
     let appPackage = await driver.getCurrentPackage();
     appPackage.should.include('io.appium.android.apis');
   });
-  it('should error out if package is not on the device', async () => {
+  it('should error out if package is not on the device', async function () {
     let caps = Object.assign({}, defaultCaps);
     caps.app = '';
     caps.appPackage = 'sipa.diordna.muippa.oi';
     caps.appActivity = '.ApiDemos';
     await driver.createSession(caps).should.eventually.be.rejectedWith(/Could not find/);
   });
-  it('should get updated capabilities', async () => {
+  it('should get updated capabilities', async function () {
     let caps = Object.assign({}, defaultCaps);
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
@@ -106,7 +106,7 @@ describe('createSession', function () {
     let serverCaps = await driver.getSession();
     serverCaps.takesScreenshot.should.exist;
   });
-  it('should get device name, udid, model, manufacturer and screen size in session details', async () => {
+  it('should get device name, udid, model, manufacturer and screen size in session details', async function () {
     let caps = Object.assign({}, defaultCaps);
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
@@ -121,7 +121,7 @@ describe('createSession', function () {
     serverCaps.deviceModel.should.exist;
     serverCaps.deviceManufacturer.should.exist;
   });
-  it('should error out for activity that fails to load after app wait activity timeout', async () => {
+  it('should error out for activity that fails to load after app wait activity timeout', async function () {
     let caps = Object.assign({}, defaultCaps);
     caps.appWaitActivity = 'non.existent.activity';
     caps.appWaitDuration = 1000; // 1 second
@@ -156,13 +156,13 @@ describe('createSession', function () {
 
 describe('close', function () {
   let driver;
-  before(() => {
+  before(function () {
     driver = new AndroidDriver();
   });
-  afterEach(async () => {
+  afterEach(async function () {
     await driver.deleteSession();
   });
-  it('should close application', async () => {
+  it('should close application', async function () {
     await driver.createSession(defaultCaps);
     await driver.closeApp();
     let appPackage = await driver.getCurrentPackage();

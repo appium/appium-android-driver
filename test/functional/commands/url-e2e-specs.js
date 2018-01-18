@@ -32,13 +32,13 @@ describe('setUrl', function () {
     driver = new AndroidDriver();
     await driver.createSession(caps);
   });
-  after(async () => {
+  after(async function () {
     if (driver) {
       await driver.deleteSession();
     }
   });
 
-  it('should be able to start a data uri via setUrl', async () => {
+  it('should be able to start a data uri via setUrl', async function () {
     if (caps.browserName === 'Chrome') {
       try {
         // on some chrome systems, we always get the terms and conditions page

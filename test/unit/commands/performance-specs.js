@@ -19,8 +19,8 @@ let sandbox = sinon.sandbox.create();
 let adb;
 let driver;
 
-describe('performance data', () => {
-  beforeEach(async () => {
+describe('performance data', function () {
+  beforeEach(async function () {
     adb = new ADB();
     driver = new AndroidDriver();
     driver.adb = adb;
@@ -29,74 +29,74 @@ describe('performance data', () => {
       return await fn();
     });
   });
-  afterEach(async () => {
+  afterEach(async function () {
     sandbox.restore();
   });
-  describe('getPerformanceDataTypes', () => {
-    it('should get the list of available getPerformance data type', () => {
+  describe('getPerformanceDataTypes', function () {
+    it('should get the list of available getPerformance data type', function () {
       let types = driver.getPerformanceDataTypes();
       types.should.eql(_.keys(SUPPORTED_PERFORMANCE_DATA_TYPES));
     });
   });
-  describe('getPerformanceData', () => {
-    it('should return battery info', async () => {
+  describe('getPerformanceData', function () {
+    it('should return battery info', async function () {
       sandbox.stub(driver, 'getBatteryInfo').returns('data');
       await driver.getPerformanceData(null, 'batteryinfo').should.become('data');
     });
-    it('should return cpu info', async () => {
+    it('should return cpu info', async function () {
       sandbox.stub(driver, 'getCPUInfo').withArgs('pkg').returns('data');
       await driver.getPerformanceData('pkg', 'cpuinfo').should.become('data');
     });
-    it('should return memory info', async () => {
+    it('should return memory info', async function () {
       sandbox.stub(driver, 'getMemoryInfo').withArgs('pkg').returns('data');
       await driver.getPerformanceData('pkg', 'memoryinfo').should.become('data');
     });
-    it('should return network info', async () => {
+    it('should return network info', async function () {
       sandbox.stub(driver, 'getNetworkTrafficInfo').returns('data');
       await driver.getPerformanceData(null, 'networkinfo').should.become('data');
     });
-    it('should throw error if data type is not valid', async () => {
+    it('should throw error if data type is not valid', async function () {
       await driver.getPerformanceData(null, 'invalid')
         .should.be.rejectedWith(/No performance data of type 'invalid' found./);
     });
   });
-  describe('getCPUInfo', () => {
-    it('should return cpu data', async () => {
+  describe('getCPUInfo', function () {
+    it('should return cpu data', async function () {
       adb.shell.withArgs(['dumpsys', 'cpuinfo', '|', 'grep', `'${PACKAGE_NAME}'`])
         .returns(' +0% 2209/io.appium.android.apis: 14% user + 23% kernel');
       (await driver.getCPUInfo(PACKAGE_NAME)).should.be.deep
         .equal([CPU_KEYS, ['14', '23']]);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
-    it('should throw error if no data', async () => {
+    it('should throw error if no data', async function () {
       adb.shell.returns(null);
       await driver.getCPUInfo(PACKAGE_NAME, 1).should.be
         .rejectedWith(/No data from dumpsys/);
     });
-    it('should throw error if cpu data is not in valid format', async () => {
+    it('should throw error if cpu data is not in valid format', async function () {
       adb.shell.returns('invalid data');
       await driver.getCPUInfo(PACKAGE_NAME, 1).should.be
         .rejectedWith(/Unable to parse cpu data/);
     });
   });
-  describe('getBatteryInfo', () => {
-    it('should return battery info', async () => {
+  describe('getBatteryInfo', function () {
+    it('should return battery info', async function () {
       adb.shell.withArgs(['dumpsys', 'battery', '|', 'grep', 'level'])
         .returns('  level: 47');
       await driver.getBatteryInfo().should.become([BATTERY_KEYS, ['47']]);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
-    it('should throw error if data is not valid', async () => {
+    it('should throw error if data is not valid', async function () {
       adb.shell.returns('invalid data');
       await driver.getBatteryInfo(1).should.be
         .rejectedWith(/Unable to parse battery data/);
     });
-    it('should throw error if no data', async () => {
+    it('should throw error if no data', async function () {
       adb.shell.returns(null);
       await driver.getBatteryInfo(1).should.be.rejectedWith(/No data from dumpsys/);
     });
   });
-  describe('getMemoryInfo', () => {
+  describe('getMemoryInfo', function () {
     const shellArgs = ['dumpsys', 'meminfo', `'${PACKAGE_NAME}'`, '|', 'grep', '-E', "'Native|Dalvik|EGL|GL|TOTAL'"];
     const dumpsysDataAPI19 = `
                           Pss  Private  Private  Swapped     Heap     Heap     Heap
@@ -122,32 +122,32 @@ describe('performance data', () => {
       ['101', '102', '103', '104', '105', // private dirty total|native|dalvik|egl|gl
        '106', '107', '108', '109', '110', // pss           total|native|dalvik|egl|gl
        '111', '112']];                    // native        heap_alloc|heap_size
-    it('should return memory info for API>18', async () => {
+    it('should return memory info for API>18', async function () {
       adb.getApiLevel.returns(19);
       adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI19);
       (await driver.getMemoryInfo(PACKAGE_NAME)).should.be.deep
         .equal(expectedResult);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
-    it('should return memory info for API<=18', async () => {
+    it('should return memory info for API<=18', async function () {
       adb.getApiLevel.returns(18);
       adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI18);
       (await driver.getMemoryInfo(PACKAGE_NAME)).should.be.deep
         .equal(expectedResult);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
-    it('should throw error if data is not valid', async () => {
+    it('should throw error if data is not valid', async function () {
       adb.shell.returns('TOTAL nodex nodex nodex nodex nodex nodex nodex');
       await driver.getMemoryInfo(PACKAGE_NAME, 1).should.be
         .rejectedWith(/Unable to parse memory data/);
     });
-    it('should throw error if no data', async () => {
+    it('should throw error if no data', async function () {
       adb.shell.returns(null);
       await driver.getMemoryInfo(PACKAGE_NAME, 1).should.be
         .rejectedWith(/No data from dumpsys/);
     });
   });
-  describe('getNetworkTrafficInfo', () => {
+  describe('getNetworkTrafficInfo', function () {
     const shellArgs = ['dumpsys', 'netstats'];
     const header = `
       Xt stats:
@@ -161,30 +161,30 @@ describe('performance data', () => {
     const dataInOldFormat = header + `
             bucketStart=start1 activeTime=time1 rxBytes=rb1 rxPackets=rp1 txBytes=tb1 txPackets=tp1 operations=op1
             bucketStart=start2 activeTime=time2 rxBytes=rb2 rxPackets=rp2 txBytes=tb2 txPackets=tp2 operations=op2`;
-    it('should return network stats', async () => {
+    it('should return network stats', async function () {
       adb.shell.withArgs(shellArgs).returns(data);
       (await driver.getNetworkTrafficInfo()).should.be.deep
         .equal([NETWORK_KEYS[1], ['start1', undefined, 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
                                  ['start2', undefined, 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur']]);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
-    it('should be able to parse data in old format', async () => {
+    it('should be able to parse data in old format', async function () {
       adb.shell.withArgs(shellArgs).returns(dataInOldFormat);
       (await driver.getNetworkTrafficInfo()).should.be.deep
         .equal([NETWORK_KEYS[0], ['start1', 'time1', 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
                                  ['start2', 'time2', 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur']]);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
-    it('should be fulfilled if history is empty', async () => {
+    it('should be fulfilled if history is empty', async function () {
       adb.shell.returns(header);
       (await driver.getNetworkTrafficInfo()).should.be.deep.equal([]);
     });
-    it('should throw error if data is not valid', async () => {
+    it('should throw error if data is not valid', async function () {
       adb.shell.returns('nodex');
       await driver.getNetworkTrafficInfo(1).should.be
         .rejectedWith(/Unable to parse network traffic data/);
     });
-    it('should throw error if no data', async () => {
+    it('should throw error if no data', async function () {
       adb.shell.returns(null);
       await driver.getNetworkTrafficInfo(1).should.be
         .rejectedWith(/No data from dumpsys/);

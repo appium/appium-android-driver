@@ -27,13 +27,13 @@ describe('apidemo - notifications', function () {
     driver = new AndroidDriver();
     await driver.createSession(defaultCaps);
   });
-  after(async () => {
+  after(async function () {
     if (driver) {
       await driver.deleteSession();
     }
   });
 
-  it('should open the notification shade @skip-ci', async () => {
+  it('should open the notification shade @skip-ci', async function () {
     let el = await driver.findElOrEls('accessibility id', ':-|', false);
     await driver.click(el.ELEMENT);
 

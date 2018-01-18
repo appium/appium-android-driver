@@ -27,10 +27,10 @@ describe('createSession', function () {
 
     driver = new AndroidDriver();
   });
-  afterEach(async () => {
+  afterEach(async function () {
     await driver.deleteSession();
   });
-  it('should start chrome and dismiss the welcome dialog', async () => {
+  it('should start chrome and dismiss the welcome dialog', async function () {
     await driver.createSession(capabilities);
     let appActivity = await driver.getCurrentActivity();
     appActivity.should.not.equal("org.chromium.chrome.browser.firstrun.FirstRunActivity");

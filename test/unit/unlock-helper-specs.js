@@ -15,13 +15,13 @@ const UNLOCK_WAIT_TIME = 100;
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('Unlock Helpers', () => {
+describe('Unlock Helpers', function () {
   let adb = new ADB();
   let driver = new AndroidDriver();
   let sandbox = sinon.sandbox.create();
   let expect = chai.expect;
-  describe('isValidUnlockType', () => {
-    it('should verify the unlock types', async () => {
+  describe('isValidUnlockType', function () {
+    it('should verify the unlock types', async function () {
       helpers.isValidUnlockType('pin').should.equal(true);
       helpers.isValidUnlockType('pattern').should.equal(true);
       helpers.isValidUnlockType('password').should.equal(true);
@@ -29,8 +29,8 @@ describe('Unlock Helpers', () => {
       helpers.isValidUnlockType('telepathy').should.equal(false);
     });
   });
-  describe('isValidKey',  () => {
-    it('should verify the unlock keys for each type', async () => {
+  describe('isValidKey',  function () {
+    it('should verify the unlock keys for each type', async function () {
       helpers.isValidKey('pin').should.equal(false);
       helpers.isValidKey('pin', ' ').should.equal(false);
       helpers.isValidKey('pin', '1111').should.equal(true);
@@ -55,13 +55,13 @@ describe('Unlock Helpers', () => {
       helpers.isValidKey('password').should.equal(false);
       helpers.isValidKey('password', '   ').should.equal(false);
     });
-    it('should throw error if unlock type is invalid', async () => {
+    it('should throw error if unlock type is invalid', async function () {
       expect(() => helpers.isValidKey('invalid_unlock_type', '1'))
         .to.throw('Invalid unlock type');
     });
   });
   describe('dismissKeyguard', withMocks({driver,  adb, asyncbox, helpers}, (mocks) => {
-    it('should hide keyboard if keyboard is snown', async () => {
+    it('should hide keyboard if keyboard is snown', async function () {
       mocks.driver.expects('isKeyboardShown').returns(true);
       mocks.driver.expects('hideKeyboard').once();
       mocks.asyncbox.expects('sleep').withExactArgs(HIDE_KEYBOARD_WAIT_TIME).once();
@@ -74,7 +74,7 @@ describe('Unlock Helpers', () => {
       mocks.asyncbox.verify();
       mocks.helpers.verify();
     });
-    it('should dismiss notifications and dissmiss keyguard via swipping up', async () => {
+    it('should dismiss notifications and dissmiss keyguard via swipping up', async function () {
       mocks.driver.expects('isKeyboardShown').returns(false);
       mocks.adb.expects('shell')
         .withExactArgs(["service", "call", "notification", "1"]).once();
@@ -86,7 +86,7 @@ describe('Unlock Helpers', () => {
       mocks.adb.verify();
       mocks.helpers.verify();
     });
-    it('should dissmiss keyguard via dismiss-keyguard shell command if API level > 21', async () => {
+    it('should dissmiss keyguard via dismiss-keyguard shell command if API level > 21', async function () {
       mocks.driver.expects('isKeyboardShown').returns(false);
       mocks.adb.expects('shell').onCall(0).returns('');
       mocks.adb.expects('back').once();
@@ -100,7 +100,7 @@ describe('Unlock Helpers', () => {
     });
   }));
   describe('swipeUp', withMocks({driver, helpers}, (mocks) => {
-    it('should perform swipe up touch action', async () => {
+    it('should perform swipe up touch action', async function () {
       let windowSize = {x: 475, y: 800};
       let actions = [
         {action: 'press', options: {element: null, x: 237, y: 790}},
@@ -113,14 +113,14 @@ describe('Unlock Helpers', () => {
       mocks.driver.verify();
     });
   }));
-  describe('encodePassword', () => {
-    it('should verify the password with blank space is encoded', async () => {
+  describe('encodePassword', function () {
+    it('should verify the password with blank space is encoded', async function () {
       helpers.encodePassword('a p p i u m').should.equal("a%sp%sp%si%su%sm");
       helpers.encodePassword('   ').should.equal("%s%s%s");
     });
   });
-  describe('stringKeyToArr', () => {
-    it('should cast string keys to array', async () => {
+  describe('stringKeyToArr', function () {
+    it('should cast string keys to array', async function () {
       helpers.stringKeyToArr('1234').should.eql(['1', '2', '3', '4']);
       helpers.stringKeyToArr(' 1234 ').should.eql(['1', '2', '3', '4']);
       helpers.stringKeyToArr('1 2 3 4').should.eql(['1', '2', '3', '4']);
@@ -128,7 +128,7 @@ describe('Unlock Helpers', () => {
     });
   });
   describe('fingerprintUnlock', withMocks({adb, asyncbox}, (mocks) => {
-    it('should be able to unlock device via fingerprint if API level >= 23', async () => {
+    it('should be able to unlock device via fingerprint if API level >= 23', async function () {
       let caps = {unlockKey: '123'};
       mocks.adb.expects('getApiLevel').returns(23);
       mocks.adb.expects('fingerprint').withExactArgs(caps.unlockKey).once();
@@ -137,7 +137,7 @@ describe('Unlock Helpers', () => {
       mocks.adb.verify();
       mocks.asyncbox.verify();
     });
-    it('should throw error if API level < 23', async () => {
+    it('should throw error if API level < 23', async function () {
       mocks.adb.expects('getApiLevel').returns(22);
       mocks.adb.expects('fingerprint').never();
       mocks.asyncbox.expects('sleep').never();
@@ -153,10 +153,10 @@ describe('Unlock Helpers', () => {
     const els = [{ELEMENT: 1}, {ELEMENT: 2}, {ELEMENT: 3},
                  {ELEMENT: 4}, {ELEMENT: 5}, {ELEMENT: 6},
                  {ELEMENT: 7}, {ELEMENT: 8}, {ELEMENT: 9}];
-    afterEach(() => {
+    afterEach(function () {
       sandbox.restore();
     });
-    it('should be able to unlock device using pin (API level >= 21)', async () => {
+    it('should be able to unlock device using pin (API level >= 21)', async function () {
       mocks.helpers.expects('dismissKeyguard').once();
       mocks.helpers.expects('stringKeyToArr').returns(keys);
       mocks.adb.expects('getApiLevel').returns(21);
@@ -187,7 +187,7 @@ describe('Unlock Helpers', () => {
       mocks.adb.verify();
       mocks.asyncbox.verify();
     });
-    it('should be able to unlock device using pin (API level < 21)', async () => {
+    it('should be able to unlock device using pin (API level < 21)', async function () {
       mocks.helpers.expects('dismissKeyguard').once();
       mocks.helpers.expects('stringKeyToArr').returns(keys);
       mocks.adb.expects('getApiLevel').returns(20);
@@ -216,7 +216,7 @@ describe('Unlock Helpers', () => {
       mocks.adb.verify();
       mocks.asyncbox.verify();
     });
-    it('should throw error if pin buttons does not exist (API level >= 21)', async () => {
+    it('should throw error if pin buttons does not exist (API level >= 21)', async function () {
       mocks.helpers.expects('dismissKeyguard').once();
       mocks.helpers.expects('stringKeyToArr').once();
       mocks.adb.expects('getApiLevel').returns(21);
@@ -227,7 +227,7 @@ describe('Unlock Helpers', () => {
       mocks.driver.verify();
       mocks.adb.verify();
     });
-    it('should throw error if pin buttons does not exist (API level < 21)', async () => {
+    it('should throw error if pin buttons does not exist (API level < 21)', async function () {
       mocks.helpers.expects('dismissKeyguard').once();
       mocks.helpers.expects('stringKeyToArr').returns(keys);
       mocks.adb.expects('getApiLevel').returns(20);
@@ -242,7 +242,7 @@ describe('Unlock Helpers', () => {
     });
   }));
   describe('passwordUnlock', withMocks({adb, helpers, asyncbox}, (mocks) => {
-    it('should be able to unlock device using password', async () => {
+    it('should be able to unlock device using password', async function () {
       let caps = {unlockKey: 'psswrd'};
       mocks.helpers.expects('dismissKeyguard').withExactArgs(driver, adb).once();
       mocks.helpers.expects('encodePassword').withExactArgs(caps.unlockKey).returns(caps.unlockKey);
@@ -256,8 +256,8 @@ describe('Unlock Helpers', () => {
       mocks.asyncbox.verify();
     });
   }));
-  describe('getPatternKeyPosition', () => {
-    it('should verify pattern pin is aproximatelly to its position', async () => {
+  describe('getPatternKeyPosition', function () {
+    it('should verify pattern pin is aproximatelly to its position', async function () {
       let pins = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((pin) => {
         return helpers.getPatternKeyPosition(pin, {x: 33, y:323}, 137.6);
       });
@@ -283,8 +283,8 @@ describe('Unlock Helpers', () => {
       expect(pins[8].y).to.be.within(rows[2] - 5, rows[2] + 5);
     });
   });
-  describe('getPatternActions', () => {
-    it('should generate press, moveTo, relase gesture scheme to unlock by pattern', async () => {
+  describe('getPatternActions', function () {
+    it('should generate press, moveTo, relase gesture scheme to unlock by pattern', async function () {
       let keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
       let actions = helpers.getPatternActions(keys, {x: 0, y:0}, 1);
       actions.map((action, i) => {
@@ -297,7 +297,7 @@ describe('Unlock Helpers', () => {
         }
       });
     });
-    it('should verify pattern gestures moves to non consecutives pins', async () => {
+    it('should verify pattern gestures moves to non consecutives pins', async function () {
       let keys = ["7", "2", "9", "8", "5", "6", "1", "4", "3"];
       let actions = helpers.getPatternActions(keys, {x: 0, y:0}, 1);
       // Move from pin 7 to pin 2
@@ -332,7 +332,7 @@ describe('Unlock Helpers', () => {
     const size = {width: 300};
     const keys = ['1', '3', '5', '7', '9'];
     const caps = {unlockKey: '13579'};
-    beforeEach(() => {
+    beforeEach(function () {
       mocks.helpers.expects('dismissKeyguard').withExactArgs(driver, adb).once();
       mocks.helpers.expects('stringKeyToArr').returns(keys);
       mocks.driver.expects('getLocation').withExactArgs(el.ELEMENT).returns(pos);
@@ -342,7 +342,7 @@ describe('Unlock Helpers', () => {
       mocks.driver.expects('performTouch').withExactArgs('actions').once();
       mocks.asyncbox.expects('sleep').withExactArgs(UNLOCK_WAIT_TIME).once();
     });
-    it('should be able to unlock device using pattern (API level >= 21)', async () => {
+    it('should be able to unlock device using pattern (API level >= 21)', async function () {
       mocks.adb.expects('getApiLevel').returns(21);
       mocks.driver.expects('findElOrEls')
         .withExactArgs('id', 'com.android.systemui:id/lockPatternView', false)
@@ -353,7 +353,7 @@ describe('Unlock Helpers', () => {
       mocks.asyncbox.verify();
       mocks.adb.verify();
     });
-    it('should be able to unlock device using pattern (API level < 21)', async () => {
+    it('should be able to unlock device using pattern (API level < 21)', async function () {
       mocks.adb.expects('getApiLevel').returns(20);
       mocks.driver.expects('findElOrEls')
         .withExactArgs('id', 'com.android.keyguard:id/lockPatternView', false)
