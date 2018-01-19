@@ -5,7 +5,6 @@ import Bootstrap from 'appium-android-bootstrap';
 import path from 'path';
 import mockFS from 'mock-fs';
 import AndroidDriver from '../../..';
-import androidHelpers from '../../../lib/android-helpers';
 import * as support from 'appium-support';
 import temp from 'temp';
 import ADB from 'appium-adb';
@@ -178,14 +177,6 @@ describe('Actions', function () {
       sandbox.stub(driver.adb, 'isScreenLocked').returns('lock_status');
       await driver.isLocked().should.become('lock_status');
       driver.adb.isScreenLocked.calledOnce.should.be.true;
-    });
-  });
-  describe('unlock', function () {
-    it('should call android-helpers.unlock()', async function () {
-      sandbox.stub(androidHelpers, 'unlock');
-      await driver.unlock('caps');
-      androidHelpers.unlock.calledWithExactly(driver, driver.adb, 'caps')
-        .should.be.true;
     });
   });
   describe('openNotifications', function () {
