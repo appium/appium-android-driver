@@ -1,9 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
+import { retryInterval } from 'asyncbox';
 import AndroidDriver from '../../../..';
 import DEFAULT_CAPS from '../../desired';
-import B from 'bluebird';
 
 
 chai.should();
@@ -72,16 +72,10 @@ describe('apidemo - touch', function () {
                       {element: endEle.ELEMENT, x: 5, y: 5}},
                       {action: "release", options: {}}];
       await driver.performTouch(gestures);
-      let element3;
-      const expectedText = 'Dropped!';
-      for (let retries = 0; retries < 3; ++retries) {
-        element3 = await driver.findElement("id", "io.appium.android.apis:id/drag_result_text");
-        if (await driver.getText(element3.ELEMENT) === expectedText) {
-          break;
-        }
-        await B.delay(500);
-      }
-      await driver.getText(element3.ELEMENT).should.eventually.equal(expectedText);
+      await retryInterval(3, 500, async () => {
+        const el = await driver.findElement("id", "io.appium.android.apis:id/drag_result_text");
+        (await driver.getText(el.ELEMENT)).should.eql('Dropped!');
+      });
     });
     it('should drag by absolute position', async function () {
       let startEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_3");
