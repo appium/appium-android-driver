@@ -27,6 +27,7 @@ describe('recording the screen', function () {
 
       await driver.startRecordingScreen().should.eventually.be.rejectedWith(/Screen recording does not work on emulators/);
     });
+
     it('should fail to recording the screen on a device with API level 18', async function () {
       mocks.driver.expects('isEmulator').returns(false);
       mocks.adb.expects('getApiLevel').returns(18);
@@ -146,6 +147,7 @@ describe('recording the screen', function () {
           screenrec 11328      shell    9u      REG               0,19     11521     294673 ${remotePath}
         `});
         mocks.adb.expects('shell').withExactArgs(['kill', '-2', ...pids]);
+        mocks.adb.expects('shell').withExactArgs(['kill', '-0', ...pids]).throws();
         mocks.adb.expects('pull').once().withExactArgs(remotePath, localFile);
         mocks.fs.expects('readFile').once().withExactArgs(localFile).returns(mediaContent);
         mocks.adb.expects('rimraf').once().withExactArgs(remotePath);
@@ -162,6 +164,7 @@ describe('recording the screen', function () {
         mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord')
           .atLeast(1).returns(pids);
         mocks.adb.expects('shell').withExactArgs(['kill', '-2', ...pids]);
+        mocks.adb.expects('shell').withExactArgs(['kill', '-0', ...pids]).throws();
         mocks.adb.expects('pull').once().withExactArgs(driver._recentScreenRecordingPath, localFile);
         mocks.fs.expects('readFile').once().withExactArgs(localFile).returns(mediaContent);
         mocks.adb.expects('rimraf').once().withExactArgs(driver._recentScreenRecordingPath);
@@ -178,6 +181,7 @@ describe('recording the screen', function () {
         mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord')
           .atLeast(1).returns(pids);
         mocks.adb.expects('shell').withExactArgs(['kill', '-2', ...pids]);
+        mocks.adb.expects('shell').withExactArgs(['kill', '-0', ...pids]).throws();
         mocks.adb.expects('pull').once().withExactArgs(driver._recentScreenRecordingPath, localFile);
         mocks.adb.expects('rimraf').once().withExactArgs(driver._recentScreenRecordingPath);
         mocks.fs.expects('rimraf').withExactArgs(localFile).once();
