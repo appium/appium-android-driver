@@ -5,7 +5,6 @@ import Bootstrap from 'appium-android-bootstrap';
 import path from 'path';
 import mockFS from 'mock-fs';
 import AndroidDriver from '../../..';
-import androidHelpers from '../../../lib/android-helpers';
 import * as support from 'appium-support';
 import temp from 'temp';
 import ADB from 'appium-adb';
