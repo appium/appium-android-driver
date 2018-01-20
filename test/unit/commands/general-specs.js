@@ -124,7 +124,11 @@ describe('General', function () {
     it('should get window size', async () => {
       sandbox.stub(driver.bootstrap, 'sendAction')
         .withArgs('getDeviceSize').returns({width: 300, height: 400});
-      await driver.getWindowRect().toString().should.be.equal({width: 300, height: 400, x: 0, y: 0}.toString());
+      const rect = await driver.getWindowRect();
+      rect.width.should.be.equal(300);
+      rect.height.should.be.equal(400);
+      rect.x.should.be.equal(0);
+      rect.y.should.be.equal(0);
     });
   });
   describe('getCurrentActivity', function () {
