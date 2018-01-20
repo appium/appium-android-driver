@@ -12,37 +12,37 @@ const f = "android.widget.FrameLayout";
 
 describe('Find - xpath', function () {
   let driver;
-  before(async () => {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(DEFAULT_CAPS);
   });
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
-  it('should throw when matching nothing', async () => {
+  it('should throw when matching nothing', async function () {
     await driver.findElOrEls('xpath', '//whatthat', false).should.eventually.be.rejectedWith(/could not be located/);
   });
-  it('should throw with status 7 for hierarchy root', async () => {
+  it('should throw with status 7 for hierarchy root', async function () {
     await driver.findElOrEls('xpath', '/*', false).should.eventually.be.rejectedWith(/could not be located/);
   });
-  it('should find element by type', async () => {
+  it('should find element by type', async function () {
     let el = await driver.findElOrEls('xpath', `//${atv}`, false);
     await driver.getText(el.ELEMENT).should.eventually.equal('API Demos');
   });
-  it('should find element by text', async () => {
+  it('should find element by text', async function () {
     let el = await driver.findElOrEls('xpath', `//${atv}[@text='Accessibility']`, false);
     await driver.getText(el.ELEMENT).should.eventually.equal('Accessibility');
   });
-  it('should find exactly one element via elementsByXPath', async () => {
+  it('should find exactly one element via elementsByXPath', async function () {
     let el = await driver.findElOrEls('xpath', `//${atv}[@text='Accessibility']`, true);
     el.length.should.equal(1);
     await driver.getText(el[0].ELEMENT).should.eventually.equal('Accessibility');
   });
-  it('should find element by partial text', async () => {
+  it('should find element by partial text', async function () {
     let el = await driver.findElOrEls('xpath', `//${atv}[contains(@text, 'Accessibility')]`, false);
     await driver.getText(el.ELEMENT).should.eventually.equal('Accessibility');
   });
-  it('should find the last element', async () => {
+  it('should find the last element', async function () {
     let el = await driver.findElOrEls('xpath', `(//${atv})[last()]`, false);
     let text = await driver.getText(el.ELEMENT);
     ["OS", "Text", "Views", "Preference"].should.include(text);
@@ -55,19 +55,19 @@ describe('Find - xpath', function () {
     // await driver.getText(el.ELEMENT).should.eventually.equal('App');
   //});
 
-  it('should find element by index and embedded desc', async () => {
+  it('should find element by index and embedded desc', async function () {
     let el = await driver.findElOrEls('xpath', `//${f}//${atv}[5]`, false);
     await driver.getText(el.ELEMENT).should.eventually.equal('Content');
   });
-  it('should find all elements', async () => {
+  it('should find all elements', async function () {
     let el = await driver.findElOrEls('xpath', `//*`, true);
     el.length.should.be.above(2);
   });
-  it('should find the first element when searching for all elements', async () => {
+  it('should find the first element when searching for all elements', async function () {
     let el = await driver.findElOrEls('xpath', `//*`, true);
     el[0].should.exist;
   });
-  it('should find less elements with compression turned on', async () => {
+  it('should find less elements with compression turned on', async function () {
     await driver.updateSettings({ignoreUnimportantViews: false});
     let elementsWithoutCompression = await driver.findElOrEls('xpath', `//*`, true);
     await driver.updateSettings({ignoreUnimportantViews: true});

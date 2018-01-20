@@ -10,15 +10,15 @@ chai.use(chaiAsPromised);
 describe('general', function () {
   let driver;
   describe('startActivity', function () {
-    before(async () => {
+    before(async function () {
       driver = new AndroidDriver();
       await driver.createSession(DEFAULT_CAPS);
     });
-    after(async () => {
+    after(async function () {
       await driver.deleteSession();
     });
 
-    it('should launch a new package and activity', async () => {
+    it('should launch a new package and activity', async function () {
       let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
       appPackage.should.equal('io.appium.android.apis');
       appActivity.should.equal('.ApiDemos');
@@ -32,7 +32,7 @@ describe('general', function () {
       newAppPackage.should.equal(startAppPackage);
       newAppActivity.should.equal(startAppActivity);
     });
-    it('should be able to launch activity with custom intent parameter category', async () => {
+    it('should be able to launch activity with custom intent parameter category', async function () {
       let startAppPackage = 'io.appium.android.apis';
       let startAppActivity = 'io.appium.android.apis.app.HelloWorld';
       let startIntentCategory = 'appium.android.intent.category.SAMPLE_CODE';
@@ -42,7 +42,7 @@ describe('general', function () {
       let {appActivity} = await driver.adb.getFocusedPackageAndActivity();
       appActivity.should.include('HelloWorld');
     });
-    it('should be able to launch activity with dontStopAppOnReset = true', async () => {
+    it('should be able to launch activity with dontStopAppOnReset = true', async function () {
       let startAppPackage = 'io.appium.android.apis';
       let startAppActivity = '.os.MorseCode';
       await driver.startActivity(startAppPackage, startAppActivity,
@@ -54,7 +54,7 @@ describe('general', function () {
       appPackage.should.equal(startAppPackage);
       appActivity.should.equal(startAppActivity);
     });
-    it('should be able to launch activity with dontStopAppOnReset = false', async () => {
+    it('should be able to launch activity with dontStopAppOnReset = false', async function () {
       let startAppPackage = 'io.appium.android.apis';
       let startAppActivity = '.os.MorseCode';
       await driver.startActivity(startAppPackage, startAppActivity,
@@ -68,19 +68,19 @@ describe('general', function () {
     });
   });
   describe('getStrings', function () {
-    before(async () => {
+    before(async function () {
       driver = new AndroidDriver();
       await driver.createSession(CONTACT_MANAGER_CAPS);
     });
-    after(async () => {
+    after(async function () {
       await driver.deleteSession();
     });
 
-    it('should return app strings', async () => {
+    it('should return app strings', async function () {
       let strings = await driver.getStrings('en');
       strings.save.should.equal('Save');
     });
-    it('should return app strings for the device language', async () => {
+    it('should return app strings for the device language', async function () {
       let strings = await driver.getStrings();
       strings.save.should.equal('Save');
     });

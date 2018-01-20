@@ -17,7 +17,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('Context', function () {
-  beforeEach(() => {
+  beforeEach(function () {
     sandbox.stub(PortFinder, 'getPort', function (cb) { // eslint-disable-line promise/prefer-await-to-callbacks
       return cb(null, 4444); // eslint-disable-line promise/prefer-await-to-callbacks
     });
@@ -61,7 +61,7 @@ describe('Context', function () {
     });
   });
   describe('setContext', function () {
-    beforeEach(() => {
+    beforeEach(function () {
       sandbox.stub(driver, 'getContexts').returns(['DEFAULT', 'WV', 'ANOTHER']);
       sandbox.stub(driver, 'switchContext');
     });
@@ -88,7 +88,7 @@ describe('Context', function () {
     });
   });
   describe('switchContext', function () {
-    beforeEach(() => {
+    beforeEach(function () {
       sandbox.stub(driver, 'stopChromedriverProxies');
       sandbox.stub(driver, 'startChromedriverProxy');
       sandbox.stub(driver, 'suspendChromedriverProxy');
@@ -139,7 +139,7 @@ describe('Context', function () {
     });
   });
   describe('startChromedriverProxy', function () {
-    beforeEach(() => {
+    beforeEach(function () {
       sandbox.stub(driver, 'onChromedriverStop');
     });
     it('should start new chromedriver session', async function () {

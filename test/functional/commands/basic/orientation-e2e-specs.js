@@ -47,7 +47,7 @@ describe('apidemo - orientation -', function () {
         appActivity: '.view.TextFields'
       }));
     });
-    after(async () => {
+    after(async function () {
       await driver.deleteSession();
     });
     it('should rotate screen to landscape', async function () {

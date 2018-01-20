@@ -19,16 +19,16 @@ let caps = _.defaults({
 
 describe.skip('network connection', function () {
   this.timeout(120000);
-  before(async () => {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(caps);
   });
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
-  describe('setNetworkConnection @skip-ci', () => {
+  describe('setNetworkConnection @skip-ci', function () {
     function test (value) {
-      it(`should be able to set to ${value}`, async () => {
+      it(`should be able to set to ${value}`, async function () {
         await driver.setNetworkConnection(value);
         await driver.getNetworkConnection().should.eventually.equal(value);
       });

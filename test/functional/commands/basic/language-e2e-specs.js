@@ -44,12 +44,12 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
     }
   }
 
-  it('should start as FR', async () => {
+  it('should start as FR', async function () {
     let frCaps = Object.assign({}, DEFAULT_CAPS, {locale: 'FR'});
     await driver.createSession(frCaps);
     await getLocale(driver.adb).should.eventually.equal('FR');
   });
-  it('should start as US', async () => {
+  it('should start as US', async function () {
     let usCaps = Object.assign({}, DEFAULT_CAPS, {locale: 'US'});
     await driver.createSession(usCaps);
     await getLocale(driver.adb).should.eventually.equal('US');

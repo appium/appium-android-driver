@@ -33,7 +33,7 @@
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^2.0.0",
     "appium-chromedriver": "^3.0.0",
-    "appium-support": "^2.11.1",
+    "appium-support": "^2.13.0",
     "appium-unlock": "^2.0.0",
     "asyncbox": "^2.0.4",
     "babel-runtime": "=5.8.24",
@@ -58,7 +58,8 @@
     "coverage": "gulp coveralls",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "precommit-test": "REPORTER=dot gulp once",
-    "lint": "gulp eslint"
+    "lint": "gulp eslint",
+    "lint:fix": "gulp eslint --fix"
   },
   "pre-commit": [
     "precommit-msg",
@@ -72,7 +73,7 @@
     "chai": "^3.0.0",
     "chai-as-promised": "^6.0.0",
     "eslint": "^3.10.2",
-    "eslint-config-appium": "^2.0.1",
+    "eslint-config-appium": "^2.1.0",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-mocha": "^4.7.0",

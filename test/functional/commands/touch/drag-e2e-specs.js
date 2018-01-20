@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
+import { retryInterval } from 'asyncbox';
 import AndroidDriver from '../../../..';
 import DEFAULT_CAPS from '../../desired';
 
@@ -15,19 +16,19 @@ let caps = _.defaults({
 
 describe('apidemo - touch', function () {
   let driver;
-  before(async () => {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(caps);
   });
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
-  afterEach(async () => {
+  afterEach(async function () {
     // reset the view by restarting the activity
     await driver.startActivity(caps.appPackage, caps.appActivity);
   });
   describe('drag', function () {
-    it('should drag by element', async () => {
+    it('should drag by element', async function () {
       let dot3 = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_dot_3', false);
       let dot2 = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_dot_2', false);
       let gestures = [
@@ -39,7 +40,7 @@ describe('apidemo - touch', function () {
       let results = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_result_text', false);
       await driver.getText(results.ELEMENT).should.eventually.include('Dropped');
     });
-    it('should drag by element with an offset', async () => {
+    it('should drag by element with an offset', async function () {
       let dot3 = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_dot_3', false);
       let dot2 = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_dot_2', false);
       let gestures = [
@@ -52,7 +53,7 @@ describe('apidemo - touch', function () {
     });
   });
   describe('performTouch', function () {
-    it('should drag by element', async () => {
+    it('should drag by element', async function () {
       let startEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_3");
       let endEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_2");
       let gestures = [{action: "longPress", options: {element: startEle.ELEMENT}},
@@ -62,7 +63,7 @@ describe('apidemo - touch', function () {
       let resultEle = await driver.findElement("id", "io.appium.android.apis:id/drag_result_text");
       await driver.getText(resultEle.ELEMENT).should.eventually.equal("Dropped!");
     });
-    it('should drag by element by offset', async () => {
+    it('should drag by element by offset', async function () {
       let startEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_3");
       let endEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_2");
       let gestures = [{action: "longPress",
@@ -71,10 +72,12 @@ describe('apidemo - touch', function () {
                       {element: endEle.ELEMENT, x: 5, y: 5}},
                       {action: "release", options: {}}];
       await driver.performTouch(gestures);
-      let element3 = await driver.findElement("id", "io.appium.android.apis:id/drag_result_text");
-      await driver.getText(element3.ELEMENT).should.eventually.equal("Dropped!");
+      await retryInterval(3, 500, async () => {
+        const el = await driver.findElement("id", "io.appium.android.apis:id/drag_result_text");
+        (await driver.getText(el.ELEMENT)).should.eql('Dropped!');
+      });
     });
-    it('should drag by absolute position', async () => {
+    it('should drag by absolute position', async function () {
       let startEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_3");
       let startLoc = await driver.getLocationInView(startEle.ELEMENT);
       let startSize = await driver.getSize(startEle.ELEMENT);

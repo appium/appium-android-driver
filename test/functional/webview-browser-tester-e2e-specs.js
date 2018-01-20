@@ -30,7 +30,7 @@ describe('Android 7 Webview Browser tester', function () {
       return;
     }
   });
-  beforeEach(async () => {
+  beforeEach(async function () {
     const capabilities = _.defaults({
       browserName: 'chromium-webview',
       avd: AVD_ANDROID_24_WITHOUT_GMS,
@@ -42,7 +42,7 @@ describe('Android 7 Webview Browser tester', function () {
     await driver.createSession(capabilities);
     server = await startServer(PORT, HOST);
   });
-  afterEach(async () => {
+  afterEach(async function () {
     if (driver) {
       await driver.deleteSession();
     }
@@ -51,7 +51,7 @@ describe('Android 7 Webview Browser tester', function () {
     }
   });
 
-  it('should start android session using webview browser tester', async () => {
+  it('should start android session using webview browser tester', async function () {
     // await driver.setUrl('http://google.com');
     await driver.setUrl(`http://${HOST}:${PORT}/test/guinea-pig`);
 

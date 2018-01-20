@@ -16,21 +16,21 @@ let caps = _.defaults({
 
 describe('element', function () {
   let el;
-  before(async () => {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(caps);
     el = _.last(await driver.findElOrEls('class name', 'android.widget.EditText', true));
     el.should.exist;
   });
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
-  afterEach(async () => {
+  afterEach(async function () {
     await driver.clear(el.ELEMENT);
   });
 
-  describe('setValueImmediate', () => {
-    it('should set the text on the element', async () => {
+  describe('setValueImmediate', function () {
+    it('should set the text on the element', async function () {
       let retries = process.env.TRAVIS ? 10 : 1;
       await retryInterval(retries, 1000, async () => {
         await driver.clear(el.ELEMENT);
@@ -39,8 +39,8 @@ describe('element', function () {
       });
     });
   });
-  describe('setValue', () => {
-    it('should set the text on the element', async () => {
+  describe('setValue', function () {
+    it('should set the text on the element', async function () {
       await driver.setValue('original value', el.ELEMENT);
       await driver.getText(el.ELEMENT).should.eventually.equal('original value');
     });

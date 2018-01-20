@@ -4,10 +4,10 @@ import ADB from 'appium-adb';
 
 let sandbox = sinon.sandbox.create();
 
-describe('Webview Helpers', () => {
+describe('Webview Helpers', function () {
   let adb = new ADB();
 
-  afterEach(() => {
+  afterEach(function () {
     sandbox.restore();
   });
 
@@ -129,7 +129,7 @@ describe('Webview Helpers', () => {
     describe('and no webviews exist', function () {
       let webViews;
 
-      beforeEach(async () => {
+      beforeEach(async function () {
         sandbox.stub(adb, 'shell', function () {
           return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
@@ -153,7 +153,7 @@ describe('Webview Helpers', () => {
     describe('and crosswalk webviews exist', function () {
       let webViews;
 
-      beforeEach(() => {
+      beforeEach(function () {
         sandbox.stub(adb, 'shell', () => {
           return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
@@ -164,7 +164,7 @@ describe('Webview Helpers', () => {
       });
 
       describe('and the device socket is not specified', function () {
-        beforeEach(async () => {
+        beforeEach(async function () {
           webViews = await helpers.getWebviews(adb);
         });
 

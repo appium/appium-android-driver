@@ -10,15 +10,15 @@ chai.use(chaiAsPromised);
 
 describe.skip("geo-location", function () {
   let driver;
-  before(async () => {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(DEFAULT_CAPS);
   });
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
 
-  it('should set geo location @skip-ci', async () => {
+  it('should set geo location @skip-ci', async function () {
     let getText = async () => {
       let els = await driver.findElOrEls('class name', 'android.widget.TextView', true);
       return await driver.getText(els[1].ELEMENT);

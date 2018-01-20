@@ -14,14 +14,14 @@ let caps = _.defaults({
 
 describe('apidemo - touch - multi-actions', function () {
   let driver;
-  before(async () => {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(caps);
   });
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
-  it('should scroll two different lists', async () => {
+  it('should scroll two different lists', async function () {
     let lists = await driver.findElOrEls('class name', 'android.widget.ListView', true);
     let leftList = lists[0].ELEMENT;
     let rightList = lists[1].ELEMENT;

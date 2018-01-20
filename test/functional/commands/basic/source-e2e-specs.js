@@ -18,18 +18,18 @@ let assertSource = async (source) => {
 
 describe('apidemo - source', function () {
   let driver;
-  before(async () => {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(DEFAULT_CAPS);
   });
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
-  it('should return the page source', async () => {
+  it('should return the page source', async function () {
     let source = await driver.getPageSource();
     await assertSource(source);
   });
-  it('should get less source when compression is enabled', async () => {
+  it('should get less source when compression is enabled', async function () {
     let getSourceWithoutCompression = async () => {
       await driver.updateSettings({ignoreUnimportantViews: false});
       return await driver.getPageSource();

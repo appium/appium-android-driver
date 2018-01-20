@@ -14,13 +14,13 @@ let caps = _.defaults({
   appActivity: '.view.TextFields'
 }, DEFAULT_CAPS);
 
-describe('recording the screen', () => {
-  before(async () => {
+describe('recording the screen', function () {
+  before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(caps);
   });
 
-  after(async () => {
+  after(async function () {
     await driver.deleteSession();
   });
 
@@ -29,14 +29,7 @@ describe('recording the screen', () => {
       return this.skip();
     }
 
-    let remoteFile = '/sdcard/test.mp4';
-
-    // make sure we don't already have the file on the device
-    if (await driver.adb.fileExists(remoteFile)) {
-      await driver.adb.shell(['rm', remoteFile]);
-    }
-
-    await driver.startRecordingScreen(remoteFile);
+    await driver.startRecordingScreen();
 
     // do some interacting, to take some time
     let el = await driver.findElOrEls('class name', 'android.widget.EditText', false);
@@ -45,8 +38,6 @@ describe('recording the screen', () => {
     let text = await driver.getText(el);
     text.should.eql('Recording the screen!');
 
-    await driver.stopRecordingScreen();
-
-    (await driver.adb.fileExists(remoteFile)).should.be.true;
+    (await driver.stopRecordingScreen()).should.not.be.empty;
   });
 });
