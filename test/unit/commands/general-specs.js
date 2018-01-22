@@ -121,7 +121,7 @@ describe('General', function () {
     });
   });
   describe('getWindowRect', function () {
-    it('should get window size', async () => {
+    it('should get window size', async function () {
       sandbox.stub(driver.bootstrap, 'sendAction')
         .withArgs('getDeviceSize').returns({width: 300, height: 400});
       const rect = await driver.getWindowRect();
