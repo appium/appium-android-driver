@@ -120,6 +120,17 @@ describe('General', function () {
       await driver.getWindowSize().should.be.equal('size');
     });
   });
+  describe('getWindowRect', function () {
+    it('should get window size', async () => {
+      sandbox.stub(driver.bootstrap, 'sendAction')
+        .withArgs('getDeviceSize').returns({width: 300, height: 400});
+      const rect = await driver.getWindowRect();
+      rect.width.should.be.equal(300);
+      rect.height.should.be.equal(400);
+      rect.x.should.be.equal(0);
+      rect.y.should.be.equal(0);
+    });
+  });
   describe('getCurrentActivity', function () {
     it('should get current activity', async function () {
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')

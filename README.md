@@ -95,6 +95,7 @@ If more than one of these capabilities are given, the driver will only use first
 | `getSystemBars`            |
 | `getText`                  |
 | `getWindowSize`            |
+| `getWindowRect`            |
 | `hideKeyboard`             |
 | `installApp`               |
 | `isAppInstalled`           |
