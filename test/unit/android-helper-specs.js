@@ -472,22 +472,15 @@ describe('Android Helpers', function () {
     });
   }));
   describe('pushSettingsApp', withMocks({adb}, (mocks) => {
-    it('should install settingsApp', async function () {
+    it('should skip granting permissions if the app is already running', async function () {
       mocks.adb.expects('installOrUpgrade').once()
         .returns(true);
-      mocks.adb.expects('grantAllPermissions').withExactArgs('io.appium.settings').once()
-        .returns(true);
+      mocks.adb.expects('grantAllPermissions').never();
       mocks.adb.expects('processExists')
           .withExactArgs('io.appium.settings').once()
           .returns(true);
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
-    });
-    it('should skip exception if installOrUpgrade or grantAllPermissions failed', async function () {
-      mocks.adb.expects('installOrUpgrade').throws();
-      mocks.adb.expects('grantAllPermissions').throws();
-      mocks.adb.expects('processExists').throws();
-      await helpers.pushSettingsApp(adb).should.be.fulfilled;
     });
     it('should launch settings app if it isnt running', async function () {
       mocks.adb.expects('installOrUpgrade').once()
