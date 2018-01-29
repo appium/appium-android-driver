@@ -192,7 +192,8 @@ describe('General', function () {
         .should.be.true;
     });
     it('should throw an error if APK does not exist', async function () {
-      await driver.installApp('non/existent/app.apk').should.be.rejectedWith(/Could not find app apk/);
+      await driver.installApp('non/existent/app.apk').should.be
+        .rejectedWith(/does not exist or is not accessible/);
     });
   });
   describe('background', function () {
