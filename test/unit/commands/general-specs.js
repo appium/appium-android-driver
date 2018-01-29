@@ -182,17 +182,17 @@ describe('General', function () {
       sandbox.stub(fs, 'exists').withArgs(app).returns(true);
       sandbox.stub(driver.adb, 'packageAndLaunchActivityFromManifest')
         .withArgs(app).returns({apkPackage: 'pkg'});
-      sandbox.stub(helpers, 'installApkRemotely')
+      sandbox.stub(helpers, 'installApk')
         .returns(true);
       await driver.installApp('app').should.eventually.be.true;
       driver.helpers.configureApp.calledOnce.should.be.true;
       fs.exists.calledOnce.should.be.true;
       driver.adb.packageAndLaunchActivityFromManifest.calledOnce.should.be.true;
-      helpers.installApkRemotely.calledWithExactly(driver.adb, opts)
+      helpers.installApk.calledWithExactly(driver.adb, opts)
         .should.be.true;
     });
     it('should throw an error if APK does not exist', async function () {
-      await driver.installApp('non/existent/app.apk').should.be.rejectedWith(/does not exist or is not accessible/);
+      await driver.installApp('non/existent/app.apk').should.be.rejectedWith(/Could not find app apk/);
     });
   });
   describe('background', function () {
@@ -310,28 +310,19 @@ describe('General', function () {
     it('should reset app via reinstall if fullReset is true', async function () {
       driver.opts.fullReset = true;
       driver.opts.appPackage = 'pkg';
-      sandbox.stub(driver.adb, 'stopAndClear');
-      sandbox.stub(driver.adb, 'uninstallApk');
-      sandbox.stub(helpers, 'installApkRemotely');
-      sandbox.stub(driver, 'grantPermissions');
       sandbox.stub(driver, 'startAUT').returns('aut');
+      sandbox.stub(helpers, 'resetApp').returns(undefined);
       await driver.reset().should.eventually.be.equal('aut');
-      driver.adb.stopAndClear.calledWithExactly('pkg').should.be.true;
-      driver.adb.uninstallApk.calledWithExactly('pkg').should.be.true;
-      helpers.installApkRemotely.calledWithExactly(driver.adb, driver.opts)
-        .should.be.true;
-      driver.grantPermissions.calledOnce.should.be.true;
+      helpers.resetApp.calledWith(driver.adb).should.be.true;
       driver.startAUT.calledOnce.should.be.true;
     });
     it('should do fast reset if fullReset is false', async function () {
       driver.opts.fullReset = false;
       driver.opts.appPackage = 'pkg';
-      sandbox.stub(driver.adb, 'stopAndClear');
-      sandbox.stub(driver, 'grantPermissions');
+      sandbox.stub(helpers, 'resetApp').returns(undefined);
       sandbox.stub(driver, 'startAUT').returns('aut');
       await driver.reset().should.eventually.be.equal('aut');
-      driver.adb.stopAndClear.calledWithExactly('pkg').should.be.true;
-      driver.grantPermissions.calledOnce.should.be.true;
+      helpers.resetApp.calledWith(driver.adb).should.be.true;
       driver.startAUT.calledOnce.should.be.true;
       expect(driver.curContext).to.be.null;
     });

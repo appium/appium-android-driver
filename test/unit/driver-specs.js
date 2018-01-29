@@ -254,7 +254,7 @@ describe('driver', function () {
     it('should reset if run with fast reset', async function () {
       driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: true};
       driver.adb = "mock_adb";
-      mocks.helpers.expects("resetApp").withExactArgs("mock_adb", undefined, "app.package", true);
+      mocks.helpers.expects("resetApp").withArgs("mock_adb");
       await driver.initAUT();
       mocks.helpers.verify();
     });
