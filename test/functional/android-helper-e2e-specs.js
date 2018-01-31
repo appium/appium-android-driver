@@ -24,7 +24,7 @@ describe('android-helpers e2e', function () {
   before(async function () {
     adb = await ADB.createADB();
   });
-  describe('installApkRemotely', function () {
+  describe('installApk', function () {
     it('installs an apk by pushing it to the device then installing it from within', async function () {
       this.timeout(MOCHA_TIMEOUT);
 
@@ -35,7 +35,7 @@ describe('android-helpers e2e', function () {
         }
       });
       await adb.isAppInstalled(opts.appPackage).should.eventually.be.false;
-      await helpers.installApkRemotely(adb, opts);
+      await helpers.installApk(adb, opts);
       await adb.isAppInstalled(opts.appPackage).should.eventually.be.true;
     });
   });
