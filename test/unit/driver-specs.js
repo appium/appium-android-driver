@@ -3,13 +3,14 @@ import chaiAsPromised from 'chai-as-promised';
 import log from '../../lib/logger';
 import sinon from 'sinon';
 import helpers from '../../lib/android-helpers';
+import * as contextCommands from '../../lib/commands/context';
 import { withMocks } from 'appium-test-support';
 import AndroidDriver from '../..';
 import ADB from 'appium-adb';
 import { errors } from 'appium-base-driver';
 import { fs } from 'appium-support';
 import { SharedPrefsBuilder } from 'shared-preferences-builder';
-
+import _ from 'lodash';
 
 let driver;
 let sandbox = sinon.sandbox.create();
@@ -375,12 +376,30 @@ describe('driver', function () {
       await driver.startAndroidSession();
       driver.dismissChromeWelcome.calledOnce.should.be.false;
     });
+  });
+  describe('startChromeSession', function () {
+    beforeEach(async function () {
+      driver = new AndroidDriver();
+      driver.adb = new ADB();
+      driver.bootstrap = new helpers.bootstrap(driver.adb);
+      driver.settings = { update () { } };
+      driver.caps = {};
+
+      sandbox.stub(contextCommands, 'setupNewChromedriver').returns({
+        on: _.noop,
+        proxyReq: _.noop,
+      });
+      sandbox.stub(driver, 'dismissChromeWelcome');
+    });
+    afterEach(function () {
+      sandbox.restore();
+    });
     it('should call dismissChromeWelcome', async function () {
       driver.opts.browserName = 'Chrome';
       driver.opts.chromeOptions = {
-        "args" : ["--no-first-run"]
+        "args": ["--no-first-run"]
       };
-      await driver.startAndroidSession();
+      await driver.startChromeSession();
       driver.dismissChromeWelcome.calledOnce.should.be.true;
     });
   });

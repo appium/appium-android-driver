@@ -318,7 +318,7 @@ describe('General', function () {
       await driver.reset().should.eventually.be.equal('aut');
       helpers.resetApp.calledWith(driver.adb).should.be.true;
       driver.startAUT.calledOnce.should.be.true;
-      expect(driver.curContext).to.be.null;
+      expect(driver.curContext).to.eql('NATIVE_APP');
     });
   });
   describe('startAUT', function () {
