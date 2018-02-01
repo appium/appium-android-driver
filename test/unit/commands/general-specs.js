@@ -117,7 +117,7 @@ describe('General', function () {
     it('should get window size', async function () {
       sandbox.stub(driver.bootstrap, 'sendAction')
         .withArgs('getDeviceSize').returns('size');
-      await driver.getWindowSize().should.be.equal('size');
+      (await driver.getWindowSize()).should.be.equal('size');
     });
   });
   describe('getWindowRect', function () {
