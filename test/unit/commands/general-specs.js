@@ -62,7 +62,7 @@ describe('General', function () {
   describe('getPageSource', function () {
     it('should return page source', async function () {
       sandbox.stub(driver.bootstrap, 'sendAction').withArgs('source').returns('sources');
-      await driver.getPageSource().should.be.equal('sources');
+      (await driver.getPageSource()).should.be.equal('sources');
     });
   });
   describe('back', function () {
@@ -117,7 +117,7 @@ describe('General', function () {
     it('should get window size', async function () {
       sandbox.stub(driver.bootstrap, 'sendAction')
         .withArgs('getDeviceSize').returns('size');
-      await driver.getWindowSize().should.be.equal('size');
+      (await driver.getWindowSize()).should.be.equal('size');
     });
   });
   describe('getWindowRect', function () {
@@ -147,49 +147,42 @@ describe('General', function () {
   });
   describe('getLogTypes', function () {
     it('should get log types', async function () {
-      await driver.getLogTypes().should.be.deep.equal(['logcat']);
+      (await driver.getLogTypes()).should.be.deep.equal(['logcat']);
     });
   });
   describe('getLog', function () {
     it('should get log types', async function () {
       sandbox.stub(driver.adb, 'getLogcatLogs').returns('logs');
-      await driver.getLog('logcat').should.be.equal('logs');
+      (await driver.getLog('logcat')).should.be.equal('logs');
     });
     it('should throws exception if log type is unsupported', async function () {
-      expect(() => driver.getLog('unsupported_type'))
-        .to.throw('Unsupported log type unsupported_type');
+      await driver.getLog('unsupported_type').should.eventually
+        .be.rejectedWith(/Unsupported log type unsupported_type/);
     });
   });
   describe('isAppInstalled', function () {
     it('should return true if app is installed', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').returns(true);
-      await driver.isAppInstalled('pkg').should.be.true;
+      (await driver.isAppInstalled('pkg')).should.be.true;
     });
   });
   describe('removeApp', function () {
     it('should remove app', async function () {
       sandbox.stub(driver.adb, 'uninstallApk').withArgs('pkg').returns(true);
-      await driver.removeApp('pkg').should.be.true;
+      (await driver.removeApp('pkg')).should.be.true;
     });
   });
   describe('installApp', function () {
     it('should install app', async function () {
-      driver.opts.fastReset = 'fastReset';
       let app = 'app.apk';
-      let opts = {app: 'app.apk', appPackage: 'pkg', fastReset: 'fastReset'};
       sandbox.stub(driver.helpers, 'configureApp').withArgs('app', '.apk')
         .returns(app);
       sandbox.stub(fs, 'exists').withArgs(app).returns(true);
-      sandbox.stub(driver.adb, 'packageAndLaunchActivityFromManifest')
-        .withArgs(app).returns({apkPackage: 'pkg'});
-      sandbox.stub(helpers, 'installApk')
-        .returns(true);
-      await driver.installApp('app').should.eventually.be.true;
+      sandbox.stub(driver.adb, 'install').returns(true);
+      await driver.installApp('app');
       driver.helpers.configureApp.calledOnce.should.be.true;
       fs.exists.calledOnce.should.be.true;
-      driver.adb.packageAndLaunchActivityFromManifest.calledOnce.should.be.true;
-      helpers.installApk.calledWithExactly(driver.adb, opts)
-        .should.be.true;
+      driver.adb.install.calledOnce.should.be.true;
     });
     it('should throw an error if APK does not exist', async function () {
       await driver.installApp('non/existent/app.apk').should.be
