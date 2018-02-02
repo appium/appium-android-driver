@@ -311,7 +311,6 @@ describe('Android Helpers', function () {
     it('should be able to do full reset', async function () {
       mocks.adb.expects('install').once().withArgs(localApkPath);
       mocks.adb.expects('forceStop').withExactArgs(pkg).once();
-      mocks.adb.expects('clear').withExactArgs(pkg).once().returns('Success');
       mocks.adb.expects('isAppInstalled').once().withExactArgs(pkg).returns(true);
       mocks.adb.expects('uninstallApk').once().withExactArgs(pkg);
       await helpers.resetApp(adb, {app: localApkPath, appPackage: pkg});
