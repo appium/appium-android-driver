@@ -311,7 +311,6 @@ describe('Android Helpers', function () {
     it('should be able to do full reset', async function () {
       mocks.adb.expects('install').once().withArgs(localApkPath);
       mocks.adb.expects('forceStop').withExactArgs(pkg).once();
-      mocks.adb.expects('clear').withExactArgs(pkg).once().returns('Success');
       mocks.adb.expects('isAppInstalled').once().withExactArgs(pkg).returns(true);
       mocks.adb.expects('uninstallApk').once().withExactArgs(pkg);
       await helpers.resetApp(adb, {app: localApkPath, appPackage: pkg});
@@ -321,7 +320,8 @@ describe('Android Helpers', function () {
       mocks.adb.expects('isAppInstalled').once().withExactArgs(pkg).returns(true);
       mocks.adb.expects('forceStop').withExactArgs(pkg).once();
       mocks.adb.expects('clear').withExactArgs(pkg).once().returns('Success');
-      await helpers.resetApp(adb, {app: localApkPath, appPackage: pkg, fastReset: true});
+      mocks.adb.expects('grantAllPermissions').once().withExactArgs(pkg);
+      await helpers.resetApp(adb, {app: localApkPath, appPackage: pkg, fastReset: true, autoGrantPermissions:true});
       mocks.adb.verify();
     });
     it('should perform reinstall if app is not installed and fast reset is requested', async function () {
