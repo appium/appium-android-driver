@@ -217,6 +217,16 @@ describe('Element', function () {
         .should.be.true;
     });
   });
+  describe('getElementRect', function () {
+    it('should get rect of an element', async function () {
+      driver.bootstrap.sendAction
+        .withArgs('element:getRect').returns('rect_info');
+      await driver.getElementRect('el1').should.become('rect_info');
+      driver.bootstrap.sendAction
+        .calledWithExactly('element:getRect', {elementId: 'el1'})
+        .should.be.true;
+    });
+  });
   describe('touchLongClick', function () {
     it('should do touch long click on element', async function () {
       let params = {elementId: 'el1', x: 12, y: 34, duration: 5};
