@@ -3,7 +3,6 @@ import chaiAsPromised from 'chai-as-promised';
 import log from '../../lib/logger';
 import sinon from 'sinon';
 import helpers from '../../lib/android-helpers';
-import * as contextCommands from '../../lib/commands/context';
 import { withMocks } from 'appium-test-support';
 import AndroidDriver from '../..';
 import ADB from 'appium-adb';
@@ -385,7 +384,7 @@ describe('driver', function () {
       driver.settings = { update () { } };
       driver.caps = {};
 
-      sandbox.stub(contextCommands, 'setupNewChromedriver').returns({
+      sandbox.stub(driver, 'setupNewChromedriver').returns({
         on: _.noop,
         proxyReq: _.noop,
       });
