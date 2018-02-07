@@ -36,7 +36,7 @@ function deSamsungify (text) {
 
 async function getElement (driver, className) {
   return await retryInterval(10, 1000, async () => {
-    let el = _.last(await driver.findElOrEls('class name', className, true));
+    let el = _.last(await driver.findElements('class name', className));
     return el.ELEMENT;
   });
 }
@@ -168,13 +168,13 @@ describe('keyboard', function () {
       }
 
       it('should be able to clear a password field', async function () {
-        let els = await driver.findElOrEls('class name', EDITTEXT_CLASS, true);
+        let els = await driver.findElements('class name', EDITTEXT_CLASS);
         let el = els[1].ELEMENT;
 
         await driver.setValue('super-duper password', el);
 
         // the text is printed into a text field, so we can retrieve and assert
-        let textEl = await driver.findElOrEls('id', 'edit1Text', false);
+        let textEl = await driver.findElement('id', 'edit1Text');
         let text = await driver.getText(textEl.ELEMENT);
         text.should.eql('super-duper password');
 

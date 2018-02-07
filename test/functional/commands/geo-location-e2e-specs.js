@@ -20,7 +20,7 @@ describe.skip("geo-location", function () {
 
   it('should set geo location @skip-ci', async function () {
     let getText = async () => {
-      let els = await driver.findElOrEls('class name', 'android.widget.TextView', true);
+      let els = await driver.findElements('class name', 'android.widget.TextView');
       return await driver.getText(els[1].ELEMENT);
     };
 

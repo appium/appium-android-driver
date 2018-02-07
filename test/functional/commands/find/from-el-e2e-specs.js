@@ -12,31 +12,30 @@ const alv = 'android.widget.ListView';
 
 describe('Find - from element', function () {
   let driver;
+  let el;
   before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(DEFAULT_CAPS);
+    el = await driver.findElement('class name', alv);
+    el = el.ELEMENT;
   });
   after(async function () {
     await driver.deleteSession();
   });
   it('should find a single element by tag name', async function () {
-    let el = await driver.findElOrEls('class name', alv, false);
-    let innerEl = await driver.findElOrEls('class name', atv, false, el.ELEMENT);
+    let innerEl = await driver.findElementFromElement('class name', atv, el);
     await driver.getText(innerEl.ELEMENT).should.eventually.equal("Access'ibility");
   });
   it('should find multiple elements by tag name', async function () {
-    let el = await driver.findElOrEls('class name', alv, false);
-    let innerEl = await driver.findElOrEls('class name', atv, true, el.ELEMENT);
+    let innerEl = await driver.findElementsFromElement('class name', atv, el);
     await driver.getText(innerEl[0].ELEMENT).should.eventually.have.length.above(10);
   });
-  it('should not find an element that doesnt exist', async function () {
-    let el = await driver.findElOrEls('class name', alv, false);
-    await driver.findElOrEls('class name', 'blargimarg', false, el.ELEMENT)
+  it('should not find an element that does not exist', async function () {
+    await driver.findElementFromElement('class name', 'blargimarg', el)
       .should.be.rejectedWith(/could not be located/);
   });
-  it('should not find multiple elements that dont exist', async function () {
-    let el = await driver.findElOrEls('class name', alv, true);
-    await driver.findElOrEls('class name', 'blargimarg', false, el.ELEMENT)
+  it('should not find multiple elements that do not exist', async function () {
+    await driver.findElementFromElement('class name', 'blargimarg', el)
       .should.be.rejectedWith(/could not be located/);
   });
 });

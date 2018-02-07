@@ -17,11 +17,11 @@ describe('Find - ID', function () {
     await driver.deleteSession();
   });
   it('should find an element by id', async function () {
-    await driver.findElOrEls('id', 'android:id/text1', false).should.eventually.exist;
+    await driver.findElement('id', 'android:id/text1').should.eventually.exist;
   });
   it('should return an array of one element if the `multi` param is true', async function () {
     // TODO: this returns an object instead of an array. Investigate.
-    let els = await driver.findElOrEls('id', 'android:id/text1', true);
+    let els = await driver.findElements('id', 'android:id/text1');
     els.should.be.an.instanceof(Array);
     els.should.have.length.above(1);
   });

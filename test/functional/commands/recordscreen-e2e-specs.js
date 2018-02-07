@@ -32,7 +32,7 @@ describe('recording the screen', function () {
     await driver.startRecordingScreen();
 
     // do some interacting, to take some time
-    let el = await driver.findElOrEls('class name', 'android.widget.EditText', false);
+    let el = await driver.findElement('class name', 'android.widget.EditText');
     el = el.ELEMENT;
     await driver.setValue('Recording the screen!', el);
     let text = await driver.getText(el);

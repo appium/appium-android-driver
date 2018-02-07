@@ -19,7 +19,7 @@ describe('element', function () {
   before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(caps);
-    el = _.last(await driver.findElOrEls('class name', 'android.widget.EditText', true));
+    el = _.last(await driver.findElements('class name', 'android.widget.EditText'));
     el.should.exist;
   });
   after(async function () {

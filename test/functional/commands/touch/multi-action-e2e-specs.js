@@ -22,7 +22,7 @@ describe('apidemo - touch - multi-actions', function () {
     await driver.deleteSession();
   });
   it('should scroll two different lists', async function () {
-    let lists = await driver.findElOrEls('class name', 'android.widget.ListView', true);
+    let lists = await driver.findElements('class name', 'android.widget.ListView');
     let leftList = lists[0].ELEMENT;
     let rightList = lists[1].ELEMENT;
     let leftGestures = [

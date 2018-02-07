@@ -29,7 +29,7 @@ describe('actions', function () {
 
   describe('replaceValue', function () {
     it('should replace existing value in a text field', async function () {
-      let el = _.last(await driver.findElOrEls('class name', 'android.widget.EditText', true));
+      let el = _.last(await driver.findElements('class name', 'android.widget.EditText'));
       el.should.exist;
       await driver.setValue('original value', el.ELEMENT);
       await driver.getText(el.ELEMENT).should.eventually.equal('original value');

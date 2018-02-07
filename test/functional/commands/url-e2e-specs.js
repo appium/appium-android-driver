@@ -42,17 +42,17 @@ describe('setUrl', function () {
     if (caps.browserName === 'Chrome') {
       try {
         // on some chrome systems, we always get the terms and conditions page
-        let btn = await driver.findElOrEls('id', 'com.android.chrome:id/terms_accept', false);
+        let btn = await driver.findElement('id', 'com.android.chrome:id/terms_accept');
         await driver.click(btn.ELEMENT);
 
-        btn = await driver.findElOrEls('id', 'com.android.chrome:id/negative_button', false);
+        btn = await driver.findElement('id', 'com.android.chrome:id/negative_button');
         await driver.click(btn.ELEMENT);
       } catch (ign) {}
     }
 
     await driver.setUrl('http://saucelabs.com');
 
-    let el = await driver.findElOrEls('id', urlId, false);
+    let el = await driver.findElement('id', urlId);
     await driver.getText(el.ELEMENT).should.eventually.include('saucelabs.com');
   });
 });
