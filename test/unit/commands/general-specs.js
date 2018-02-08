@@ -175,13 +175,13 @@ describe('General', function () {
   describe('installApp', function () {
     it('should install app', async function () {
       let app = 'app.apk';
-      sandbox.stub(driver.helpers, 'configureApp').withArgs('app', '.apk')
+      sandbox.stub(driver.helpers, 'configureApp').withArgs(app, '.apk')
         .returns(app);
-      sandbox.stub(fs, 'exists').withArgs(app).returns(true);
+      sandbox.stub(fs, 'rimraf').returns();
       sandbox.stub(driver.adb, 'install').returns(true);
-      await driver.installApp('app');
+      await driver.installApp(app);
       driver.helpers.configureApp.calledOnce.should.be.true;
-      fs.exists.calledOnce.should.be.true;
+      fs.rimraf.notCalled.should.be.true;
       driver.adb.install.calledOnce.should.be.true;
     });
     it('should throw an error if APK does not exist', async function () {
