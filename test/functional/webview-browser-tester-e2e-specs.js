@@ -58,10 +58,10 @@ describe('Android 7 Webview Browser tester', function () {
     // make sure we are in the right context
     await driver.getCurrentContext().should.eventually.eql("CHROMIUM");
 
-    let el = await driver.findElOrEls('id', 'i am a link', false);
+    let el = await driver.findElement('id', 'i am a link');
     await driver.click(el.ELEMENT);
 
-    el = await driver.findElOrEls('id', 'I am another page title', false);
+    el = await driver.findElement('id', 'I am another page title');
     el.should.exist;
   });
 });

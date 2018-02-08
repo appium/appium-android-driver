@@ -20,30 +20,30 @@ describe('Find - xpath', function () {
     await driver.deleteSession();
   });
   it('should throw when matching nothing', async function () {
-    await driver.findElOrEls('xpath', '//whatthat', false).should.eventually.be.rejectedWith(/could not be located/);
+    await driver.findElement('xpath', '//whatthat').should.eventually.be.rejectedWith(/could not be located/);
   });
   it('should throw with status 7 for hierarchy root', async function () {
-    await driver.findElOrEls('xpath', '/*', false).should.eventually.be.rejectedWith(/could not be located/);
+    await driver.findElement('xpath', '/*').should.eventually.be.rejectedWith(/could not be located/);
   });
   it('should find element by type', async function () {
-    let el = await driver.findElOrEls('xpath', `//${atv}`, false);
+    let el = await driver.findElement('xpath', `//${atv}`);
     await driver.getText(el.ELEMENT).should.eventually.equal('API Demos');
   });
   it('should find element by text', async function () {
-    let el = await driver.findElOrEls('xpath', `//${atv}[@text='Accessibility']`, false);
+    let el = await driver.findElement('xpath', `//${atv}[@text='Accessibility']`);
     await driver.getText(el.ELEMENT).should.eventually.equal('Accessibility');
   });
   it('should find exactly one element via elementsByXPath', async function () {
-    let el = await driver.findElOrEls('xpath', `//${atv}[@text='Accessibility']`, true);
+    let el = await driver.findElements('xpath', `//${atv}[@text='Accessibility']`);
     el.length.should.equal(1);
     await driver.getText(el[0].ELEMENT).should.eventually.equal('Accessibility');
   });
   it('should find element by partial text', async function () {
-    let el = await driver.findElOrEls('xpath', `//${atv}[contains(@text, 'Accessibility')]`, false);
+    let el = await driver.findElement('xpath', `//${atv}[contains(@text, 'Accessibility')]`);
     await driver.getText(el.ELEMENT).should.eventually.equal('Accessibility');
   });
   it('should find the last element', async function () {
-    let el = await driver.findElOrEls('xpath', `(//${atv})[last()]`, false);
+    let el = await driver.findElement('xpath', `(//${atv})[last()]`);
     let text = await driver.getText(el.ELEMENT);
     ["OS", "Text", "Views", "Preference"].should.include(text);
   });
@@ -51,27 +51,27 @@ describe('Find - xpath', function () {
   // TODO: Doesn't work on CI. Works locally on API_LEVEL 23
   //it('should find element by xpath index and child @skip-ci', async () => {
     // let alv = 'android.widget.ListView';
-    // let el = await driver.findElOrEls('xpath', `//${f}[2]/${alv}[1]/${atv}[4]`, false);
+    // let el = await driver.findElement('xpath', `//${f}[2]/${alv}[1]/${atv}[4]`);
     // await driver.getText(el.ELEMENT).should.eventually.equal('App');
   //});
 
   it('should find element by index and embedded desc', async function () {
-    let el = await driver.findElOrEls('xpath', `//${f}//${atv}[5]`, false);
+    let el = await driver.findElement('xpath', `//${f}//${atv}[5]`);
     await driver.getText(el.ELEMENT).should.eventually.equal('Content');
   });
   it('should find all elements', async function () {
-    let el = await driver.findElOrEls('xpath', `//*`, true);
-    el.length.should.be.above(2);
+    let els = await driver.findElements('xpath', `//*`);
+    els.length.should.be.above(2);
   });
   it('should find the first element when searching for all elements', async function () {
-    let el = await driver.findElOrEls('xpath', `//*`, true);
+    let el = await driver.findElements('xpath', `//*`);
     el[0].should.exist;
   });
   it('should find less elements with compression turned on', async function () {
     await driver.updateSettings({ignoreUnimportantViews: false});
-    let elementsWithoutCompression = await driver.findElOrEls('xpath', `//*`, true);
+    let elementsWithoutCompression = await driver.findElements('xpath', `//*`);
     await driver.updateSettings({ignoreUnimportantViews: true});
-    let elementsWithCompression = await driver.findElOrEls('xpath', `//*`, true);
+    let elementsWithCompression = await driver.findElements('xpath', `//*`);
     elementsWithoutCompression.length.should.be.greaterThan(elementsWithCompression.length);
   });
 });

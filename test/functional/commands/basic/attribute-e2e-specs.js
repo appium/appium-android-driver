@@ -14,7 +14,7 @@ describe('apidemo - attributes', function () {
   before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(DEFAULT_CAPS);
-    let animation = await driver.findElOrEls('accessibility id', 'Animation', false);
+    let animation = await driver.findElement('accessibility id', 'Animation');
     animationEl = animation.ELEMENT;
   });
   after(async function () {
@@ -31,7 +31,7 @@ describe('apidemo - attributes', function () {
   });
   it('should be able to find name attribute, falling back to text', async function () {
     await driver.click(animationEl);
-    let textView = await driver.findElOrEls('class name', 'android.widget.TextView', true);
+    let textView = await driver.findElements('class name', 'android.widget.TextView');
     let textViewEl = textView[1].ELEMENT;
     await driver.getAttribute('name', textViewEl).should.eventually.become('Bouncing Balls');
     await driver.back();

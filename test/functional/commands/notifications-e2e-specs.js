@@ -34,7 +34,7 @@ describe('apidemo - notifications', function () {
   });
 
   it('should open the notification shade @skip-ci', async function () {
-    let el = await driver.findElOrEls('accessibility id', ':-|', false);
+    let el = await driver.findElement('accessibility id', ':-|');
     await driver.click(el.ELEMENT);
 
     // give the app a second to catch up before opening notifications
@@ -42,7 +42,7 @@ describe('apidemo - notifications', function () {
     await driver.openNotifications();
 
     await retry(4, async () => {
-      let textViews = await driver.findElOrEls('class name', 'android.widget.TextView', true);
+      let textViews = await driver.findElements('class name', 'android.widget.TextView');
       let text = [];
       for (let view of textViews) {
         text.push(await driver.getText(view.ELEMENT));

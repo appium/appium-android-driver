@@ -24,54 +24,54 @@ describe('Find - basic', function () {
     await driver.deleteSession();
   });
   it('should find a single element by content-description', async function () {
-    let el = await driver.findElOrEls('accessibility id', 'Animation', false);
+    let el = await driver.findElement('accessibility id', 'Animation');
     await driver.getText(el.ELEMENT).should.eventually.equal('Animation');
   });
   it('should find an element by class name', async function () {
-    let el = await driver.findElOrEls('class name', 'android.widget.TextView', false);
+    let el = await driver.findElement('class name', 'android.widget.TextView');
     await driver.getText(el.ELEMENT).should.eventually.equal('API Demos');
   });
   it('should find multiple elements by class name', async function () {
-    await driver.findElOrEls('class name', 'android.widget.TextView', true)
+    await driver.findElements('class name', 'android.widget.TextView')
       .should.eventually.have.length.at.least(10);
   });
   it('should not find an element that doesnt exist', async function () {
-    await driver.findElOrEls('class name', 'blargimarg', false)
+    await driver.findElement('class name', 'blargimarg')
       .should.be.rejectedWith(/could not be located/);
   });
   it('should not find multiple elements that doesnt exist', async function () {
-    await driver.findElOrEls('class name', 'blargimarg', true)
+    await driver.findElements('class name', 'blargimarg')
       .should.eventually.have.length(0);
   });
   it('should fail on empty locator', async function () {
-    await driver.findElOrEls('class name', '', true).should.be.rejectedWith(/selector/);
+    await driver.findElements('class name', '').should.be.rejectedWith(/selector/);
   });
   it('should find a single element by string id @skip-android-all', async function () {
-    let el = await driver.findElOrEls('id', 'activity_sample_code', false);
+    let el = await driver.findElement('id', 'activity_sample_code');
     await driver.getText(el.ELEMENT).should.eventually.equal('API Demos');
   });
   it('should find a single element by resource-id', async function () {
-    await driver.findElOrEls('id', `android:id/${singleResourceId}`, false)
+    await driver.findElement('id', `android:id/${singleResourceId}`)
       .should.eventually.exist;
   });
   it('should find multiple elements by resource-id', async function () {
-    await driver.findElOrEls('id', 'android:id/text1', true)
+    await driver.findElements('id', 'android:id/text1')
       .should.eventually.have.length.at.least(10);
   });
   it('should find multiple elements by resource-id even when theres just one', async function () {
-    await driver.findElOrEls('id', `android:id/${singleResourceId}`, true)
+    await driver.findElements('id', `android:id/${singleResourceId}`)
       .should.eventually.have.length(1);
   });
   it('should find a single element by resource-id with implicit package', async function () {
-    await driver.findElOrEls('id', singleResourceId, false)
+    await driver.findElement('id', singleResourceId)
       .should.eventually.exist;
   });
   it('should find a single element by resource-id with implicit package', async function () {
-    await driver.findElOrEls('id', 'text1', true)
+    await driver.findElements('id', 'text1')
       .should.eventually.have.length.at.least(10);
   });
   it('should find multiple elements by resource-id with implicit package even when theres just one', async function () {
-    await driver.findElOrEls('id', singleResourceId, true)
+    await driver.findElements('id', singleResourceId)
       .should.eventually.have.length(1);
   });
   describe('implicit wait', function () {
@@ -81,7 +81,7 @@ describe('Find - basic', function () {
     });
     it('should respect implicit wait with multiple elements', async function () {
       let beforeMs = Date.now();
-      await driver.findElOrEls('id', 'there_is_nothing_called_this', true)
+      await driver.findElements('id', 'there_is_nothing_called_this')
         .should.eventually.have.length(0);
       let afterMs = Date.now();
       (afterMs - beforeMs).should.be.below(implicitWait + 5000);
@@ -89,7 +89,7 @@ describe('Find - basic', function () {
     });
     it('should respect implicit wait with a single element', async function () {
       let beforeMs = Date.now();
-      await driver.findElOrEls('id', 'there_is_nothing_called_this', false)
+      await driver.findElement('id', 'there_is_nothing_called_this')
         .should.eventually.be.rejectedWith(/could not be located/);
       let afterMs = Date.now();
       (afterMs - beforeMs).should.be.below(implicitWait + 5000);

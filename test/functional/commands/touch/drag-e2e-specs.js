@@ -29,26 +29,26 @@ describe('apidemo - touch', function () {
   });
   describe('drag', function () {
     it('should drag by element', async function () {
-      let dot3 = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_dot_3', false);
-      let dot2 = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_dot_2', false);
+      let dot3 = await driver.findElement('id', 'io.appium.android.apis:id/drag_dot_3');
+      let dot2 = await driver.findElement('id', 'io.appium.android.apis:id/drag_dot_2');
       let gestures = [
         {options: {element: dot3.ELEMENT}},
         {options: {element: dot2.ELEMENT}}
       ];
       await driver.doTouchDrag(gestures);
 
-      let results = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_result_text', false);
+      let results = await driver.findElement('id', 'io.appium.android.apis:id/drag_result_text');
       await driver.getText(results.ELEMENT).should.eventually.include('Dropped');
     });
     it('should drag by element with an offset', async function () {
-      let dot3 = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_dot_3', false);
-      let dot2 = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_dot_2', false);
+      let dot3 = await driver.findElement('id', 'io.appium.android.apis:id/drag_dot_3');
+      let dot2 = await driver.findElement('id', 'io.appium.android.apis:id/drag_dot_2');
       let gestures = [
         {options: {element: dot3.ELEMENT, x: 5, y: 5}},
         {options: {element: dot2.ELEMENT, x: 5, y: 5}}
       ];
       await driver.doTouchDrag(gestures);
-      let results = await driver.findElOrEls('id', 'io.appium.android.apis:id/drag_result_text', false);
+      let results = await driver.findElement('id', 'io.appium.android.apis:id/drag_result_text');
       await driver.getText(results.ELEMENT).should.eventually.include('Dropped');
     });
   });
