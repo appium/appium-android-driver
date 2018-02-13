@@ -82,11 +82,26 @@ describe('Android Helpers', function () {
     it('should set the correct avdArgs', async function () {
       let avdArgs = '-wipe-data';
       (helpers.prepareAVDArgs({}, adb, avdArgs)).should.equal(avdArgs);
-      (helpers.prepareAVDArgs({isHeadless: true}, adb, avdArgs)).should.have.string('-no-window');
+    });
+    it('should add headless arg', async function () {
+      let avdArgs = '-wipe-data';
+      let args = helpers.prepareAVDArgs({isHeadless: true}, adb, avdArgs);
+      args.should.have.string('-wipe-data');
+      args.should.have.string('-no-window');
+    });
+    it('should add network speed arg', async function () {
+      let avdArgs = '-wipe-data';
       mocks.helpers.expects('ensureNetworkSpeed').once()
         .returns('edge');
-      (helpers.prepareAVDArgs({networkSpeed: 'edge'}, adb, avdArgs)).should.have.string('-netspeed edge');
+      let args = helpers.prepareAVDArgs({networkSpeed: 'edge'}, adb, avdArgs);
+      args.should.have.string('-wipe-data');
+      args.should.have.string('-netspeed edge');
       mocks.adb.verify();
+    });
+    it('should not include empty avdArgs', async function () {
+      let avdArgs = '';
+      let args = helpers.prepareAVDArgs({isHeadless: true}, adb, avdArgs);
+      args.should.eql('-no-window');
     });
   }));
   describe('ensureNetworkSpeed', function () {
