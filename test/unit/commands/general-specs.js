@@ -231,6 +231,31 @@ describe('General', function () {
       B.delay.calledWithExactly(10000).should.be.true;
       driver.adb.startApp.calledWithExactly(params).should.be.true;
     });
+    it('should bring app to background and back if waiting for other pkg / activity', async function () { //eslint-disable-line
+      const appPackage = 'somepkg';
+      const appActivity = 'someacv';
+      const appWaitPackage = 'somewaitpkg';
+      const appWaitActivity = 'somewaitacv';
+      driver.opts = {appPackage, appActivity, appWaitPackage, appWaitActivity,
+                     intentAction: 'act', intentCategory: 'cat',
+                     intentFlags: 'flgs', optionalIntentArguments: 'opt',
+                     stopApp: false};
+      let params = {pkg: appPackage, activity: appActivity,
+                    waitPkg: appWaitPackage, waitActivity: appWaitActivity,
+                    action: 'act', category: 'cat',
+                    flags: 'flgs',
+                    optionalIntentArguments: 'opt', stopApp: false};
+      sandbox.stub(driver.adb, 'goToHome');
+      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
+        .returns({appPackage: appWaitPackage, appActivity: appWaitActivity});
+      sandbox.stub(B, 'delay');
+      sandbox.stub(driver.adb, 'startApp');
+      await driver.background(10);
+      driver.adb.getFocusedPackageAndActivity.calledOnce.should.be.true;
+      driver.adb.goToHome.calledOnce.should.be.true;
+      B.delay.calledWithExactly(10000).should.be.true;
+      driver.adb.startApp.calledWithExactly(params).should.be.true;
+    });
     it('should not bring app back if seconds are negative', async function () {
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'startApp');
