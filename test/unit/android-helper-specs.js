@@ -362,6 +362,7 @@ describe('Android Helpers', function () {
               .should.eventually.be.rejectedWith(/appPackage/);
     });
     it('should install/upgrade and reset app if fast reset is set to true', async function () {
+      mocks.adb.expects('isAppInstalled').once().returns(true);
       mocks.adb.expects('installOrUpgrade').once().withArgs(opts.app, opts.appPackage);
       mocks.helpers.expects('resetApp').once().withArgs(adb);
       await helpers.installApk(adb, Object.assign({}, opts, {fastReset: true}));
@@ -379,6 +380,14 @@ describe('Android Helpers', function () {
       mocks.adb.expects('installOrUpgrade').once().withArgs(opts.app, opts.appPackage);
       mocks.helpers.expects('resetApp').never();
       await helpers.installApk(adb, opts);
+      mocks.adb.verify();
+      mocks.helpers.verify();
+    });
+    it('should install/upgrade and skip fast reseting the app if this was the fresh install', async function () {
+      mocks.adb.expects('isAppInstalled').once().returns(false);
+      mocks.adb.expects('installOrUpgrade').once().withArgs(opts.app, opts.appPackage);
+      mocks.helpers.expects('resetApp').never();
+      await helpers.installApk(adb, Object.assign({}, opts, {fastReset: true}));
       mocks.adb.verify();
       mocks.helpers.verify();
     });
