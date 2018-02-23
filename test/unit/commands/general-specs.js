@@ -9,7 +9,7 @@ import { fs } from 'appium-support';
 import Bootstrap from 'appium-android-bootstrap';
 import B from 'bluebird';
 import ADB from 'appium-adb';
-import os from 'os';
+
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -144,28 +144,6 @@ describe('General', function () {
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
         .returns({appPackage: 'pkg'});
       await driver.getCurrentPackage().should.eventually.equal('pkg');
-    });
-  });
-  describe('getLogTypes', function () {
-    it('should get log types', async function () {
-      const types = await driver.getLogTypes();
-      for (const type of ['logcat', 'bugreport', 'server']) {
-        types.should.include(type);
-      }
-    });
-  });
-  describe('getLog', function () {
-    it('should get logcat logs', async function () {
-      sandbox.stub(driver.adb, 'getLogcatLogs').returns(['logs']);
-      (await driver.getLog('logcat')).should.be.deep.equal(['logs']);
-    });
-    it('should get bugreport logs', async function () {
-      sandbox.stub(driver.adb, 'bugreport').returns(`line1${os.EOL}line2`);
-      (await driver.getLog('bugreport')).should.be.deep.equal(['line1', 'line2']);
-    });
-    it('should throws exception if log type is unsupported', async function () {
-      await driver.getLog('unsupported_type').should.eventually
-        .be.rejectedWith(/Unsupported log type/);
     });
   });
   describe('isAppInstalled', function () {
