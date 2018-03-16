@@ -38,7 +38,9 @@ describe('commands - logging', function () {
     });
     it('should get bugreport logs', async function () {
       sinon.stub(driver.adb, 'bugreport').returns(`line1${os.EOL}line2`);
-      (await driver.getLog('bugreport')).should.be.deep.equal(['line1', 'line2']);
+      const [record1, record2] = await driver.getLog('bugreport');
+      record1.message.should.eql('line1');
+      record2.message.should.eql('line2');
       driver.adb.bugreport.called.should.be.true;
       driver.adb.bugreport.restore();
     });
