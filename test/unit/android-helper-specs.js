@@ -449,25 +449,29 @@ describe('Android Helpers', function () {
   describe('pushStrings', withMocks({adb, fs}, (mocks) => {
     const opts = {app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
     it('should extracts string.xml and converts it to string.json and pushes it', async function () {
+      mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`).once();
+      mocks.fs.expects('exists').withExactArgs(opts.app).returns(true);
+      mocks.fs.expects('rimraf').once();
       mocks.adb.expects('extractStringsFromApk').withArgs(opts.app, 'en')
-        .returns({apkStrings: 'apk_strings', localPath: 'local_path'});
+        .returns({apkStrings: {id: 'string'}, localPath: 'local_path'});
       mocks.adb.expects('push').withExactArgs('local_path', REMOTE_TEMP_PATH).once();
-      await helpers.pushStrings('en', adb, opts).should.become('apk_strings');
+      (await helpers.pushStrings('en', adb, opts)).should.be.deep.equal({id: 'string'});
       mocks.adb.verify();
     });
     it('should delete remote strings.json if app is not present', async function () {
-      mocks.adb.expects('extractStringsFromApk').throws();
+      mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`).once();
       mocks.fs.expects('exists').withExactArgs(opts.app).returns(false);
-      mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`);
-      await helpers.pushStrings('en', adb, opts).should.be.deep.equal({});
+      (await helpers.pushStrings('en', adb, opts)).should.be.deep.equal({});
       mocks.adb.verify();
       mocks.fs.verify();
     });
     it('should push an empty json object if app does not have strings.xml', async function () {
-      mocks.adb.expects('extractStringsFromApk').throws();
+      mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`).once();
       mocks.fs.expects('exists').withExactArgs(opts.app).returns(true);
+      mocks.fs.expects('rimraf').once();
+      mocks.adb.expects('extractStringsFromApk').throws();
       mocks.adb.expects('shell').withExactArgs('echo', [`'{}' > ${REMOTE_TEMP_PATH}/strings.json`]);
-      await helpers.pushStrings('en', adb, opts).should.be.deep.equal({});
+      (await helpers.pushStrings('en', adb, opts)).should.be.deep.equal({});
       mocks.adb.verify();
       mocks.fs.verify();
     });
