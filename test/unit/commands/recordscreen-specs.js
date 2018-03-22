@@ -22,8 +22,9 @@ describe('recording the screen', function () {
     const localFile = '/path/to/local.mp4';
     const mediaContent = new Buffer('appium');
 
-    it('should fail to recording the screen on an emulator', async function () {
+    it('should fail to recording the screen on an older emulator', async function () {
       mocks.driver.expects('isEmulator').returns(true);
+      mocks.adb.expects('getApiLevel').returns(26);
 
       await driver.startRecordingScreen().should.eventually.be.rejectedWith(/Screen recording does not work on emulators/);
     });
@@ -38,8 +39,8 @@ describe('recording the screen', function () {
     describe('beginning the recording', function () {
       beforeEach(function () {
         driver._recentScreenRecordingPath = null;
-        mocks.driver.expects('isEmulator').returns(false);
-        mocks.adb.expects('getApiLevel').returns(19);
+        mocks.driver.expects('isEmulator').atLeast(1).returns(false);
+        mocks.adb.expects('getApiLevel').atLeast(1).returns(19);
         mocks.adb.expects('getPIDsByName')
           .atLeast(1).withExactArgs('screenrecord').returns([]);
       });
@@ -120,6 +121,10 @@ describe('recording the screen', function () {
     });
 
     describe('stopRecordingScreen', function () {
+      beforeEach(function () {
+        mocks.driver.expects('isEmulator').atLeast(1).returns(false);
+        mocks.adb.expects('getApiLevel').atLeast(1).returns(19);
+      });
       afterEach(function () {
         mocks.driver.verify();
         mocks.adb.verify();
