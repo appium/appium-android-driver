@@ -121,6 +121,10 @@ describe('recording the screen', function () {
     });
 
     describe('stopRecordingScreen', function () {
+      beforeEach(function () {
+        mocks.driver.expects('isEmulator').atLeast(1).returns(false);
+        mocks.adb.expects('getApiLevel').atLeast(1).returns(19);
+      });
       afterEach(function () {
         mocks.driver.verify();
         mocks.adb.verify();
