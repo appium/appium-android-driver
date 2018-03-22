@@ -22,8 +22,9 @@ describe('recording the screen', function () {
     const localFile = '/path/to/local.mp4';
     const mediaContent = new Buffer('appium');
 
-    it('should fail to recording the screen on an emulator', async function () {
+    it('should fail to recording the screen on an older emulator', async function () {
       mocks.driver.expects('isEmulator').returns(true);
+      mocks.adb.expects('getApiLevel').returns(26);
 
       await driver.startRecordingScreen().should.eventually.be.rejectedWith(/Screen recording does not work on emulators/);
     });
