@@ -39,8 +39,8 @@ describe('recording the screen', function () {
     describe('beginning the recording', function () {
       beforeEach(function () {
         driver._recentScreenRecordingPath = null;
-        mocks.driver.expects('isEmulator').returns(false);
-        mocks.adb.expects('getApiLevel').returns(19);
+        mocks.driver.expects('isEmulator').atLeast(1).returns(false);
+        mocks.adb.expects('getApiLevel').atLeast(1).returns(19);
         mocks.adb.expects('getPIDsByName')
           .atLeast(1).withExactArgs('screenrecord').returns([]);
       });
