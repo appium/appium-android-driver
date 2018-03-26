@@ -121,6 +121,21 @@ describe('recording the screen', function () {
     });
 
     describe('stopRecordingScreen', function () {
+      const psOutput = `
+      USER           PID  PPID     VSZ    RSS WCHAN            ADDR S NAME
+      root          8384     2       0      0 worker_thread       0 S [kworker/0:1]
+      u0_a43        8400  1510 1449772  90992 ep_poll             0 S com.google.android.apps.messaging:rcs
+      root          8423     2       0      0 worker_thread       0 S [kworker/u4:2]
+      u0_a43        8435  1510 1452544  93576 ep_poll             0 S com.google.android.apps.messaging
+      u0_a7         8471  1510 1427536  79804 ep_poll             0 S android.process.acore
+      root          8669     2       0      0 worker_thread       0 S [kworker/u5:1]
+      u0_a35        8805  1510 1426428  61540 ep_poll             0 S com.google.android.apps.wallpaper
+      u0_a10        8864  1510 1427412  69752 ep_poll             0 S android.process.media
+      root          8879     2       0      0 worker_thread       0 S [kworker/1:1]
+      u0_a60        8897  1510 1490420 108852 ep_poll             0 S com.google.android.apps.photos
+      shell         9136  1422    7808   2784 0            ebddfaf0 R ps
+      `;
+
       beforeEach(function () {
         mocks.driver.expects('isEmulator').atLeast(1).returns(false);
         mocks.adb.expects('getApiLevel').atLeast(1).returns(19);
@@ -152,7 +167,7 @@ describe('recording the screen', function () {
           screenrec 11328      shell    9u      REG               0,19     11521     294673 ${remotePath}
         `});
         mocks.adb.expects('shell').withExactArgs(['kill', '-2', ...pids]);
-        mocks.adb.expects('shell').withExactArgs(['kill', '-0', ...pids]).throws();
+        mocks.adb.expects('shell').withExactArgs(['ps']).returns(psOutput);
         mocks.adb.expects('pull').once().withExactArgs(remotePath, localFile);
         mocks.fs.expects('readFile').once().withExactArgs(localFile).returns(mediaContent);
         mocks.adb.expects('rimraf').once().withExactArgs(remotePath);
@@ -169,7 +184,7 @@ describe('recording the screen', function () {
         mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord')
           .atLeast(1).returns(pids);
         mocks.adb.expects('shell').withExactArgs(['kill', '-2', ...pids]);
-        mocks.adb.expects('shell').withExactArgs(['kill', '-0', ...pids]).throws();
+        mocks.adb.expects('shell').withExactArgs(['ps']).returns(psOutput);
         mocks.adb.expects('pull').once().withExactArgs(driver._recentScreenRecordingPath, localFile);
         mocks.fs.expects('readFile').once().withExactArgs(localFile).returns(mediaContent);
         mocks.adb.expects('rimraf').once().withExactArgs(driver._recentScreenRecordingPath);
@@ -186,7 +201,7 @@ describe('recording the screen', function () {
         mocks.adb.expects('getPIDsByName').withExactArgs('screenrecord')
           .atLeast(1).returns(pids);
         mocks.adb.expects('shell').withExactArgs(['kill', '-2', ...pids]);
-        mocks.adb.expects('shell').withExactArgs(['kill', '-0', ...pids]).throws();
+        mocks.adb.expects('shell').withExactArgs(['ps']).returns(psOutput);
         mocks.adb.expects('pull').once().withExactArgs(driver._recentScreenRecordingPath, localFile);
         mocks.adb.expects('rimraf').once().withExactArgs(driver._recentScreenRecordingPath);
         mocks.fs.expects('rimraf').withExactArgs(localFile).once();
