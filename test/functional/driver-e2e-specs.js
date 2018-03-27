@@ -171,3 +171,26 @@ describe('close', function () {
     }
   });
 });
+
+describe('setEmuOrientation', function () {
+  let driver;
+  before(() => {
+    driver = new AndroidDriver();
+  });
+  afterEach(async () => {
+    await driver.deleteSession();
+  });
+  it('check emulator is rotating', async function () {
+    let caps = _.defaults({
+      androidInstallTimeout: 90000,
+      avd: 'Pixel_API_26',
+      orientation: 'landscape'
+    }, DEFAULT_CAPS);
+    caps.appPackage = 'io.appium.android.apis';
+    caps.appActivity = 'io.appium.android.apis.app.HelloWorld';
+    caps.intentCategory = 'appium.android.intent.category.SAMPLE_CODE';
+    await driver.createSession(caps);
+    let orientation  = await driver.getOrientation();
+    orientation.should.equal('landscape');
+  });
+});
