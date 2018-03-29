@@ -5,4 +5,4 @@ build
 .idea/
 *.iml
 coverage
-package-lock.json
+package-lock.json*
