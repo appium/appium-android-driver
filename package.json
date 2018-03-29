@@ -31,7 +31,7 @@
     "appium-adb": "^6.3.0",
     "appium-android-bootstrap": "^2.7.5",
     "appium-android-ime": "^2.0.0",
-    "appium-base-driver": "^2.23.0",
+    "appium-base-driver": "^2.26.0",
     "appium-chromedriver": "^3.0.0",
     "appium-support": "^2.13.0",
     "appium-unlock": "^2.0.0",
@@ -46,6 +46,7 @@
     "source-map-support": "^0.3.1",
     "teen_process": "^1.9.0",
     "temp": "^0.8.3",
+    "ws": "^5.0.0",
     "yargs": "^6.6.0"
   },
   "scripts": {
