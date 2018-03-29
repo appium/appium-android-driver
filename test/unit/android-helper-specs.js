@@ -404,7 +404,8 @@ describe('Android Helpers', function () {
 
     const expectedADBInstallOpts = {
       grantPermissions: undefined,
-      timeout: opts.androidInstallTimeout
+      timeout: opts.androidInstallTimeout,
+      "-r": true,
     };
 
     it('should not call adb.install if otherApps is empty', async function () {
@@ -684,6 +685,19 @@ describe('Android Helpers', function () {
     it('should return pakage for chromium-webview', async function () {
       helpers.getChromePkg('chromium-webview').should.deep.equal(
         {pkg: 'org.chromium.webview_shell', activity: 'org.chromium.webview_shell.WebViewBrowserActivity'});
+    });
+  });
+
+  describe('#parseArray', function () {
+    it('should parse array string to array', function () {
+      helpers.parseArray('["a", "b", "c"]').should.eql(['a', 'b', 'c']);
+    });
+    it('should parse a simple string to one item array', function () {
+      helpers.parseArray('abc').should.eql(['abc']);
+    });
+    it('should reject if an Object is provided', function () {
+      (() => helpers.parseArray('{"hello": "world"}')).should.throw(/s/);
+      //(() => helpers.parseArray('{"hello": "world"}'))().should.throw(/must provide a/);
     });
   });
 });

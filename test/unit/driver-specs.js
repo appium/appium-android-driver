@@ -496,14 +496,5 @@ describe('driver', function () {
         (() => { driver.canProxy('aaa'); }).should.throw;
       });
     });
-
-    describe('#parseArray', function () {
-      it('should parse array string to array', function () {
-        driver.parseArray('["a", "b", "c"]').should.eql(['a', 'b', 'c']);
-      });
-      it('should parse a simple string to one item array', function () {
-        driver.parseArray('abc').should.eql(['abc']);
-      });
-    });
   });
 });
