@@ -264,6 +264,19 @@ describe('driver', function () {
       await driver.initAUT();
       mocks.helpers.verify();
     });
+    it('should install "otherApps" if set in capabilities', async function () {
+      const otherApps = ["http://URL_FOR/fake/app.apk"];
+      const tempApps = ["/path/to/fake/app.apk"];
+      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: false,
+        otherApps: `["${otherApps[0]}"]`
+      };
+      sandbox.stub(driver.helpers, 'configureApp')
+        .withArgs(otherApps[0], '.apk')
+        .returns(tempApps[0]);
+      mocks.helpers.expects("installOtherApks").once().withArgs(tempApps, driver.adb, driver.opts);
+      await driver.initAUT();
+      mocks.helpers.verify();
+    });
   }));
   describe('startAndroidSession', function () {
     beforeEach(async function () {
@@ -481,6 +494,15 @@ describe('driver', function () {
       });
       it('should throw an error if session id is wrong', function () {
         (() => { driver.canProxy('aaa'); }).should.throw;
+      });
+    });
+
+    describe('#parseArray', function () {
+      it('should parse array string to array', function () {
+        driver.parseArray('["a", "b", "c"]').should.eql(['a', 'b', 'c']);
+      });
+      it('should parse a simple string to one item array', function () {
+        driver.parseArray('abc').should.eql(['abc']);
       });
     });
   });

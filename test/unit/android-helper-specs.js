@@ -350,7 +350,7 @@ describe('Android Helpers', function () {
     });
   }));
 
-  describe('installApk', withMocks({adb, fs, helpers}, (mocks) => {
+  describe('installApk', withMocks({adb, fs, helpers}, function (mocks) {
     //use mock appium capabilities for this test
     const opts = {
       app : 'local',
@@ -390,6 +390,37 @@ describe('Android Helpers', function () {
       await helpers.installApk(adb, Object.assign({}, opts, {fastReset: true}));
       mocks.adb.verify();
       mocks.helpers.verify();
+    });
+  }));
+  describe('installOtherApks', withMocks({adb, fs, helpers}, function (mocks) {
+    const opts = {
+      app : 'local',
+      appPackage : 'pkg',
+      androidInstallTimeout : 90000
+    };
+
+    const fakeApk = '/path/to/fake/app.apk';
+    const otherFakeApk = '/path/to/other/fake/app.apk';
+
+    const expectedADBInstallOpts = {
+      grantPermissions: undefined,
+      timeout: opts.androidInstallTimeout
+    };
+
+    it('should not call adb.install if otherApps is empty', async function () {
+      mocks.adb.expects('install').never();
+      await helpers.installOtherApks([], adb, opts);
+      mocks.adb.verify();
+    });
+    it('should call adb.install once if otherApps has one item', async function () {
+      mocks.adb.expects('install').once().withArgs(fakeApk, expectedADBInstallOpts);
+      await helpers.installOtherApks([fakeApk], adb, opts);
+      mocks.adb.verify();
+    });
+    it('should call adb.install twice if otherApps has two item', async function () {
+      mocks.adb.expects('install').twice();
+      await helpers.installOtherApks([fakeApk, otherFakeApk], adb, opts);
+      mocks.adb.verify();
     });
   }));
   describe('initUnicodeKeyboard', withMocks({adb}, (mocks) => {
