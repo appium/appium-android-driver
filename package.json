@@ -32,7 +32,7 @@
     "appium-android-bootstrap": "^2.7.5",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^2.26.0",
-    "appium-chromedriver": "^3.0.0",
+    "appium-chromedriver": "^3.5.0",
     "appium-support": "^2.13.0",
     "appium-unlock": "^2.0.0",
     "asyncbox": "^2.0.4",
