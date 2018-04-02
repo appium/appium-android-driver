@@ -350,7 +350,7 @@ describe('Android Helpers', function () {
     });
   }));
 
-  describe('installApk', withMocks({adb, fs, helpers}, (mocks) => {
+  describe('installApk', withMocks({adb, fs, helpers}, function (mocks) {
     //use mock appium capabilities for this test
     const opts = {
       app : 'local',
@@ -390,6 +390,38 @@ describe('Android Helpers', function () {
       await helpers.installApk(adb, Object.assign({}, opts, {fastReset: true}));
       mocks.adb.verify();
       mocks.helpers.verify();
+    });
+  }));
+  describe('installOtherApks', withMocks({adb, fs, helpers}, function (mocks) {
+    const opts = {
+      app: 'local',
+      appPackage: 'pkg',
+      androidInstallTimeout: 90000
+    };
+
+    const fakeApk = '/path/to/fake/app.apk';
+    const otherFakeApk = '/path/to/other/fake/app.apk';
+
+    const expectedADBInstallOpts = {
+      grantPermissions: undefined,
+      timeout: opts.androidInstallTimeout,
+      replace: true,
+    };
+
+    it('should not call adb.install if otherApps is empty', async function () {
+      mocks.adb.expects('install').never();
+      await helpers.installOtherApks([], adb, opts);
+      mocks.adb.verify();
+    });
+    it('should call adb.install once if otherApps has one item', async function () {
+      mocks.adb.expects('install').once().withArgs(fakeApk, expectedADBInstallOpts);
+      await helpers.installOtherApks([fakeApk], adb, opts);
+      mocks.adb.verify();
+    });
+    it('should call adb.install twice if otherApps has two item', async function () {
+      mocks.adb.expects('install').twice();
+      await helpers.installOtherApks([fakeApk, otherFakeApk], adb, opts);
+      mocks.adb.verify();
     });
   }));
   describe('initUnicodeKeyboard', withMocks({adb}, (mocks) => {
@@ -653,6 +685,15 @@ describe('Android Helpers', function () {
     it('should return pakage for chromium-webview', async function () {
       helpers.getChromePkg('chromium-webview').should.deep.equal(
         {pkg: 'org.chromium.webview_shell', activity: 'org.chromium.webview_shell.WebViewBrowserActivity'});
+    });
+  });
+
+  describe('#parseArray', function () {
+    it('should parse array string to array', function () {
+      helpers.parseArray('["a", "b", "c"]').should.eql(['a', 'b', 'c']);
+    });
+    it('should parse a simple string to one item array', function () {
+      helpers.parseArray('abc').should.eql(['abc']);
     });
   });
 });
