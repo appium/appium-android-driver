@@ -394,9 +394,9 @@ describe('Android Helpers', function () {
   }));
   describe('installOtherApks', withMocks({adb, fs, helpers}, function (mocks) {
     const opts = {
-      app : 'local',
-      appPackage : 'pkg',
-      androidInstallTimeout : 90000
+      app: 'local',
+      appPackage: 'pkg',
+      androidInstallTimeout: 90000
     };
 
     const fakeApk = '/path/to/fake/app.apk';
@@ -405,7 +405,7 @@ describe('Android Helpers', function () {
     const expectedADBInstallOpts = {
       grantPermissions: undefined,
       timeout: opts.androidInstallTimeout,
-      "-r": true,
+      replace: true,
     };
 
     it('should not call adb.install if otherApps is empty', async function () {
@@ -694,10 +694,6 @@ describe('Android Helpers', function () {
     });
     it('should parse a simple string to one item array', function () {
       helpers.parseArray('abc').should.eql(['abc']);
-    });
-    it('should reject if an Object is provided', function () {
-      (() => helpers.parseArray('{"hello": "world"}')).should.throw(/s/);
-      //(() => helpers.parseArray('{"hello": "world"}'))().should.throw(/must provide a/);
     });
   });
 });
