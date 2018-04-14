@@ -61,44 +61,48 @@ describe('Network', function () {
   });
   describe('setNetworkConnection', function () {
     beforeEach(async function () {
-      sandbox.stub(driver, 'getNetworkConnection').returns('res');
       sandbox.stub(driver, 'setWifiState');
       driver.isEmulator.returns(false);
     });
     it('should turn off wifi and data', async function () {
-      await driver.setNetworkConnection(0).should.become('res');
-      adb.setAirplaneMode.calledWithExactly(0).should.be.true;
-      adb.broadcastAirplaneMode.calledWithExactly(0).should.be.true;
-      driver.setWifiState.calledWithExactly(0).should.be.true;
-      adb.setDataState.calledWithExactly(0, false).should.be.true;
+      sandbox.stub(driver, 'getNetworkConnection').returns(6);
+      await driver.setNetworkConnection(0);
+      adb.setAirplaneMode.called.should.be.false;
+      adb.broadcastAirplaneMode.called.should.be.false;
+      driver.setWifiState.calledWithExactly(false).should.be.true;
+      adb.setDataState.calledWithExactly(false, false).should.be.true;
     });
     it('should turn on and broadcast airplane mode', async function () {
+      sandbox.stub(driver, 'getNetworkConnection').returns(0);
       await driver.setNetworkConnection(1);
-      adb.setAirplaneMode.calledWithExactly(1).should.be.true;
-      adb.broadcastAirplaneMode.calledWithExactly(1).should.be.true;
+      adb.setAirplaneMode.calledWithExactly(true).should.be.true;
+      adb.broadcastAirplaneMode.calledWithExactly(true).should.be.true;
       driver.setWifiState.called.should.be.false;
       adb.setDataState.called.should.be.false;
     });
     it('should turn on wifi', async function () {
+      sandbox.stub(driver, 'getNetworkConnection').returns(0);
       await driver.setNetworkConnection(2);
-      adb.setAirplaneMode.calledWithExactly(0).should.be.true;
-      adb.broadcastAirplaneMode.calledWithExactly(0).should.be.true;
-      driver.setWifiState.calledWithExactly(1).should.be.true;
-      adb.setDataState.calledWithExactly(0, false).should.be.true;
+      adb.setAirplaneMode.called.should.be.false;
+      adb.broadcastAirplaneMode.called.should.be.false;
+      driver.setWifiState.calledWithExactly(true).should.be.true;
+      adb.setDataState.called.should.be.false;
     });
     it('should turn on data', async function () {
+      sandbox.stub(driver, 'getNetworkConnection').returns(0);
       await driver.setNetworkConnection(4);
-      adb.setAirplaneMode.calledWithExactly(0).should.be.true;
-      adb.broadcastAirplaneMode.calledWithExactly(0).should.be.true;
-      driver.setWifiState.calledWithExactly(0).should.be.true;
-      adb.setDataState.calledWithExactly(1, false).should.be.true;
+      adb.setAirplaneMode.called.should.be.false;
+      adb.broadcastAirplaneMode.called.should.be.false;
+      driver.setWifiState.called.should.be.false;
+      adb.setDataState.calledWithExactly(true, false).should.be.true;
     });
     it('should turn on data and wifi', async function () {
+      sandbox.stub(driver, 'getNetworkConnection').returns(0);
       await driver.setNetworkConnection(6);
-      adb.setAirplaneMode.calledWithExactly(0).should.be.true;
-      adb.broadcastAirplaneMode.calledWithExactly(0).should.be.true;
-      driver.setWifiState.calledWithExactly(1).should.be.true;
-      adb.setDataState.calledWithExactly(1, false).should.be.true;
+      adb.setAirplaneMode.called.should.be.false;
+      adb.broadcastAirplaneMode.called.should.be.false;
+      driver.setWifiState.calledWithExactly(true).should.be.true;
+      adb.setDataState.calledWithExactly(true, false).should.be.true;
     });
   });
   describe('setWifiState', function () {
