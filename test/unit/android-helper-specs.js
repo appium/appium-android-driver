@@ -405,21 +405,20 @@ describe('Android Helpers', function () {
     const expectedADBInstallOpts = {
       grantPermissions: undefined,
       timeout: opts.androidInstallTimeout,
-      replace: true,
     };
 
-    it('should not call adb.install if otherApps is empty', async function () {
-      mocks.adb.expects('install').never();
+    it('should not call adb.installOrUpgrade if otherApps is empty', async function () {
+      mocks.adb.expects('installOrUpgrade').never();
       await helpers.installOtherApks([], adb, opts);
       mocks.adb.verify();
     });
-    it('should call adb.install once if otherApps has one item', async function () {
-      mocks.adb.expects('install').once().withArgs(fakeApk, expectedADBInstallOpts);
+    it('should call adb.installOrUpgrade once if otherApps has one item', async function () {
+      mocks.adb.expects('installOrUpgrade').once().withArgs(fakeApk, null, expectedADBInstallOpts);
       await helpers.installOtherApks([fakeApk], adb, opts);
       mocks.adb.verify();
     });
-    it('should call adb.install twice if otherApps has two item', async function () {
-      mocks.adb.expects('install').twice();
+    it('should call adb.installOrUpgrade twice if otherApps has two item', async function () {
+      mocks.adb.expects('installOrUpgrade').twice();
       await helpers.installOtherApks([fakeApk, otherFakeApk], adb, opts);
       mocks.adb.verify();
     });
