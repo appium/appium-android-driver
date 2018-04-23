@@ -205,7 +205,7 @@ describe('General', function () {
       let params = {pkg: appPackage, activity: appActivity, action: 'act', category: 'cat',
                     flags: 'flgs', waitPkg: 'wpkg', waitActivity: 'wacv',
                     optionalIntentArguments: 'opt', stopApp: false};
-      driver.opts.startActivityArgs = {[`${appPackage}/${appActivity}`]: params};
+      driver._cachedActivityArgs = {[`${appPackage}/${appActivity}`]: params};
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
         .returns({appPackage, appActivity});
