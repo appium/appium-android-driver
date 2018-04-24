@@ -334,13 +334,31 @@ describe('General', function () {
   });
   describe('startAUT', function () {
     it('should start AUT', async function () {
-      driver.opts = {appPackage: 'pkg', appActivity: 'act', intentAction: 'actn',
-                     intentCategory: 'cat', intentFlags: 'flgs', appWaitPackage: 'wpkg',
-                     appWaitActivity: 'wact', appWaitDuration: 'wdur',
-                     optionalIntentArguments: 'opt'};
-      let params = {pkg: 'pkg', activity: 'act', action: 'actn', category: 'cat',
-                    flags: 'flgs', waitPkg: 'wpkg', waitActivity: 'wact',
-                    waitDuration: 'wdur', optionalIntentArguments: 'opt', stopApp: false};
+      driver.opts = {
+        appPackage: 'pkg',
+        appActivity: 'act',
+        intentAction: 'actn',
+        intentCategory: 'cat',
+        intentFlags: 'flgs',
+        appWaitPackage: 'wpkg',
+        appWaitActivity: 'wact',
+        appWaitDuration: 'wdur',
+        optionalIntentArguments: 'opt',
+        userProfile: 1
+      };
+      let params = {
+        pkg: 'pkg',
+        activity: 'act',
+        action: 'actn',
+        category: 'cat',
+        flags: 'flgs',
+        waitPkg: 'wpkg',
+        waitActivity: 'wact',
+        waitDuration: 'wdur',
+        optionalIntentArguments: 'opt',
+        stopApp: false,
+        user: 1
+      };
       driver.opts.dontStopAppOnReset = true;
       params.stopApp = false;
       sandbox.stub(driver.adb, 'startApp');
