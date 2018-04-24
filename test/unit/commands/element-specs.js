@@ -275,10 +275,10 @@ describe('Element', function () {
     });
   });
   describe('tap', function () {
-    it('shoulde tap an element', async function () {
+    it('should tap absolute coordinates', async function () {
       await driver.tap('el1', 12, 34, 3);
-      driver.bootstrap.sendAction.alwaysCalledWith('element:click',
-        {elementId: 'el1', x: 12, y: 34}).should.be.true;
+      driver.bootstrap.sendAction.alwaysCalledWith('click',
+        {x: 12, y: 34}).should.be.true;
       driver.bootstrap.sendAction.calledThrice.should.be.true;
     });
     it('should tap without an element', async function () {
