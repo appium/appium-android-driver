@@ -43,6 +43,7 @@
     "lodash": "^4.17.4",
     "portfinder": "^1.0.6",
     "shared-preferences-builder": "^0.0.4",
+    "shell-quote": "^1.6.1",
     "source-map-support": "^0.3.1",
     "teen_process": "^1.9.0",
     "temp": "^0.8.3",
