@@ -518,9 +518,9 @@ describe('Android Helpers', function () {
     });
     it('should start unlock app', async function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
-      mocks.adb.expects('isScreenLocked').returns(false);
+      mocks.adb.expects('isScreenLocked').twice().returns(false);
       mocks.adb.expects('forceStop').once().returns('');
-      mocks.adb.expects('startApp').twice().returns('');
+      mocks.adb.expects('startApp').once().returns('');
       await helpers.unlock(helpers, adb, {});
       mocks.adb.verify();
       mocks.helpers.verify();
