@@ -95,7 +95,7 @@ describe('driver', function () {
       sandbox.stub(driver, 'checkAppPresent');
       sandbox.stub(driver, 'checkPackagePresent');
       sandbox.stub(driver, 'startAndroidSession');
-      sandbox.stub(ADB, 'createADB', async (opts) => {
+      sandbox.stub(ADB, 'createADB').callsFake(async function (opts) {
         return {
           getDevicesWithRetry: async () => {
             return [

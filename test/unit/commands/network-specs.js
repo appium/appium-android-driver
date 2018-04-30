@@ -18,7 +18,7 @@ describe('Network', function () {
     driver.adb = adb;
     sandbox.stub(adb);
     sandbox.stub(driver, 'isEmulator');
-    sandbox.stub(driver, 'wrapBootstrapDisconnect', async (fn) => {
+    sandbox.stub(driver, 'wrapBootstrapDisconnect').callsFake(async function (fn) {
       await fn();
     });
     sandbox.stub(B, 'delay');

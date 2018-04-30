@@ -25,7 +25,7 @@ describe('performance data', function () {
     driver = new AndroidDriver();
     driver.adb = adb;
     sandbox.stub(adb);
-    sandbox.stub(asyncbox, 'retryInterval', async (times, sleepMs, fn) => {
+    sandbox.stub(asyncbox, 'retryInterval').callsFake(async function (times, sleepMs, fn) {
       return await fn();
     });
   });

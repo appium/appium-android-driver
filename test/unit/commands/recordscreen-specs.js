@@ -20,7 +20,7 @@ describe('recording the screen', function () {
 
   describe('basic', withMocks({adb, driver, fs, temp}, (mocks) => {
     const localFile = '/path/to/local.mp4';
-    const mediaContent = new Buffer('appium');
+    const mediaContent = Buffer.from('appium');
 
     it('should fail to recording the screen on an older emulator', async function () {
       mocks.driver.expects('isEmulator').returns(true);

@@ -18,7 +18,7 @@ chai.use(chaiAsPromised);
 
 describe('Context', function () {
   beforeEach(function () {
-    sandbox.stub(PortFinder, 'getPort', function (cb) { // eslint-disable-line promise/prefer-await-to-callbacks
+    sandbox.stub(PortFinder, 'getPort').callsFake(function (cb) { // eslint-disable-line promise/prefer-await-to-callbacks
       return cb(null, 4444); // eslint-disable-line promise/prefer-await-to-callbacks
     });
     driver = new AndroidDriver();
