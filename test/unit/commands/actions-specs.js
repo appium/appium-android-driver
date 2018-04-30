@@ -267,13 +267,13 @@ describe('Actions', function () {
     });
   });
   describe('pullFolder', function () {
-    let zippedDir, unzippedDir, tempDir, tempPathStub;
+    const zippedDir = '/mock/path/to/zipped';
+    const unzippedDir = '/mock/path/to/unzipped';
+    const tempDir = '/mock/path/to/temp-dir';
+    let tempPathStub;
 
     before(function () {
       // Create in-memory mock file system for file writes
-      zippedDir = '/mock/path/to/zipped';
-      unzippedDir = '/mock/path/to/unzipped';
-      tempDir = '/mock/path/to/temp-dir';
       mockFS({
         [zippedDir]: {},
         [unzippedDir]: {},
@@ -281,7 +281,7 @@ describe('Actions', function () {
       });
 
       // Stub temp.path to use an in-memory filepath
-      tempPathStub = sinon.stub(temp, 'path', () => tempDir);
+      tempPathStub = sinon.stub(temp, 'path').returns(tempDir);
     });
 
     after(function () {
@@ -292,14 +292,14 @@ describe('Actions', function () {
     it('should pull a folder and return base64 zip', async function () {
       // Stub in driver.adb and make it pull a folder with two files
       let adbPullStub;
-      const pull = async (ignore, localPath) => {
+      const pull = async function (ignore, localPath) {
         await support.fs.writeFile(path.resolve(localPath, 'a.txt'), 'hello world', {flags: 'w'});
         await support.fs.writeFile(path.resolve(localPath, 'b.txt'), 'foobar', {flags: 'w'});
       };
       if (!driver.adb) {
         driver.adb = {pull};
       } else {
-        adbPullStub = sinon.stub(driver.adb, 'pull', pull);
+        adbPullStub = sinon.stub(driver.adb, 'pull').callsFake(pull);
       }
 
       // Call 'driver.pullFolder' and zip the base64 contents to a .zip file
@@ -528,8 +528,8 @@ describe('Actions', function () {
       sandbox.stub(driver.adb, 'getScreenOrientation');
       sandbox.stub(driver, 'getScreenshotDataWithAdbExecOut');
       sandbox.stub(driver, 'getScreenshotDataWithAdbShell');
-      sandbox.stub(image, 'getBuffer', function (mime, cb) { // eslint-disable-line promise/prefer-await-to-callbacks
-        return cb.call(this, null, new Buffer('appium'));
+      sandbox.stub(image, 'getBuffer').callsFake(function (mime, cb) { // eslint-disable-line promise/prefer-await-to-callbacks
+        return cb.call(this, null, Buffer.from('appium'));
       });
       sandbox.stub(image, 'rotate');
       driver.adb.getScreenOrientation.returns(2);

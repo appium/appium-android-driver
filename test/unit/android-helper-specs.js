@@ -150,7 +150,7 @@ describe('Android Helpers', function () {
     let curDeviceId = '';
 
     before(function () {
-      sinon.stub(ADB, 'createADB', async () => {
+      sinon.stub(ADB, 'createADB').callsFake(async function () {
         return {
           getDevicesWithRetry: async () => {
             return _.map(devices, (device) => { return {udid: device.udid}; });
@@ -251,7 +251,7 @@ describe('Android Helpers', function () {
     let curDeviceId = '';
     let emulatorPort = -1;
     before(function () {
-      sinon.stub(ADB, 'createADB', async () => {
+      sinon.stub(ADB, 'createADB').callsFake(async function () {
         return {
           setDeviceId: (udid) => { curDeviceId = udid; },
           setEmulatorPort: (emPort) => { emulatorPort = emPort; }

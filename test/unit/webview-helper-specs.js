@@ -16,7 +16,7 @@ describe('Webview Helpers', function () {
     const pkg = 'io.appium.android.apis';
 
     it('should get package name when all fields are filled', async function () {
-      sandbox.stub(adb, 'shell', function () {
+      sandbox.stub(adb, 'shell').callsFake(function () {
         return 'USER           PID  PPID     VSZ    RSS WCHAN            ADDR S NAME\n' +
                'root             1     0    9948   2344 SyS_epoll_wait      0 S init\n' +
                'root             2     0       0      0 kthreadd            0 S [kthreadd]\n' +
@@ -30,7 +30,7 @@ describe('Webview Helpers', function () {
       name.should.eql(pkg);
     });
     it('should get package name when some fields are empty', async function () {
-      sandbox.stub(adb, 'shell', function () {
+      sandbox.stub(adb, 'shell').callsFake(function () {
         return 'USER           PID  PPID     VSZ    RSS WCHAN            ADDR S NAME\n' +
                'root             1     0    9948   2344 SyS_epoll_wait      0 S init\n' +
                'root             2     0       0      0 kthreadd            0 S [kthreadd]\n' +
@@ -44,7 +44,7 @@ describe('Webview Helpers', function () {
       name.should.eql(pkg);
     });
     it('should get package name when some headers are empty', async function () {
-      sandbox.stub(adb, 'shell', function () {
+      sandbox.stub(adb, 'shell').callsFake(function () {
         return 'USER           PID  PPID     VSZ    RSS WCHAN            ADDR   NAME\n' +
                'root             1     0    9948   2344 SyS_epoll_wait      0 S init\n' +
                'root             2     0       0      0 kthreadd            0 S [kthreadd]\n' +
@@ -58,7 +58,7 @@ describe('Webview Helpers', function () {
       name.should.eql(pkg);
     });
     it('should get package name when some headers and fields are empty', async function () {
-      sandbox.stub(adb, 'shell', function () {
+      sandbox.stub(adb, 'shell').callsFake(function () {
         return 'USER           PID  PPID     VSZ    RSS WCHAN            ADDR   NAME\n' +
                'root             1     0    9948   2344 SyS_epoll_wait      0 S init\n' +
                'root             2     0       0      0 kthreadd            0 S [kthreadd]\n' +
@@ -78,7 +78,7 @@ describe('Webview Helpers', function () {
       let webViews;
 
       beforeEach(async function () {
-        sandbox.stub(adb, 'shell', () => {
+        sandbox.stub(adb, 'shell').callsFake(function () {
           return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
@@ -104,7 +104,7 @@ describe('Webview Helpers', function () {
       let webViews;
 
       beforeEach(async function () {
-        sandbox.stub(adb, 'shell', function () {
+        sandbox.stub(adb, 'shell').callsFake(function () {
           return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
@@ -130,7 +130,7 @@ describe('Webview Helpers', function () {
       let webViews;
 
       beforeEach(async function () {
-        sandbox.stub(adb, 'shell', function () {
+        sandbox.stub(adb, 'shell').callsFake(function () {
           return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
@@ -154,7 +154,7 @@ describe('Webview Helpers', function () {
       let webViews;
 
       beforeEach(function () {
-        sandbox.stub(adb, 'shell', () => {
+        sandbox.stub(adb, 'shell').callsFake(function () {
           return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
                 '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +

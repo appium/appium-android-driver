@@ -61,7 +61,7 @@ describe('actions', function () {
   describe('getScreenshot', function () {
     it('should return valid base64-encoded screenshot', async function () {
       const base64screenshot = await driver.getScreenshot();
-      const imageMagic = new Buffer(base64screenshot, 'base64').toString('hex', 0, PNG_MAGIC_LENGTH);
+      const imageMagic = Buffer.from(base64screenshot, 'base64').toString('hex', 0, PNG_MAGIC_LENGTH);
       imageMagic.should.be.equal(PNG_MAGIC);
     });
   });
