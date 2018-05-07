@@ -193,7 +193,7 @@ describe('General', function () {
       driver.adb.goToHome.calledOnce.should.be.true;
       B.delay.calledWithExactly(10000).should.be.true;
       driver.activateApp.calledWithExactly(appPackage).should.be.true;
-      driver.adb.startApp.should.be.notCalled;
+      driver.adb.startApp.notCalled.should.be.true;
     });
     it('should bring app to background and back if started after session init', async function () {
       const appPackage = 'newpkg';
@@ -216,7 +216,7 @@ describe('General', function () {
       driver.adb.goToHome.calledOnce.should.be.true;
       B.delay.calledWithExactly(10000).should.be.true;
       driver.adb.startApp.calledWithExactly(params).should.be.true;
-      driver.activateApp.should.be.notCalled;
+      driver.activateApp.notCalled.should.be.true;
     });
     it('should bring app to background and back if waiting for other pkg / activity', async function () { //eslint-disable-line
       const appPackage = 'somepkg';
@@ -238,7 +238,7 @@ describe('General', function () {
       driver.adb.goToHome.calledOnce.should.be.true;
       B.delay.calledWithExactly(10000).should.be.true;
       driver.activateApp.calledWithExactly(appWaitPackage).should.be.true;
-      driver.adb.startApp.should.be.notCalled;
+      driver.adb.startApp.notCalled.should.be.true;
     });
     it('should not bring app back if seconds are negative', async function () {
       sandbox.stub(driver.adb, 'goToHome');
