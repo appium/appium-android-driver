@@ -182,9 +182,6 @@ describe('General', function () {
       driver.opts = {appPackage, appActivity, intentAction: 'act',
                      intentCategory: 'cat', intentFlags: 'flgs',
                      optionalIntentArguments: 'opt'};
-      let params = {pkg: appPackage, activity: appActivity, action: 'act', category: 'cat',
-                    flags: 'flgs',
-                    optionalIntentArguments: 'opt', stopApp: false};
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
         .returns({appPackage, appActivity});
@@ -230,11 +227,6 @@ describe('General', function () {
                      intentAction: 'act', intentCategory: 'cat',
                      intentFlags: 'flgs', optionalIntentArguments: 'opt',
                      stopApp: false};
-      let params = {pkg: appPackage, activity: appActivity,
-                    waitPkg: appWaitPackage, waitActivity: appWaitActivity,
-                    action: 'act', category: 'cat',
-                    flags: 'flgs',
-                    optionalIntentArguments: 'opt', stopApp: false};
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
         .returns({appPackage: appWaitPackage, appActivity: appWaitActivity});
