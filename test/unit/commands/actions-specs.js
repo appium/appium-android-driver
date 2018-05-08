@@ -234,6 +234,7 @@ describe('Actions', function () {
       let content = 'appium';
       sandbox.stub(temp, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'push');
+      sandbox.stub(driver.adb, 'shell');
       sandbox.stub(support.fs, 'writeFile');
       sandbox.stub(support.fs, 'exists').withArgs(localFile).returns(true);
       sandbox.stub(support.fs, 'unlink');
