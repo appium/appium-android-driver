@@ -52,9 +52,9 @@ describe('Find', function () {
       await driver.findElOrEls('xpaht', '//*[1]', true)
         .should.eventually.be.deep.equal([]);
     });
-    it('should throws NoSuchElementError if element does not exist', async function () {
-      driver.doFindElementOrEls.throws(new Error('An element could not be located'));
-      await driver.findElOrEls('xpaht', '//*[1]', false)
+    it('should throw NoSuchElementError if element does not exist', async function () {
+      driver.doFindElementOrEls.throws(new Error('No element found'));
+      await driver.findElOrEls('xpath', '//*[1]', false)
         .should.be.rejectedWith(errors.NoSuchElementError);
     });
     it('should fails if locator strategy is not valid', async function () {
