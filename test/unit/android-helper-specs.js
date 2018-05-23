@@ -262,13 +262,23 @@ describe('Android Helpers', function () {
       ADB.createADB.restore();
     });
     it('should create adb and set device id and emulator port', async function () {
-      await helpers.createADB("1.7", "111222", "111", "222", true, "remote_host", true);
+      await helpers.createADB({
+        javaVersion: '1.7',
+        udid: '111222',
+        emPort: '111',
+        adbPort: '222',
+        suppressKillServer: true,
+        remoteAdbHost: 'remote_host',
+        clearDeviceLogsOnStart: true,
+        adbExecTimeout: 50,
+      });
       ADB.createADB.calledWithExactly({
         javaVersion: "1.7",
         adbPort: "222",
         suppressKillServer: true,
         remoteAdbHost: "remote_host",
         clearDeviceLogsOnStart: true,
+        adbExecTimeout: 50,
       }).should.be.true;
       curDeviceId.should.equal("111222");
       emulatorPort.should.equal("111");
