@@ -413,6 +413,7 @@ describe('Android Helpers', function () {
     const otherFakeApk = '/path/to/other/fake/app.apk';
 
     const expectedADBInstallOpts = {
+      allowTestPackages: undefined,
       grantPermissions: undefined,
       timeout: opts.androidInstallTimeout,
     };
