@@ -301,6 +301,12 @@ describe('Android Helpers', function () {
         appActivity: "act"});
       mocks.adb.verify();
     });
+    it('should print warn when all parameters are already present but the format is odd', async function () {
+      // It only prints warn message
+      mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
+      await helpers.getLaunchInfo(adb, {app: "foo", appPackage: "bar ", appWaitPackage: "*", appActivity: "act ", appWaitActivity: ". "});
+      mocks.adb.verify();
+    });
     it('should print warn when appPackage & appActivity are already present but the format is odd', async function () {
       // It only prints warn message
       mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
