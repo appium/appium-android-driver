@@ -18,7 +18,7 @@ chai.use(chaiAsPromised);
 describe('Unlock Helpers', function () {
   let adb = new ADB();
   let driver = new AndroidDriver();
-  let sandbox = sinon.sandbox.create();
+  let sandbox = sinon.createSandbox();
   let expect = chai.expect;
   describe('isValidUnlockType', function () {
     it('should verify the unlock types', async function () {

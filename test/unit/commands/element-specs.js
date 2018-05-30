@@ -7,7 +7,7 @@ import ADB from 'appium-adb';
 import androidHelpers from '../../../lib/android-helpers';
 
 let driver;
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 chai.should();
 chai.use(chaiAsPromised);
 

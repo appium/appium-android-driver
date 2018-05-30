@@ -12,7 +12,7 @@ import { SharedPrefsBuilder } from 'shared-preferences-builder';
 import _ from 'lodash';
 
 let driver;
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 let expect = chai.expect;
 chai.should();
 chai.use(chaiAsPromised);

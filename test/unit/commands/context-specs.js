@@ -11,7 +11,7 @@ import { errors } from 'appium-base-driver';
 
 let driver;
 let stubbedChromedriver;
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 let expect = chai.expect;
 chai.should();
 chai.use(chaiAsPromised);

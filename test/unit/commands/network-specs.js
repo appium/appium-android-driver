@@ -7,7 +7,7 @@ import B from 'bluebird';
 
 let driver;
 let adb;
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 chai.should();
 chai.use(chaiAsPromised);
 

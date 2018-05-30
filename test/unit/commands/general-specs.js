@@ -15,7 +15,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 let driver;
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 let expect = chai.expect;
 
 describe('General', function () {

@@ -6,7 +6,7 @@ import AndroidDriver from '../../..';
 import { errors } from 'appium-base-driver';
 
 let driver;
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 chai.should();
 chai.use(chaiAsPromised);
 
