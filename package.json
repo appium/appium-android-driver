@@ -84,9 +84,22 @@
     "mock-fs": "^4.5.0",
     "gulp": "^3.9.1",
     "pre-commit": "^1.1.3",
-    "sinon": "^4.5.0",
+    "sinon": "^5.0.10",
     "unzip": "^0.1.11",
     "xmldom": "^0.1.19",
     "xpath": "^0.0.27"
+  },
+  "greenkeeper": {
+    "ignore": [
+      "babel-eslint",
+      "babel-preset-env",
+      "eslint",
+      "eslint-plugin-babel",
+      "eslint-plugin-import",
+      "eslint-plugin-mocha",
+      "eslint-plugin-promise",
+      "gulp",
+      "babel-runtime"
+    ]
   }
 }

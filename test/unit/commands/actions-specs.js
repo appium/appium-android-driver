@@ -13,7 +13,7 @@ import helpers from '../../../lib/commands/actions';
 import * as teen_process from 'teen_process';
 
 let driver;
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 chai.should();
 chai.use(chaiAsPromised);
 

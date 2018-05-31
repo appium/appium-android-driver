@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import helpers from '../../lib/webview-helpers';
 import ADB from 'appium-adb';
 
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 
 describe('Webview Helpers', function () {
   let adb = new ADB();

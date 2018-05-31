@@ -15,7 +15,7 @@ const PACKAGE_NAME = 'io.appium.android.apis';
 const RETRY_PAUSE = 1000;
 const RETRY_COUNT = 2;
 
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 let adb;
 let driver;
 
