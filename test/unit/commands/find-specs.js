@@ -53,7 +53,7 @@ describe('Find', function () {
         .should.eventually.be.deep.equal([]);
     });
     it('should throw NoSuchElementError if element does not exist', async function () {
-      driver.doFindElementOrEls.throws(new Error('No element found'));
+      driver.doFindElementOrEls.throws(new errors.NoSuchElementError());
       await driver.findElOrEls('xpath', '//*[1]', false)
         .should.be.rejectedWith(errors.NoSuchElementError);
     });
