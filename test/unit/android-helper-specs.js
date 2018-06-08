@@ -609,11 +609,11 @@ describe('Android Helpers', function () {
       mocks.helpers.verify();
       mocks.adb.verify();
     });
-    it('should not install settings app and mock location on emulator', async function () {
+    it('should not install mock location on emulator', async function () {
       const opts = {avd: "avd"};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
-      mocks.helpers.expects('pushSettingsApp').never();
+      mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').withArgs(adb).once();
       mocks.helpers.expects('setMockLocationApp').never();
       mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
