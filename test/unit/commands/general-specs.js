@@ -51,9 +51,9 @@ describe('General', function () {
   describe('getDeviceTime', function () {
     it('should return device time', async function () {
       sandbox.stub(driver.adb, 'shell');
-      driver.adb.shell.returns(' 11:12 ');
-      await driver.getDeviceTime().should.become('11:12');
-      driver.adb.shell.calledWithExactly(['date']).should.be.true;
+      driver.adb.shell.returns(' Sat Jun 09 2018 11:17:42 GTM+0900 (JST) ');
+      await driver.getDeviceTime().should.become('Sat Jun 09 2018 11:17:42 GTM+0900 (JST)');
+      driver.adb.shell.calledWithExactly(['date', '\"+%a\ %b\ %d\ %Y\ %X\ GTM%z\ \(%Z\)\"']).should.be.true;
     });
     it('should thorws error if shell command failed', async function () {
       sandbox.stub(driver.adb, 'shell').throws();
