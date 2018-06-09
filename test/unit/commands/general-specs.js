@@ -55,6 +55,12 @@ describe('General', function () {
       await driver.getDeviceTime().should.become('2018-06-09T16:21:54+0900');
       driver.adb.shell.calledWithExactly(['date', '+%Y-%m-%dT%T%z']).should.be.true;
     });
+    it('should return device time with custom format', async function () {
+      sandbox.stub(driver.adb, 'shell');
+      driver.adb.shell.returns(' 2018-06-09 ');
+      await driver.getDeviceTime('+%Y-%m-%d').should.become('2018-06-09');
+      driver.adb.shell.calledWithExactly(['date', '+%Y-%m-%d']).should.be.true;
+    });
     it('should thorws error if shell command failed', async function () {
       sandbox.stub(driver.adb, 'shell').throws();
       await driver.getDeviceTime().should.be.rejectedWith('Could not capture');
