@@ -65,6 +65,10 @@ describe('General', function () {
       sandbox.stub(driver.adb, 'shell').throws();
       await driver.getDeviceTime().should.be.rejectedWith('Could not capture');
     });
+    it('should thorws error if format is not string', async function () {
+      sandbox.stub(driver.adb, 'shell').throws();
+      await driver.getDeviceTime({}).should.be.rejectedWith('Format should be string like \'+%Y-%m-%dT%T%z\'');
+    });
   });
   describe('getPageSource', function () {
     it('should return page source', async function () {
