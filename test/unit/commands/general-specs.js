@@ -67,7 +67,7 @@ describe('General', function () {
     });
     it('should thorws error if format is not string', async function () {
       sandbox.stub(driver.adb, 'shell').throws();
-      await driver.getDeviceTime({}).should.be.rejectedWith('Format should be string like \'+%Y-%m-%dT%T%z\'');
+      await driver.getDeviceTime({}).should.be.rejectedWith('The format specifier is expected to be a valid string specifier');
     });
   });
   describe('getPageSource', function () {
