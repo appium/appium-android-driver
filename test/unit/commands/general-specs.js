@@ -63,7 +63,7 @@ describe('General', function () {
     });
     it('should thorws error if shell command failed', async function () {
       sandbox.stub(driver.adb, 'shell').throws();
-      await driver.getDeviceTime().should.be.rejectedWith(/Could not capture/);
+      await driver.getDeviceTime().should.be.rejected;
     });
     it('should thorws error if format is not string', async function () {
       sandbox.stub(driver.adb, 'shell').throws();
