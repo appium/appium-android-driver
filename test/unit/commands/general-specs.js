@@ -52,23 +52,23 @@ describe('General', function () {
     it('should return device time', async function () {
       sandbox.stub(driver.adb, 'shell');
       driver.adb.shell.returns(' 2018-06-09T16:21:54+0900 ');
-      await driver.getDeviceTime().should.become('2018-06-09T16:21:54+0900');
+      await driver.getDeviceTime().should.become('2018-06-09T07:21:54+00:00');
       driver.adb.shell.calledWithExactly(['date', '+%Y-%m-%dT%T%z']).should.be.true;
     });
     it('should return device time with custom format', async function () {
       sandbox.stub(driver.adb, 'shell');
-      driver.adb.shell.returns(' 2018-06-09 ');
-      await driver.getDeviceTime('+%Y-%m-%d').should.become('2018-06-09');
-      driver.adb.shell.calledWithExactly(['date', '+%Y-%m-%d']).should.be.true;
+      driver.adb.shell.returns(' 2018-06-09T16:21:54+0900 ');
+      await driver.getDeviceTime('YYYY-MM-DD').should.become('2018-06-09');
+      driver.adb.shell.calledWithExactly(['date', '+%Y-%m-%dT%T%z']).should.be.true;
     });
     it('should thorws error if shell command failed', async function () {
       sandbox.stub(driver.adb, 'shell').throws();
-      await driver.getDeviceTime().should.be.rejectedWith('Could not capture');
+      await driver.getDeviceTime().should.be.rejected;
     });
     it('should thorws error if format is not string', async function () {
       sandbox.stub(driver.adb, 'shell').throws();
       await driver.getDeviceTime({}).should.be.rejectedWith(
-        'The format specifier is expected to be a valid string specifier like \'+%Y-%m-%dT%T%z\'.'
+        /The format specifier is expected to be a valid string specifier/
       );
     });
   });
