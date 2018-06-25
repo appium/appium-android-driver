@@ -9,6 +9,7 @@ import { fs } from 'appium-support';
 import Bootstrap from 'appium-android-bootstrap';
 import B from 'bluebird';
 import ADB from 'appium-adb';
+import moment from 'moment-timezone';
 
 
 chai.should();
@@ -49,6 +50,12 @@ describe('General', function () {
     });
   });
   describe('getDeviceTime', function () {
+    beforeEach(function () {
+      moment.tz.setDefault('Atlantic/Reykjavik');
+    });
+    afterEach(function () {
+      moment.tz.setDefault();
+    });
     it('should return device time', async function () {
       sandbox.stub(driver.adb, 'shell');
       driver.adb.shell.returns(' 2018-06-09T16:21:54+0900 ');
@@ -61,11 +68,11 @@ describe('General', function () {
       await driver.getDeviceTime('YYYY-MM-DD').should.become('2018-06-09');
       driver.adb.shell.calledWithExactly(['date', '+%Y-%m-%dT%T%z']).should.be.true;
     });
-    it('should thorws error if shell command failed', async function () {
+    it('should throw error if shell command failed', async function () {
       sandbox.stub(driver.adb, 'shell').throws();
       await driver.getDeviceTime().should.be.rejected;
     });
-    it('should thorws error if format is not string', async function () {
+    it('should throw error if format is not string', async function () {
       sandbox.stub(driver.adb, 'shell').throws();
       await driver.getDeviceTime({}).should.be.rejectedWith(
         /The format specifier is expected to be a valid string specifier/
