@@ -39,7 +39,7 @@ describe('logs', function () {
 
   it('should be able to receieve logcat output via web socket', async function () {
     const endpoint = `/ws/session/${driver.sessionId}/appium/device/logcat`;
-    const timeout = 5000;
+    const timeout = 20000;
     await driver.execute('mobile: startLogsBroadcast', {});
     try {
       await new B((resolve, reject) => {
