@@ -109,7 +109,8 @@ describe('driver', function () {
           setDeviceId: () => {},
           setEmulatorPort: () => {},
           adbPort: opts.adbPort,
-          networkSpeed: () => {}
+          networkSpeed: () => {},
+          getApiLevel: () => 22,
         };
       });
       sandbox.stub(driver.helpers, 'configureApp')
