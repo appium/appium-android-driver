@@ -19,7 +19,8 @@ npm install appium-android-driver
 ```
 
 ## Usage
-Import Android Driver, set [desired capabilities](http://appium.io/slate/en/1.5/?javascript#appium-server-capabilities) and create a session:
+
+Import Android Driver, set [desired capabilities](http://appium.io/docs/en/writing-running-appium/caps/index.html#android-only) and create a session:
 
 ```
 import { AndroidDriver } from `appium-android-driver`
@@ -163,11 +164,9 @@ If more than one of these capabilities are given, the driver will only use first
 | `powerCapacity`            |
 | `networkSpeed`             |
 
-
 ## API Notes
 
 `lock` behaves differently in Android than it does in iOS. In Android it does not take any arguments, and locks the screen and returns immediately.
-
 
 ## Development
 
