@@ -168,6 +168,8 @@ describe('keyboard', function () {
       }
 
       it('should be able to clear a password field', async function () {
+        this.retries(3);
+
         let els = await driver.findElements('class name', EDITTEXT_CLASS);
         let el = els[1].ELEMENT;
 
