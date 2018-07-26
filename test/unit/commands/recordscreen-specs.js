@@ -53,7 +53,7 @@ describe('recording the screen', function () {
 
       it('should call adb to start screen recording', async function () {
         mocks.adb.expects('shell').once().returns(new B(() => {}));
-        mocks.adb.expects('fileSize').once().returns(39571);
+        mocks.adb.expects('fileExists').once().returns(true);
 
         await driver.startRecordingScreen();
         driver._recentScreenRecordingPath.should.not.be.empty;
@@ -63,7 +63,7 @@ describe('recording the screen', function () {
         const remotePath = '/sdcard/video.mp4';
 
         mocks.adb.expects('shell').returns(new B(() => {}));
-        mocks.adb.expects('fileSize').once().returns(39571);
+        mocks.adb.expects('fileExists').once().returns(true);
         mocks.adb.expects('pull').once().withExactArgs(remotePath, localFile);
         mocks.fs.expects('readFile').once().withExactArgs(localFile).returns(mediaContent);
         mocks.adb.expects('rimraf').once().withExactArgs(remotePath);
@@ -79,7 +79,6 @@ describe('recording the screen', function () {
       });
 
       it('should fail if adb screen recording errors out', async function () {
-        mocks.adb.expects('fileSize').returns(31);
         let shellStub = sinon.stub(adb, 'shell');
         try {
           shellStub
@@ -91,31 +90,15 @@ describe('recording the screen', function () {
         }
       });
 
-      it('should call ls multiple times until size is big enough', async function () {
+      it('should call ls multiple times and fail if the file never appears', async function () {
         mocks.adb.expects('shell').once().returns(new B(() => {}));
-        let fileSizeStub = sinon.stub(adb, 'fileSize');
+        let fileExistsStub = sinon.stub(adb, 'fileExists');
         try {
-          fileSizeStub
-              .onCall(0)
-                .returns(31)
-              .onCall(1)
-                .returns(42);
+          fileExistsStub.withArgs().returns(false);
 
-          await driver.startRecordingScreen();
+          await driver.startRecordingScreen().should.eventually.be.rejectedWith(/does not exist/);
         } finally {
-          fileSizeStub.restore();
-        }
-      });
-
-      it('should call ls multiple times and fail if size never gets big enough', async function () {
-        mocks.adb.expects('shell').once().returns(new B(() => {}));
-        let fileSizeStub = sinon.stub(adb, 'fileSize');
-        try {
-          fileSizeStub.withArgs().returns(31);
-
-          await driver.startRecordingScreen().should.eventually.be.rejectedWith(/is still too small: 31 bytes/);
-        } finally {
-          fileSizeStub.restore();
+          fileExistsStub.restore();
         }
       });
     });
