@@ -30,15 +30,5 @@ describe('recording the screen', function () {
 
       await driver.startRecordingScreen().should.eventually.be.rejectedWith(/Screen recording not available on API Level 18. Minimum API Level is 19/);
     });
-
-    describe('stopRecordingScreen', function () {
-      it('should return empty string if no recording processes are running', async function () {
-        driver._screenRecordingProperties = null;
-        mocks.adb.expects('getPIDsByName')
-          .atLeast(1).withExactArgs('screenrecord').returns([]);
-
-        (await driver.stopRecordingScreen()).should.eql('');
-      });
-    });
   }));
 });
