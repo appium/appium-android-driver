@@ -510,4 +510,28 @@ describe('General', function () {
       (await driver.getSystemBars()).should.be.eql(validSystemBars);
     });
   });
+  describe('findVersions', function () {
+    it('should return an array of version strings given a package', async function () {
+      // variable for findVersion
+      let validDumpsysPackage = [
+        '  Packages:',
+        '    Package [com.test] (skdfd):',
+        '    userId=xxxx',
+        '    versionName=1.0.0'
+      ].join('\n');
+      let expectedVersion = ['1.0.0'];
+      driver = new AndroidDriver();
+      driver.adb = {};
+      driver.adb.shell = () => { return validDumpsysPackage; };
+      (await driver.findVersions("com.text")).should.be.eql(expectedVersion);
+    });
+    it('should return an empty array if no version is found', async function () {
+      let emptyDumpsysPackage = "";
+      let expectedOutput = [];
+      driver = new AndroidDriver();
+      driver.adb = {};
+      driver.adb.shell = () => { return emptyDumpsysPackage; };
+      (await driver.findVersions("com.text")).should.be.eql(expectedOutput);
+    });
+  });
 });
