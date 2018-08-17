@@ -53,6 +53,7 @@ describe('apidemo - touch', function () {
     });
   });
   describe('performTouch', function () {
+    this.retries(3);
     it('should drag by element', async function () {
       let startEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_3");
       let endEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_2");
