@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "appium-adb": "^6.15.0",
-    "appium-android-bootstrap": "^2.11.0",
+    "appium-android-bootstrap": "^3.0.0",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^3.0.0",
     "appium-chromedriver": "^4.0.0",
