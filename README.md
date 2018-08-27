@@ -40,6 +40,42 @@ await driver.setOrientation('LANDSCAPE');
 console.log(await driver.getOrientation()); // -> 'LANDSCAPE'
 ```
 
+### Technical details of the bootstrap system installed on the device
+
+The system works by a `com.android.uiautomator.testrunner.UiAutomatorTestCase`
+placed on the Android device, which opens a [SocketServer](http://docs.oracle.com/javase/7/docs/api/java/net/ServerSocket.html)
+on port `4724`. This server receives commands, converts them to appropriate
+Android UI Automator commands, and runs them in the context of the device.
+
+The commands are sent through the JavaScript interface.
+
+### UiAutomator interface
+
+Appium's UiAutomator interface has two methods `start` and `shutdown`.
+
+`async start (uiAutomatorBinaryPath, className, startDetector, ...extraParams)`
+
+`start` will push uiAutomatorBinary to device and start UiAutomator with className
+and return the SubProcess. `startDetector` and `extraParams` are optional arguments.
+`startDetector` will be used as condition to check against your output stream of test if any. `extraParams` will be passed along as command line arguments when starting the subProcess.
+
+`shutdown` will kill UiAutomator process on the device and also kill the subProcess.
+
+
+```
+import { UiAutomator } from 'appium-android-bootstrap';
+import ADB from 'appium-adb';
+
+let adb = await ADB.createADB();
+let uiAutomator = new UiAutomator(adb);
+
+let startDetector = (s) => { return /Appium Socket Server Ready/.test(s); };
+await uiAutomator.start('foo/bar.jar', 'io.appium.android.bootstrap.Bootstrap',
+                        startDetector, '-e', 'disableAndroidWatchers', true);
+await uiAutomator.shutdown();
+
+```
+
 ### Specifying and selecting devices/emulators
 The driver will attempt to connect to a device/emulator based on these properties in the `desiredCapabilities` object:
 
@@ -168,12 +204,13 @@ If more than one of these capabilities are given, the driver will only use first
 
 `lock` behaves differently in Android than it does in iOS. In Android it does not take any arguments, and locks the screen and returns immediately.
 
+
 ## Development
 
 ### Transpile ES2015 code
 
 ```
-gulp transpile
+npm run build
 ```
 
 ### Watch

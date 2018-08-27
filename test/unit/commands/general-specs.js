@@ -6,7 +6,7 @@ import { parseSurfaceLine, parseWindows } from '../../../lib/commands/general';
 import helpers from '../../../lib/android-helpers';
 import { withMocks } from 'appium-test-support';
 import { fs } from 'appium-support';
-import Bootstrap from 'appium-android-bootstrap';
+import Bootstrap from '../../../lib/bootstrap';
 import B from 'bluebird';
 import ADB from 'appium-adb';
 import moment from 'moment-timezone';

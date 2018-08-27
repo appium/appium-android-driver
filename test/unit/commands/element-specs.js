@@ -1,10 +1,11 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import Bootstrap from 'appium-android-bootstrap';
+import Bootstrap from '../../../lib/bootstrap';
 import AndroidDriver from '../../..';
 import ADB from 'appium-adb';
 import androidHelpers from '../../../lib/android-helpers';
+
 
 let driver;
 let sandbox = sinon.createSandbox();

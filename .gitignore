@@ -6,3 +6,12 @@ build
 *.iml
 coverage
 package-lock.json*
+
+.idea
+target
+out
+bin
+bootstrap/bin/*
+bootstrap/local.properties
+bootstrap/.classpath
+bootstrap/target/
