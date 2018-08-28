@@ -63,7 +63,7 @@ and return the SubProcess. `startDetector` and `extraParams` are optional argume
 
 
 ```
-import { UiAutomator } from 'appium-android-bootstrap';
+import UiAutomator from 'lib/uiautomator';
 import ADB from 'appium-adb';
 
 let adb = await ADB.createADB();
