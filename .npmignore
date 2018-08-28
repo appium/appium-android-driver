@@ -1,4 +1,10 @@
 node_modules
 *.log
-test/assets
+test
 coverage
+
+.idea
+.iml
+out
+bootstrap/local.properties
+bootstrap/.classpath

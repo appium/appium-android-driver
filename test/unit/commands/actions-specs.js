@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import Bootstrap from 'appium-android-bootstrap';
+import Bootstrap from '../../../lib/bootstrap';
 import path from 'path';
 import mockFS from 'mock-fs';
 import AndroidDriver from '../../..';
@@ -11,6 +11,7 @@ import ADB from 'appium-adb';
 import jimp from 'jimp';
 import helpers from '../../../lib/commands/actions';
 import * as teen_process from 'teen_process';
+
 
 let driver;
 let sandbox = sinon.createSandbox();
