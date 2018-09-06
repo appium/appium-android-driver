@@ -156,9 +156,9 @@ describe('Network', function () {
         longitude: '2.2',
       });
       const {latitude, longitude, altitude} = await driver.getGeoLocation();
-      isNaN(latitude).should.be.false;
-      isNaN(longitude).should.be.false;
-      isNaN(altitude).should.be.false;
+      (Number.isNaN(latitude)).should.be.false;
+      (Number.isNaN(longitude)).should.be.false;
+      (Number.isNaN(altitude)).should.be.false;
     });
   });
   describe('toggleLocationSettings', function () {
