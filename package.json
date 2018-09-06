@@ -28,7 +28,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-adb": "^6.15.0",
+    "appium-adb": "^6.18.0",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^3.0.0",
     "appium-chromedriver": "^4.0.0",
@@ -37,7 +37,7 @@
     "asyncbox": "^2.0.4",
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.4.7",
-    "io.appium.settings": "^2.4.0",
+    "io.appium.settings": "^2.5.0",
     "jimp": "^0.2.24",
     "lodash": "^4.17.4",
     "moment": "^2.22.2",

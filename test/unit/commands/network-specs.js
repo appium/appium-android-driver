@@ -149,6 +149,18 @@ describe('Network', function () {
       await driver.setGeoLocation('location').should.become('res');
     });
   });
+  describe('getGeoLocation', function () {
+    it('should get location', async function () {
+      adb.getGeoLocation.returns({
+        latitude: '1.1',
+        longitude: '2.2',
+      });
+      const {latitude, longitude, altitude} = await driver.getGeoLocation();
+      (Number.isNaN(latitude)).should.be.false;
+      (Number.isNaN(longitude)).should.be.false;
+      (Number.isNaN(altitude)).should.be.false;
+    });
+  });
   describe('toggleLocationSettings', function () {
     beforeEach(async function () {
       sandbox.stub(driver, 'toggleSetting');
