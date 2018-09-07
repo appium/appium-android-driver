@@ -25,9 +25,7 @@ import org.json.JSONException;
 import java.util.Hashtable;
 
 /**
- * This handler is used to clear elements in the Android UI.
- *
- * Based on the element Id, clear that element.
+ * This handler is used to set the timeout waits for the current application to idle.
  *
  */
 public class WaitForIdle extends CommandHandler {
