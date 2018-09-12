@@ -143,10 +143,18 @@ describe('Network', function () {
     });
   });
   describe('setGeoLocation', function () {
-    it('should set location', async function () {
+    it('should return location in use after setting', async function () {
       adb.setGeoLocation.withArgs('location', 'is_emu').returns('res');
+      adb.getGeoLocation.returns({
+        latitude: '1.1',
+        longitude: '2.2',
+        altitude: '3.3',
+      });
       driver.isEmulator.returns('is_emu');
-      await driver.setGeoLocation('location').should.become('res');
+      const {latitude, longitude, altitude} = await driver.setGeoLocation('location');
+      (Number.isNaN(latitude)).should.be.false;
+      (Number.isNaN(longitude)).should.be.false;
+      (Number.isNaN(altitude)).should.be.false;
     });
   });
   describe('getGeoLocation', function () {
