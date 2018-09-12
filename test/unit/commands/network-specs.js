@@ -143,7 +143,7 @@ describe('Network', function () {
     });
   });
   describe('setGeoLocation', function () {
-    it('should set location', async function () {
+    it('should return location in use after setting', async function () {
       adb.setGeoLocation.withArgs('location', 'is_emu').returns('res');
       adb.getGeoLocation.returns({
         latitude: '1.1',
