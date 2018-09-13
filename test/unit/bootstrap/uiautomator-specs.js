@@ -38,20 +38,17 @@ describe('UiAutomator', function () {
   it('parseJarNameFromPath should throw error for invalid path', async function () {
     (() => { uiAutomator.parseJarNameFromPath('foo/bar'); }).should.throw(/Unable to parse/);
   });
-  describe('start', withSandbox({mocks: {adb, teen_process}}, (S) => {
+  describe('start', withSandbox({mocks: {adb}}, (S) => {
     it('should return a subProcess', async function () {
       let conn = new events.EventEmitter();
       conn.start = _.noop;
-      const args = ['-P', 5037,
-                    'shell', 'uiautomator', 'runtest', 'AppiumBootstrap.jar',
+      const args = ['shell', 'uiautomator', 'runtest', 'AppiumBootstrap.jar',
                     '-c', bootstrapClassName];
       S.mocks.adb.expects('push').once()
         .withExactArgs(bootstrapJar, '/data/local/tmp/')
         .returns('');
-      S.mocks.adb.expects('getAdbPath').once()
-        .returns('adbPath');
-      S.mocks.teen_process.expects('SubProcess')
-        .once().withExactArgs('adbPath', args)
+      S.mocks.adb.expects('createSubProcess')
+        .once().withExactArgs(args)
         .returns(conn);
 
       await uiAutomator.start(bootstrapJar, bootstrapClassName);
