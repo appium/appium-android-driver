@@ -271,6 +271,11 @@ describe('Android Helpers', function () {
         remoteAdbHost: 'remote_host',
         clearDeviceLogsOnStart: true,
         adbExecTimeout: 50,
+        useKeystore: true,
+        keystorePath: '/some/path',
+        keystorePassword: '123456',
+        keyAlias: 'keyAlias',
+        keyPassword: 'keyPassword',
       });
       ADB.createADB.calledWithExactly({
         javaVersion: "1.7",
@@ -279,6 +284,11 @@ describe('Android Helpers', function () {
         remoteAdbHost: "remote_host",
         clearDeviceLogsOnStart: true,
         adbExecTimeout: 50,
+        useKeystore: true,
+        keystorePath: '/some/path',
+        keystorePassword: '123456',
+        keyAlias: 'keyAlias',
+        keyPassword: 'keyPassword',
       }).should.be.true;
       curDeviceId.should.equal("111222");
       emulatorPort.should.equal("111");
