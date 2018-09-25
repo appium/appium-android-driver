@@ -516,8 +516,17 @@ describe('Android Helpers', function () {
     });
   }));
   describe('pushStrings', withMocks({adb, fs}, (mocks) => {
-    const opts = {app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
+    it('should return {} because of no app, no package and no app in the target device', async function () {
+      const opts = {tmpDir: '/tmp_dir', appPackage: 'pkg'};
+      mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`).once();
+      mocks.adb.expects('pullApk').withExactArgs(opts.appPackage, opts.tmpDir)
+        .throws(`adb: error: remote object ${opts.appPackage} does not exist`);
+      (await helpers.pushStrings('en', adb, opts)).should.be.deep.equal({});
+      mocks.adb.verify();
+      mocks.fs.verify();
+    });
     it('should extracts string.xml and converts it to string.json and pushes it', async function () {
+      const opts = {app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
       mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`).once();
       mocks.fs.expects('exists').withExactArgs(opts.app).returns(true);
       mocks.fs.expects('rimraf').once();
@@ -528,6 +537,7 @@ describe('Android Helpers', function () {
       mocks.adb.verify();
     });
     it('should delete remote strings.json if app is not present', async function () {
+      const opts = {app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
       mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`).once();
       mocks.fs.expects('exists').withExactArgs(opts.app).returns(false);
       (await helpers.pushStrings('en', adb, opts)).should.be.deep.equal({});
@@ -535,6 +545,7 @@ describe('Android Helpers', function () {
       mocks.fs.verify();
     });
     it('should push an empty json object if app does not have strings.xml', async function () {
+      const opts = {app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
       mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`).once();
       mocks.fs.expects('exists').withExactArgs(opts.app).returns(true);
       mocks.fs.expects('rimraf').once();
