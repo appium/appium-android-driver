@@ -17,7 +17,7 @@ const DEFAULT_PORT = 4723;
 async function main () {
   let port = yargs.argv.port || DEFAULT_PORT;
   let host = yargs.argv.host || DEFAULT_HOST;
-  return startServer(port, host);
+  return await startServer(port, host);
 }
 
 if (require.main === module) {
@@ -25,6 +25,8 @@ if (require.main === module) {
 }
 
 export default AndroidDriver;
-export { androidHelpers, androidCommands, AndroidDriver, startServer,
-         commonCapConstraints, webviewHelpers, NATIVE_WIN, WEBVIEW_WIN,
-         WEBVIEW_BASE, CHROMIUM_WIN };
+export {
+  androidHelpers, androidCommands, AndroidDriver, startServer,
+  commonCapConstraints, webviewHelpers, NATIVE_WIN, WEBVIEW_WIN, WEBVIEW_BASE,
+  CHROMIUM_WIN,
+};

@@ -25,7 +25,7 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
   });
 
   let driver;
-  beforeEach(async function () {
+  beforeEach(function () {
     driver = new AndroidDriver();
   });
   after(async function () {

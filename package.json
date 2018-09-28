@@ -27,7 +27,15 @@
   "directories": {
     "lib": "lib"
   },
+  "files": [
+    "index.js",
+    "lib",
+    "build/index.js",
+    "build/lib",
+    "bootstrap/bin/AppiumBootstrap.jar"
+  ],
   "dependencies": {
+    "@babel/runtime": "^7.0.0",
     "appium-adb": "^6.19.0",
     "appium-android-ime": "^2.0.0",
     "appium-base-driver": "^3.0.0",
@@ -35,10 +43,9 @@
     "appium-support": "^2.13.0",
     "appium-unlock": "^2.0.0",
     "asyncbox": "^2.0.4",
-    "babel-runtime": "=5.8.24",
     "bluebird": "^3.4.7",
     "io.appium.settings": "^2.5.0",
-    "jimp": "^0.2.24",
+    "jimp": "^0.5.3",
     "lodash": "^4.17.4",
     "moment": "^2.22.2",
     "portfinder": "^1.0.6",
@@ -51,8 +58,8 @@
     "yargs": "^12.0.1"
   },
   "scripts": {
-    "clean": "rm -rf node_modeuls && rm -f package-lock.json && npm install",
-    "prepublish": "gulp prepublish",
+    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
+    "prepare": "gulp prepublish",
     "test": "gulp once",
     "watch": "gulp watch",
     "build": "gulp transpile",
@@ -70,19 +77,19 @@
     "precommit-test"
   ],
   "devDependencies": {
+    "ajv": "^6.5.3",
     "android-apidemos": "^3.0.0",
-    "appium-gulp-plugins": "^2.2.0",
+    "appium-gulp-plugins": "^3.1.0",
     "appium-test-support": "^1.0.0",
-    "babel-eslint": "^7.1.1",
+    "babel-eslint": "^10.0.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^3.10.2",
-    "eslint-config-appium": "^2.1.0",
-    "eslint-plugin-babel": "^3.3.0",
+    "eslint": "^5.2.0",
+    "eslint-config-appium": "^3.1.0",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-mocha": "^4.7.0",
-    "eslint-plugin-promise": "^3.3.1",
-    "gulp": "^3.9.1",
+    "eslint-plugin-mocha": "^5.0.0",
+    "eslint-plugin-promise": "^4.0.0",
+    "gulp": "^4.0.0",
     "mocha": "^5.1.1",
     "mock-fs": "^4.5.0",
     "moment-timezone": "^0.5.21",
@@ -93,16 +100,6 @@
     "xpath": "^0.0.27"
   },
   "greenkeeper": {
-    "ignore": [
-      "babel-eslint",
-      "babel-preset-env",
-      "eslint",
-      "eslint-plugin-babel",
-      "eslint-plugin-import",
-      "eslint-plugin-mocha",
-      "eslint-plugin-promise",
-      "gulp",
-      "babel-runtime"
-    ]
+    "ignore": []
   }
 }

@@ -12,8 +12,8 @@ import path from 'path';
 
 let opts = {
   app,
-  appPackage : 'io.appium.android.apis',
-  androidInstallTimeout : 90000
+  appPackage: 'io.appium.android.apis',
+  androidInstallTimeout: 90000
 };
 
 chai.should();

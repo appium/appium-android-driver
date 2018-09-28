@@ -20,7 +20,7 @@ let adb;
 let driver;
 
 describe('performance data', function () {
-  beforeEach(async function () {
+  beforeEach(function () {
     adb = new ADB();
     driver = new AndroidDriver();
     driver.adb = adb;
@@ -29,7 +29,7 @@ describe('performance data', function () {
       return await fn();
     });
   });
-  afterEach(async function () {
+  afterEach(function () {
     sandbox.restore();
   });
   describe('getPerformanceDataTypes', function () {
@@ -119,9 +119,12 @@ describe('performance data', function () {
                   GL      110      555      105      555        0        0
                TOTAL      106      555      101      555      555      555`;
     const expectedResult = [MEMORY_KEYS,
-      ['101', '102', '103', '104', '105', // private dirty total|native|dalvik|egl|gl
-       '106', '107', '108', '109', '110', // pss           total|native|dalvik|egl|gl
-       '111', '112']];                    // native        heap_alloc|heap_size
+      [
+        '101', '102', '103', '104', '105', // private dirty total|native|dalvik|egl|gl
+        '106', '107', '108', '109', '110', // pss           total|native|dalvik|egl|gl
+        '111', '112' // native        heap_alloc|heap_size
+      ],
+    ];
     it('should return memory info for API>18', async function () {
       adb.getApiLevel.returns(19);
       adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI19);
@@ -164,15 +167,21 @@ describe('performance data', function () {
     it('should return network stats', async function () {
       adb.shell.withArgs(shellArgs).returns(data);
       (await driver.getNetworkTrafficInfo()).should.be.deep
-        .equal([NETWORK_KEYS[1], ['start1', undefined, 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
-                                 ['start2', undefined, 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur']]);
+        .equal([
+          NETWORK_KEYS[1],
+          ['start1', undefined, 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
+          ['start2', undefined, 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur']
+        ]);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
     it('should be able to parse data in old format', async function () {
       adb.shell.withArgs(shellArgs).returns(dataInOldFormat);
       (await driver.getNetworkTrafficInfo()).should.be.deep
-        .equal([NETWORK_KEYS[0], ['start1', 'time1', 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
-                                 ['start2', 'time2', 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur']]);
+        .equal([
+          NETWORK_KEYS[0],
+          ['start1', 'time1', 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
+          ['start2', 'time2', 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur']
+        ]);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
     it('should be fulfilled if history is empty', async function () {
