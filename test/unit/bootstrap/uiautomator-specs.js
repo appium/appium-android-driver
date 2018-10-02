@@ -35,15 +35,16 @@ describe('UiAutomator', function () {
     let windowsJarName = `C:\\\\appium\\bar.jar`;
     uiAutomator.parseJarNameFromPath(windowsJarName).should.equal('bar.jar');
   });
-  it('parseJarNameFromPath should throw error for invalid path', async function () {
+  it('parseJarNameFromPath should throw error for invalid path', function () {
     (() => { uiAutomator.parseJarNameFromPath('foo/bar'); }).should.throw(/Unable to parse/);
   });
   describe('start', withSandbox({mocks: {adb}}, (S) => {
     it('should return a subProcess', async function () {
       let conn = new events.EventEmitter();
       conn.start = _.noop;
-      const args = ['shell', 'uiautomator', 'runtest', 'AppiumBootstrap.jar',
-                    '-c', bootstrapClassName];
+      const args = [
+        'shell', 'uiautomator', 'runtest', 'AppiumBootstrap.jar', '-c', bootstrapClassName
+      ];
       S.mocks.adb.expects('push').once()
         .withExactArgs(bootstrapJar, '/data/local/tmp/')
         .returns('');

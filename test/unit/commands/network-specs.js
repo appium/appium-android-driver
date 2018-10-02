@@ -12,7 +12,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('Network', function () {
-  beforeEach(async function () {
+  beforeEach(function () {
     driver = new AndroidDriver();
     adb = new ADB();
     driver.adb = adb;
@@ -60,7 +60,7 @@ describe('Network', function () {
     });
   });
   describe('setNetworkConnection', function () {
-    beforeEach(async function () {
+    beforeEach(function () {
       sandbox.stub(driver, 'setWifiState');
       driver.isEmulator.returns(false);
     });
@@ -170,7 +170,7 @@ describe('Network', function () {
     });
   });
   describe('toggleLocationSettings', function () {
-    beforeEach(async function () {
+    beforeEach(function () {
       sandbox.stub(driver, 'toggleSetting');
     });
     it('should throw an error for API<16', async function () {
@@ -207,7 +207,7 @@ describe('Network', function () {
       sandbox.stub(driver, 'doKey').returns('');
       sandbox.stub(driver, 'openSettingsActivity').returns('');
       adb.getFocusedPackageAndActivity
-        .returns({appPackage: 'fpkg', appActivity:'fact'});
+        .returns({appPackage: 'fpkg', appActivity: 'fact'});
     });
     it('should toggle setting', async function () {
       await driver.toggleSetting('set', [61, 72]);

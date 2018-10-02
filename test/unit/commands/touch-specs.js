@@ -17,18 +17,22 @@ describe('Touch', function () {
     describe('given a touch sequence with absolute coordinates', function () {
       it('should use offsets for moveTo', async function () {
         // let driver = new AndroidDriver({foo: 'bar'});
-        let actions = [{action: 'press', options: {x: 100, y: 101}},
-                       {action: 'moveTo', options: {x: 50, y: 51}},
-                       {action: 'wait', options: {ms: 5000}},
-                       {action: 'moveTo', options: {x: -40, y: -41}},
-                       {action: 'release', options: {}}];
+        let actions = [
+          {action: 'press', options: {x: 100, y: 101}},
+          {action: 'moveTo', options: {x: 50, y: 51}},
+          {action: 'wait', options: {ms: 5000}},
+          {action: 'moveTo', options: {x: -40, y: -41}},
+          {action: 'release', options: {}}
+        ];
         let touchStates = await driver.parseTouch(actions, false);
         touchStates.length.should.equal(5);
-        let parsedActions = [{action: 'press', x: 100, y: 101},
-                             {action: 'moveTo', x: 50, y: 51},
-                             {action: 'wait', x: 50, y: 51},
-                             {action: 'moveTo', x: -40, y: -41},
-                             {action: 'release'}];
+        let parsedActions = [
+          {action: 'press', x: 100, y: 101},
+          {action: 'moveTo', x: 50, y: 51},
+          {action: 'wait', x: 50, y: 51},
+          {action: 'moveTo', x: -40, y: -41},
+          {action: 'release'}
+        ];
         let index = 0;
         for (let state of touchStates) {
           state.action.should.equal(parsedActions[index].action);
@@ -44,9 +48,11 @@ describe('Touch', function () {
 
   describe('fixRelease', withMocks({driver, adb}, (mocks) => {
     it('should be able to get the correct release coordinates', async function () {
-      let actions = [{action: 'press', options: {x: 20, y: 21}},
-                     {action: 'moveTo', options: {x: 10, y: 11}},
-                     {action: 'release'}];
+      let actions = [
+        {action: 'press', options: {x: 20, y: 21}},
+        {action: 'moveTo', options: {x: 10, y: 11}},
+        {action: 'release'}
+      ];
       let release = await driver.fixRelease(actions, false);
       release.options.should.eql({x: 10, y: 11});
     });
@@ -54,9 +60,11 @@ describe('Touch', function () {
       mocks.driver.expects('getLocationInView')
         .withExactArgs(2)
         .returns({x: 100, y: 101});
-      let actions = [{action: 'press', options: {element: 1, x: 20, y: 21}},
-                     {action: 'moveTo', options: {element: 2, x: 10, y: 11}},
-                     {action: 'release'}];
+      let actions = [
+        {action: 'press', options: {element: 1, x: 20, y: 21}},
+        {action: 'moveTo', options: {element: 2, x: 10, y: 11}},
+        {action: 'release'}
+      ];
       let release = await driver.fixRelease(actions, false);
       release.options.should.eql({x: 110, y: 112});
     });
@@ -67,21 +75,25 @@ describe('Touch', function () {
       mocks.driver.expects('getSize')
         .withExactArgs(2)
         .returns({width: 5, height: 6});
-      let actions = [{action: 'press', options: {element: 1, x: 20, y: 21}},
-                     {action: 'moveTo', options: {element: 2}},
-                     {action: 'release'}];
+      let actions = [
+        {action: 'press', options: {element: 1, x: 20, y: 21}},
+        {action: 'moveTo', options: {element: 2}},
+        {action: 'release'}
+      ];
       let release = await driver.fixRelease(actions, false);
       release.options.should.eql({x: 102.5, y: 104});
     });
   }));
 
   describe('doTouchDrag', withMocks({driver, adb}, (mocks) => {
-    let tests = async (apiLevel, defaultDuration) => {
+    let tests = (apiLevel, defaultDuration) => {
       it('should handle longPress not having duration', async function () {
         let expectedDuration = defaultDuration;
-        let actions = [{action: 'longPress', options: {x: 100, y: 101}},
-                       {action: 'moveTo', options: {x: 50, y: 51}},
-                       {action: 'release', options: {}}];
+        let actions = [
+          {action: 'longPress', options: {x: 100, y: 101}},
+          {action: 'moveTo', options: {x: 50, y: 51}},
+          {action: 'release', options: {}}
+        ];
 
         mocks.driver.expects('drag')
           .withExactArgs(actions[0].options.x, actions[0].options.y,
@@ -95,9 +107,11 @@ describe('Touch', function () {
       });
       it('should handle longPress having duration', async function () {
         let expectedDuration = 4;
-        let actions = [{action: 'longPress', options: {x: 100, y: 101, duration: expectedDuration * 1000}},
-                       {action: 'moveTo', options: {x: 50, y: 51}},
-                       {action: 'release', options: {}}];
+        let actions = [
+          {action: 'longPress', options: {x: 100, y: 101, duration: expectedDuration * 1000}},
+          {action: 'moveTo', options: {x: 50, y: 51}},
+          {action: 'release', options: {}}
+        ];
 
         mocks.driver.expects('drag')
           .withExactArgs(actions[0].options.x, actions[0].options.y,
@@ -111,9 +125,11 @@ describe('Touch', function () {
       });
       it('should handle longPress having duration less than minimum', async function () {
         let expectedDuration = defaultDuration;
-        let actions = [{action: 'longPress', options: {x: 100, y: 101, duration: 500}},
-                       {action: 'moveTo', options: {x: 50, y: 51}},
-                       {action: 'release', options: {}}];
+        let actions = [
+          {action: 'longPress', options: {x: 100, y: 101, duration: 500}},
+          {action: 'moveTo', options: {x: 50, y: 51}},
+          {action: 'release', options: {}}
+        ];
 
         mocks.driver.expects('drag')
           .withExactArgs(actions[0].options.x, actions[0].options.y,
@@ -153,8 +169,10 @@ describe('Touch', function () {
 
   describe('parseTouch', function () {
     it('should handle actions starting with wait', async function () {
-      let actions = [{action: 'wait', options: {ms: 500}},
-                     {action: 'tap', options: {x: 100, y: 101}}];
+      let actions = [
+        {action: 'wait', options: {ms: 500}},
+        {action: 'tap', options: {x: 100, y: 101}}
+      ];
 
       let touchStateObject = await driver.parseTouch(actions, true);
       touchStateObject.should.eql([{

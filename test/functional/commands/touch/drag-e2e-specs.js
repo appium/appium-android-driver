@@ -57,9 +57,11 @@ describe('apidemo - touch', function () {
     it('should drag by element', async function () {
       let startEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_3");
       let endEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_2");
-      let gestures = [{action: "longPress", options: {element: startEle.ELEMENT}},
-                      {action: "moveTo", options: {element: endEle.ELEMENT}},
-                      {action: "release", options: {}}];
+      let gestures = [
+        {action: "longPress", options: {element: startEle.ELEMENT}},
+        {action: "moveTo", options: {element: endEle.ELEMENT}},
+        {action: "release", options: {}}
+      ];
       await driver.performTouch(gestures);
       let resultEle = await driver.findElement("id", "io.appium.android.apis:id/drag_result_text");
       await driver.getText(resultEle.ELEMENT).should.eventually.equal("Dropped!");
@@ -67,11 +69,11 @@ describe('apidemo - touch', function () {
     it('should drag by element by offset', async function () {
       let startEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_3");
       let endEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_2");
-      let gestures = [{action: "longPress",
-                       options: {element: startEle.ELEMENT, x: 5, y: 5}},
-                      {action: "moveTo", options:
-                      {element: endEle.ELEMENT, x: 5, y: 5}},
-                      {action: "release", options: {}}];
+      let gestures = [
+        {action: "longPress", options: {element: startEle.ELEMENT, x: 5, y: 5}},
+        {action: "moveTo", options: {element: endEle.ELEMENT, x: 5, y: 5}},
+        {action: "release", options: {}}
+      ];
       await driver.performTouch(gestures);
       await retryInterval(3, 500, async () => {
         const el = await driver.findElement("id", "io.appium.android.apis:id/drag_result_text");
@@ -85,13 +87,17 @@ describe('apidemo - touch', function () {
       let endEle = await driver.findElement("id", "io.appium.android.apis:id/drag_dot_2");
       let endLoc = await driver.getLocationInView(endEle.ELEMENT);
       let endSize = await driver.getSize(endEle.ELEMENT);
-      let gestures = [{action: "longPress",
-                       options: {x: startLoc.x + (startSize.width / 2),
-                                 y: startLoc.y + (startSize.height / 2)}},
-                      {action: "moveTo",
-                       options: {x: endLoc.x + (endSize.width / 2),
-                                 y: endLoc.y + (endSize.height / 2)}},
-                      {action: "release", options: {}}];
+      let gestures = [
+        {action: "longPress", options: {
+          x: startLoc.x + (startSize.width / 2),
+          y: startLoc.y + (startSize.height / 2)
+        }},
+        {action: "moveTo", options: {
+          x: endLoc.x + (endSize.width / 2),
+          y: endLoc.y + (endSize.height / 2)
+        }},
+        {action: "release", options: {}}
+      ];
       await driver.performTouch(gestures);
       let resultEle = await driver.findElement("id", "io.appium.android.apis:id/drag_result_text");
       await driver.getText(resultEle.ELEMENT).should.eventually.equal("Dropped!");

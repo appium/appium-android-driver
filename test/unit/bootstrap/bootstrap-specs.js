@@ -15,7 +15,7 @@ import _ from 'lodash';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('AndroidBootstrap', async function () {
+describe('AndroidBootstrap', function () {
   const systemPort = 4724;
   let adb = new ADB();
   let androidBootstrap = new AndroidBootstrap(adb, systemPort);
