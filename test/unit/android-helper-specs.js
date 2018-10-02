@@ -6,7 +6,6 @@ import ADB from 'appium-adb';
 import { withMocks } from 'appium-test-support';
 import * as teen_process from 'teen_process';
 import { fs } from 'appium-support';
-import { path as unlockApkPath } from 'appium-unlock';
 import unlocker from '../../lib/unlock-helpers';
 import _ from 'lodash';
 import B from 'bluebird';
@@ -334,8 +333,12 @@ describe('Android Helpers', function () {
     it('should return package and launch activity from manifest', async function () {
       mocks.adb.expects('packageAndLaunchActivityFromManifest').withExactArgs('foo')
         .returns({apkPackage: 'pkg', apkActivity: 'ack'});
-      const result = {appPackage: 'pkg', appWaitPackage: 'pkg',
-                      appActivity: 'ack', appWaitActivity: 'ack'};
+      const result = {
+        appPackage: 'pkg',
+        appWaitPackage: 'pkg',
+        appActivity: 'ack',
+        appWaitActivity: 'ack',
+      };
       (await helpers.getLaunchInfo(adb, {app: "foo"})).should.deep
         .equal(result);
       mocks.adb.verify();
@@ -510,14 +513,6 @@ describe('Android Helpers', function () {
       mocks.adb.verify();
     });
   }));
-  describe('pushUnlock', withMocks({adb}, (mocks) => {
-    it('should install unlockApp', async function () {
-      mocks.adb.expects('installOrUpgrade').withArgs(unlockApkPath, 'io.appium.unlock').once()
-        .returns('');
-      await helpers.pushUnlock(adb);
-      mocks.adb.verify();
-    });
-  }));
   describe('pushStrings', withMocks({adb, fs}, (mocks) => {
     it('should return {} because of no app, no package and no app in the target device', async function () {
       const opts = {tmpDir: '/tmp_dir', appPackage: 'pkg'};
@@ -633,7 +628,6 @@ describe('Android Helpers', function () {
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').withExactArgs(adb, opts.language, opts.locale).once();
       mocks.helpers.expects('setMockLocationApp').withExactArgs(adb, 'io.appium.settings').once();
-      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
       await helpers.initDevice(adb, opts);
       mocks.helpers.verify();
       mocks.adb.verify();
@@ -645,7 +639,6 @@ describe('Android Helpers', function () {
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').withArgs(adb).once();
       mocks.helpers.expects('setMockLocationApp').never();
-      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
       await helpers.initDevice(adb, opts);
       mocks.helpers.verify();
       mocks.adb.verify();
@@ -658,7 +651,6 @@ describe('Android Helpers', function () {
       mocks.helpers.expects('ensureDeviceLocale').once();
       mocks.helpers.expects('setMockLocationApp').once();
       mocks.helpers.expects('initUnicodeKeyboard').withExactArgs(adb).once().returns("defaultIME");
-      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
       await helpers.initDevice(adb, opts).should.become("defaultIME");
       mocks.helpers.verify();
       mocks.adb.verify();
@@ -671,7 +663,6 @@ describe('Android Helpers', function () {
       mocks.helpers.expects('ensureDeviceLocale').once();
       mocks.helpers.expects('setMockLocationApp').once();
       mocks.helpers.expects('initUnicodeKeyboard').never();
-      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
       should.not.exist(await helpers.initDevice(adb, opts));
       mocks.helpers.verify();
       mocks.adb.verify();
@@ -684,7 +675,6 @@ describe('Android Helpers', function () {
       mocks.helpers.expects('ensureDeviceLocale').once();
       mocks.helpers.expects('setMockLocationApp').once();
       mocks.helpers.expects('initUnicodeKeyboard').never();
-      mocks.helpers.expects('pushUnlock').never();
       await helpers.initDevice(adb, opts);
       mocks.helpers.verify();
       mocks.adb.verify();
