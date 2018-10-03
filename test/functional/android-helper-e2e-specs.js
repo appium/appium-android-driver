@@ -6,7 +6,6 @@ import ADB from 'appium-adb';
 import { app } from './desired';
 import { MOCHA_TIMEOUT } from './helpers';
 import { exec } from 'teen_process';
-import { path as unlockApkPath } from 'appium-unlock';
 import path from 'path';
 
 
@@ -74,23 +73,6 @@ describe('android-helpers e2e', function () {
       await exec('npm', ['install', settingsPkg]);
 
       await helpers.pushSettingsApp(adb, true);
-    });
-  });
-  describe('pushUnlock', function () {
-    const unlockPkg = 'appium-unlock';
-    const unlockBundle = 'io.appium.unlock';
-    it('should be able to upgrade from unlock v0.0.1 to latest', async function () {
-      await adb.uninstallApk(unlockBundle);
-
-      // get and install old version of settings app
-      await exec('npm', ['install', `${unlockPkg}@0.0.1`]);
-      await adb.install(unlockApkPath);
-
-      // get latest version of settings app
-      await exec('npm', ['uninstall', unlockPkg]);
-      await exec('npm', ['install', unlockPkg]);
-
-      await helpers.pushUnlock(adb);
     });
   });
 });
