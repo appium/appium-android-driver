@@ -1,10 +1,11 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import Bootstrap from 'appium-android-bootstrap';
+import Bootstrap from '../../../lib/bootstrap';
 import AndroidDriver from '../../..';
 import ADB from 'appium-adb';
 import androidHelpers from '../../../lib/android-helpers';
+
 
 let driver;
 let sandbox = sinon.createSandbox();
@@ -83,8 +84,12 @@ describe('Element', function () {
     });
   });
   describe('setElementValue', function () {
-    const params = {elementId: 'el0', text: 'text to set',  replace: true,
-                  unicodeKeyboard: true};
+    const params = {
+      elementId: 'el0',
+      text: 'text to set',
+      replace: true,
+      unicodeKeyboard: true,
+    };
     it('should call doSetElementValue', async function () {
       sandbox.stub(driver, 'doSetElementValue');
       await driver.setElementValue('text to set', 'el0', true);
@@ -270,7 +275,7 @@ describe('Element', function () {
   describe('complexTap', function () {
     it('should tap an element', async function () {
       await driver.complexTap(null, null, null, 12, 34);
-      driver.bootstrap.sendAction.calledWithExactly('click', {x: 12, y:34})
+      driver.bootstrap.sendAction.calledWithExactly('click', {x: 12, y: 34})
         .should.be.true;
     });
   });

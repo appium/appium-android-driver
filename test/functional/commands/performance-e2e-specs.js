@@ -30,7 +30,7 @@ describe('performance', function () {
       capability.should.eql(_.keys(SUPPORTED_PERFORMANCE_DATA_TYPES));
     });
 
-    it('should throw an Error for unsupported capability data type ', async function  () {
+    it('should throw an Error for unsupported capability data type ', async function () {
       await driver.getPerformanceData(caps.appPackage, 'randominfo', 2).should.be.rejected;
     });
 

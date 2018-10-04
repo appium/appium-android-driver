@@ -8,9 +8,9 @@ import DEFAULT_CAPS from './desired';
 
 chai.should();
 chai.use(chaiAsPromised);
-let expect = chai.expect;
+const expect = chai.expect;
 
-let defaultCaps = _.defaults({
+const defaultCaps = _.defaults({
   androidInstallTimeout: 90000
 }, DEFAULT_CAPS);
 
@@ -29,7 +29,7 @@ describe('createSession', function () {
     return {appPackage, appActivity};
   }
 
-  it('should start android session focusing on default pkg and act', async function () {
+  it('should start android session focusing on default package and activity', async function () {
     await driver.createSession(defaultCaps);
     let {appPackage, appActivity} = await getPackageAndActivity(driver);
     appPackage.should.equal('io.appium.android.apis');

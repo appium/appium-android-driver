@@ -121,6 +121,12 @@ describe('Find - uiautomator', function () {
     let el = await driver.findElement('-android uiautomator', selector);
     await driver.getText(el.ELEMENT).should.eventually.equal('Views');
   });
+  it('should parse commas in quotes correctly', async function () {
+    // two commas could mess with the parsing
+    let selector = 'new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text("One thing, another thing, and yet a third.").instance(0));';
+    await driver.findElement('-android uiautomator', selector)
+      .should.eventually.be.rejectedWith(/An element could not be located/);
+  });
   it('should error reasonably if a UiScrollable does not return a UiObject', async function () {
     let selector = 'new UiScrollable(new UiSelector().scrollable(true).instance(0)).setMaxSearchSwipes(10)';
     await driver.findElement('-android uiautomator', selector)

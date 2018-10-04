@@ -6,7 +6,7 @@ import { parseSurfaceLine, parseWindows } from '../../../lib/commands/general';
 import helpers from '../../../lib/android-helpers';
 import { withMocks } from 'appium-test-support';
 import { fs } from 'appium-support';
-import Bootstrap from 'appium-android-bootstrap';
+import Bootstrap from '../../../lib/bootstrap';
 import B from 'bluebird';
 import ADB from 'appium-adb';
 import moment from 'moment-timezone';
@@ -428,7 +428,7 @@ describe('General', function () {
     });
   });
   describe('parseSurfaceLine', function () {
-    it('should return visible true if the surface is visible', async function () {
+    it('should return visible true if the surface is visible', function () {
       parseSurfaceLine('shown=true rect=1 1 1 1').should.be.eql({
         visible: true,
         x: 1,
@@ -437,7 +437,7 @@ describe('General', function () {
         height: 1
       });
     });
-    it('should return visible false if the surface is not visible', async function () {
+    it('should return visible false if the surface is not visible', function () {
       parseSurfaceLine('shown=false rect=1 1 1 1').should.be.eql({
         visible: false,
         x: 1,
@@ -446,7 +446,7 @@ describe('General', function () {
         height: 1
       });
     });
-    it('should return the parsed surface bounds', async function () {
+    it('should return the parsed surface bounds', function () {
       parseSurfaceLine('shown=true rect=(1.0,2.0) 3.0 x 4.0').should.be.eql({
         visible: true,
         x: 1,
@@ -478,11 +478,11 @@ describe('General', function () {
   };
 
   describe('parseWindows', function () {
-    it('should throw an error if the status bar info wasn\'t found', async function () {
+    it('should throw an error if the status bar info wasn\'t found', function () {
       expect(() => { parseWindows(''); })
         .to.throw(Error, /Failed to parse status bar information./);
     });
-    it('should throw an error if the navigation bar info wasn\'t found', async function () {
+    it('should throw an error if the navigation bar info wasn\'t found', function () {
       let windowOutput = [
         '  Window #1 StatusBar',
         '    blah blah blah',
@@ -492,7 +492,7 @@ describe('General', function () {
       expect(() => { parseWindows(windowOutput); })
         .to.throw(Error, /Failed to parse navigation bar information./);
     });
-    it('should return status and navigation bar info when both are given', async function () {
+    it('should return status and navigation bar info when both are given', function () {
       parseWindows(validWindowOutput).should.be.eql(validSystemBars);
     });
   });

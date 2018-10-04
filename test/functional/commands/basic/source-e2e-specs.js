@@ -9,7 +9,7 @@ import DEFAULT_CAPS from '../../desired';
 chai.should();
 chai.use(chaiAsPromised);
 
-let assertSource = async (source) => {
+let assertSource = (source) => {
   source.should.exist;
   let dom = new DOMParser().parseFromString(source);
   let nodes = xpath.select('//android.widget.TextView[@content-desc="App"]', dom);

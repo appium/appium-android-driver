@@ -49,11 +49,11 @@ describe('Find - xpath', function () {
   });
 
   // TODO: Doesn't work on CI. Works locally on API_LEVEL 23
-  //it('should find element by xpath index and child @skip-ci', async () => {
-    // let alv = 'android.widget.ListView';
-    // let el = await driver.findElement('xpath', `//${f}[2]/${alv}[1]/${atv}[4]`);
-    // await driver.getText(el.ELEMENT).should.eventually.equal('App');
-  //});
+  // it('should find element by xpath index and child @skip-ci', async () => {
+  //   let alv = 'android.widget.ListView';
+  //   let el = await driver.findElement('xpath', `//${f}[2]/${alv}[1]/${atv}[4]`);
+  //   await driver.getText(el.ELEMENT).should.eventually.equal('App');
+  // });
 
   it('should find element by index and embedded desc', async function () {
     let el = await driver.findElement('xpath', `//${f}//${atv}[5]`);

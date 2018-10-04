@@ -130,6 +130,8 @@ let languageTests = [
 ];
 
 describe('keyboard', function () {
+  this.retries(3);
+
   describe('ascii', function () {
     let driver;
     before(async function () {

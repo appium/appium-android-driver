@@ -6,7 +6,6 @@ import ADB from 'appium-adb';
 import { withMocks } from 'appium-test-support';
 import * as teen_process from 'teen_process';
 import { fs } from 'appium-support';
-import { path as unlockApkPath } from 'appium-unlock';
 import unlocker from '../../lib/unlock-helpers';
 import _ from 'lodash';
 import B from 'bluebird';
@@ -79,17 +78,17 @@ describe('Android Helpers', function () {
     });
   }));
   describe('prepareAVDArgs', withMocks({adb, helpers}, (mocks) => {
-    it('should set the correct avdArgs', async function () {
+    it('should set the correct avdArgs', function () {
       let avdArgs = '-wipe-data';
       (helpers.prepareAVDArgs({}, adb, avdArgs)).should.equal(avdArgs);
     });
-    it('should add headless arg', async function () {
+    it('should add headless arg', function () {
       let avdArgs = '-wipe-data';
       let args = helpers.prepareAVDArgs({isHeadless: true}, adb, avdArgs);
       args.should.have.string('-wipe-data');
       args.should.have.string('-no-window');
     });
-    it('should add network speed arg', async function () {
+    it('should add network speed arg', function () {
       let avdArgs = '-wipe-data';
       mocks.helpers.expects('ensureNetworkSpeed').once()
         .returns('edge');
@@ -98,7 +97,7 @@ describe('Android Helpers', function () {
       args.should.have.string('-netspeed edge');
       mocks.adb.verify();
     });
-    it('should not include empty avdArgs', async function () {
+    it('should not include empty avdArgs', function () {
       let avdArgs = '';
       let args = helpers.prepareAVDArgs({isHeadless: true}, adb, avdArgs);
       args.should.eql('-no-window');
@@ -150,9 +149,9 @@ describe('Android Helpers', function () {
     let curDeviceId = '';
 
     before(function () {
-      sinon.stub(ADB, 'createADB').callsFake(async function () {
+      sinon.stub(ADB, 'createADB').callsFake(function () {
         return {
-          getDevicesWithRetry: async () => {
+          getDevicesWithRetry: () => {
             return _.map(devices, (device) => { return {udid: device.udid}; });
           },
           getPortFromEmulatorString: () => {
@@ -251,7 +250,7 @@ describe('Android Helpers', function () {
     let curDeviceId = '';
     let emulatorPort = -1;
     before(function () {
-      sinon.stub(ADB, 'createADB').callsFake(async function () {
+      sinon.stub(ADB, 'createADB').callsFake(function () {
         return {
           setDeviceId: (udid) => { curDeviceId = udid; },
           setEmulatorPort: (emPort) => { emulatorPort = emPort; }
@@ -271,6 +270,11 @@ describe('Android Helpers', function () {
         remoteAdbHost: 'remote_host',
         clearDeviceLogsOnStart: true,
         adbExecTimeout: 50,
+        useKeystore: true,
+        keystorePath: '/some/path',
+        keystorePassword: '123456',
+        keyAlias: 'keyAlias',
+        keyPassword: 'keyPassword',
       });
       ADB.createADB.calledWithExactly({
         javaVersion: "1.7",
@@ -279,6 +283,11 @@ describe('Android Helpers', function () {
         remoteAdbHost: "remote_host",
         clearDeviceLogsOnStart: true,
         adbExecTimeout: 50,
+        useKeystore: true,
+        keystorePath: '/some/path',
+        keystorePassword: '123456',
+        keyAlias: 'keyAlias',
+        keyPassword: 'keyPassword',
       }).should.be.true;
       curDeviceId.should.equal("111222");
       emulatorPort.should.equal("111");
@@ -297,8 +306,16 @@ describe('Android Helpers', function () {
     });
     it('should return when appPackage & appActivity are already present', async function () {
       mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-      await helpers.getLaunchInfo(adb, {app: "foo", appPackage: "bar",
-        appActivity: "act"});
+      await helpers.getLaunchInfo(adb, {
+        app: "foo",
+        appPackage: "bar",
+        appActivity: "act",
+      });
+      mocks.adb.verify();
+    });
+    it('should return when all parameters are already present', async function () {
+      mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
+      await helpers.getLaunchInfo(adb, {app: "foo", appPackage: "bar", appWaitPackage: "*", appActivity: "app.activity", appWaitActivity: "app.nameA,app.nameB"});
       mocks.adb.verify();
     });
     it('should print warn when all parameters are already present but the format is odd', async function () {
@@ -316,8 +333,12 @@ describe('Android Helpers', function () {
     it('should return package and launch activity from manifest', async function () {
       mocks.adb.expects('packageAndLaunchActivityFromManifest').withExactArgs('foo')
         .returns({apkPackage: 'pkg', apkActivity: 'ack'});
-      const result = {appPackage: 'pkg', appWaitPackage: 'pkg',
-                      appActivity: 'ack', appWaitActivity: 'ack'};
+      const result = {
+        appPackage: 'pkg',
+        appWaitPackage: 'pkg',
+        appActivity: 'ack',
+        appWaitActivity: 'ack',
+      };
       (await helpers.getLaunchInfo(adb, {app: "foo"})).should.deep
         .equal(result);
       mocks.adb.verify();
@@ -358,7 +379,7 @@ describe('Android Helpers', function () {
       mocks.adb.expects('forceStop').withExactArgs(pkg).once();
       mocks.adb.expects('clear').withExactArgs(pkg).once().returns('Success');
       mocks.adb.expects('grantAllPermissions').once().withExactArgs(pkg);
-      await helpers.resetApp(adb, {app: localApkPath, appPackage: pkg, fastReset: true, autoGrantPermissions:true});
+      await helpers.resetApp(adb, {app: localApkPath, appPackage: pkg, fastReset: true, autoGrantPermissions: true});
       mocks.adb.verify();
     });
     it('should perform reinstall if app is not installed and fast reset is requested', async function () {
@@ -375,9 +396,9 @@ describe('Android Helpers', function () {
   describe('installApk', withMocks({adb, fs, helpers}, function (mocks) {
     //use mock appium capabilities for this test
     const opts = {
-      app : 'local',
-      appPackage : 'pkg',
-      androidInstallTimeout : 90000
+      app: 'local',
+      appPackage: 'pkg',
+      androidInstallTimeout: 90000
     };
     it('should complain if appPackage is not passed', async function () {
       await helpers.installApk(adb, {})
@@ -492,17 +513,18 @@ describe('Android Helpers', function () {
       mocks.adb.verify();
     });
   }));
-  describe('pushUnlock', withMocks({adb}, (mocks) => {
-    it('should install unlockApp', async function () {
-      mocks.adb.expects('installOrUpgrade').withArgs(unlockApkPath, 'io.appium.unlock').once()
-        .returns('');
-      await helpers.pushUnlock(adb);
-      mocks.adb.verify();
-    });
-  }));
   describe('pushStrings', withMocks({adb, fs}, (mocks) => {
-    const opts = {app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
+    it('should return {} because of no app, no package and no app in the target device', async function () {
+      const opts = {tmpDir: '/tmp_dir', appPackage: 'pkg'};
+      mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`).once();
+      mocks.adb.expects('pullApk').withExactArgs(opts.appPackage, opts.tmpDir)
+        .throws(`adb: error: remote object ${opts.appPackage} does not exist`);
+      (await helpers.pushStrings('en', adb, opts)).should.be.deep.equal({});
+      mocks.adb.verify();
+      mocks.fs.verify();
+    });
     it('should extracts string.xml and converts it to string.json and pushes it', async function () {
+      const opts = {app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
       mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`).once();
       mocks.fs.expects('exists').withExactArgs(opts.app).returns(true);
       mocks.fs.expects('rimraf').once();
@@ -513,6 +535,7 @@ describe('Android Helpers', function () {
       mocks.adb.verify();
     });
     it('should delete remote strings.json if app is not present', async function () {
+      const opts = {app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
       mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`).once();
       mocks.fs.expects('exists').withExactArgs(opts.app).returns(false);
       (await helpers.pushStrings('en', adb, opts)).should.be.deep.equal({});
@@ -520,6 +543,7 @@ describe('Android Helpers', function () {
       mocks.fs.verify();
     });
     it('should push an empty json object if app does not have strings.xml', async function () {
+      const opts = {app: 'app', tmpDir: '/tmp_dir', appPackage: 'pkg'};
       mocks.adb.expects('rimraf').withExactArgs(`${REMOTE_TEMP_PATH}/strings.json`).once();
       mocks.fs.expects('exists').withExactArgs(opts.app).returns(true);
       mocks.fs.expects('rimraf').once();
@@ -541,8 +565,7 @@ describe('Android Helpers', function () {
     });
     it('should start unlock app', async function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
-      mocks.adb.expects('forceStop').once().returns('');
-      mocks.adb.expects('startApp').once().returns('');
+      mocks.adb.expects('shell').once().returns('');
       await helpers.unlock(helpers, adb, {});
       mocks.adb.verify();
       mocks.helpers.verify();
@@ -604,7 +627,6 @@ describe('Android Helpers', function () {
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').withExactArgs(adb, opts.language, opts.locale).once();
       mocks.helpers.expects('setMockLocationApp').withExactArgs(adb, 'io.appium.settings').once();
-      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
       await helpers.initDevice(adb, opts);
       mocks.helpers.verify();
       mocks.adb.verify();
@@ -616,33 +638,30 @@ describe('Android Helpers', function () {
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').withArgs(adb).once();
       mocks.helpers.expects('setMockLocationApp').never();
-      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
       await helpers.initDevice(adb, opts);
       mocks.helpers.verify();
       mocks.adb.verify();
     });
     it('should return defaultIME if unicodeKeyboard is setted to true', async function () {
-      const opts = {unicodeKeyboard : true};
+      const opts = {unicodeKeyboard: true};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').once();
       mocks.helpers.expects('setMockLocationApp').once();
       mocks.helpers.expects('initUnicodeKeyboard').withExactArgs(adb).once().returns("defaultIME");
-      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
       await helpers.initDevice(adb, opts).should.become("defaultIME");
       mocks.helpers.verify();
       mocks.adb.verify();
     });
     it('should return undefined if unicodeKeyboard is setted to false', async function () {
-      const opts = {unicodeKeyboard : false};
+      const opts = {unicodeKeyboard: false};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').once();
       mocks.helpers.expects('setMockLocationApp').once();
       mocks.helpers.expects('initUnicodeKeyboard').never();
-      mocks.helpers.expects('pushUnlock').withExactArgs(adb).once();
       should.not.exist(await helpers.initDevice(adb, opts));
       mocks.helpers.verify();
       mocks.adb.verify();
@@ -655,55 +674,54 @@ describe('Android Helpers', function () {
       mocks.helpers.expects('ensureDeviceLocale').once();
       mocks.helpers.expects('setMockLocationApp').once();
       mocks.helpers.expects('initUnicodeKeyboard').never();
-      mocks.helpers.expects('pushUnlock').never();
       await helpers.initDevice(adb, opts);
       mocks.helpers.verify();
       mocks.adb.verify();
     });
   }));
   describe('removeNullProperties', function () {
-    it('should ignore null properties', async function () {
+    it('should ignore null properties', function () {
       let test = {foo: null, bar: true};
       helpers.removeNullProperties(test);
       _.keys(test).length.should.equal(1);
     });
-    it('should ignore undefined properties', async function () {
+    it('should ignore undefined properties', function () {
       let test = {foo: undefined, bar: true};
       helpers.removeNullProperties(test);
       _.keys(test).length.should.equal(1);
     });
-    it('should not ignore falsy properties like 0 and false', async function () {
+    it('should not ignore falsy properties like 0 and false', function () {
       let test = {foo: false, bar: true, zero: 0};
       helpers.removeNullProperties(test);
       _.keys(test).length.should.equal(3);
     });
   });
   describe('truncateDecimals', function () {
-    it('should use floor when number is positive', async function () {
+    it('should use floor when number is positive', function () {
       helpers.truncateDecimals(12.345, 2).should.equal(12.34);
     });
-    it('should use ceil when number is negative', async function () {
+    it('should use ceil when number is negative', function () {
       helpers.truncateDecimals(-12.345, 2).should.equal(-12.34);
     });
   });
   describe('getChromePkg', function () {
-    it('should return pakage for chromium', async function () {
+    it('should return pakage for chromium', function () {
       helpers.getChromePkg('chromium').should.deep.equal(
         {pkg: 'org.chromium.chrome.shell', activity: '.ChromeShellActivity'});
     });
-    it('should return pakage for chromebeta', async function () {
+    it('should return pakage for chromebeta', function () {
       helpers.getChromePkg('chromebeta').should.deep.equal(
         {pkg: 'com.chrome.beta', activity: 'com.google.android.apps.chrome.Main'});
     });
-    it('should return pakage for browser', async function () {
+    it('should return pakage for browser', function () {
       helpers.getChromePkg('browser').should.deep.equal(
         {pkg: 'com.android.browser', activity: 'com.android.browser.BrowserActivity'});
     });
-    it('should return pakage for chromium-browser', async function () {
+    it('should return pakage for chromium-browser', function () {
       helpers.getChromePkg('chromium-browser').should.deep.equal(
         {pkg: 'org.chromium.chrome', activity: 'com.google.android.apps.chrome.Main'});
     });
-    it('should return pakage for chromium-webview', async function () {
+    it('should return pakage for chromium-webview', function () {
       helpers.getChromePkg('chromium-webview').should.deep.equal(
         {pkg: 'org.chromium.webview_shell', activity: 'org.chromium.webview_shell.WebViewBrowserActivity'});
     });

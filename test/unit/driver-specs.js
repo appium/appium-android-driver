@@ -66,7 +66,7 @@ describe('driver', function () {
         driver.opts.appPackage = 'io.appium.test';
         driver.opts.sharedPreferences = {
           name: 'com.appium.prefs',
-          prefs: [{type: 'string', name: 'mystr', value:'appium rocks!'}]
+          prefs: [{type: 'string', name: 'mystr', value: 'appium rocks!'}]
         };
         mocks.driver.expects('getPrefsBuilder').once().returns(builder);
         mocks.builder.expects('build').once();
@@ -95,9 +95,9 @@ describe('driver', function () {
       sandbox.stub(driver, 'checkAppPresent');
       sandbox.stub(driver, 'checkPackagePresent');
       sandbox.stub(driver, 'startAndroidSession');
-      sandbox.stub(ADB, 'createADB').callsFake(async function (opts) {
+      sandbox.stub(ADB, 'createADB').callsFake(function (opts) {
         return {
-          getDevicesWithRetry: async () => {
+          getDevicesWithRetry: () => {
             return [
               {udid: 'emulator-1234'},
               {udid: 'rotalume-1337'}
@@ -109,7 +109,8 @@ describe('driver', function () {
           setDeviceId: () => {},
           setEmulatorPort: () => {},
           adbPort: opts.adbPort,
-          networkSpeed: () => {}
+          networkSpeed: () => {},
+          getApiLevel: () => 22,
         };
       });
       sandbox.stub(driver.helpers, 'configureApp')
@@ -119,7 +120,7 @@ describe('driver', function () {
     afterEach(function () {
       sandbox.restore();
     });
-    it('should verify device is an emulator', async function () {
+    it('should verify device is an emulator', function () {
       driver.opts.avd = "Nexus_5X_Api_23";
       driver.isEmulator().should.equal(true);
       driver.opts.avd = undefined;
@@ -183,7 +184,7 @@ describe('driver', function () {
     });
   });
   describe('deleteSession', function () {
-    beforeEach(async function () {
+    beforeEach(function () {
       driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.bootstrap = new helpers.bootstrap(driver.adb);
@@ -224,7 +225,7 @@ describe('driver', function () {
     });
   });
   describe('dismissChromeWelcome', function () {
-    before(async function () {
+    before(function () {
       driver = new AndroidDriver();
     });
     it('should verify chromeOptions args', function () {
@@ -243,7 +244,7 @@ describe('driver', function () {
     });
   });
   describe('initAUT', withMocks({helpers}, (mocks) => {
-    beforeEach(async function () {
+    beforeEach(function () {
       driver = new AndroidDriver();
       driver.caps = {};
     });
@@ -267,8 +268,12 @@ describe('driver', function () {
     it('should install "otherApps" if set in capabilities', async function () {
       const otherApps = ["http://URL_FOR/fake/app.apk"];
       const tempApps = ["/path/to/fake/app.apk"];
-      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: false,
-        otherApps: `["${otherApps[0]}"]`
+      driver.opts = {
+        appPackage: "app.package",
+        appActivity: "act",
+        fullReset: false,
+        fastReset: false,
+        otherApps: `["${otherApps[0]}"]`,
       };
       sandbox.stub(driver.helpers, 'configureApp')
         .withArgs(otherApps[0], '.apk')
@@ -279,7 +284,7 @@ describe('driver', function () {
     });
   }));
   describe('startAndroidSession', function () {
-    beforeEach(async function () {
+    beforeEach(function () {
       driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.bootstrap = new helpers.bootstrap(driver.adb);
@@ -288,9 +293,10 @@ describe('driver', function () {
 
       // create a fake bootstrap because we can't mock
       // driver.bootstrap.<whatever> in advance
-      let fakeBootstrap = {start () {},
-                           onUnexpectedShutdown: {catch () {}}
-                          };
+      let fakeBootstrap = {
+        start () {},
+        onUnexpectedShutdown: {catch () {}}
+      };
 
       sandbox.stub(helpers, 'initDevice');
       sandbox.stub(helpers, 'unlock');
@@ -390,7 +396,7 @@ describe('driver', function () {
     });
   });
   describe('startChromeSession', function () {
-    beforeEach(async function () {
+    beforeEach(function () {
       driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.bootstrap = new helpers.bootstrap(driver.adb);

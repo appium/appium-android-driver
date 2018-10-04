@@ -1,5 +1,11 @@
 language: android
 dist: precise
+addons:
+    apt:
+      sources:
+        - ubuntu-toolchain-r-test
+      packages:
+        - g++-4.9
 android:
   components:
     # use the latest revision of Android SDK Tools
@@ -25,9 +31,11 @@ env:
     - ANDROID_EMU_NAME=test
     - ANDROID_EMU_TARGET=android-21
     - ANDROID_EMU_ABI=armeabi-v7a
+    - CC=gcc-4.9 CXX=g++-4.9
   matrix:
     - TEST=unit RECURSIVE=--recursive START_EMU=0
     - TEST=functional
+    - TEST=functional/bootstrap
     - TEST=functional/commands
     - TEST=functional/commands/basic
     - TEST=functional/commands/find
@@ -36,7 +44,7 @@ env:
 before_script:
   # node stuff
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
-  - nvm install 6
+  - nvm install 8
   - node --version
   - npm --version
   - npm install appium-test-support # get the travis emu scripts

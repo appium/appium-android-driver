@@ -12,7 +12,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('Network', function () {
-  beforeEach(async function () {
+  beforeEach(function () {
     driver = new AndroidDriver();
     adb = new ADB();
     driver.adb = adb;
@@ -60,7 +60,7 @@ describe('Network', function () {
     });
   });
   describe('setNetworkConnection', function () {
-    beforeEach(async function () {
+    beforeEach(function () {
       sandbox.stub(driver, 'setWifiState');
       driver.isEmulator.returns(false);
     });
@@ -143,14 +143,34 @@ describe('Network', function () {
     });
   });
   describe('setGeoLocation', function () {
-    it('should set location', async function () {
+    it('should return location in use after setting', async function () {
       adb.setGeoLocation.withArgs('location', 'is_emu').returns('res');
+      adb.getGeoLocation.returns({
+        latitude: '1.1',
+        longitude: '2.2',
+        altitude: '3.3',
+      });
       driver.isEmulator.returns('is_emu');
-      await driver.setGeoLocation('location').should.become('res');
+      const {latitude, longitude, altitude} = await driver.setGeoLocation('location');
+      (Number.isNaN(latitude)).should.be.false;
+      (Number.isNaN(longitude)).should.be.false;
+      (Number.isNaN(altitude)).should.be.false;
+    });
+  });
+  describe('getGeoLocation', function () {
+    it('should get location', async function () {
+      adb.getGeoLocation.returns({
+        latitude: '1.1',
+        longitude: '2.2',
+      });
+      const {latitude, longitude, altitude} = await driver.getGeoLocation();
+      (Number.isNaN(latitude)).should.be.false;
+      (Number.isNaN(longitude)).should.be.false;
+      (Number.isNaN(altitude)).should.be.false;
     });
   });
   describe('toggleLocationSettings', function () {
-    beforeEach(async function () {
+    beforeEach(function () {
       sandbox.stub(driver, 'toggleSetting');
     });
     it('should throw an error for API<16', async function () {
@@ -187,7 +207,7 @@ describe('Network', function () {
       sandbox.stub(driver, 'doKey').returns('');
       sandbox.stub(driver, 'openSettingsActivity').returns('');
       adb.getFocusedPackageAndActivity
-        .returns({appPackage: 'fpkg', appActivity:'fact'});
+        .returns({appPackage: 'fpkg', appActivity: 'fact'});
     });
     it('should toggle setting', async function () {
       await driver.toggleSetting('set', [61, 72]);

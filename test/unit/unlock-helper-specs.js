@@ -21,7 +21,7 @@ describe('Unlock Helpers', function () {
   let sandbox = sinon.createSandbox();
   let expect = chai.expect;
   describe('isValidUnlockType', function () {
-    it('should verify the unlock types', async function () {
+    it('should verify the unlock types', function () {
       helpers.isValidUnlockType('pin').should.equal(true);
       helpers.isValidUnlockType('pattern').should.equal(true);
       helpers.isValidUnlockType('password').should.equal(true);
@@ -29,8 +29,8 @@ describe('Unlock Helpers', function () {
       helpers.isValidUnlockType('telepathy').should.equal(false);
     });
   });
-  describe('isValidKey',  function () {
-    it('should verify the unlock keys for each type', async function () {
+  describe('isValidKey', function () {
+    it('should verify the unlock keys for each type', function () {
       helpers.isValidKey('pin').should.equal(false);
       helpers.isValidKey('pin', ' ').should.equal(false);
       helpers.isValidKey('pin', '1111').should.equal(true);
@@ -55,12 +55,12 @@ describe('Unlock Helpers', function () {
       helpers.isValidKey('password').should.equal(false);
       helpers.isValidKey('password', '   ').should.equal(false);
     });
-    it('should throw error if unlock type is invalid', async function () {
+    it('should throw error if unlock type is invalid', function () {
       expect(() => helpers.isValidKey('invalid_unlock_type', '1'))
         .to.throw('Invalid unlock type');
     });
   });
-  describe('dismissKeyguard', withMocks({driver,  adb, asyncbox, helpers}, (mocks) => {
+  describe('dismissKeyguard', withMocks({driver, adb, asyncbox, helpers}, (mocks) => {
     it('should hide keyboard if keyboard is snown', async function () {
       mocks.driver.expects('isKeyboardShown').returns(true);
       mocks.driver.expects('hideKeyboard').once();
@@ -114,13 +114,13 @@ describe('Unlock Helpers', function () {
     });
   }));
   describe('encodePassword', function () {
-    it('should verify the password with blank space is encoded', async function () {
+    it('should verify the password with blank space is encoded', function () {
       helpers.encodePassword('a p p i u m').should.equal("a%sp%sp%si%su%sm");
       helpers.encodePassword('   ').should.equal("%s%s%s");
     });
   });
   describe('stringKeyToArr', function () {
-    it('should cast string keys to array', async function () {
+    it('should cast string keys to array', function () {
       helpers.stringKeyToArr('1234').should.eql(['1', '2', '3', '4']);
       helpers.stringKeyToArr(' 1234 ').should.eql(['1', '2', '3', '4']);
       helpers.stringKeyToArr('1 2 3 4').should.eql(['1', '2', '3', '4']);
@@ -150,9 +150,11 @@ describe('Unlock Helpers', function () {
   describe('pinUnlock', withMocks({adb, helpers, driver, asyncbox}, (mocks) => {
     const caps = {unlockKey: '13579'};
     const keys = ['1', '3', '5', '7', '9'];
-    const els = [{ELEMENT: 1}, {ELEMENT: 2}, {ELEMENT: 3},
-                 {ELEMENT: 4}, {ELEMENT: 5}, {ELEMENT: 6},
-                 {ELEMENT: 7}, {ELEMENT: 8}, {ELEMENT: 9}];
+    const els = [
+      {ELEMENT: 1}, {ELEMENT: 2}, {ELEMENT: 3},
+      {ELEMENT: 4}, {ELEMENT: 5}, {ELEMENT: 6},
+      {ELEMENT: 7}, {ELEMENT: 8}, {ELEMENT: 9},
+    ];
     afterEach(function () {
       sandbox.restore();
     });
@@ -257,9 +259,9 @@ describe('Unlock Helpers', function () {
     });
   }));
   describe('getPatternKeyPosition', function () {
-    it('should verify pattern pin is aproximatelly to its position', async function () {
+    it('should verify pattern pin is aproximatelly to its position', function () {
       let pins = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((pin) => {
-        return helpers.getPatternKeyPosition(pin, {x: 33, y:323}, 137.6);
+        return helpers.getPatternKeyPosition(pin, {x: 33, y: 323}, 137.6);
       });
       let cols = [101, 238, 375];
       let rows = [391, 528, 665];
@@ -284,9 +286,9 @@ describe('Unlock Helpers', function () {
     });
   });
   describe('getPatternActions', function () {
-    it('should generate press, moveTo, relase gesture scheme to unlock by pattern', async function () {
+    it('should generate press, moveTo, relase gesture scheme to unlock by pattern', function () {
       let keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
-      let actions = helpers.getPatternActions(keys, {x: 0, y:0}, 1);
+      let actions = helpers.getPatternActions(keys, {x: 0, y: 0}, 1);
       actions.map((action, i) => {
         if (i === 0) {
           action.action.should.equal('press');
@@ -297,9 +299,9 @@ describe('Unlock Helpers', function () {
         }
       });
     });
-    it('should verify pattern gestures moves to non consecutives pins', async function () {
+    it('should verify pattern gestures moves to non consecutives pins', function () {
       let keys = ["7", "2", "9", "8", "5", "6", "1", "4", "3"];
-      let actions = helpers.getPatternActions(keys, {x: 0, y:0}, 1);
+      let actions = helpers.getPatternActions(keys, {x: 0, y: 0}, 1);
       // Move from pin 7 to pin 2
       actions[1].options.x.should.equal(1);
       actions[1].options.y.should.equal(-2);

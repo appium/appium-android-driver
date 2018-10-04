@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import Bootstrap from 'appium-android-bootstrap';
+import Bootstrap from '../../../lib/bootstrap';
 import path from 'path';
 import mockFS from 'mock-fs';
 import AndroidDriver from '../../..';
@@ -11,6 +11,7 @@ import ADB from 'appium-adb';
 import jimp from 'jimp';
 import helpers from '../../../lib/commands/actions';
 import * as teen_process from 'teen_process';
+
 
 let driver;
 let sandbox = sinon.createSandbox();
@@ -113,7 +114,7 @@ describe('Actions', function () {
       driver.swipe(0, 0, 1, 1, 0, 1);
       driver.bootstrap.sendAction.calledWith('swipe').should.be.true;
     });
-    it('should set start point to (0.5;0.5) if startX and startY are "null"', async function () {
+    it('should set start point to (0.5;0.5) if startX and startY are "null"', function () {
       let swipeOpts = {startX: 0.5, startY: 0.5, endX: 0, endY: 0, steps: 0};
       sandbox.stub(driver, 'doSwipe');
       driver.swipe('null', 'null', 0, 0, 0);
@@ -153,12 +154,12 @@ describe('Actions', function () {
       elementId: 'elem1', destElId: 'elem2',
       startX: 1, startY: 2, endX: 3, endY: 4, steps: 1
     };
-    it('should drag an element', async function () {
+    it('should drag an element', function () {
       driver.drag(1, 2, 3, 4, 0.02, null, 'elem1', 'elem2');
       driver.bootstrap.sendAction.calledWithExactly('element:drag', dragOpts)
         .should.be.true;
     });
-    it('should drag without an element', async function () {
+    it('should drag without an element', function () {
       dragOpts.elementId = null;
       driver.drag(1, 2, 3, 4, 0.02, null, null, 'elem2');
       driver.bootstrap.sendAction.calledWithExactly('drag', dragOpts)
