@@ -469,7 +469,6 @@ describe('Android Helpers', function () {
   }));
   describe('initUnicodeKeyboard', withMocks({adb}, (mocks) => {
     it('should install and enable unicodeIME', async function () {
-      mocks.adb.expects('install').once().returns('');
       mocks.adb.expects('defaultIME').once().returns('defaultIME');
       mocks.adb.expects('enableIME').once().returns('');
       mocks.adb.expects('setIME').once().returns('');

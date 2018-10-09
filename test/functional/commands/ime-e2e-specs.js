@@ -13,7 +13,7 @@ let defaultCaps = _.defaults({
   unicodeKeyboard: true,
   resetKeyboard: true
 }, DEFAULT_CAPS);
-let unicodeImeId = 'io.appium.android.ime/.UnicodeIME';
+let unicodeImeId = 'io.appium.settings/.UnicodeIME';
 
 describe('apidemo - IME', function () {
   before(async function () {
