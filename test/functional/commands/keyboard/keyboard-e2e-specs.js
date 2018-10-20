@@ -36,7 +36,10 @@ function deSamsungify (text) {
 
 async function getElement (driver, className) {
   return await retryInterval(10, 1000, async () => {
-    let el = _.last(await driver.findElements('class name', className));
+    const el = _.last(await driver.findElements('class name', className));
+    if (!el) {
+      throw new Error(`Cannot find an element by class name '${className}'`);
+    }
     return el.ELEMENT;
   });
 }
