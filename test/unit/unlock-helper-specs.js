@@ -166,7 +166,7 @@ describe('Unlock Helpers', function () {
         .withExactArgs("id", "com.android.systemui:id/digit_text", true)
         .returns(els);
       mocks.driver.expects('findElOrEls')
-        .withExactArgs('xpath', "//*[starts-with(@resource-id, 'com.android.keyguard:id/key_enter')]", false)
+        .withExactArgs('xpath', "//*[contains(@resource-id, 'id/key_enter')]", false)
         .returns({ELEMENT: 100});
       for (let e of els) {
         mocks.driver.expects('getAttribute').withExactArgs('text', e.ELEMENT)
@@ -199,7 +199,7 @@ describe('Unlock Helpers', function () {
           .returns({ELEMENT: parseInt(pin, 10)});
       }
       mocks.driver.expects('findElOrEls')
-        .withExactArgs('xpath', "//*[starts-with(@resource-id, 'com.android.keyguard:id/key_enter')]", false)
+        .withExactArgs('xpath', "//*[contains(@resource-id, 'id/key_enter')]", false)
         .returns({ELEMENT: 100});
       mocks.asyncbox.expects('sleep').withExactArgs(UNLOCK_WAIT_TIME).once();
       sandbox.stub(driver, 'click');
