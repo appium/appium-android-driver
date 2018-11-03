@@ -115,9 +115,21 @@ describe('Android Helpers', function () {
   });
   describe('ensureDeviceLocale', withMocks({adb}, (mocks) => {
     it('should call setDeviceLanguageCountry', async function () {
-      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US').once();
-      mocks.adb.expects('ensureCurrentLocale').withExactArgs('en', 'US').once().returns(true);
+      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US', null).once();
+      mocks.adb.expects('ensureCurrentLocale').withExactArgs('en', 'US', null).once().returns(true);
       await helpers.ensureDeviceLocale(adb, 'en', 'US');
+      mocks.adb.verify();
+    });
+    it('should call setDeviceLanguageCountry without script', async function () {
+      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US', null).once();
+      mocks.adb.expects('ensureCurrentLocale').withExactArgs('en', 'US', null).once().returns(true);
+      await helpers.ensureDeviceLocale(adb, 'en', 'US', undefined);
+      mocks.adb.verify();
+    });
+    it('should call setDeviceLanguageCountry with script', async function () {
+      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('zh', 'CN', 'Hans').once();
+      mocks.adb.expects('ensureCurrentLocale').withExactArgs('zh', 'CN', 'Hans').once().returns(true);
+      await helpers.ensureDeviceLocale(adb, 'zh', 'CN', 'Hans');
       mocks.adb.verify();
     });
     it('should never call setDeviceLanguageCountry', async function () {
@@ -127,8 +139,8 @@ describe('Android Helpers', function () {
       mocks.adb.verify();
     });
     it('should call setDeviceLanguageCountry with throw', async function () {
-      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('fr', 'FR').once();
-      mocks.adb.expects('ensureCurrentLocale').withExactArgs('fr', 'FR').once().returns(false);
+      mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('fr', 'FR', null).once();
+      mocks.adb.expects('ensureCurrentLocale').withExactArgs('fr', 'FR', null).once().returns(false);
       await helpers.ensureDeviceLocale(adb, 'fr', 'FR').should.eventually.be.rejectedWith(Error, `Failed to set language: fr and country: FR`);
       mocks.adb.verify();
     });
@@ -620,11 +632,11 @@ describe('Android Helpers', function () {
   }));
   describe('initDevice', withMocks({helpers, adb}, (mocks) => {
     it('should init device', async function () {
-      const opts = {language: "en", locale: "us"};
+      const opts = {language: "en", locale: "us", localeScript: 'Script'};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
-      mocks.helpers.expects('ensureDeviceLocale').withExactArgs(adb, opts.language, opts.locale).once();
+      mocks.helpers.expects('ensureDeviceLocale').withExactArgs(adb, opts.language, opts.locale, opts.localeScript).once();
       mocks.helpers.expects('setMockLocationApp').withExactArgs(adb, 'io.appium.settings').once();
       await helpers.initDevice(adb, opts);
       mocks.helpers.verify();

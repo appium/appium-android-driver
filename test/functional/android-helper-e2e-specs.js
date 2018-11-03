@@ -52,6 +52,16 @@ describe('android-helpers e2e', function () {
         await adb.getDeviceLocale().should.eventually.equal('fr-FR');
       }
     });
+    it('should set device language and country with script', async function () {
+      await helpers.ensureDeviceLocale(adb, 'zh', 'CN', 'Hans');
+
+      if (await adb.getApiLevel() < 23) {
+        await adb.getDeviceLanguage().should.eventually.equal('fr');
+        await adb.getDeviceCountry().should.eventually.equal('FR');
+      } else {
+        await adb.getDeviceLocale().should.eventually.equal('fr-Hans-CN');
+      }
+    });
   });
   describe('pushSettingsApp', function () {
     const settingsPkg = 'io.appium.settings';
