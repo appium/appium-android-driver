@@ -42,7 +42,7 @@
     "appium-support": "^2.24.1",
     "asyncbox": "^2.0.4",
     "bluebird": "^3.4.7",
-    "io.appium.settings": "^2.8.0",
+    "io.appium.settings": "^2.10.0",
     "jimp": "^0.5.3",
     "lodash": "^4.17.4",
     "moment": "^2.22.2",
