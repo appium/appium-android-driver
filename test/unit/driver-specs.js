@@ -197,6 +197,7 @@ describe('driver', function () {
       sandbox.stub(driver.adb, 'stopLogcat');
       sandbox.stub(driver.adb, 'setAnimationState');
       sandbox.stub(driver.adb, 'setDefaultHiddenApiPolicy');
+      sandbox.stub(driver.adb, 'getApiLevel').returns(27);
       sandbox.stub(driver.bootstrap, 'shutdown');
       sandbox.spy(log, 'debug');
     });
@@ -228,14 +229,14 @@ describe('driver', function () {
     });
     it('should call setAnimationState to enable it with API Level 27', async function () {
       driver._wasWindowAnimationDisabled = true;
-      driver.caps.deviceApiLevel = 27;
       await driver.deleteSession();
       driver.adb.setAnimationState.calledOnce.should.be.true;
       driver.adb.setDefaultHiddenApiPolicy.calledOnce.should.be.false;
     });
     it('should call setAnimationState to enable it with API Level 28', async function () {
       driver._wasWindowAnimationDisabled = true;
-      driver.caps.deviceApiLevel = 28;
+      driver.adb.getApiLevel.restore();
+      sandbox.stub(driver.adb, 'getApiLevel').returns(28);
       await driver.deleteSession();
       driver.adb.setAnimationState.calledOnce.should.be.true;
       driver.adb.setDefaultHiddenApiPolicy.calledOnce.should.be.true;
