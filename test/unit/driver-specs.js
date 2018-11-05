@@ -449,8 +449,6 @@ describe('driver', function () {
       driver.adb.setHiddenApiPolicy.calledOnce.should.be.false;
       driver.adb.setAnimationState.calledOnce.should.be.false;
     });
-
-
   });
   describe('startChromeSession', function () {
     beforeEach(function () {
