@@ -196,6 +196,8 @@ describe('driver', function () {
       sandbox.stub(driver.adb, 'stopLogcat');
       sandbox.stub(driver.bootstrap, 'shutdown');
       sandbox.spy(log, 'debug');
+      driver.caps = {};
+      driver.caps.getPlatformVersion = "28.0";
     });
     afterEach(function () {
       sandbox.restore();
