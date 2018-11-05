@@ -109,8 +109,8 @@ describe('General', function () {
       driver.adb.isSoftKeyboardPresent = () => {
         callIdx++;
         return {
-          isKeyboardShown: callIdx <= 1 ? true : false,
-          canCloseKeyboard: callIdx <= 1 ? true : false,
+          isKeyboardShown: callIdx <= 1,
+          canCloseKeyboard: callIdx <= 1,
         };
       };
       await driver.hideKeyboard().should.eventually.be.fulfilled;
