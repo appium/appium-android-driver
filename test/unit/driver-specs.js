@@ -186,6 +186,7 @@ describe('driver', function () {
   describe('deleteSession', function () {
     beforeEach(function () {
       driver = new AndroidDriver();
+      driver.caps = {};
       driver.adb = new ADB();
       driver.bootstrap = new helpers.bootstrap(driver.adb);
       sandbox.stub(driver, 'stopChromedriverProxies');
@@ -194,10 +195,10 @@ describe('driver', function () {
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'uninstallApk');
       sandbox.stub(driver.adb, 'stopLogcat');
+      sandbox.stub(driver.adb, 'setAnimationState');
+      sandbox.stub(driver.adb, 'setDefaultHiddenApiPolicy');
       sandbox.stub(driver.bootstrap, 'shutdown');
       sandbox.spy(log, 'debug');
-      driver.caps = {};
-      driver.caps.getPlatformVersion = "28.0";
     });
     afterEach(function () {
       sandbox.restore();
@@ -224,6 +225,26 @@ describe('driver', function () {
       driver.opts.fullReset = true;
       await driver.deleteSession();
       driver.adb.uninstallApk.calledOnce.should.be.true;
+    });
+    it('should call setAnimationState to enable it with API Level 27', async function () {
+      driver._wasWindowAnimationDisabled = true;
+      driver.caps.deviceApiLevel = 27;
+      await driver.deleteSession();
+      driver.adb.setAnimationState.calledOnce.should.be.true;
+      driver.adb.setDefaultHiddenApiPolicy.calledOnce.should.be.false;
+    });
+    it('should call setAnimationState to enable it with API Level 28', async function () {
+      driver._wasWindowAnimationDisabled = true;
+      driver.caps.deviceApiLevel = 28;
+      await driver.deleteSession();
+      driver.adb.setAnimationState.calledOnce.should.be.true;
+      driver.adb.setDefaultHiddenApiPolicy.calledOnce.should.be.true;
+    });
+    it('should not call setAnimationState', async function () {
+      driver._wasWindowAnimationDisabled = false;
+      await driver.deleteSession();
+      driver.adb.setAnimationState.calledOnce.should.be.false;
+      driver.adb.setDefaultHiddenApiPolicy.calledOnce.should.be.false;
     });
   });
   describe('dismissChromeWelcome', function () {
@@ -314,6 +335,9 @@ describe('driver', function () {
       sandbox.stub(driver.adb, 'getScreenSize');
       sandbox.stub(driver.adb, 'getModel');
       sandbox.stub(driver.adb, 'getManufacturer');
+      sandbox.stub(driver.adb, 'getApiLevel').returns(27);
+      sandbox.stub(driver.adb, 'setHiddenApiPolicy');
+      sandbox.stub(driver.adb, 'setAnimationState');
     });
     afterEach(function () {
       sandbox.restore();
@@ -396,6 +420,37 @@ describe('driver', function () {
       await driver.startAndroidSession();
       driver.dismissChromeWelcome.calledOnce.should.be.false;
     });
+    it('should call setAnimationState with API level 27', async function () {
+      driver.opts.disableWindowAnimation = true;
+      sandbox.stub(driver.adb, 'isAnimationOn').returns(true);
+
+      await driver.startAndroidSession();
+      driver.adb.isAnimationOn.calledOnce.should.be.true;
+      driver.adb.setHiddenApiPolicy.calledOnce.should.be.false;
+      driver.adb.setAnimationState.calledOnce.should.be.true;
+    });
+    it('should call setAnimationState with API level 28', async function () {
+      driver.opts.disableWindowAnimation = true;
+      sandbox.stub(driver.adb, 'isAnimationOn').returns(true);
+      driver.adb.getApiLevel.restore();
+      sandbox.stub(driver.adb, 'getApiLevel').returns(28);
+
+      await driver.startAndroidSession();
+      driver.adb.isAnimationOn.calledOnce.should.be.true;
+      driver.adb.setHiddenApiPolicy.calledOnce.should.be.true;
+      driver.adb.setAnimationState.calledOnce.should.be.true;
+    });
+    it('should not call setAnimationState', async function () {
+      driver.opts.disableWindowAnimation = true;
+      sandbox.stub(driver.adb, 'isAnimationOn').returns(false);
+
+      await driver.startAndroidSession();
+      driver.adb.isAnimationOn.calledOnce.should.be.true;
+      driver.adb.setHiddenApiPolicy.calledOnce.should.be.false;
+      driver.adb.setAnimationState.calledOnce.should.be.false;
+    });
+
+
   });
   describe('startChromeSession', function () {
     beforeEach(function () {
