@@ -103,21 +103,38 @@ describe('General', function () {
     });
   });
   describe('hideKeyboard', function () {
-    it('should hide keyboard via back command', async function () {
-      sandbox.stub(driver, 'back');
-      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: true, canCloseKeyboard: true}; };
-      await driver.hideKeyboard();
-      driver.back.calledOnce.should.be.true;
+    it('should hide keyboard with ESC command', async function () {
+      sandbox.stub(driver.adb, 'keyevent');
+      let callIdx = 0;
+      driver.adb.isSoftKeyboardPresent = () => {
+        callIdx++;
+        return {
+          isKeyboardShown: callIdx <= 1,
+          canCloseKeyboard: callIdx <= 1,
+        };
+      };
+      await driver.hideKeyboard().should.eventually.be.fulfilled;
+      driver.adb.keyevent.calledWithExactly(111).should.be.true;
     });
-    it('should not call back command if can\'t close keyboard', async function () {
-      sandbox.stub(driver, 'back');
-      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: true, canCloseKeyboard: false}; };
-      await driver.hideKeyboard();
-      driver.back.notCalled.should.be.true;
+    it('should throw if can\'t close keyboard', async function () {
+      sandbox.stub(driver.adb, 'keyevent');
+      driver.adb.isSoftKeyboardPresent = () => {
+        return {
+          isKeyboardShown: true,
+          canCloseKeyboard: false,
+        };
+      };
+      await driver.hideKeyboard().should.eventually.be.rejected;
+      driver.adb.keyevent.notCalled.should.be.true;
     });
-    it('should throw an error if no keyboard is present', async function () {
-      driver.adb.isSoftKeyboardPresent = () => { return false; };
-      await driver.hideKeyboard().should.be.rejectedWith(/not present/);
+    it('should not throw if no keyboard is present', async function () {
+      driver.adb.isSoftKeyboardPresent = () => {
+        return {
+          isKeyboardShown: false,
+          canCloseKeyboard: false,
+        };
+      };
+      await driver.hideKeyboard().should.eventually.be.fulfilled;
     });
   });
   describe('openSettingsActivity', function () {
