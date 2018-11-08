@@ -21,7 +21,6 @@ gulp.task('ant', gulp.series(['ant-clean', 'ant-build']), function () {});
 
 boilerplate({
   build: 'appium-android-driver',
-  extraPrepublishTasks: ['ant'],
   e2eTest: {android: true},
   testTimeout: 40000,
   coverage: {

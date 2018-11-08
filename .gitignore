@@ -10,8 +10,8 @@ package-lock.json*
 .idea
 target
 out
-bin
 bootstrap/bin/*
+!bootstrap/bin/AppiumBootstrap.jar
 bootstrap/local.properties
 bootstrap/.classpath
 bootstrap/target/
