@@ -230,6 +230,9 @@ Now you should be able to build the Jar file by running
 npm run build:bootstrap
 ```
 
+The AppiumBootstrap.jar file is committed to source, and isn't built during the publish step. Any updates to it
+need to be committed.
+
 ### Transpile ES2015 code
 
 ```
