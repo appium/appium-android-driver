@@ -231,7 +231,7 @@ npm run build:bootstrap
 ```
 
 The AppiumBootstrap.jar file is committed to source, and isn't built during the publish step. Any updates to it
-need to be committed.
+need to be committed. To build the jar, run `gulp ant`.
 
 ### Transpile ES2015 code
 
