@@ -496,7 +496,7 @@ describe('Android Helpers', function () {
         .withExactArgs('io.appium.settings').once()
         .returns(true);
       mocks.adb.expects('getApiLevel').never();
-      mocks.adb.expects('grantPermission').never();
+      mocks.adb.expects('grantPermissions').never();
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
     });
@@ -507,7 +507,7 @@ describe('Android Helpers', function () {
         .withExactArgs('io.appium.settings').once()
         .returns(true);
       mocks.adb.expects('getApiLevel').never();
-      mocks.adb.expects('grantPermission').never();
+      mocks.adb.expects('grantPermissions').never();
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
     });
@@ -530,14 +530,9 @@ describe('Android Helpers', function () {
         .returns(false);
       mocks.adb.expects('getApiLevel').once()
         .returns(22);
-      mocks.adb.expects('grantPermission').once()
-        .withExactArgs('io.appium.settings', 'android.permission.SET_ANIMATION_SCALE')
-        .returns(true);
-      mocks.adb.expects('grantPermission').once()
-        .withExactArgs('io.appium.settings', 'android.permission.CHANGE_CONFIGURATION')
-        .returns(true);
-      mocks.adb.expects('grantPermission').once()
-        .withExactArgs('io.appium.settings', 'android.permission.ACCESS_FINE_LOCATION')
+      mocks.adb.expects('grantPermissions').once()
+        .withExactArgs('io.appium.settings',
+          ['android.permission.SET_ANIMATION_SCALE', 'android.permission.CHANGE_CONFIGURATION', 'android.permission.ACCESS_FINE_LOCATION'])
         .returns(true);
       mocks.adb.expects('startApp').once();
       await helpers.pushSettingsApp(adb);
