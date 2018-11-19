@@ -116,7 +116,8 @@ describe('General', function () {
       await driver.hideKeyboard().should.eventually.be.fulfilled;
       driver.adb.keyevent.calledWithExactly(111).should.be.true;
     });
-    it('should throw if can\'t close keyboard', async function () {
+    it('should throw if cannot close keyboard', async function () {
+      this.timeout(10000);
       sandbox.stub(driver.adb, 'keyevent');
       driver.adb.isSoftKeyboardPresent = () => {
         return {

@@ -5,6 +5,7 @@ build
 .idea/
 *.iml
 coverage
+.nyc_output/
 package-lock.json*
 
 .idea

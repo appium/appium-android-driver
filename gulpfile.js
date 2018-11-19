@@ -26,6 +26,6 @@ boilerplate({
   testTimeout: 40000,
   coverage: {
     files: ['./build/test/unit/**/*-specs.js', '!./build/test/functional/**', '!./build/test/assets'],
-    verbose: false
+    verbose: true,
   },
 });
