@@ -204,7 +204,7 @@ describe('Android Helpers', function () {
       udid.should.equal('emulator-1234');
       emPort.should.equal(1234);
     });
-    it('should get first deviceId and emPort if avd, platformVersion, and udid aren\'t given', async function () {
+    it('should get first deviceId and emPort if avd, platformVersion, and udid are not given', async function () {
       let {udid, emPort} = await helpers.getDeviceInfoFromCaps();
       udid.should.equal('emulator-1234');
       emPort.should.equal(1234);

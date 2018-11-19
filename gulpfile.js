@@ -24,7 +24,7 @@ boilerplate({
   e2eTest: {android: true},
   testTimeout: 40000,
   coverage: {
-    files: ['./test/unit/**/*-specs.js', '!./test/functional/**', '!./test/assets'],
-    verbose: true
+    files: ['./build/test/unit/**/*-specs.js', '!./build/test/functional/**', '!./build/test/assets'],
+    verbose: true,
   },
 });
