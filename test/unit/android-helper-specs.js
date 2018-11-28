@@ -511,25 +511,25 @@ describe('Android Helpers', function () {
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
     });
-    it('should launch settings app if it isnt running on over API level 23+ devices', async function () {
+    it('should launch settings app if it isnt running on over API level 24 devices', async function () {
+      mocks.adb.expects('installOrUpgrade').once()
+        .returns(true);
+      mocks.adb.expects('processExists').once()
+        .returns(false);
+      mocks.adb.expects('getApiLevel').once()
+        .returns(24);
+      mocks.adb.expects('startApp').once();
+      await helpers.pushSettingsApp(adb);
+      mocks.adb.verify();
+    });
+
+    it('should launch settings app if it isnt running on under API level 23 devices', async function () {
       mocks.adb.expects('installOrUpgrade').once()
         .returns(true);
       mocks.adb.expects('processExists').once()
         .returns(false);
       mocks.adb.expects('getApiLevel').once()
         .returns(23);
-      mocks.adb.expects('startApp').once();
-      await helpers.pushSettingsApp(adb);
-      mocks.adb.verify();
-    });
-
-    it('should launch settings app if it isnt running on under API level 22 devices', async function () {
-      mocks.adb.expects('installOrUpgrade').once()
-        .returns(true);
-      mocks.adb.expects('processExists').once()
-        .returns(false);
-      mocks.adb.expects('getApiLevel').once()
-        .returns(22);
       mocks.adb.expects('grantPermissions').once()
         .withExactArgs('io.appium.settings',
           ['android.permission.SET_ANIMATION_SCALE', 'android.permission.CHANGE_CONFIGURATION', 'android.permission.ACCESS_FINE_LOCATION'])
