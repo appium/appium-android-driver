@@ -673,12 +673,34 @@ describe('Android Helpers', function () {
       mocks.helpers.verify();
       mocks.adb.verify();
     });
+    it('should init device without locale and language', async function () {
+      const opts = {};
+      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('startLogcat').once();
+      mocks.helpers.expects('pushSettingsApp').once();
+      mocks.helpers.expects('ensureDeviceLocale').never();
+      mocks.helpers.expects('setMockLocationApp').withExactArgs(adb, 'io.appium.settings').once();
+      await helpers.initDevice(adb, opts);
+      mocks.helpers.verify();
+      mocks.adb.verify();
+    });
+    it('should init device with either locale or language', async function () {
+      const opts = {language: "en"};
+      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('startLogcat').once();
+      mocks.helpers.expects('pushSettingsApp').once();
+      mocks.helpers.expects('ensureDeviceLocale').withExactArgs(adb, opts.language, opts.locale, opts.localeScript).once();
+      mocks.helpers.expects('setMockLocationApp').withExactArgs(adb, 'io.appium.settings').once();
+      await helpers.initDevice(adb, opts);
+      mocks.helpers.verify();
+      mocks.adb.verify();
+    });
     it('should not install mock location on emulator', async function () {
       const opts = {avd: "avd"};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
-      mocks.helpers.expects('ensureDeviceLocale').withArgs(adb).once();
+      mocks.helpers.expects('ensureDeviceLocale').never();
       mocks.helpers.expects('setMockLocationApp').never();
       await helpers.initDevice(adb, opts);
       mocks.helpers.verify();
@@ -689,7 +711,7 @@ describe('Android Helpers', function () {
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
-      mocks.helpers.expects('ensureDeviceLocale').once();
+      mocks.helpers.expects('ensureDeviceLocale').never();
       mocks.helpers.expects('setMockLocationApp').once();
       mocks.helpers.expects('initUnicodeKeyboard').withExactArgs(adb).once().returns("defaultIME");
       await helpers.initDevice(adb, opts).should.become("defaultIME");
@@ -701,7 +723,7 @@ describe('Android Helpers', function () {
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
-      mocks.helpers.expects('ensureDeviceLocale').once();
+      mocks.helpers.expects('ensureDeviceLocale').never();
       mocks.helpers.expects('setMockLocationApp').once();
       mocks.helpers.expects('initUnicodeKeyboard').never();
       should.not.exist(await helpers.initDevice(adb, opts));
@@ -713,7 +735,7 @@ describe('Android Helpers', function () {
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
-      mocks.helpers.expects('ensureDeviceLocale').once();
+      mocks.helpers.expects('ensureDeviceLocale').never();
       mocks.helpers.expects('setMockLocationApp').once();
       mocks.helpers.expects('initUnicodeKeyboard').never();
       await helpers.initDevice(adb, opts);
