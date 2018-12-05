@@ -39,7 +39,7 @@
     "appium-adb": "^6.27.0",
     "appium-base-driver": "^3.0.0",
     "appium-chromedriver": "^4.8.0",
-    "appium-support": "^2.24.1",
+    "appium-support": "^2.25.0",
     "asyncbox": "^2.0.4",
     "bluebird": "^3.4.7",
     "io.appium.settings": "^2.10.0",
