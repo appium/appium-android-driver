@@ -36,8 +36,8 @@ env:
     - TEST=unit RECURSIVE=--recursive START_EMU=0
     - TEST=functional
     - TEST=functional/bootstrap
-    - TEST=functional/commands
     - TEST=functional/commands/keyboard
+    - TEST=functional/commands
     - TEST=functional/commands/basic
     - TEST=functional/commands/find
     - TEST=functional/commands/touch
