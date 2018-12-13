@@ -37,9 +37,9 @@ env:
     - TEST=functional
     - TEST=functional/bootstrap
     - TEST=functional/commands
+    - TEST=functional/commands/keyboard
     - TEST=functional/commands/basic
     - TEST=functional/commands/find
-    - TEST=functional/commands/keyboard
     - TEST=functional/commands/touch
 before_script:
   # node stuff
