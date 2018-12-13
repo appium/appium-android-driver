@@ -17,10 +17,7 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
   before(async function () {
     if (process.env.TRAVIS) return this.skip(); //eslint-disable-line curly
 
-    // restarting doesn't work on Android 7
     let adb = new ADB();
-    if (await adb.getApiLevel() > 23) return this.skip(); //eslint-disable-line curly
-
     initialLocale = await getLocale(adb);
   });
 
@@ -30,28 +27,29 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
   });
   after(async function () {
     if (driver) {
-      await driver.adb.setDeviceCountry(initialLocale);
-
+      await driver.adb.setDeviceLocale(initialLocale);
       await driver.deleteSession();
     }
   });
 
   async function getLocale (adb) {
     if (await adb.getApiLevel() < 23) {
-      return await adb.getDeviceCountry();
+      const language = await adb.getDeviceLanguage();
+      const country = await adb.getDeviceCountry();
+      return `${language}-${country}`;
     } else {
       return await adb.getDeviceLocale();
     }
   }
 
   it('should start as FR', async function () {
-    let frCaps = Object.assign({}, DEFAULT_CAPS, {locale: 'FR'});
+    let frCaps = Object.assign({}, DEFAULT_CAPS, {language: 'fr', locale: 'FR'});
     await driver.createSession(frCaps);
-    await getLocale(driver.adb).should.eventually.equal('FR');
+    await getLocale(driver.adb).should.eventually.equal('fr-FR');
   });
   it('should start as US', async function () {
-    let usCaps = Object.assign({}, DEFAULT_CAPS, {locale: 'US'});
+    let usCaps = Object.assign({}, DEFAULT_CAPS, {language: 'en', locale: 'US'});
     await driver.createSession(usCaps);
-    await getLocale(driver.adb).should.eventually.equal('US');
+    await getLocale(driver.adb).should.eventually.equal('en-US');
   });
 });
