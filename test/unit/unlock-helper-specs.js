@@ -62,7 +62,7 @@ describe('Unlock Helpers', function () {
   });
   describe('wakeUp', withMocks({adb, helpers}, (mocks) => {
     it('should call shell input to wake up device', async function () {
-      mocks.adb.expects('keyevent').withExactArgs("224").once();
+      mocks.adb.expects('keyevent').withExactArgs('224').once();
       await helpers.wakeUp(adb);
       mocks.adb.verify();
     });
