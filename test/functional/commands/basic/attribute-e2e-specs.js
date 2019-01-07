@@ -37,7 +37,7 @@ describe('apidemo - attributes', function () {
     await driver.back();
   });
   it('should be able to find content description attribute', async function () {
-    await driver.getAttribute('contentDescription', animationEl).should.eventually.become("Animation");
+    await driver.getAttribute('contentDescription', animationEl).should.eventually.become('Animation');
   });
   it('should be able to find displayed attribute', async function () {
     await driver.getAttribute('displayed', animationEl).should.eventually.become('true');

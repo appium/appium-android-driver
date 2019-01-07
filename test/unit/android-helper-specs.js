@@ -12,7 +12,7 @@ import B from 'bluebird';
 
 
 const should = chai.should();
-const REMOTE_TEMP_PATH = "/data/local/tmp";
+const REMOTE_TEMP_PATH = '/data/local/tmp';
 chai.use(chaiAsPromised);
 
 
@@ -22,7 +22,7 @@ describe('Android Helpers', function () {
     it('should correctly parse java version', function () {
       helpers.parseJavaVersion(`java version "1.8.0_40"
         Java(TM) SE Runtime Environment (build 1.8.0_40-b27)`).should
-        .be.equal("1.8.0_40");
+        .be.equal('1.8.0_40');
     });
     it('should return null if it cannot parse java verstion', function () {
       should.not.exist(helpers.parseJavaVersion('foo bar'));
@@ -47,10 +47,10 @@ describe('Android Helpers', function () {
     });
   }));
   describe('prepareEmulator', withMocks({adb, helpers}, (mocks) => {
-    const opts = {avd: "foo@bar", avdArgs: "", language: "en", locale: "us"};
+    const opts = {avd: 'foo@bar', avdArgs: '', language: 'en', locale: 'us'};
     it('should not launch avd if one is already running', async function () {
       mocks.adb.expects('getRunningAVD').withExactArgs('foobar')
-        .returns("foo");
+        .returns('foo');
       mocks.adb.expects('launchAVD').never();
       mocks.adb.expects('killEmulator').never();
       await helpers.prepareEmulator(adb, opts);
@@ -61,12 +61,12 @@ describe('Android Helpers', function () {
         .returns(null);
       mocks.adb.expects('launchAVD').withExactArgs('foo@bar', '', 'en', 'us',
         undefined, undefined)
-        .returns("");
+        .returns('');
       await helpers.prepareEmulator(adb, opts);
       mocks.adb.verify();
     });
     it('should kill emulator if avdArgs contains -wipe-data', async function () {
-      const opts = {avd: "foo@bar", avdArgs: "-wipe-data"};
+      const opts = {avd: 'foo@bar', avdArgs: '-wipe-data'};
       mocks.adb.expects('getRunningAVD').withExactArgs('foobar').returns('foo');
       mocks.adb.expects('killEmulator').withExactArgs('foobar').once();
       mocks.adb.expects('launchAVD').once();
@@ -289,10 +289,10 @@ describe('Android Helpers', function () {
         keyPassword: 'keyPassword',
       });
       ADB.createADB.calledWithExactly({
-        javaVersion: "1.7",
-        adbPort: "222",
+        javaVersion: '1.7',
+        adbPort: '222',
         suppressKillServer: true,
-        remoteAdbHost: "remote_host",
+        remoteAdbHost: 'remote_host',
         clearDeviceLogsOnStart: true,
         adbExecTimeout: 50,
         useKeystore: true,
@@ -301,8 +301,8 @@ describe('Android Helpers', function () {
         keyAlias: 'keyAlias',
         keyPassword: 'keyPassword',
       }).should.be.true;
-      curDeviceId.should.equal("111222");
-      emulatorPort.should.equal("111");
+      curDeviceId.should.equal('111222');
+      emulatorPort.should.equal('111');
     });
     it('should not set emulator port if emPort is undefined', async function () {
       emulatorPort = 5555;
@@ -319,27 +319,27 @@ describe('Android Helpers', function () {
     it('should return when appPackage & appActivity are already present', async function () {
       mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
       await helpers.getLaunchInfo(adb, {
-        app: "foo",
-        appPackage: "bar",
-        appActivity: "act",
+        app: 'foo',
+        appPackage: 'bar',
+        appActivity: 'act',
       });
       mocks.adb.verify();
     });
     it('should return when all parameters are already present', async function () {
       mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-      await helpers.getLaunchInfo(adb, {app: "foo", appPackage: "bar", appWaitPackage: "*", appActivity: "app.activity", appWaitActivity: "app.nameA,app.nameB"});
+      await helpers.getLaunchInfo(adb, {app: 'foo', appPackage: 'bar', appWaitPackage: '*', appActivity: 'app.activity', appWaitActivity: 'app.nameA,app.nameB'});
       mocks.adb.verify();
     });
     it('should print warn when all parameters are already present but the format is odd', async function () {
       // It only prints warn message
       mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-      await helpers.getLaunchInfo(adb, {app: "foo", appPackage: "bar ", appWaitPackage: "*", appActivity: "a_act", appWaitActivity: ". "});
+      await helpers.getLaunchInfo(adb, {app: 'foo', appPackage: 'bar ', appWaitPackage: '*', appActivity: 'a_act', appWaitActivity: '. '});
       mocks.adb.verify();
     });
     it('should print warn when appPackage & appActivity are already present but the format is odd', async function () {
       // It only prints warn message
       mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-      await helpers.getLaunchInfo(adb, {app: "foo", appPackage: "bar", appActivity: "a_act "});
+      await helpers.getLaunchInfo(adb, {app: 'foo', appPackage: 'bar', appActivity: 'a_act '});
       mocks.adb.verify();
     });
     it('should return package and launch activity from manifest', async function () {
@@ -351,7 +351,7 @@ describe('Android Helpers', function () {
         appActivity: 'ack',
         appWaitActivity: 'ack',
       };
-      (await helpers.getLaunchInfo(adb, {app: "foo"})).should.deep
+      (await helpers.getLaunchInfo(adb, {app: 'foo'})).should.deep
         .equal(result);
       mocks.adb.verify();
     });
@@ -615,7 +615,7 @@ describe('Android Helpers', function () {
     it('should raise an error on undefined unlockKey when unlockType is defined', async function () {
       mocks.adb.expects('isScreenLocked').once().returns(true);
       mocks.unlocker.expects('isValidKey').once();
-      await helpers.unlock(helpers, adb, {unlockType: "pin"}).should.be.rejectedWith('unlockKey');
+      await helpers.unlock(helpers, adb, {unlockType: 'pin'}).should.be.rejectedWith('unlockKey');
       mocks.adb.verify();
       mocks.unlocker.verify();
       mocks.helpers.verify();
@@ -624,7 +624,7 @@ describe('Android Helpers', function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.unlocker.expects('pinUnlock').once();
-      await helpers.unlock(helpers, adb, {unlockType: "pin", unlockKey: "1111"});
+      await helpers.unlock(helpers, adb, {unlockType: 'pin', unlockKey: '1111'});
       mocks.adb.verify();
       mocks.helpers.verify();
     });
@@ -632,7 +632,7 @@ describe('Android Helpers', function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.unlocker.expects('passwordUnlock').once();
-      await helpers.unlock(helpers, adb, {unlockType: "password", unlockKey: "appium"});
+      await helpers.unlock(helpers, adb, {unlockType: 'password', unlockKey: 'appium'});
       mocks.adb.verify();
       mocks.helpers.verify();
     });
@@ -640,7 +640,7 @@ describe('Android Helpers', function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.unlocker.expects('patternUnlock').once();
-      await helpers.unlock(helpers, adb, {unlockType: "pattern", unlockKey: "123456789"});
+      await helpers.unlock(helpers, adb, {unlockType: 'pattern', unlockKey: '123456789'});
       mocks.adb.verify();
       mocks.helpers.verify();
     });
@@ -648,7 +648,7 @@ describe('Android Helpers', function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.unlocker.expects('fingerprintUnlock').once();
-      await helpers.unlock(helpers, adb, {unlockType: "fingerprint", unlockKey: "1111"});
+      await helpers.unlock(helpers, adb, {unlockType: 'fingerprint', unlockKey: '1111'});
       mocks.adb.verify();
       mocks.unlocker.verify();
     });
@@ -656,14 +656,14 @@ describe('Android Helpers', function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
       mocks.adb.expects('getApiLevel').once().returns(21);
-      await helpers.unlock(helpers, adb, {unlockType: "fingerprint", unlockKey: "1111"}).should.eventually
+      await helpers.unlock(helpers, adb, {unlockType: 'fingerprint', unlockKey: '1111'}).should.eventually
         .be.rejectedWith('Fingerprint');
       mocks.helpers.verify();
     });
   }));
   describe('initDevice', withMocks({helpers, adb}, (mocks) => {
     it('should init device', async function () {
-      const opts = {language: "en", locale: "us", localeScript: 'Script'};
+      const opts = {language: 'en', locale: 'us', localeScript: 'Script'};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
@@ -685,7 +685,7 @@ describe('Android Helpers', function () {
       mocks.adb.verify();
     });
     it('should init device with either locale or language', async function () {
-      const opts = {language: "en"};
+      const opts = {language: 'en'};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
@@ -696,7 +696,7 @@ describe('Android Helpers', function () {
       mocks.adb.verify();
     });
     it('should not install mock location on emulator', async function () {
-      const opts = {avd: "avd"};
+      const opts = {avd: 'avd'};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
@@ -713,8 +713,8 @@ describe('Android Helpers', function () {
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').never();
       mocks.helpers.expects('setMockLocationApp').once();
-      mocks.helpers.expects('initUnicodeKeyboard').withExactArgs(adb).once().returns("defaultIME");
-      await helpers.initDevice(adb, opts).should.become("defaultIME");
+      mocks.helpers.expects('initUnicodeKeyboard').withExactArgs(adb).once().returns('defaultIME');
+      await helpers.initDevice(adb, opts).should.become('defaultIME');
       mocks.helpers.verify();
       mocks.adb.verify();
     });
@@ -731,7 +731,7 @@ describe('Android Helpers', function () {
       mocks.adb.verify();
     });
     it('should not push unlock app if unlockType is defined', async function () {
-      const opts = {unlockType: "unlock_type"};
+      const opts = {unlockType: 'unlock_type'};
       mocks.adb.expects('waitForDevice').once();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();

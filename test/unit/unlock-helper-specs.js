@@ -7,7 +7,7 @@ import AndroidDriver from '../../lib/driver';
 import * as asyncbox from 'asyncbox';
 import ADB from 'appium-adb';
 
-const KEYCODE_NUMPAD_ENTER = "66";
+const KEYCODE_NUMPAD_ENTER = '66';
 const INPUT_KEYS_WAIT_TIME = 100;
 const HIDE_KEYBOARD_WAIT_TIME = 100;
 const UNLOCK_WAIT_TIME = 100;
@@ -77,7 +77,7 @@ describe('Unlock Helpers', function () {
     it('should dismiss notifications and dissmiss keyguard via swipping up', async function () {
       mocks.driver.expects('isKeyboardShown').returns(false);
       mocks.adb.expects('shell')
-        .withExactArgs(["service", "call", "notification", "1"]).once();
+        .withExactArgs(['service', 'call', 'notification', '1']).once();
       mocks.adb.expects('back').once();
       mocks.adb.expects('getApiLevel').returns(21);
       mocks.helpers.expects('swipeUp').withExactArgs(driver).once();
@@ -91,7 +91,7 @@ describe('Unlock Helpers', function () {
       mocks.adb.expects('shell').onCall(0).returns('');
       mocks.adb.expects('back').once();
       mocks.adb.expects('getApiLevel').returns(22);
-      mocks.adb.expects('shell').withExactArgs(["wm", "dismiss-keyguard"]).once();
+      mocks.adb.expects('shell').withExactArgs(['wm', 'dismiss-keyguard']).once();
       mocks.helpers.expects('swipeUp').never();
       await helpers.dismissKeyguard(driver, adb);
       mocks.driver.verify();
@@ -115,8 +115,8 @@ describe('Unlock Helpers', function () {
   }));
   describe('encodePassword', function () {
     it('should verify the password with blank space is encoded', function () {
-      helpers.encodePassword('a p p i u m').should.equal("a%sp%sp%si%su%sm");
-      helpers.encodePassword('   ').should.equal("%s%s%s");
+      helpers.encodePassword('a p p i u m').should.equal('a%sp%sp%si%su%sm');
+      helpers.encodePassword('   ').should.equal('%s%s%s');
     });
   });
   describe('stringKeyToArr', function () {
@@ -163,7 +163,7 @@ describe('Unlock Helpers', function () {
       mocks.helpers.expects('stringKeyToArr').returns(keys);
       mocks.adb.expects('getApiLevel').returns(21);
       mocks.driver.expects('findElOrEls')
-        .withExactArgs("id", "com.android.systemui:id/digit_text", true)
+        .withExactArgs('id', 'com.android.systemui:id/digit_text', true)
         .returns(els);
       mocks.driver.expects('findElOrEls')
         .withExactArgs('xpath', "//*[contains(@resource-id, 'id/key_enter')]", false)
@@ -195,7 +195,7 @@ describe('Unlock Helpers', function () {
       mocks.adb.expects('getApiLevel').returns(20);
       for (let pin of keys) {
         mocks.driver.expects('findElOrEls')
-          .withExactArgs("id", `com.android.keyguard:id/key${pin}`, false)
+          .withExactArgs('id', `com.android.keyguard:id/key${pin}`, false)
           .returns({ELEMENT: parseInt(pin, 10)});
       }
       mocks.driver.expects('findElOrEls')
@@ -287,7 +287,7 @@ describe('Unlock Helpers', function () {
   });
   describe('getPatternActions', function () {
     it('should generate press, moveTo, relase gesture scheme to unlock by pattern', function () {
-      let keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+      let keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
       let actions = helpers.getPatternActions(keys, {x: 0, y: 0}, 1);
       actions.map((action, i) => {
         if (i === 0) {
@@ -300,7 +300,7 @@ describe('Unlock Helpers', function () {
       });
     });
     it('should verify pattern gestures moves to non consecutives pins', function () {
-      let keys = ["7", "2", "9", "8", "5", "6", "1", "4", "3"];
+      let keys = ['7', '2', '9', '8', '5', '6', '1', '4', '3'];
       let actions = helpers.getPatternActions(keys, {x: 0, y: 0}, 1);
       // Move from pin 7 to pin 2
       actions[1].options.x.should.equal(1);

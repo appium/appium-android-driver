@@ -56,7 +56,7 @@ describe('Android 7 Webview Browser tester', function () {
     await driver.setUrl(`http://${HOST}:${PORT}/test/guinea-pig`);
 
     // make sure we are in the right context
-    await driver.getCurrentContext().should.eventually.eql("CHROMIUM");
+    await driver.getCurrentContext().should.eventually.eql('CHROMIUM');
 
     let el = await driver.findElement('id', 'i am a link');
     await driver.click(el.ELEMENT);

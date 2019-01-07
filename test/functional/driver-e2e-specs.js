@@ -167,7 +167,7 @@ describe('close', function () {
     await driver.closeApp();
     let appPackage = await driver.getCurrentPackage();
     if (appPackage) {
-      appPackage.should.not.equal("io.appium.android.apis");
+      appPackage.should.not.equal('io.appium.android.apis');
     }
   });
 });
