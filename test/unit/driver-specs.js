@@ -36,7 +36,7 @@ describe('driver', function () {
       it('should be rejected if isEmulator is false', function () {
         let driver = new AndroidDriver();
         sandbox.stub(driver, 'isEmulator').returns(false);
-        driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
+        driver.fingerprint(1111).should.eventually.be.rejectedWith('fingerprint method is only available for emulators');
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
@@ -44,7 +44,7 @@ describe('driver', function () {
       it('sendSMS should be rejected if isEmulator is false', function () {
         let driver = new AndroidDriver();
         sandbox.stub(driver, 'isEmulator').returns(false);
-        driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
+        driver.sendSMS(4509, 'Hello Appium').should.eventually.be.rejectedWith('sendSMS method is only available for emulators');
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
@@ -121,12 +121,12 @@ describe('driver', function () {
       sandbox.restore();
     });
     it('should verify device is an emulator', function () {
-      driver.opts.avd = "Nexus_5X_Api_23";
+      driver.opts.avd = 'Nexus_5X_Api_23';
       driver.isEmulator().should.equal(true);
       driver.opts.avd = undefined;
-      driver.opts.udid = "emulator-5554";
+      driver.opts.udid = 'emulator-5554';
       driver.isEmulator().should.equal(true);
-      driver.opts.udid = "01234567889";
+      driver.opts.udid = '01234567889';
       driver.isEmulator().should.equal(false);
     });
     it('should get java version if none is provided', async function () {
@@ -259,11 +259,11 @@ describe('driver', function () {
       driver.shouldDismissChromeWelcome().should.be.false;
       driver.opts = {chromeOptions: {args: []}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {chromeOptions: {args: "--no-first-run"}};
+      driver.opts = {chromeOptions: {args: '--no-first-run'}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {chromeOptions: {args: ["--disable-dinosaur-easter-egg"]}};
+      driver.opts = {chromeOptions: {args: ['--disable-dinosaur-easter-egg']}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {chromeOptions: {args: ["--no-first-run"]}};
+      driver.opts = {chromeOptions: {args: ['--no-first-run']}};
       driver.shouldDismissChromeWelcome().should.be.true;
     });
   });
@@ -273,28 +273,28 @@ describe('driver', function () {
       driver.caps = {};
     });
     it('should throw error if run with full reset', async function () {
-      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: true};
+      driver.opts = {appPackage: 'app.package', appActivity: 'act', fullReset: true};
       await driver.initAUT().should.be.rejectedWith(/Full reset requires an app capability/);
     });
     it('should reset if run with fast reset', async function () {
-      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: true};
-      driver.adb = "mock_adb";
-      mocks.helpers.expects("resetApp").withArgs("mock_adb");
+      driver.opts = {appPackage: 'app.package', appActivity: 'act', fullReset: false, fastReset: true};
+      driver.adb = 'mock_adb';
+      mocks.helpers.expects('resetApp').withArgs('mock_adb');
       await driver.initAUT();
       mocks.helpers.verify();
     });
     it('should keep data if run without reset', async function () {
-      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: false};
-      mocks.helpers.expects("resetApp").never();
+      driver.opts = {appPackage: 'app.package', appActivity: 'act', fullReset: false, fastReset: false};
+      mocks.helpers.expects('resetApp').never();
       await driver.initAUT();
       mocks.helpers.verify();
     });
     it('should install "otherApps" if set in capabilities', async function () {
-      const otherApps = ["http://URL_FOR/fake/app.apk"];
-      const tempApps = ["/path/to/fake/app.apk"];
+      const otherApps = ['http://URL_FOR/fake/app.apk'];
+      const tempApps = ['/path/to/fake/app.apk'];
       driver.opts = {
-        appPackage: "app.package",
-        appActivity: "act",
+        appPackage: 'app.package',
+        appActivity: 'act',
         fullReset: false,
         fastReset: false,
         otherApps: `["${otherApps[0]}"]`,
@@ -302,7 +302,7 @@ describe('driver', function () {
       sandbox.stub(driver.helpers, 'configureApp')
         .withArgs(otherApps[0], '.apk')
         .returns(tempApps[0]);
-      mocks.helpers.expects("installOtherApks").once().withArgs(tempApps, driver.adb, driver.opts);
+      mocks.helpers.expects('installOtherApks').once().withArgs(tempApps, driver.adb, driver.opts);
       await driver.initAUT();
       mocks.helpers.verify();
     });
@@ -471,7 +471,7 @@ describe('driver', function () {
     it('should call dismissChromeWelcome', async function () {
       driver.opts.browserName = 'Chrome';
       driver.opts.chromeOptions = {
-        "args": ["--no-first-run"]
+        'args': ['--no-first-run']
       };
       await driver.startChromeSession();
       driver.dismissChromeWelcome.calledOnce.should.be.true;

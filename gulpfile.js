@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const { exec } = require('teen_process');
 const system = require('appium-support').system;

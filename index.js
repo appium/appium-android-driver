@@ -8,7 +8,7 @@ import * as server from './lib/server';
 
 const { startServer } = server;
 
-const DEFAULT_HOST = "localhost";
+const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 4723;
 
 async function main () {

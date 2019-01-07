@@ -30,7 +30,7 @@ const defaultUnicodeCaps = _.defaults({
 
 function deSamsungify (text) {
   // For samsung S5 text is appended with ". Editing."
-  return text.replace(". Editing.", "");
+  return text.replace('. Editing.', '');
 }
 
 async function getElement (driver, className) {

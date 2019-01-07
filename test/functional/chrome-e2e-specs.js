@@ -12,9 +12,9 @@ chai.use(chaiAsPromised);
 const avd = process.env.ANDROID_25_AVD || 'Nexus_5_API_25';
 const capabilities = _.defaults({
   avd,
-  platformVersion: "7.1",
+  platformVersion: '7.1',
   chromeOptions: {
-    args: ["--no-first-run"]
+    args: ['--no-first-run']
   }
 }, CHROME_CAPS);
 
@@ -33,6 +33,6 @@ describe('createSession', function () {
   it('should start chrome and dismiss the welcome dialog', async function () {
     await driver.createSession(capabilities);
     let appActivity = await driver.getCurrentActivity();
-    appActivity.should.not.equal("org.chromium.chrome.browser.firstrun.FirstRunActivity");
+    appActivity.should.not.equal('org.chromium.chrome.browser.firstrun.FirstRunActivity');
   });
 });

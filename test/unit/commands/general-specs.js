@@ -288,7 +288,7 @@ describe('General', function () {
   describe('getStrings', withMocks({helpers}, (mocks) => {
     it('should return app strings', async function () {
       driver.bootstrap.sendAction = () => { return ''; };
-      mocks.helpers.expects("pushStrings")
+      mocks.helpers.expects('pushStrings')
           .returns({test: 'en_value'});
       let strings = await driver.getStrings('en');
       strings.test.should.equal('en_value');

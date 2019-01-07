@@ -38,20 +38,20 @@ describe('Android Bootstrap', function () {
   after(async function () {
     await androidBootstrap.shutdown();
   });
-  it("sendAction should work", async function () {
+  it('sendAction should work', async function () {
     (await androidBootstrap.sendAction('wake')).should.equal(true);
   });
-  it("sendCommand should work", async function () {
+  it('sendCommand should work', async function () {
     (await androidBootstrap.sendCommand(COMMAND_TYPES.ACTION, {action: 'getDataDir'})).should
-     .equal("/data");
+     .equal('/data');
   });
-  it("sendCommand should correctly throw error", async function () {
+  it('sendCommand should correctly throw error', async function () {
     await androidBootstrap.sendCommand(COMMAND_TYPES.ACTION, {action: 'unknown'}).should
      .eventually.be.rejectedWith(errors.UnknownCommandError);
   });
-  it("should cancel onUnexpectedShutdown promise on unexpected uiAutomator shutdown", async function () {
+  it('should cancel onUnexpectedShutdown promise on unexpected uiAutomator shutdown', async function () {
     await androidBootstrap.sendCommand(COMMAND_TYPES.SHUTDOWN);
     await androidBootstrap.onUnexpectedShutdown.should.eventually
-      .be.rejectedWith("UiAUtomator shut down unexpectedly");
+      .be.rejectedWith('UiAUtomator shut down unexpectedly');
   });
 });

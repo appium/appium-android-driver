@@ -291,9 +291,9 @@ describe('Context', function () {
         .should.be.equal('app_act');
     });
     it('should be able to set loggingPrefs capability', async function () {
-      let chromedriver = await setupNewChromedriver({pageLoadStrategy: "strategy"});
+      let chromedriver = await setupNewChromedriver({pageLoadStrategy: 'strategy'});
       chromedriver.start.getCall(0).args[0].pageLoadStrategy
-        .should.be.equal("strategy");
+        .should.be.equal('strategy');
     });
   });
 });

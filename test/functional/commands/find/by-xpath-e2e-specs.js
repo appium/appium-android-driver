@@ -8,7 +8,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 const atv = 'android.widget.TextView';
-const f = "android.widget.FrameLayout";
+const f = 'android.widget.FrameLayout';
 
 describe('Find - xpath', function () {
   let driver;
@@ -45,7 +45,7 @@ describe('Find - xpath', function () {
   it('should find the last element', async function () {
     let el = await driver.findElement('xpath', `(//${atv})[last()]`);
     let text = await driver.getText(el.ELEMENT);
-    ["OS", "Text", "Views", "Preference"].should.include(text);
+    ['OS', 'Text', 'Views', 'Preference'].should.include(text);
   });
 
   // TODO: Doesn't work on CI. Works locally on API_LEVEL 23
