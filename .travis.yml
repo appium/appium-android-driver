@@ -33,7 +33,7 @@ env:
     - ANDROID_EMU_ABI=armeabi-v7a
     - CC=gcc-4.9 CXX=g++-4.9
   matrix:
-    - TEST=unit RECURSIVE=--recursive START_EMU=0
+    - TEST=unit RECURSIVE=--recursive START_EMU=0 COVERALLS=1
     - TEST=functional
     - TEST=functional/bootstrap
     - TEST=functional/commands/keyboard
@@ -64,4 +64,4 @@ before_script:
 script:
   - npm run lint && npm run mocha -- -t $MOCHA_TIMEOUT $RECURSIVE build/test/$TEST -g @skip-ci -i
 after_success:
-  - _FORCE_LOGS=0 npm run coverage
+  - if [ ${COVERALLS} = "1" ]; then npm run coverage; fi
