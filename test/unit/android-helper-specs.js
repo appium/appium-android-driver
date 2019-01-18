@@ -18,19 +18,6 @@ chai.use(chaiAsPromised);
 
 describe('Android Helpers', function () {
   let adb = new ADB();
-  describe('parseJavaVersion', function () {
-    it('should correctly parse java version', function () {
-      helpers.parseJavaVersion(`java version "1.8.0_40"
-        Java(TM) SE Runtime Environment (build 1.8.0_40-b27)`).should
-        .be.equal('1.8.0_40');
-    });
-    it('should return null if it cannot parse java verstion', function () {
-      should.not.exist(helpers.parseJavaVersion('foo bar'));
-    });
-    it('should parse OpenJDK versioning', function () {
-      helpers.parseJavaVersion('openjdk version 1.8').should.be.equal('1.8');
-    });
-  });
 
   describe('getJavaVersion', withMocks({teen_process}, (mocks) => {
     it('should correctly get java version', async function () {
@@ -39,7 +26,7 @@ describe('Android Helpers', function () {
       (await helpers.getJavaVersion()).should.equal('1.8.0_40');
       mocks.teen_process.verify();
     });
-    it('should return null if it cannot parse java verstion', async function () {
+    it('should throw if cannot parse java verstion', async function () {
       mocks.teen_process.expects('exec').withExactArgs('java', ['-version'])
         .returns({stderr: 'foo bar'});
       await helpers.getJavaVersion().should.eventually.be.rejectedWith('Java');

@@ -129,10 +129,6 @@ describe('driver', function () {
       driver.opts.udid = '01234567889';
       driver.isEmulator().should.equal(false);
     });
-    it('should get java version if none is provided', async function () {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
-      driver.opts.javaVersion.should.exist;
-    });
     it('should get browser package details if browserName is provided', async function () {
       sandbox.spy(helpers, 'getChromePkg');
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'Chrome'});
