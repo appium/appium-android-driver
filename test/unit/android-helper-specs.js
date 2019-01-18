@@ -261,7 +261,6 @@ describe('Android Helpers', function () {
     });
     it('should create adb and set device id and emulator port', async function () {
       await helpers.createADB({
-        javaVersion: '1.7',
         udid: '111222',
         emPort: '111',
         adbPort: '222',
@@ -276,7 +275,6 @@ describe('Android Helpers', function () {
         keyPassword: 'keyPassword',
       });
       ADB.createADB.calledWithExactly({
-        javaVersion: '1.7',
         adbPort: '222',
         suppressKillServer: true,
         remoteAdbHost: 'remote_host',

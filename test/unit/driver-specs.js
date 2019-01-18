@@ -150,15 +150,6 @@ describe('driver', function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
       driver.caps.webStorageEnabled.should.exist;
     });
-    it('should delete a session on failure', async function () {
-      // Force an error to make sure deleteSession gets called
-      sandbox.stub(helpers, 'getJavaVersion').throws();
-      sandbox.stub(driver, 'deleteSession');
-      try {
-        await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
-      } catch (ign) {}
-      driver.deleteSession.calledOnce.should.be.true;
-    });
     it('should pass along adbPort capability to ADB', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', adbPort: 1111});
       driver.adb.adbPort.should.equal(1111);
