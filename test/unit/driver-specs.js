@@ -129,10 +129,6 @@ describe('driver', function () {
       driver.opts.udid = '01234567889';
       driver.isEmulator().should.equal(false);
     });
-    it('should get java version if none is provided', async function () {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
-      driver.opts.javaVersion.should.exist;
-    });
     it('should get browser package details if browserName is provided', async function () {
       sandbox.spy(helpers, 'getChromePkg');
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'Chrome'});
@@ -153,15 +149,6 @@ describe('driver', function () {
     it('should add server details to caps', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
       driver.caps.webStorageEnabled.should.exist;
-    });
-    it('should delete a session on failure', async function () {
-      // Force an error to make sure deleteSession gets called
-      sandbox.stub(helpers, 'getJavaVersion').throws();
-      sandbox.stub(driver, 'deleteSession');
-      try {
-        await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
-      } catch (ign) {}
-      driver.deleteSession.calledOnce.should.be.true;
     });
     it('should pass along adbPort capability to ADB', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', adbPort: 1111});
