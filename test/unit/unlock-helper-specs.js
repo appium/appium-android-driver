@@ -60,17 +60,10 @@ describe('Unlock Helpers', function () {
         .to.throw('Invalid unlock type');
     });
   });
-  describe('wakeUp', withMocks({adb, helpers}, (mocks) => {
-    it('should call shell input to wake up device', async function () {
-      mocks.adb.expects('keyevent').withExactArgs('224').once();
-      await helpers.wakeUp(adb);
-      mocks.adb.verify();
-    });
-  }));
   describe('dismissKeyguard', withMocks({driver, adb, asyncbox, helpers}, (mocks) => {
     it('should hide keyboard if keyboard is snown', async function () {
       mocks.driver.expects('isKeyboardShown').returns(true);
-      mocks.helpers.expects('wakeUp').once();
+      mocks.adb.expects('keyevent').withExactArgs('224').once();
       mocks.driver.expects('hideKeyboard').once();
       mocks.asyncbox.expects('sleep').withExactArgs(HIDE_KEYBOARD_WAIT_TIME).once();
       mocks.adb.expects('shell').once();
@@ -84,7 +77,7 @@ describe('Unlock Helpers', function () {
     });
     it('should dismiss notifications and dissmiss keyguard via swipping up', async function () {
       mocks.driver.expects('isKeyboardShown').returns(false);
-      mocks.helpers.expects('wakeUp').once();
+      mocks.adb.expects('keyevent').withExactArgs('224').once();
       mocks.adb.expects('shell')
         .withExactArgs(['service', 'call', 'notification', '1']).once();
       mocks.adb.expects('back').once();
@@ -97,7 +90,7 @@ describe('Unlock Helpers', function () {
     });
     it('should dissmiss keyguard via dismiss-keyguard shell command if API level > 21', async function () {
       mocks.driver.expects('isKeyboardShown').returns(false);
-      mocks.helpers.expects('wakeUp').once();
+      mocks.adb.expects('keyevent').withExactArgs('224').once();
       mocks.adb.expects('shell').onCall(0).returns('');
       mocks.adb.expects('back').once();
       mocks.adb.expects('getApiLevel').returns(22);
