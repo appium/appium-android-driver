@@ -79,13 +79,12 @@ describe('Find - basic', function () {
     before(async function () {
       await driver.implicitWait(implicitWait);
     });
-    it('should respect implicit wait with multiple elements', async function () {
+    it('should not respect implicit wait with multiple elements', async function () {
       let beforeMs = Date.now();
       await driver.findElements('id', 'there_is_nothing_called_this')
         .should.eventually.have.length(0);
       let afterMs = Date.now();
-      (afterMs - beforeMs).should.be.below(implicitWait + 5000);
-      (afterMs - beforeMs).should.be.above(implicitWait);
+      (afterMs - beforeMs).should.be.below(implicitWait);
     });
     it('should respect implicit wait with a single element', async function () {
       let beforeMs = Date.now();

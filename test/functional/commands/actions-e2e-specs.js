@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../..';
 import _ from 'lodash';
+import { retryInterval } from 'asyncbox';
 import DEFAULT_CAPS from '../desired';
 
 
@@ -31,8 +32,11 @@ describe('actions', function () {
     it('should replace existing value in a text field', async function () {
       this.retries(4);
 
-      let el = _.last(await driver.findElements('class name', 'android.widget.EditText'));
-      el.should.exist;
+      let el;
+      await retryInterval(3, 1000, async () => {
+        el = _.last(await driver.findElements('class name', 'android.widget.EditText'));
+        el.should.exist;
+      });
       await driver.setValue('original value', el.ELEMENT);
       await driver.getText(el.ELEMENT).should.eventually.equal('original value');
 
