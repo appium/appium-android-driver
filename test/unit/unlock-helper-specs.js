@@ -7,7 +7,7 @@ import AndroidDriver from '../../lib/driver';
 import * as asyncbox from 'asyncbox';
 import ADB from 'appium-adb';
 
-const KEYCODE_NUMPAD_ENTER = '66';
+const KEYCODE_NUMPAD_ENTER = 66;
 const INPUT_KEYS_WAIT_TIME = 100;
 const HIDE_KEYBOARD_WAIT_TIME = 100;
 const UNLOCK_WAIT_TIME = 100;
@@ -63,8 +63,8 @@ describe('Unlock Helpers', function () {
   describe('dismissKeyguard', withMocks({driver, adb, asyncbox, helpers}, (mocks) => {
     it('should hide keyboard if keyboard is shown', async function () {
       mocks.driver.expects('isKeyboardShown').returns(true);
-      mocks.driver.expects('pressKeyCode').withExactArgs('224').once();
-      mocks.driver.expects('pressKeyCode').withExactArgs('26').once();
+      mocks.driver.expects('pressKeyCode').withExactArgs(224).once();
+      mocks.driver.expects('pressKeyCode').withExactArgs(26).once();
       mocks.driver.expects('hideKeyboard').once();
       mocks.asyncbox.expects('sleep').withExactArgs(HIDE_KEYBOARD_WAIT_TIME).once();
       mocks.adb.expects('shell').once();
@@ -78,8 +78,8 @@ describe('Unlock Helpers', function () {
     });
     it('should dismiss notifications and dissmiss keyguard via swipping up', async function () {
       mocks.driver.expects('isKeyboardShown').returns(false);
-      mocks.driver.expects('pressKeyCode').withExactArgs('224').once();
-      mocks.driver.expects('pressKeyCode').withExactArgs('26').once();
+      mocks.driver.expects('pressKeyCode').withExactArgs(224).once();
+      mocks.driver.expects('pressKeyCode').withExactArgs(26).once();
       mocks.adb.expects('shell')
         .withExactArgs(['service', 'call', 'notification', '1']).once();
       mocks.adb.expects('back').once();
@@ -92,8 +92,8 @@ describe('Unlock Helpers', function () {
     });
     it('should dissmiss keyguard via dismiss-keyguard shell command if API level > 21', async function () {
       mocks.driver.expects('isKeyboardShown').returns(false);
-      mocks.driver.expects('pressKeyCode').withExactArgs('224').once();
-      mocks.driver.expects('pressKeyCode').withExactArgs('26').once();
+      mocks.driver.expects('pressKeyCode').withExactArgs(224).once();
+      mocks.driver.expects('pressKeyCode').withExactArgs(26).once();
       mocks.adb.expects('shell').onCall(0).returns('');
       mocks.adb.expects('back').once();
       mocks.adb.expects('getApiLevel').returns(22);
@@ -172,7 +172,7 @@ describe('Unlock Helpers', function () {
         .withExactArgs('id', 'com.android.systemui:id/digit_text', true)
         .returns(els);
       mocks.adb.expects('isScreenLocked').returns(true);
-      mocks.driver.expects('pressKeyCode').withExactArgs('66').once();
+      mocks.driver.expects('pressKeyCode').withExactArgs(66).once();
       for (let e of els) {
         mocks.driver.expects('getAttribute').withExactArgs('text', e.ELEMENT)
           .returns(e.ELEMENT.toString());
