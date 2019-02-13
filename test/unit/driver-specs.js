@@ -293,37 +293,37 @@ describe('driver', function () {
       await driver.initAUT();
       mocks.helpers.verify();
     });
-    it('should uninstall a package "uninstallPackages" if set in capabiliteis', async function () {
-      const uninstallPackages = 'app.bundle.id1';
+    it('should uninstall a package "uninstallOtherPackages" if set in capabiliteis', async function () {
+      const uninstallOtherPackages = 'app.bundle.id1';
       driver.opts = {
         appPackage: 'app.package',
         appActivity: 'act',
         fullReset: false,
         fastReset: false,
-        uninstallPackages,
+        uninstallOtherPackages,
       };
       driver.adb = new ADB();
       sandbox.stub(driver.adb, 'uninstallApk')
         .withArgs('app.bundle.id1')
         .returns(true);
-      mocks.helpers.expects('uninstallPackages').once().withArgs([uninstallPackages], driver.adb);
+      mocks.helpers.expects('uninstallOtherPackages').once().withArgs([uninstallOtherPackages], driver.adb);
       await driver.initAUT();
       mocks.helpers.verify();
     });
 
-    it('should uninstall multiple packages "uninstallPackages" if set in capabiliteis', async function () {
-      const uninstallPackages = ['app.bundle.id1', 'app.bundle.id2'];
+    it('should uninstall multiple packages "uninstallOtherPackages" if set in capabiliteis', async function () {
+      const uninstallOtherPackages = ['app.bundle.id1', 'app.bundle.id2'];
       driver.opts = {
         appPackage: 'app.package',
         appActivity: 'act',
         fullReset: false,
         fastReset: false,
-        uninstallPackages: `["${uninstallPackages[0]}", "${uninstallPackages[1]}"]`,
+        uninstallOtherPackages: `["${uninstallOtherPackages[0]}", "${uninstallOtherPackages[1]}"]`,
       };
       driver.adb = new ADB();
       sandbox.stub(driver.adb, 'uninstallApk')
         .returns(true);
-      mocks.helpers.expects('uninstallPackages').once().withArgs(uninstallPackages, driver.adb);
+      mocks.helpers.expects('uninstallOtherPackages').once().withArgs(uninstallOtherPackages, driver.adb);
       await driver.initAUT();
       mocks.helpers.verify();
     });
