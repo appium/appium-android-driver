@@ -335,6 +335,15 @@ describe('driver', function () {
       (await helpers._get3rdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID]))
         .should.eql(['app.bundle.id1', 'io.appium.uiautomator2.server', 'io.appium.uiautomator2.server.test']);
     });
+
+    it('get all 3rd party packages with multiple package filter', async function () {
+      driver.adb = new ADB();
+      sandbox.stub(driver.adb, 'shell')
+        .returns('package:app.bundle.id1\npackage:io.appium.settings\npackage:io.appium.uiautomator2.server\npackage:io.appium.uiautomator2.server.test\n');
+      (await helpers._get3rdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID, 'io.appium.uiautomator2.server']))
+        .should.eql(['app.bundle.id1', 'io.appium.uiautomator2.server.test']);
+    });
+
     it('get no 3rd party packages', async function () {
       driver.adb = new ADB();
       sandbox.stub(driver.adb, 'shell').throws('');
