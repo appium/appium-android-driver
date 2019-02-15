@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import log from '../../lib/logger';
 import sinon from 'sinon';
-import helpers from '../../lib/android-helpers';
+import { helpers, SETTINGS_HELPER_PKG_ID } from '../../lib/android-helpers';
 import { withMocks } from 'appium-test-support';
 import AndroidDriver from '../..';
 import ADB from 'appium-adb';
@@ -292,6 +292,63 @@ describe('driver', function () {
       mocks.helpers.expects('installOtherApks').once().withArgs(tempApps, driver.adb, driver.opts);
       await driver.initAUT();
       mocks.helpers.verify();
+    });
+    it('should uninstall a package "uninstallOtherPackages" if set in capabilities', async function () {
+      const uninstallOtherPackages = 'app.bundle.id1';
+      driver.opts = {
+        appPackage: 'app.package',
+        appActivity: 'act',
+        fullReset: false,
+        fastReset: false,
+        uninstallOtherPackages,
+      };
+      driver.adb = new ADB();
+      sandbox.stub(driver.adb, 'uninstallApk')
+        .withArgs('app.bundle.id1')
+        .returns(true);
+      mocks.helpers.expects('uninstallOtherPackages').once().withArgs(driver.adb, [uninstallOtherPackages], [SETTINGS_HELPER_PKG_ID]);
+      await driver.initAUT();
+      mocks.helpers.verify();
+    });
+
+    it('should uninstall multiple packages "uninstallOtherPackages" if set in capabilities', async function () {
+      const uninstallOtherPackages = ['app.bundle.id1', 'app.bundle.id2'];
+      driver.opts = {
+        appPackage: 'app.package',
+        appActivity: 'act',
+        fullReset: false,
+        fastReset: false,
+        uninstallOtherPackages: `["${uninstallOtherPackages[0]}", "${uninstallOtherPackages[1]}"]`,
+      };
+      driver.adb = new ADB();
+      sandbox.stub(driver.adb, 'uninstallApk')
+        .returns(true);
+      mocks.helpers.expects('uninstallOtherPackages').once().withArgs(driver.adb, uninstallOtherPackages, [SETTINGS_HELPER_PKG_ID]);
+      await driver.initAUT();
+      mocks.helpers.verify();
+    });
+
+    it('get all 3rd party packages', async function () {
+      driver.adb = new ADB();
+      sandbox.stub(driver.adb, 'shell')
+        .returns('package:app.bundle.id1\npackage:io.appium.settings\npackage:io.appium.uiautomator2.server\npackage:io.appium.uiautomator2.server.test\n');
+      (await helpers.getThirdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID]))
+        .should.eql(['app.bundle.id1', 'io.appium.uiautomator2.server', 'io.appium.uiautomator2.server.test']);
+    });
+
+    it('get all 3rd party packages with multiple package filter', async function () {
+      driver.adb = new ADB();
+      sandbox.stub(driver.adb, 'shell')
+        .returns('package:app.bundle.id1\npackage:io.appium.settings\npackage:io.appium.uiautomator2.server\npackage:io.appium.uiautomator2.server.test\n');
+      (await helpers.getThirdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID, 'io.appium.uiautomator2.server']))
+        .should.eql(['app.bundle.id1', 'io.appium.uiautomator2.server.test']);
+    });
+
+    it('get no 3rd party packages', async function () {
+      driver.adb = new ADB();
+      sandbox.stub(driver.adb, 'shell').throws('');
+      (await helpers.getThirdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID]))
+        .should.eql([]);
     });
   }));
   describe('startAndroidSession', function () {
