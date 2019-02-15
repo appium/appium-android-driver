@@ -306,7 +306,7 @@ describe('driver', function () {
       sandbox.stub(driver.adb, 'uninstallApk')
         .withArgs('app.bundle.id1')
         .returns(true);
-      mocks.helpers.expects('uninstallOtherPackages').once().withArgs([uninstallOtherPackages], driver.adb, [SETTINGS_HELPER_PKG_ID]);
+      mocks.helpers.expects('uninstallOtherPackages').once().withArgs(driver.adb, [uninstallOtherPackages], [SETTINGS_HELPER_PKG_ID]);
       await driver.initAUT();
       mocks.helpers.verify();
     });
@@ -323,7 +323,7 @@ describe('driver', function () {
       driver.adb = new ADB();
       sandbox.stub(driver.adb, 'uninstallApk')
         .returns(true);
-      mocks.helpers.expects('uninstallOtherPackages').once().withArgs(uninstallOtherPackages, driver.adb, [SETTINGS_HELPER_PKG_ID]);
+      mocks.helpers.expects('uninstallOtherPackages').once().withArgs(driver.adb, uninstallOtherPackages, [SETTINGS_HELPER_PKG_ID]);
       await driver.initAUT();
       mocks.helpers.verify();
     });
