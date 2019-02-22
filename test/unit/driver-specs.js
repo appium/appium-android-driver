@@ -198,10 +198,10 @@ describe('driver', function () {
       driver.stopChromedriverProxies.called.should.be.false;
       driver.adb.stopLogcat.called.should.be.true;
     });
-    it('should not call stopLogcat if skipLogcatCapture is true', async function () {
+    it('should call stopLogcat even if skipLogcatCapture is true', async function () {
       driver.opts.skipLogcatCapture = true;
       await driver.deleteSession();
-      driver.adb.stopLogcat.called.should.be.false;
+      driver.adb.stopLogcat.called.should.be.true;
     });
     it('should reset keyboard to default IME', async function () {
       driver.opts.unicodeKeyboard = true;
