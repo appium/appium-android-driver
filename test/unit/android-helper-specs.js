@@ -727,6 +727,17 @@ describe('Android Helpers', function () {
       mocks.helpers.verify();
       mocks.adb.verify();
     });
+    it('should init device without starting logcat', async function () {
+      const opts = { skipLogcatCapture: true };
+      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('startLogcat').never();
+      mocks.helpers.expects('pushSettingsApp').once();
+      mocks.helpers.expects('ensureDeviceLocale').never();
+      mocks.helpers.expects('setMockLocationApp').withExactArgs(adb, 'io.appium.settings').once();
+      await helpers.initDevice(adb, opts);
+      mocks.helpers.verify();
+      mocks.adb.verify();
+    });
   }));
   describe('removeNullProperties', function () {
     it('should ignore null properties', function () {
