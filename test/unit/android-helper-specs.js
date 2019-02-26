@@ -367,7 +367,7 @@ describe('Android Helpers', function () {
       mocks.adb.expects('install').once().withArgs(localApkPath);
       mocks.adb.expects('forceStop').withExactArgs(pkg).once();
       mocks.adb.expects('isAppInstalled').once().withExactArgs(pkg).returns(true);
-      mocks.adb.expects('uninstallApk').once().withExactArgs(pkg);
+      mocks.adb.expects('uninstallApk').once().withExactArgs(pkg, { timeout: 20000 });
       await helpers.resetApp(adb, {app: localApkPath, appPackage: pkg});
       mocks.adb.verify();
     });
