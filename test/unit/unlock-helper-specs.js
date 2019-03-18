@@ -304,29 +304,29 @@ describe('Unlock Helpers', function () {
       let keys = ['7', '2', '9', '8', '5', '6', '1', '4', '3'];
       let actions = helpers.getPatternActions(keys, {x: 0, y: 0}, 1);
       // Move from pin 7 to pin 2
-      actions[1].options.x.should.equal(1);
-      actions[1].options.y.should.equal(-2);
+      actions[1].options.x.should.equal(2);
+      actions[1].options.y.should.equal(1);
       // Move from pin 2 to pin 9
-      actions[2].options.x.should.equal(1);
-      actions[2].options.y.should.equal(2);
+      actions[2].options.x.should.equal(3);
+      actions[2].options.y.should.equal(3);
       // Move from pin 9 to pin 8
-      actions[3].options.x.should.equal(-1);
-      actions[3].options.y.should.equal(0);
+      actions[3].options.x.should.equal(2);
+      actions[3].options.y.should.equal(3);
       // Move from pin 8 to pin 5
-      actions[4].options.x.should.equal(0);
-      actions[4].options.y.should.equal(-1);
+      actions[4].options.x.should.equal(2);
+      actions[4].options.y.should.equal(2);
       // Move from pin 5 to pin 6
-      actions[5].options.x.should.equal(1);
-      actions[5].options.y.should.equal(0);
+      actions[5].options.x.should.equal(3);
+      actions[5].options.y.should.equal(2);
       // Move from pin 6 to pin 1
-      actions[6].options.x.should.equal(-2);
-      actions[6].options.y.should.equal(-1);
+      actions[6].options.x.should.equal(1);
+      actions[6].options.y.should.equal(1);
       // Move from pin 1 to pin 4
-      actions[7].options.x.should.equal(0);
-      actions[7].options.y.should.equal(1);
+      actions[7].options.x.should.equal(1);
+      actions[7].options.y.should.equal(2);
       // Move from pin 4 to pin 3
-      actions[8].options.x.should.equal(2);
-      actions[8].options.y.should.equal(-1);
+      actions[8].options.x.should.equal(3);
+      actions[8].options.y.should.equal(1);
     });
   });
   describe('patternUnlock', withMocks({driver, helpers, adb, asyncbox}, (mocks) => {
