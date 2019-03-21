@@ -8,15 +8,15 @@ const boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp);
 
 const ANT_CMD = system.isWindows() ? 'ant.bat' : 'ant';
 
-gulp.task('ant-clean', function () {
+gulp.task('ant-clean', function clean () {
   return exec(ANT_CMD, ['clean'], {cwd: 'bootstrap'});
 });
 
-gulp.task('ant-build', function () {
+gulp.task('ant-build', function build () {
   return exec(ANT_CMD, ['build'], {cwd: 'bootstrap'});
 });
 
-gulp.task('ant', gulp.series(['ant-clean', 'ant-build']), function () {});
+gulp.task('ant', gulp.series(['ant-clean', 'ant-build']));
 
 
 boilerplate({
