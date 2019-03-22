@@ -273,6 +273,7 @@ describe('Android Helpers', function () {
         keystorePassword: '123456',
         keyAlias: 'keyAlias',
         keyPassword: 'keyPassword',
+        remoteAppsCacheLimit: 5,
       });
       ADB.createADB.calledWithExactly({
         adbPort: '222',
@@ -285,6 +286,7 @@ describe('Android Helpers', function () {
         keystorePassword: '123456',
         keyAlias: 'keyAlias',
         keyPassword: 'keyPassword',
+        remoteAppsCacheLimit: 5,
       }).should.be.true;
       curDeviceId.should.equal('111222');
       emulatorPort.should.equal('111');

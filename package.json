@@ -36,7 +36,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "appium-adb": "^7.0.0",
+    "appium-adb": "^7.6.0",
     "appium-base-driver": "^3.0.0",
     "appium-chromedriver": "^4.8.0",
     "appium-support": "^2.25.0",
