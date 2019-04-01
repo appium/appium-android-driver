@@ -156,11 +156,15 @@ describe('driver', function () {
     });
     it('should proxy screenshot if nativeWebScreenshot is off', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: false});
-      driver.getProxyAvoidList().should.have.length(8);
+      driver.getProxyAvoidList()
+        .some((x) => x[1].toString().includes('/screenshot'))
+        .should.be.false;
     });
     it('should not proxy screenshot if nativeWebScreenshot is on', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: true});
-      driver.getProxyAvoidList().should.have.length(9);
+      driver.getProxyAvoidList()
+        .some((x) => x[1].toString().includes('/screenshot'))
+        .should.be.true;
     });
     it('should set networkSpeed before launching app', async function () {
       sandbox.stub(driver, 'isEmulator').returns(true);
