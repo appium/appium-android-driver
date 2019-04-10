@@ -274,6 +274,7 @@ describe('Android Helpers', function () {
         keyAlias: 'keyAlias',
         keyPassword: 'keyPassword',
         remoteAppsCacheLimit: 5,
+        buildToolsVersion: '1.2.3',
       });
       ADB.createADB.calledWithExactly({
         adbPort: '222',
@@ -287,6 +288,7 @@ describe('Android Helpers', function () {
         keyAlias: 'keyAlias',
         keyPassword: 'keyPassword',
         remoteAppsCacheLimit: 5,
+        buildToolsVersion: '1.2.3',
       }).should.be.true;
       curDeviceId.should.equal('111222');
       emulatorPort.should.equal('111');
