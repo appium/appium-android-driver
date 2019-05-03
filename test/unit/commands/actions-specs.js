@@ -281,7 +281,7 @@ describe('Actions', function () {
         [tempDir]: {},
       });
 
-      // Stub temp.path to use an in-memory filepath
+      // Stub tempDir.path to use an in-memory filepath
       tempPathStub = sinon.stub(support.tempDir, 'path').returns(tempDir);
     });
 
