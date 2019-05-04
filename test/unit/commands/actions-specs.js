@@ -6,7 +6,6 @@ import path from 'path';
 import mockFS from 'mock-fs';
 import AndroidDriver from '../../..';
 import * as support from 'appium-support';
-import temp from 'temp';
 import ADB from 'appium-adb';
 import jimp from 'jimp';
 import helpers from '../../../lib/commands/actions';
@@ -198,7 +197,7 @@ describe('Actions', function () {
   describe('pullFile', function () {
     it('should be able to pull file from device', async function () {
       let localFile = 'local/tmp_file';
-      sandbox.stub(temp, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'pull');
       sandbox.stub(support.fs, 'readFile').withArgs(localFile).returns('appium');
       sandbox.stub(support.fs, 'exists').withArgs(localFile).returns(true);
@@ -214,7 +213,7 @@ describe('Actions', function () {
       const packageId = 'com.myapp';
       const remotePath = 'path/in/container';
       const tmpPath = '/data/local/tmp/container';
-      sandbox.stub(temp, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'pull');
       sandbox.stub(driver.adb, 'shell');
       sandbox.stub(support.fs, 'readFile').withArgs(localFile).returns('appium');
@@ -233,7 +232,7 @@ describe('Actions', function () {
     it('should be able to push file to device', async function () {
       let localFile = 'local/tmp_file';
       let content = 'appium';
-      sandbox.stub(temp, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'push');
       sandbox.stub(driver.adb, 'shell');
       sandbox.stub(support.fs, 'writeFile');
@@ -251,7 +250,7 @@ describe('Actions', function () {
       const packageId = 'com.myapp';
       const remotePath = 'path/in/container';
       const tmpPath = '/data/local/tmp/container';
-      sandbox.stub(temp, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'push');
       sandbox.stub(driver.adb, 'shell');
       sandbox.stub(support.fs, 'writeFile');
@@ -282,8 +281,8 @@ describe('Actions', function () {
         [tempDir]: {},
       });
 
-      // Stub temp.path to use an in-memory filepath
-      tempPathStub = sinon.stub(temp, 'path').returns(tempDir);
+      // Stub tempDir.path to use an in-memory filepath
+      tempPathStub = sinon.stub(support.tempDir, 'path').returns(tempDir);
     });
 
     after(function () {
@@ -453,7 +452,7 @@ describe('Actions', function () {
     const png = '/path/sc.png';
     const localFile = 'local_file';
     beforeEach(function () {
-      sandbox.stub(temp, 'path');
+      sandbox.stub(support.tempDir, 'path');
       sandbox.stub(support.fs, 'exists');
       sandbox.stub(support.fs, 'unlink');
       sandbox.stub(driver.adb, 'shell');
@@ -461,7 +460,7 @@ describe('Actions', function () {
       sandbox.stub(path.posix, 'resolve');
       sandbox.stub(jimp, 'read');
       sandbox.stub(driver.adb, 'fileSize');
-      temp.path.returns(localFile);
+      support.tempDir.path.returns(localFile);
       support.fs.exists.withArgs(localFile).returns(true);
       support.fs.unlink.withArgs(localFile).returns(true);
       path.posix.resolve.withArgs(defaultDir, 'screenshot.png').returns(png);
