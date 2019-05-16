@@ -15,8 +15,9 @@ const CONTACT_MANAGER_CAPS = _.defaults({
 }, DEFAULT_CAPS);
 
 const CHROME_CAPS = _.defaults({
-  browserName: 'chrome'
+  browserName: 'chrome',
 }, DEFAULT_CAPS);
+delete CHROME_CAPS.app;
 
 export { app, DEFAULT_CAPS, CONTACT_MANAGER_CAPS, CHROME_CAPS };
 export default DEFAULT_CAPS;
