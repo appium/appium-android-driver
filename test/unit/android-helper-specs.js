@@ -508,16 +508,10 @@ describe('Android Helpers', function () {
         .onCall(1).returns(true);
       mocks.adb.expects('getApiLevel').once()
         .returns(24);
-      mocks.adb.expects('shell').once()
-        .withExactArgs(['monkey',
-          '-p', 'io.appium.settings',
-          '-c', 'android.intent.category.LAUNCHER',
-          '1'])
-        .returns('');
+      mocks.adb.expects('startApp').once();
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
     });
-
     it('should launch settings app if it isnt running on under API level 23 devices', async function () {
       mocks.adb.expects('installOrUpgrade').once()
         .returns(true);
@@ -530,12 +524,7 @@ describe('Android Helpers', function () {
         .withExactArgs('io.appium.settings',
           ['android.permission.SET_ANIMATION_SCALE', 'android.permission.CHANGE_CONFIGURATION', 'android.permission.ACCESS_FINE_LOCATION'])
         .returns(true);
-      mocks.adb.expects('shell').once()
-        .withExactArgs(['monkey',
-          '-p', 'io.appium.settings',
-          '-c', 'android.intent.category.LAUNCHER',
-          '1'])
-        .returns('');
+      mocks.adb.expects('startApp').once();
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
     });
