@@ -204,6 +204,14 @@ If more than one of these capabilities are given, the driver will only use first
 
 `lock` behaves differently in Android than it does in iOS. In Android it does not take any arguments, and locks the screen and returns immediately.
 
+## Opt-In Features (With Security Risk)
+
+These can be enabled when running this driver through Appium, via the `--allow-insecure` or `--relaxed-security` flags.
+
+|Feature Name|Description|
+|------------|-----------|
+|get_server_logs|Allows retrieving of Appium server logs via the Webdriver log interface|
+|adb_shell|Allows execution of arbitrary adb shell commands via the "mobile: shell" command|
 
 ## Development
 
