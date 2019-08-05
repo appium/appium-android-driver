@@ -50,16 +50,10 @@ describe('General', function () {
     });
   });
   describe('getDeviceTime', function () {
-    beforeEach(function () {
-      moment.tz.setDefault('Atlantic/Reykjavik');
-    });
-    afterEach(function () {
-      moment.tz.setDefault();
-    });
     it('should return device time', async function () {
       sandbox.stub(driver.adb, 'shell');
       driver.adb.shell.returns(' 2018-06-09T16:21:54+0900 ');
-      await driver.getDeviceTime().should.become('2018-06-09T07:21:54+00:00');
+      await driver.getDeviceTime().should.become('2018-06-09T16:21:54+09:00');
       driver.adb.shell.calledWithExactly(['date', '+%Y-%m-%dT%T%z']).should.be.true;
     });
     it('should return device time with custom format', async function () {
