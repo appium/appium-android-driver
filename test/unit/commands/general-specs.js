@@ -9,7 +9,6 @@ import { fs } from 'appium-support';
 import Bootstrap from '../../../lib/bootstrap';
 import B from 'bluebird';
 import ADB from 'appium-adb';
-import moment from 'moment-timezone';
 
 
 chai.should();
