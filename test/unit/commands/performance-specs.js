@@ -47,6 +47,10 @@ describe('performance data', function () {
       sandbox.stub(driver, 'getCPUInfo').withArgs('pkg').returns('data');
       await driver.getPerformanceData('pkg', 'cpuinfo').should.become('data');
     });
+    it('should return ui info', async function () {
+      sandbox.stub(driver, 'getUIInfo').withArgs('pkg').returns('data');
+      await driver.getPerformanceData('pkg', 'uiinfo').should.become('data');
+    });
     it('should return memory info', async function () {
       sandbox.stub(driver, 'getMemoryInfo').withArgs('pkg').returns('data');
       await driver.getPerformanceData('pkg', 'memoryinfo').should.become('data');
@@ -77,6 +81,12 @@ describe('performance data', function () {
       adb.shell.returns('invalid data');
       await driver.getCPUInfo(PACKAGE_NAME, 1).should.be
         .rejectedWith(/Unable to parse cpu data/);
+    });
+  });
+  describe('getUIInfo', function () {
+    it('should throw error if no data', async function () {
+      adb.shell.returns(null);
+      await driver.getUIInfo(1).should.be.rejectedWith(/No data from dumpsys/);
     });
   });
   describe('getBatteryInfo', function () {
