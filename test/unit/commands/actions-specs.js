@@ -356,14 +356,14 @@ describe('Actions', function () {
     it('should call sensor adb command for emulator', async function () {
       sandbox.stub(driver.adb, 'sensorSet');
       sandbox.stub(driver, 'isEmulator').returns(true);
-      await driver.sensorSet('light', 0);
+      await driver.sensorSet({sensorType: 'light', value: 0});
       driver.adb.sensorSet.calledWithExactly('light', 0)
         .should.be.true;
     });
     it('should throw exception for real device', async function () {
       sandbox.stub(driver.adb, 'sensorSet');
       sandbox.stub(driver, 'isEmulator').returns(false);
-      await driver.sensorSet('light', 0)
+      await driver.sensorSet({sensorType: 'light', value: 0})
         .should.be.rejectedWith('sensorSet method is only available for emulators');
       driver.adb.sensorSet.notCalled.should.be.true;
     });
