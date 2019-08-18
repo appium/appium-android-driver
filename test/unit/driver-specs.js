@@ -52,7 +52,7 @@ describe('driver', function () {
       it('sensorSet should be rejected if isEmulator is false', function () {
         let driver = new AndroidDriver();
         sandbox.stub(driver, 'isEmulator').returns(false);
-        driver.sensorSet('light', 0).should.eventually.be.rejectedWith('sensorSet method is only available for emulators');
+        driver.sensorSet({sensorType: 'light', value: 0}).should.eventually.be.rejectedWith('sensorSet method is only available for emulators');
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
