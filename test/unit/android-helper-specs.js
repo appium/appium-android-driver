@@ -143,6 +143,7 @@ describe('Android Helpers', function () {
       {udid: 'rotalume-1337', os: '5.0.1'},
       {udid: 'roamulet-9000', os: '6.0'},
       {udid: 'roamulet-0', os: '2.3'},
+      {udid: 'roamulet-2019', os: '9'},
       {udid: '0123456789', os: 'wellhellothere'}
     ];
     let curDeviceId = '';
@@ -219,6 +220,14 @@ describe('Android Helpers', function () {
       udid.should.equal('roamulet-9000');
       emPort.should.equal(1234);
     });
+    it('should get deviceId and emPort if platformVersion is shorter than os version', async function () {
+      let caps = {
+        platformVersion: '9.0'
+      };
+      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      udid.should.equal('roamulet-2019');
+      emPort.should.equal(1234);
+    });
     it('should get the first deviceId and emPort if platformVersion is found multiple times', async function () {
       let caps = {
         platformVersion: '5.0.1'
@@ -227,12 +236,12 @@ describe('Android Helpers', function () {
       udid.should.equal('rotalume-1338');
       emPort.should.equal(1234);
     });
-    it('should get the first deviceId and emPort if platformVersion is found multiple times and is a partial match', async function () {
+    it('should get the deviceId and emPort of most recent version if we have partial match', async function () {
       let caps = {
         platformVersion: '5.0'
       };
       let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
-      udid.should.equal('rotalume-1338');
+      udid.should.equal('rotalume-1339');
       emPort.should.equal(1234);
     });
     it('should get deviceId and emPort by udid if udid and platformVersion are given', async function () {
