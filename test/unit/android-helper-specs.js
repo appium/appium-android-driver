@@ -222,7 +222,7 @@ describe('Android Helpers', function () {
     });
     it('should get deviceId and emPort if platformVersion is shorter than os version', async function () {
       let caps = {
-        platformVersion: '9.0'
+        platformVersion: 9
       };
       let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
       udid.should.equal('roamulet-2019');
@@ -241,7 +241,7 @@ describe('Android Helpers', function () {
         platformVersion: '5.0'
       };
       let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
-      udid.should.equal('rotalume-1339');
+      udid.should.equal('rotalume-1338');
       emPort.should.equal(1234);
     });
     it('should get deviceId and emPort by udid if udid and platformVersion are given', async function () {
