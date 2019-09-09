@@ -417,7 +417,7 @@ describe('Android Helpers', function () {
     it('should install/upgrade and reset app if fast reset is set to true', async function () {
       mocks.adb.expects('installOrUpgrade').once()
         .withArgs(opts.app, opts.appPackage)
-        .returns({wasUninstalled: false, appState: 'notInstalled'});
+        .returns({wasUninstalled: false, appState: 'sameVersionInstalled'});
       mocks.helpers.expects('resetApp').once().withArgs(adb);
       await helpers.installApk(adb, Object.assign({}, opts, {fastReset: true}));
       mocks.adb.verify();
@@ -442,7 +442,7 @@ describe('Android Helpers', function () {
     it('should install/upgrade and skip fast resetting the app if this was the fresh install', async function () {
       mocks.adb.expects('installOrUpgrade').once()
         .withArgs(opts.app, opts.appPackage)
-        .returns({wasUninstalled: true, appState: 'sameVersionInstalled'});
+        .returns({wasUninstalled: false, appState: 'notInstalled'});
       mocks.helpers.expects('resetApp').never();
       await helpers.installApk(adb, Object.assign({}, opts, {fastReset: true}));
       mocks.adb.verify();
