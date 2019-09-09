@@ -415,8 +415,9 @@ describe('Android Helpers', function () {
               .should.eventually.be.rejectedWith(/appPackage/);
     });
     it('should install/upgrade and reset app if fast reset is set to true', async function () {
-      mocks.adb.expects('isAppInstalled').once().returns(true);
-      mocks.adb.expects('installOrUpgrade').once().withArgs(opts.app, opts.appPackage);
+      mocks.adb.expects('installOrUpgrade').once()
+        .withArgs(opts.app, opts.appPackage)
+        .returns({wasUninstalled: false, appState: 'notInstalled'});
       mocks.helpers.expects('resetApp').once().withArgs(adb);
       await helpers.installApk(adb, Object.assign({}, opts, {fastReset: true}));
       mocks.adb.verify();
@@ -430,15 +431,18 @@ describe('Android Helpers', function () {
       mocks.helpers.verify();
     });
     it('should not run reset if the corresponding option is not set', async function () {
-      mocks.adb.expects('installOrUpgrade').once().withArgs(opts.app, opts.appPackage);
+      mocks.adb.expects('installOrUpgrade').once()
+        .withArgs(opts.app, opts.appPackage)
+        .returns({wasUninstalled: true, appState: 'sameVersionInstalled'});
       mocks.helpers.expects('resetApp').never();
       await helpers.installApk(adb, opts);
       mocks.adb.verify();
       mocks.helpers.verify();
     });
-    it('should install/upgrade and skip fast reseting the app if this was the fresh install', async function () {
-      mocks.adb.expects('isAppInstalled').once().returns(false);
-      mocks.adb.expects('installOrUpgrade').once().withArgs(opts.app, opts.appPackage);
+    it('should install/upgrade and skip fast resetting the app if this was the fresh install', async function () {
+      mocks.adb.expects('installOrUpgrade').once()
+        .withArgs(opts.app, opts.appPackage)
+        .returns({wasUninstalled: true, appState: 'sameVersionInstalled'});
       mocks.helpers.expects('resetApp').never();
       await helpers.installApk(adb, Object.assign({}, opts, {fastReset: true}));
       mocks.adb.verify();
