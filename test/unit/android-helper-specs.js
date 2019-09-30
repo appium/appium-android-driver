@@ -143,6 +143,7 @@ describe('Android Helpers', function () {
       {udid: 'rotalume-1337', os: '5.0.1'},
       {udid: 'roamulet-9000', os: '6.0'},
       {udid: 'roamulet-0', os: '2.3'},
+      {udid: 'roamulet-2019', os: '9'},
       {udid: '0123456789', os: 'wellhellothere'}
     ];
     let curDeviceId = '';
@@ -219,6 +220,14 @@ describe('Android Helpers', function () {
       udid.should.equal('roamulet-9000');
       emPort.should.equal(1234);
     });
+    it('should get deviceId and emPort if platformVersion is shorter than os version', async function () {
+      let caps = {
+        platformVersion: 9
+      };
+      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      udid.should.equal('roamulet-2019');
+      emPort.should.equal(1234);
+    });
     it('should get the first deviceId and emPort if platformVersion is found multiple times', async function () {
       let caps = {
         platformVersion: '5.0.1'
@@ -227,7 +236,7 @@ describe('Android Helpers', function () {
       udid.should.equal('rotalume-1338');
       emPort.should.equal(1234);
     });
-    it('should get the first deviceId and emPort if platformVersion is found multiple times and is a partial match', async function () {
+    it('should get the deviceId and emPort of most recent version if we have partial match', async function () {
       let caps = {
         platformVersion: '5.0'
       };
@@ -406,8 +415,9 @@ describe('Android Helpers', function () {
               .should.eventually.be.rejectedWith(/appPackage/);
     });
     it('should install/upgrade and reset app if fast reset is set to true', async function () {
-      mocks.adb.expects('isAppInstalled').once().returns(true);
-      mocks.adb.expects('installOrUpgrade').once().withArgs(opts.app, opts.appPackage);
+      mocks.adb.expects('installOrUpgrade').once()
+        .withArgs(opts.app, opts.appPackage)
+        .returns({wasUninstalled: false, appState: 'sameVersionInstalled'});
       mocks.helpers.expects('resetApp').once().withArgs(adb);
       await helpers.installApk(adb, Object.assign({}, opts, {fastReset: true}));
       mocks.adb.verify();
@@ -421,15 +431,18 @@ describe('Android Helpers', function () {
       mocks.helpers.verify();
     });
     it('should not run reset if the corresponding option is not set', async function () {
-      mocks.adb.expects('installOrUpgrade').once().withArgs(opts.app, opts.appPackage);
+      mocks.adb.expects('installOrUpgrade').once()
+        .withArgs(opts.app, opts.appPackage)
+        .returns({wasUninstalled: true, appState: 'sameVersionInstalled'});
       mocks.helpers.expects('resetApp').never();
       await helpers.installApk(adb, opts);
       mocks.adb.verify();
       mocks.helpers.verify();
     });
-    it('should install/upgrade and skip fast reseting the app if this was the fresh install', async function () {
-      mocks.adb.expects('isAppInstalled').once().returns(false);
-      mocks.adb.expects('installOrUpgrade').once().withArgs(opts.app, opts.appPackage);
+    it('should install/upgrade and skip fast resetting the app if this was the fresh install', async function () {
+      mocks.adb.expects('installOrUpgrade').once()
+        .withArgs(opts.app, opts.appPackage)
+        .returns({wasUninstalled: false, appState: 'notInstalled'});
       mocks.helpers.expects('resetApp').never();
       await helpers.installApk(adb, Object.assign({}, opts, {fastReset: true}));
       mocks.adb.verify();

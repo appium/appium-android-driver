@@ -9,7 +9,7 @@
     "mobile",
     "mobile testing"
   ],
-  "version": "4.18.0",
+  "version": "4.20.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -36,23 +36,24 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "appium-adb": "^7.9.0",
-    "appium-base-driver": "^3.17.0",
+    "appium-adb": "^7.13.0",
+    "appium-base-driver": "^4.0.0",
     "appium-chromedriver": "^4.13.0",
     "appium-support": "^2.25.0",
     "asyncbox": "^2.0.4",
     "bluebird": "^3.4.7",
     "io.appium.settings": "^2.10.0",
-    "jimp": "^0.6.0",
+    "jimp": "^0.8.0",
     "lodash": "^4.17.4",
-    "moment": "^2.22.2",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.26",
     "portfinder": "^1.0.6",
     "shared-preferences-builder": "^0.0.4",
     "shell-quote": "^1.6.1",
     "source-map-support": "^0.5.5",
     "teen_process": "^1.9.0",
     "ws": "^7.0.0",
-    "yargs": "^13.1.0"
+    "yargs": "^14.0.0"
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
@@ -84,10 +85,8 @@
     "gulp": "^4.0.0",
     "mocha": "^6.0.0",
     "mock-fs": "^4.5.0",
-    "moment-timezone": "^0.5.21",
     "pre-commit": "^1.1.3",
     "sinon": "^7.2.3",
-    "unzip": "^0.1.11",
     "xmldom": "^0.1.19",
     "xpath": "^0.0.27"
   },
