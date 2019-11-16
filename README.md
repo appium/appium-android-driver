@@ -193,6 +193,7 @@ If more than one of these capabilities are given, the driver will only use first
 | `wrapBootstrapDisconnect`  |
 | `fingerprint`              |
 | `sendSMS`                  |
+| `sensorSet`                |
 | `gsmCall`                  |
 | `gsmSignal`                |
 | `gsmVoice`                 |

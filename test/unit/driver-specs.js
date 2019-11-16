@@ -48,6 +48,14 @@ describe('driver', function () {
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
+    describe('sensorSet', function () {
+      it('sensorSet should be rejected if isEmulator is false', function () {
+        let driver = new AndroidDriver();
+        sandbox.stub(driver, 'isEmulator').returns(false);
+        driver.sensorSet({sensorType: 'light', value: 0}).should.eventually.be.rejectedWith('sensorSet method is only available for emulators');
+        driver.isEmulator.calledOnce.should.be.true;
+      });
+    });
   });
   describe('sharedPreferences', function () {
     driver = new AndroidDriver();
