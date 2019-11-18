@@ -53,7 +53,7 @@
     "source-map-support": "^0.5.5",
     "teen_process": "^1.9.0",
     "ws": "^7.0.0",
-    "yargs": "^14.0.0"
+    "yargs": "^15.0.1"
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
