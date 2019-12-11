@@ -48,6 +48,7 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
     "portfinder": "^1.0.6",
+    "portscanner": "2.2.0",
     "shared-preferences-builder": "^0.0.4",
     "shell-quote": "^1.6.1",
     "source-map-support": "^0.5.5",
