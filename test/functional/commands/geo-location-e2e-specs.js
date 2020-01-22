@@ -8,7 +8,7 @@ import DEFAULT_CAPS from '../desired';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe.skip("geo-location", function () {
+describe.skip('geo-location', function () {
   let driver;
   before(async function () {
     driver = new AndroidDriver();

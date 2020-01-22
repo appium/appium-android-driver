@@ -2,11 +2,9 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../..';
 import _ from 'lodash';
-import B from 'bluebird';
-import stream from 'stream';
-import Unzip from 'unzip';
 import DEFAULT_CAPS from '../desired';
-
+import { fs, tempDir, zip } from 'appium-support';
+import path from 'path';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -43,34 +41,26 @@ describe('file movement', function () {
   });
 
   it('should pull a folder', async function () {
-    let stringData = `random string data ${Math.random()}`;
-    let base64Data = Buffer.from(stringData).toString('base64');
+    const stringData = `random string data ${Math.random()}`;
+    const base64Data = Buffer.from(stringData).toString('base64');
 
     // send the files, then pull the whole folder
-    let remoteDir = getRandomDir();
+    const remoteDir = getRandomDir();
     await driver.pushFile(`${remoteDir}/remote0.txt`, base64Data);
     await driver.pushFile(`${remoteDir}/remote1.txt`, base64Data);
-    let data = await driver.pullFolder(remoteDir);
+    const data = await driver.pullFolder(remoteDir);
 
-    // go through the folder we pulled and make sure the
-    // two files we pushed are in it
-    let zipPromise = new B((resolve) => {
-      let entryCount = 0;
-      let zipStream = new stream.Readable();
-      zipStream._read = _.noop;
-      zipStream
-        .pipe(Unzip.Parse())
-        .on('entry', function (entry) {
-          entryCount++;
-          entry.autodrain();
-        })
-        .on('close', function () {
-          resolve(entryCount);
-        });
-      zipStream.push(data, 'base64');
-      zipStream.push(null);
-    });
-
-    (await zipPromise).should.equal(2);
+    const tmpRoot = await tempDir.openDir();
+    try {
+      const zipPath = path.resolve(tmpRoot, 'data.zip');
+      await fs.writeFile(zipPath, Buffer.from(data, 'base64'));
+      const extractedDataPath = path.resolve(tmpRoot, 'extracted_data');
+      await fs.mkdir(extractedDataPath);
+      await zip.extractAllTo(zipPath, extractedDataPath);
+      const itemsCount = (await fs.readdir(extractedDataPath)).length;
+      itemsCount.should.eql(2);
+    } finally {
+      await fs.rimraf(tmpRoot);
+    }
   });
 });

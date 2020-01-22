@@ -18,27 +18,26 @@ const PACKAGE = 'io.appium.android.apis';
 const TEXTFIELD_ACTIVITY = '.view.TextFields';
 const KEYEVENT_ACTIVITY = '.text.KeyEventText';
 
-let defaultAsciiCaps = _.defaults({
+const defaultAsciiCaps = _.defaults({
   newCommandTimeout: 90,
-  appPackage: PACKAGE,
   appActivity: TEXTFIELD_ACTIVITY,
 }, DEFAULT_CAPS);
 
-let defaultUnicodeCaps = _.defaults({
+const defaultUnicodeCaps = _.defaults({
   unicodeKeyboard: true,
   resetKeyboard: true
 }, defaultAsciiCaps);
 
 function deSamsungify (text) {
   // For samsung S5 text is appended with ". Editing."
-  return text.replace(". Editing.", "");
+  return text.replace('. Editing.', '');
 }
 
 async function getElement (driver, className) {
-  return await retryInterval(10, 1000, async () => {
-    let el = _.last(await driver.findElements('class name', className));
-    return el.ELEMENT;
-  });
+  const els = await driver.findElements('class name', className);
+  els.should.have.length.at.least(1);
+  let el = _.last(els);
+  return el.ELEMENT;
 }
 
 async function runTextEditTest (driver, testText, keys = false) {
@@ -106,7 +105,7 @@ async function runKeyEventTest (driver) {
   text.should.include('keyCode=KEYCODE_MENU');
 }
 
-let tests = [
+const tests = [
   {label: 'editing a text field', text: 'Life, the Universe and Everything.'},
   {label: 'sending \'&-\'', text: '&-'},
   {label: 'sending \'&\' and \'-\' in other text', text: 'In the mid-1990s he ate fish & chips as mayor-elect.'},
@@ -114,7 +113,7 @@ let tests = [
   {label: 'sending numbers', text: '0123456789'},
 ];
 
-let unicodeTests = [
+const unicodeTests = [
   {label: 'should be able to send \'-\' in unicode text', text: 'परीक्षा-परीक्षण'},
   {label: 'should be able to send \'&\' in text', text: 'Fish & chips'},
   {label: 'should be able to send \'&\' in unicode text', text: 'Mīna & chips'},
@@ -122,12 +121,25 @@ let unicodeTests = [
   {label: 'should be able to send a \'u\' with an umlaut', text: 'ü'},
 ];
 
-let languageTests = [
+const languageTests = [
   {label: 'should be able to send Tamil', text: 'சோதனை'},
   {label: 'should be able to send Chinese', text: '测试'},
   {label: 'should be able to send Arabic', text: 'تجريب'},
   {label: 'should be able to send Hebrew', text: 'בדיקות'},
 ];
+
+async function ensureUnlocked (driver) {
+  // on Travis the device is sometimes not unlocked
+  await retryInterval(10, 1000, async function () {
+    if (!await driver.isLocked()) {
+      return;
+    }
+    console.log(`\n\nDevice locked. Attempting to unlock`); // eslint-disable-line
+    await driver.unlock();
+    // trigger another iteration
+    throw new Error(`The device is locked.`);
+  });
+}
 
 describe('keyboard', function () {
   this.retries(3);
@@ -153,12 +165,12 @@ describe('keyboard', function () {
       await driver.deleteSession();
     });
 
-    describe('editing a text field', function () {
-      before(async function () {
-        await driver.startActivity(PACKAGE, TEXTFIELD_ACTIVITY);
-      });
+    beforeEach(async function () {
+      await ensureUnlocked(driver);
+    });
 
-      for (let test of tests) {
+    describe('editing a text field', function () {
+      for (const test of tests) {
         describe(test.label, function () {
           it(`should work with setValue: '${test.text}'`, async function () {
             await runTextEditTest(driver, test.text);
@@ -170,8 +182,11 @@ describe('keyboard', function () {
       }
 
       it('should be able to clear a password field', async function () {
-        let els = await driver.findElements('class name', EDITTEXT_CLASS);
-        let el = els[1].ELEMENT;
+        const els = await driver.findElements('class name', EDITTEXT_CLASS);
+        els.should.have.length.at.least(1);
+
+        // the second field is the password field
+        const el = els[1].ELEMENT;
 
         await driver.setValue('super-duper password', el);
 
@@ -212,13 +227,13 @@ describe('keyboard', function () {
       await driver.deleteSession();
     });
 
-    describe('editing a text field', function () {
-      before(async function () {
-        await driver.startActivity(PACKAGE, TEXTFIELD_ACTIVITY);
-      });
+    beforeEach(async function () {
+      await ensureUnlocked(driver);
+    });
 
-      for (let testSet of [tests, unicodeTests, languageTests]) {
-        for (let test of testSet) {
+    describe('editing a text field', function () {
+      for (const testSet of [tests, unicodeTests, languageTests]) {
+        for (const test of testSet) {
           describe(test.label, function () {
             it(`should work with setValue: '${test.text}'`, async function () {
               await runTextEditTest(driver, test.text);

@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import log from '../../lib/logger';
 import sinon from 'sinon';
-import helpers from '../../lib/android-helpers';
+import { helpers, SETTINGS_HELPER_PKG_ID } from '../../lib/android-helpers';
 import { withMocks } from 'appium-test-support';
 import AndroidDriver from '../..';
 import ADB from 'appium-adb';
@@ -36,7 +36,7 @@ describe('driver', function () {
       it('should be rejected if isEmulator is false', function () {
         let driver = new AndroidDriver();
         sandbox.stub(driver, 'isEmulator').returns(false);
-        driver.fingerprint(1111).should.eventually.be.rejectedWith("fingerprint method is only available for emulators");
+        driver.fingerprint(1111).should.eventually.be.rejectedWith('fingerprint method is only available for emulators');
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
@@ -44,7 +44,15 @@ describe('driver', function () {
       it('sendSMS should be rejected if isEmulator is false', function () {
         let driver = new AndroidDriver();
         sandbox.stub(driver, 'isEmulator').returns(false);
-        driver.sendSMS(4509, "Hello Appium").should.eventually.be.rejectedWith("sendSMS method is only available for emulators");
+        driver.sendSMS(4509, 'Hello Appium').should.eventually.be.rejectedWith('sendSMS method is only available for emulators');
+        driver.isEmulator.calledOnce.should.be.true;
+      });
+    });
+    describe('sensorSet', function () {
+      it('sensorSet should be rejected if isEmulator is false', function () {
+        let driver = new AndroidDriver();
+        sandbox.stub(driver, 'isEmulator').returns(false);
+        driver.sensorSet({sensorType: 'light', value: 0}).should.eventually.be.rejectedWith('sensorSet method is only available for emulators');
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
@@ -121,17 +129,13 @@ describe('driver', function () {
       sandbox.restore();
     });
     it('should verify device is an emulator', function () {
-      driver.opts.avd = "Nexus_5X_Api_23";
+      driver.opts.avd = 'Nexus_5X_Api_23';
       driver.isEmulator().should.equal(true);
       driver.opts.avd = undefined;
-      driver.opts.udid = "emulator-5554";
+      driver.opts.udid = 'emulator-5554';
       driver.isEmulator().should.equal(true);
-      driver.opts.udid = "01234567889";
+      driver.opts.udid = '01234567889';
       driver.isEmulator().should.equal(false);
-    });
-    it('should get java version if none is provided', async function () {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
-      driver.opts.javaVersion.should.exist;
     });
     it('should get browser package details if browserName is provided', async function () {
       sandbox.spy(helpers, 'getChromePkg');
@@ -154,26 +158,21 @@ describe('driver', function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
       driver.caps.webStorageEnabled.should.exist;
     });
-    it('should delete a session on failure', async function () {
-      // Force an error to make sure deleteSession gets called
-      sandbox.stub(helpers, 'getJavaVersion').throws();
-      sandbox.stub(driver, 'deleteSession');
-      try {
-        await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
-      } catch (ign) {}
-      driver.deleteSession.calledOnce.should.be.true;
-    });
     it('should pass along adbPort capability to ADB', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', adbPort: 1111});
       driver.adb.adbPort.should.equal(1111);
     });
     it('should proxy screenshot if nativeWebScreenshot is off', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: false});
-      driver.getProxyAvoidList().should.have.length(8);
+      driver.getProxyAvoidList()
+        .some((x) => x[1].toString().includes('/screenshot'))
+        .should.be.false;
     });
     it('should not proxy screenshot if nativeWebScreenshot is on', async function () {
       await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: true});
-      driver.getProxyAvoidList().should.have.length(9);
+      driver.getProxyAvoidList()
+        .some((x) => x[1].toString().includes('/screenshot'))
+        .should.be.true;
     });
     it('should set networkSpeed before launching app', async function () {
       sandbox.stub(driver, 'isEmulator').returns(true);
@@ -186,6 +185,7 @@ describe('driver', function () {
   describe('deleteSession', function () {
     beforeEach(function () {
       driver = new AndroidDriver();
+      driver.caps = {};
       driver.adb = new ADB();
       driver.bootstrap = new helpers.bootstrap(driver.adb);
       sandbox.stub(driver, 'stopChromedriverProxies');
@@ -194,6 +194,9 @@ describe('driver', function () {
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'uninstallApk');
       sandbox.stub(driver.adb, 'stopLogcat');
+      sandbox.stub(driver.adb, 'setAnimationState');
+      sandbox.stub(driver.adb, 'setDefaultHiddenApiPolicy');
+      sandbox.stub(driver.adb, 'getApiLevel').returns(27);
       sandbox.stub(driver.bootstrap, 'shutdown');
       sandbox.spy(log, 'debug');
     });
@@ -203,8 +206,12 @@ describe('driver', function () {
     it('should not do anything if Android Driver has already shut down', async function () {
       driver.bootstrap = null;
       await driver.deleteSession();
-      log.debug.callCount.should.eql(3);
       driver.stopChromedriverProxies.called.should.be.false;
+      driver.adb.stopLogcat.called.should.be.true;
+    });
+    it('should call stopLogcat even if skipLogcatCapture is true', async function () {
+      driver.opts.skipLogcatCapture = true;
+      await driver.deleteSession();
       driver.adb.stopLogcat.called.should.be.true;
     });
     it('should reset keyboard to default IME', async function () {
@@ -223,6 +230,26 @@ describe('driver', function () {
       await driver.deleteSession();
       driver.adb.uninstallApk.calledOnce.should.be.true;
     });
+    it('should call setAnimationState to enable it with API Level 27', async function () {
+      driver._wasWindowAnimationDisabled = true;
+      await driver.deleteSession();
+      driver.adb.setAnimationState.calledOnce.should.be.true;
+      driver.adb.setDefaultHiddenApiPolicy.calledOnce.should.be.false;
+    });
+    it('should call setAnimationState to enable it with API Level 28', async function () {
+      driver._wasWindowAnimationDisabled = true;
+      driver.adb.getApiLevel.restore();
+      sandbox.stub(driver.adb, 'getApiLevel').returns(28);
+      await driver.deleteSession();
+      driver.adb.setAnimationState.calledOnce.should.be.true;
+      driver.adb.setDefaultHiddenApiPolicy.calledOnce.should.be.true;
+    });
+    it('should not call setAnimationState', async function () {
+      driver._wasWindowAnimationDisabled = false;
+      await driver.deleteSession();
+      driver.adb.setAnimationState.calledOnce.should.be.false;
+      driver.adb.setDefaultHiddenApiPolicy.calledOnce.should.be.false;
+    });
   });
   describe('dismissChromeWelcome', function () {
     before(function () {
@@ -235,11 +262,11 @@ describe('driver', function () {
       driver.shouldDismissChromeWelcome().should.be.false;
       driver.opts = {chromeOptions: {args: []}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {chromeOptions: {args: "--no-first-run"}};
+      driver.opts = {chromeOptions: {args: '--no-first-run'}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {chromeOptions: {args: ["--disable-dinosaur-easter-egg"]}};
+      driver.opts = {chromeOptions: {args: ['--disable-dinosaur-easter-egg']}};
       driver.shouldDismissChromeWelcome().should.be.false;
-      driver.opts = {chromeOptions: {args: ["--no-first-run"]}};
+      driver.opts = {chromeOptions: {args: ['--no-first-run']}};
       driver.shouldDismissChromeWelcome().should.be.true;
     });
   });
@@ -249,28 +276,28 @@ describe('driver', function () {
       driver.caps = {};
     });
     it('should throw error if run with full reset', async function () {
-      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: true};
+      driver.opts = {appPackage: 'app.package', appActivity: 'act', fullReset: true};
       await driver.initAUT().should.be.rejectedWith(/Full reset requires an app capability/);
     });
     it('should reset if run with fast reset', async function () {
-      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: true};
-      driver.adb = "mock_adb";
-      mocks.helpers.expects("resetApp").withArgs("mock_adb");
+      driver.opts = {appPackage: 'app.package', appActivity: 'act', fullReset: false, fastReset: true};
+      driver.adb = 'mock_adb';
+      mocks.helpers.expects('resetApp').withArgs('mock_adb');
       await driver.initAUT();
       mocks.helpers.verify();
     });
     it('should keep data if run without reset', async function () {
-      driver.opts = {appPackage: "app.package", appActivity: "act", fullReset: false, fastReset: false};
-      mocks.helpers.expects("resetApp").never();
+      driver.opts = {appPackage: 'app.package', appActivity: 'act', fullReset: false, fastReset: false};
+      mocks.helpers.expects('resetApp').never();
       await driver.initAUT();
       mocks.helpers.verify();
     });
     it('should install "otherApps" if set in capabilities', async function () {
-      const otherApps = ["http://URL_FOR/fake/app.apk"];
-      const tempApps = ["/path/to/fake/app.apk"];
+      const otherApps = ['http://URL_FOR/fake/app.apk'];
+      const tempApps = ['/path/to/fake/app.apk'];
       driver.opts = {
-        appPackage: "app.package",
-        appActivity: "act",
+        appPackage: 'app.package',
+        appActivity: 'act',
         fullReset: false,
         fastReset: false,
         otherApps: `["${otherApps[0]}"]`,
@@ -278,9 +305,66 @@ describe('driver', function () {
       sandbox.stub(driver.helpers, 'configureApp')
         .withArgs(otherApps[0], '.apk')
         .returns(tempApps[0]);
-      mocks.helpers.expects("installOtherApks").once().withArgs(tempApps, driver.adb, driver.opts);
+      mocks.helpers.expects('installOtherApks').once().withArgs(tempApps, driver.adb, driver.opts);
       await driver.initAUT();
       mocks.helpers.verify();
+    });
+    it('should uninstall a package "uninstallOtherPackages" if set in capabilities', async function () {
+      const uninstallOtherPackages = 'app.bundle.id1';
+      driver.opts = {
+        appPackage: 'app.package',
+        appActivity: 'act',
+        fullReset: false,
+        fastReset: false,
+        uninstallOtherPackages,
+      };
+      driver.adb = new ADB();
+      sandbox.stub(driver.adb, 'uninstallApk')
+        .withArgs('app.bundle.id1')
+        .returns(true);
+      mocks.helpers.expects('uninstallOtherPackages').once().withArgs(driver.adb, [uninstallOtherPackages], [SETTINGS_HELPER_PKG_ID]);
+      await driver.initAUT();
+      mocks.helpers.verify();
+    });
+
+    it('should uninstall multiple packages "uninstallOtherPackages" if set in capabilities', async function () {
+      const uninstallOtherPackages = ['app.bundle.id1', 'app.bundle.id2'];
+      driver.opts = {
+        appPackage: 'app.package',
+        appActivity: 'act',
+        fullReset: false,
+        fastReset: false,
+        uninstallOtherPackages: `["${uninstallOtherPackages[0]}", "${uninstallOtherPackages[1]}"]`,
+      };
+      driver.adb = new ADB();
+      sandbox.stub(driver.adb, 'uninstallApk')
+        .returns(true);
+      mocks.helpers.expects('uninstallOtherPackages').once().withArgs(driver.adb, uninstallOtherPackages, [SETTINGS_HELPER_PKG_ID]);
+      await driver.initAUT();
+      mocks.helpers.verify();
+    });
+
+    it('get all 3rd party packages', async function () {
+      driver.adb = new ADB();
+      sandbox.stub(driver.adb, 'shell')
+        .returns('package:app.bundle.id1\npackage:io.appium.settings\npackage:io.appium.uiautomator2.server\npackage:io.appium.uiautomator2.server.test\n');
+      (await helpers.getThirdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID]))
+        .should.eql(['app.bundle.id1', 'io.appium.uiautomator2.server', 'io.appium.uiautomator2.server.test']);
+    });
+
+    it('get all 3rd party packages with multiple package filter', async function () {
+      driver.adb = new ADB();
+      sandbox.stub(driver.adb, 'shell')
+        .returns('package:app.bundle.id1\npackage:io.appium.settings\npackage:io.appium.uiautomator2.server\npackage:io.appium.uiautomator2.server.test\n');
+      (await helpers.getThirdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID, 'io.appium.uiautomator2.server']))
+        .should.eql(['app.bundle.id1', 'io.appium.uiautomator2.server.test']);
+    });
+
+    it('get no 3rd party packages', async function () {
+      driver.adb = new ADB();
+      sandbox.stub(driver.adb, 'shell').throws('');
+      (await helpers.getThirdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID]))
+        .should.eql([]);
     });
   }));
   describe('startAndroidSession', function () {
@@ -312,6 +396,9 @@ describe('driver', function () {
       sandbox.stub(driver.adb, 'getScreenSize');
       sandbox.stub(driver.adb, 'getModel');
       sandbox.stub(driver.adb, 'getManufacturer');
+      sandbox.stub(driver.adb, 'getApiLevel').returns(27);
+      sandbox.stub(driver.adb, 'setHiddenApiPolicy');
+      sandbox.stub(driver.adb, 'setAnimationState');
     });
     afterEach(function () {
       sandbox.restore();
@@ -394,6 +481,35 @@ describe('driver', function () {
       await driver.startAndroidSession();
       driver.dismissChromeWelcome.calledOnce.should.be.false;
     });
+    it('should call setAnimationState with API level 27', async function () {
+      driver.opts.disableWindowAnimation = true;
+      sandbox.stub(driver.adb, 'isAnimationOn').returns(true);
+
+      await driver.startAndroidSession();
+      driver.adb.isAnimationOn.calledOnce.should.be.true;
+      driver.adb.setHiddenApiPolicy.calledOnce.should.be.false;
+      driver.adb.setAnimationState.calledOnce.should.be.true;
+    });
+    it('should call setAnimationState with API level 28', async function () {
+      driver.opts.disableWindowAnimation = true;
+      sandbox.stub(driver.adb, 'isAnimationOn').returns(true);
+      driver.adb.getApiLevel.restore();
+      sandbox.stub(driver.adb, 'getApiLevel').returns(28);
+
+      await driver.startAndroidSession();
+      driver.adb.isAnimationOn.calledOnce.should.be.true;
+      driver.adb.setHiddenApiPolicy.calledOnce.should.be.true;
+      driver.adb.setAnimationState.calledOnce.should.be.true;
+    });
+    it('should not call setAnimationState', async function () {
+      driver.opts.disableWindowAnimation = true;
+      sandbox.stub(driver.adb, 'isAnimationOn').returns(false);
+
+      await driver.startAndroidSession();
+      driver.adb.isAnimationOn.calledOnce.should.be.true;
+      driver.adb.setHiddenApiPolicy.calledOnce.should.be.false;
+      driver.adb.setAnimationState.calledOnce.should.be.false;
+    });
   });
   describe('startChromeSession', function () {
     beforeEach(function () {
@@ -415,7 +531,7 @@ describe('driver', function () {
     it('should call dismissChromeWelcome', async function () {
       driver.opts.browserName = 'Chrome';
       driver.opts.chromeOptions = {
-        "args": ["--no-first-run"]
+        'args': ['--no-first-run']
       };
       await driver.startChromeSession();
       driver.dismissChromeWelcome.calledOnce.should.be.true;

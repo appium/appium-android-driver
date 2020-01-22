@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const { exec } = require('teen_process');
 const system = require('appium-support').system;
@@ -8,24 +8,23 @@ const boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp);
 
 const ANT_CMD = system.isWindows() ? 'ant.bat' : 'ant';
 
-gulp.task('ant-clean', function () {
+gulp.task('ant-clean', function clean () {
   return exec(ANT_CMD, ['clean'], {cwd: 'bootstrap'});
 });
 
-gulp.task('ant-build', function () {
+gulp.task('ant-build', function build () {
   return exec(ANT_CMD, ['build'], {cwd: 'bootstrap'});
 });
 
-gulp.task('ant', gulp.series(['ant-clean', 'ant-build']), function () {});
+gulp.task('ant', gulp.series(['ant-clean', 'ant-build']));
 
 
 boilerplate({
   build: 'appium-android-driver',
-  extraPrepublishTasks: ['ant'],
   e2eTest: {android: true},
   testTimeout: 40000,
   coverage: {
-    files: ['./test/unit/**/*-specs.js', '!./test/functional/**', '!./test/assets'],
-    verbose: true
+    files: ['./build/test/unit/**/*-specs.js', '!./build/test/functional/**', '!./build/test/assets'],
+    verbose: true,
   },
 });
