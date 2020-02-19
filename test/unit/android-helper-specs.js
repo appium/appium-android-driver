@@ -505,8 +505,7 @@ describe('Android Helpers', function () {
     it('should not skip granting permissions if the app is already running on under API level 22 devices', async function () {
       mocks.adb.expects('installOrUpgrade').once()
         .returns(true);
-      mocks.adb.expects('processExists')
-        .withExactArgs('io.appium.settings').once()
+      mocks.adb.expects('processExists').once()
         .returns(true);
       mocks.adb.expects('getApiLevel').never();
       mocks.adb.expects('grantPermissions').never();
@@ -516,28 +515,26 @@ describe('Android Helpers', function () {
     it('should launch settings app if it isnt running on over API level 24 devices', async function () {
       mocks.adb.expects('installOrUpgrade').once()
         .returns(true);
-      mocks.adb.expects('processExists').twice()
-        .onCall(0).returns(false)
-        .onCall(1).returns(true);
+      mocks.adb.expects('processExists').once()
+        .returns(false);
       mocks.adb.expects('getApiLevel').once()
         .returns(24);
-      mocks.adb.expects('startApp').once();
+      mocks.adb.expects('requireRunningSettingsApp').once();
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
     });
     it('should launch settings app if it isnt running on under API level 23 devices', async function () {
       mocks.adb.expects('installOrUpgrade').once()
         .returns(true);
-      mocks.adb.expects('processExists').twice()
-        .onCall(0).returns(false)
-        .onCall(1).returns(true);
+      mocks.adb.expects('processExists').once()
+        .returns(false);
       mocks.adb.expects('getApiLevel').once()
         .returns(23);
       mocks.adb.expects('grantPermissions').once()
         .withExactArgs('io.appium.settings',
           ['android.permission.SET_ANIMATION_SCALE', 'android.permission.CHANGE_CONFIGURATION', 'android.permission.ACCESS_FINE_LOCATION'])
         .returns(true);
-      mocks.adb.expects('startApp').once();
+      mocks.adb.expects('requireRunningSettingsApp').once();
       await helpers.pushSettingsApp(adb);
       mocks.adb.verify();
     });
