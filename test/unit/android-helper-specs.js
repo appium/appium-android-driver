@@ -4,7 +4,6 @@ import sinon from 'sinon';
 import helpers from '../../lib/android-helpers';
 import ADB from 'appium-adb';
 import { withMocks } from 'appium-test-support';
-import * as teen_process from 'teen_process';
 import { fs } from 'appium-support';
 import unlocker from '../../lib/unlock-helpers';
 import _ from 'lodash';
@@ -19,20 +18,23 @@ chai.use(chaiAsPromised);
 describe('Android Helpers', function () {
   let adb = new ADB();
 
-  describe('getJavaVersion', withMocks({teen_process}, (mocks) => {
-    it('should correctly get java version', async function () {
-      mocks.teen_process.expects('exec').withExactArgs('java', ['-version'])
-        .returns({stderr: 'java version "1.8.0_40"'});
-      (await helpers.getJavaVersion()).should.equal('1.8.0_40');
-      mocks.teen_process.verify();
+  describe('isEmulator', function () {
+    it('should be true if driver opts contain avd', async function () {
+      (await helpers.isEmulator(null, {avd: 'yolo'})).should.be.true;
     });
-    it('should throw if cannot parse java verstion', async function () {
-      mocks.teen_process.expects('exec').withExactArgs('java', ['-version'])
-        .returns({stderr: 'foo bar'});
-      await helpers.getJavaVersion().should.eventually.be.rejectedWith('Java');
-      mocks.teen_process.verify();
+    it('should be true if driver opts contain emulator udid', async function () {
+      (await helpers.isEmulator({}, {udid: 'Emulator-5554'})).should.be.true;
     });
-  }));
+    it('should be false if driver opts do not contain emulator udid', async function () {
+      (await helpers.isEmulator({}, {udid: 'ABCD1234'})).should.be.false;
+    });
+    it('should be true if device id in adb contains emulator', async function () {
+      (await helpers.isEmulator({curDeviceId: 'emulator-5554'}, {})).should.be.true;
+    });
+    it('should be false if device id in adb does not contain emulator', async function () {
+      (await helpers.isEmulator({curDeviceId: 'ABCD1234'}, {})).should.be.false;
+    });
+  });
   describe('prepareEmulator', withMocks({adb, helpers}, (mocks) => {
     const opts = {avd: 'foo@bar', avdArgs: '', language: 'en', locale: 'us'};
     it('should not launch avd if one is already running', async function () {
