@@ -364,6 +364,7 @@ describe('General', function () {
         intentFlags: 'flgs',
         appWaitPackage: 'wpkg',
         appWaitActivity: 'wact',
+        appWaitForLaunch: true,
         appWaitDuration: 'wdur',
         optionalIntentArguments: 'opt',
         userProfile: 1
@@ -376,6 +377,7 @@ describe('General', function () {
         flags: 'flgs',
         waitPkg: 'wpkg',
         waitActivity: 'wact',
+        waitForLaunch: true,
         waitDuration: 'wdur',
         optionalIntentArguments: 'opt',
         stopApp: false,
