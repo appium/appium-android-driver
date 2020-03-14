@@ -3,7 +3,6 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import Bootstrap from '../../../lib/bootstrap';
 import path from 'path';
-import mockFS from 'mock-fs';
 import AndroidDriver from '../../..';
 import * as support from 'appium-support';
 import ADB from 'appium-adb';
@@ -199,7 +198,9 @@ describe('Actions', function () {
       let localFile = 'local/tmp_file';
       sandbox.stub(support.tempDir, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'pull');
-      sandbox.stub(support.fs, 'readFile').withArgs(localFile).returns('appium');
+      sandbox.stub(support.util, 'toInMemoryBase64')
+        .withArgs(localFile)
+        .returns(Buffer.from('YXBwaXVt', 'utf8'));
       sandbox.stub(support.fs, 'exists').withArgs(localFile).returns(true);
       sandbox.stub(support.fs, 'unlink');
       await driver.pullFile('remote_path').should.become('YXBwaXVt');
@@ -216,7 +217,9 @@ describe('Actions', function () {
       sandbox.stub(support.tempDir, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'pull');
       sandbox.stub(driver.adb, 'shell');
-      sandbox.stub(support.fs, 'readFile').withArgs(localFile).returns('appium');
+      sandbox.stub(support.util, 'toInMemoryBase64')
+        .withArgs(localFile)
+        .returns(Buffer.from('YXBwaXVt', 'utf8'));
       sandbox.stub(support.fs, 'exists').withArgs(localFile).returns(true);
       sandbox.stub(support.fs, 'unlink');
       await driver.pullFile(`@${packageId}/${remotePath}`).should.become('YXBwaXVt');
@@ -265,60 +268,6 @@ describe('Actions', function () {
       driver.adb.shell.calledWithExactly(['cp', '-f', tmpPath, `/data/data/${packageId}/${remotePath}`]).should.be.true;
       support.fs.unlink.calledWithExactly(localFile).should.be.true;
       driver.adb.shell.calledWithExactly(['rm', '-f', tmpPath]).should.be.true;
-    });
-  });
-  describe('pullFolder', function () {
-    const zippedDir = '/mock/path/to/zipped';
-    const unzippedDir = '/mock/path/to/unzipped';
-    const tempDir = '/mock/path/to/temp-dir';
-    let tempPathStub;
-
-    before(function () {
-      // Create in-memory mock file system for file writes
-      mockFS({
-        [zippedDir]: {},
-        [unzippedDir]: {},
-        [tempDir]: {},
-      });
-
-      // Stub tempDir.path to use an in-memory filepath
-      tempPathStub = sinon.stub(support.tempDir, 'path').returns(tempDir);
-    });
-
-    after(function () {
-      tempPathStub.restore();
-      mockFS.restore();
-    });
-
-    it('should pull a folder and return base64 zip', async function () {
-      // Stub in driver.adb and make it pull a folder with two files
-      let adbPullStub;
-      const pull = async function (ignore, localPath) {
-        await support.fs.writeFile(path.resolve(localPath, 'a.txt'), 'hello world', {flags: 'w'});
-        await support.fs.writeFile(path.resolve(localPath, 'b.txt'), 'foobar', {flags: 'w'});
-      };
-      if (!driver.adb) {
-        driver.adb = {pull};
-      } else {
-        adbPullStub = sinon.stub(driver.adb, 'pull').callsFake(pull);
-      }
-
-      // Call 'driver.pullFolder' and zip the base64 contents to a .zip file
-      const zippedBase64 = await driver.pullFolder('/does/not/matter');
-      (typeof zippedBase64).should.equal('string');
-      await support.fs.writeFile(path.resolve(zippedDir, 'zipped.zip'), zippedBase64, {encoding: 'base64', flags: 'w'});
-
-      // Extract the zip file and verify it's contents
-      await support.zip.extractAllTo(path.resolve(zippedDir, 'zipped.zip'), unzippedDir);
-      await support.fs.readFile(path.resolve(unzippedDir, 'a.txt'), 'utf8').should.eventually.equal('hello world');
-      await support.fs.readFile(path.resolve(unzippedDir, 'b.txt'), 'utf8').should.eventually.equal('foobar');
-
-      // Restore stub
-      if (adbPullStub) {
-        adbPullStub.restore();
-      } else {
-        delete driver.adb;
-      }
     });
   });
   describe('fingerprint', function () {
