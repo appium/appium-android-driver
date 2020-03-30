@@ -14,7 +14,7 @@ chai.use(chaiAsPromised);
 const HOST = util.localIp();
 const PORT = 4723;
 
-let defaultCaps = _.defaults({
+const caps = _.defaults({
   androidInstallTimeout: 90000
 }, DEFAULT_CAPS);
 
@@ -24,7 +24,7 @@ describe('logs', function () {
 
   before(async function () {
     driver = new AndroidDriver();
-    await driver.createSession(defaultCaps);
+    await driver.createSession(caps);
     server = await startServer(PORT, HOST);
     driver.server = server;
   });
@@ -39,19 +39,24 @@ describe('logs', function () {
 
   it('should be able to receieve logcat output via web socket', async function () {
     const endpoint = `/ws/session/${driver.sessionId}/appium/device/logcat`;
-    const timeout = 20000;
+    const timeout = 200;
+    const logsPromise = new B((resolve, reject) => {
+      const client = new WebSocket(`ws://${HOST}:${PORT}${endpoint}`);
+      client.on('message', (data) => {
+        data.should.not.be.empty;
+        resolve();
+      });
+      client.on('error', reject);
+      setTimeout(() => reject(new Error('No websocket messages have been received after the timeout')),
+                timeout);
+    });
+
     await driver.execute('mobile: startLogsBroadcast', {});
     try {
-      await new B((resolve, reject) => {
-        const client = new WebSocket(`ws://${HOST}:${PORT}${endpoint}`);
-        client.on('message', (data) => {
-          data.should.not.be.empty;
-          resolve();
-        });
-        client.on('error', reject);
-        setTimeout(() => reject(new Error('No websocket messages have been received after the timeout')),
-                  timeout);
-      });
+      // do something that ought to produce some logs
+      await driver.startActivity('io.appium.android.apis', 'io.appium.android.apis.ApiDemos');
+      // wait for data, or a timeout
+      await logsPromise;
     } finally {
       await driver.execute('mobile: stopLogsBroadcast', {});
     }
