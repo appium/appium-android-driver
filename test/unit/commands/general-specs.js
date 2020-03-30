@@ -81,11 +81,15 @@ describe('General', function () {
   });
   describe('isKeyboardShown', function () {
     it('should return true if the keyboard is shown', async function () {
-      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: true, canCloseKeyboard: true}; };
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+        return {isKeyboardShown: true, canCloseKeyboard: true};
+      };
       (await driver.isKeyboardShown()).should.equal(true);
     });
     it('should return false if the keyboard is not shown', async function () {
-      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: false, canCloseKeyboard: true}; };
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+        return {isKeyboardShown: false, canCloseKeyboard: true};
+      };
       (await driver.isKeyboardShown()).should.equal(false);
     });
   });
@@ -93,7 +97,7 @@ describe('General', function () {
     it('should hide keyboard with ESC command', async function () {
       sandbox.stub(driver.adb, 'keyevent');
       let callIdx = 0;
-      driver.adb.isSoftKeyboardPresent = () => {
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
         callIdx++;
         return {
           isKeyboardShown: callIdx <= 1,
@@ -106,7 +110,7 @@ describe('General', function () {
     it('should throw if cannot close keyboard', async function () {
       this.timeout(10000);
       sandbox.stub(driver.adb, 'keyevent');
-      driver.adb.isSoftKeyboardPresent = () => {
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
         return {
           isKeyboardShown: true,
           canCloseKeyboard: false,
@@ -116,7 +120,7 @@ describe('General', function () {
       driver.adb.keyevent.notCalled.should.be.true;
     });
     it('should not throw if no keyboard is present', async function () {
-      driver.adb.isSoftKeyboardPresent = () => {
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
         return {
           isKeyboardShown: false,
           canCloseKeyboard: false,
@@ -274,7 +278,7 @@ describe('General', function () {
   });
   describe('getStrings', withMocks({helpers}, (mocks) => {
     it('should return app strings', async function () {
-      driver.bootstrap.sendAction = () => { return ''; };
+      driver.bootstrap.sendAction = () => '';
       mocks.helpers.expects('pushStrings')
           .returns({test: 'en_value'});
       let strings = await driver.getStrings('en');
@@ -282,14 +286,14 @@ describe('General', function () {
       mocks.helpers.verify();
     });
     it('should return cached app strings for the specified language', async function () {
-      driver.adb.getDeviceLanguage = () => { return 'en'; };
+      driver.adb.getDeviceLanguage = () => 'en';
       driver.apkStrings.en = {test: 'en_value'};
       driver.apkStrings.fr = {test: 'fr_value'};
       let strings = await driver.getStrings('fr');
       strings.test.should.equal('fr_value');
     });
     it('should return cached app strings for the device language', async function () {
-      driver.adb.getDeviceLanguage = () => { return 'en'; };
+      driver.adb.getDeviceLanguage = () => 'en';
       driver.apkStrings.en = {test: 'en_value'};
       driver.apkStrings.fr = {test: 'fr_value'};
       let strings = await driver.getStrings();
@@ -408,7 +412,7 @@ describe('General', function () {
   });
   describe('getDisplayDensity', function () {
     it('should return the display density of a device', async function () {
-      driver.adb.shell = () => { return '123'; };
+      driver.adb.shell = () => '123';
       (await driver.getDisplayDensity()).should.equal(123);
     });
     it('should return the display density of an emulator', async function () {
@@ -426,11 +430,11 @@ describe('General', function () {
       (await driver.getDisplayDensity()).should.equal(456);
     });
     it('should throw an error if the display density property can\'t be found', async function () {
-      driver.adb.shell = () => { return ''; };
+      driver.adb.shell = () => '';
       await driver.getDisplayDensity().should.be.rejectedWith(/Failed to get display density property/);
     });
     it('should throw and error if the display density is not a number', async function () {
-      driver.adb.shell = () => { return 'abc'; };
+      driver.adb.shell = () => 'abc';
       await driver.getDisplayDensity().should.be.rejectedWith(/Failed to get display density property/);
     });
   });
@@ -507,13 +511,13 @@ describe('General', function () {
     it('should throw an error if there\'s no window manager output', async function () {
       driver = new AndroidDriver();
       driver.adb = {};
-      driver.adb.shell = () => { return ''; };
+      driver.adb.shell = () => '';
       await driver.getSystemBars().should.be.rejectedWith(/Did not get window manager output./);
     });
     it('should return the parsed system bar info', async function () {
       driver = new AndroidDriver();
       driver.adb = {};
-      driver.adb.shell = () => { return validWindowOutput; };
+      driver.adb.shell = () => validWindowOutput;
       (await driver.getSystemBars()).should.be.eql(validSystemBars);
     });
   });

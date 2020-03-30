@@ -105,13 +105,13 @@ describe('driver', function () {
       sandbox.stub(driver, 'startAndroidSession');
       sandbox.stub(ADB, 'createADB').callsFake(function (opts) {
         return {
-          getDevicesWithRetry: () => {
+          getDevicesWithRetry () {
             return [
               {udid: 'emulator-1234'},
               {udid: 'rotalume-1337'}
             ];
           },
-          getPortFromEmulatorString: () => {
+          getPortFromEmulatorString () {
             return 1234;
           },
           setDeviceId: () => {},

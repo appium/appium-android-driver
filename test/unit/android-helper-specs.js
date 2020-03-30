@@ -153,19 +153,19 @@ describe('Android Helpers', function () {
     before(function () {
       sinon.stub(ADB, 'createADB').callsFake(function () {
         return {
-          getDevicesWithRetry: () => {
-            return _.map(devices, (device) => { return {udid: device.udid}; });
+          getDevicesWithRetry () {
+            return _.map(devices, function getDevice (device) { return {udid: device.udid}; });
           },
-          getPortFromEmulatorString: () => {
+          getPortFromEmulatorString () {
             return 1234;
           },
-          getRunningAVD: () => {
+          getRunningAVD () {
             return {udid: 'emulator-1234', port: 1234};
           },
-          setDeviceId: (udid) => {
+          setDeviceId (udid) {
             curDeviceId = udid;
           },
-          getPlatformVersion: () => {
+          getPlatformVersion () {
             return _.filter(devices, {udid: curDeviceId})[0].os;
           },
           curDeviceId: 'emulator-1234',
