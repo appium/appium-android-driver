@@ -59,6 +59,6 @@ before_script:
   - sleep 30
   - adb shell input keyevent 82 &
 script:
-  - npm run lint && npm run mocha -- -t $MOCHA_TIMEOUT $RECURSIVE build/test/$TEST -g @skip-ci -i
+  - npm run lint && npx mocha -t $MOCHA_TIMEOUT $RECURSIVE build/test/$TEST -g @skip-ci -i
 after_success:
   - if [ ${COVERALLS} = "1" ]; then npm run coverage; fi
