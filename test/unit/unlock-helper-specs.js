@@ -261,7 +261,7 @@ describe('Unlock Helpers', function () {
   }));
   describe('getPatternKeyPosition', function () {
     it('should verify pattern pin is aproximatelly to its position', function () {
-      let pins = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((pin) => {
+      let pins = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(function mapPins (pin) {
         return helpers.getPatternKeyPosition(pin, {x: 33, y: 323}, 137.6);
       });
       let cols = [101, 238, 375];
