@@ -47,8 +47,6 @@ describe('logs', function () {
         resolve();
       });
       client.on('error', reject);
-      setTimeout(() => reject(new Error('No websocket messages have been received after the timeout')),
-                timeout);
     });
 
     await driver.execute('mobile: startLogsBroadcast', {});
@@ -56,7 +54,7 @@ describe('logs', function () {
       // do something that ought to produce some logs
       await driver.startActivity('io.appium.android.apis', 'io.appium.android.apis.ApiDemos');
       // wait for data, or a timeout
-      await logsPromise;
+      await logsPromise.timeout(timeout, 'No websocket messages have been received after the timeout');
     } finally {
       await driver.execute('mobile: stopLogsBroadcast', {});
     }
