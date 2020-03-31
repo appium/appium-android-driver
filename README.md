@@ -5,7 +5,6 @@
 
 [![Build Status](https://travis-ci.org/appium/appium-android-driver.svg?branch=master)](https://travis-ci.org/appium/appium-android-driver)
 [![Coverage Status](https://coveralls.io/repos/appium/appium-android-driver/badge.svg?branch=master)](https://coveralls.io/r/appium/appium-android-driver?branch=master)
-[![Greenkeeper badge](https://badges.greenkeeper.io/appium/appium-android-driver.svg)](https://greenkeeper.io/)
 
 # Appium Android Driver
 
