@@ -10,7 +10,7 @@ chai.use(chaiAsPromised);
 
 describe('IME', function () {
   let driver;
-  let sandbox = sinon.sandbox.create();
+  let sandbox = sinon.createSandbox();
   beforeEach(function () {
     driver = new AndroidDriver();
     driver.adb = new ADB();

@@ -1,12 +1,13 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import Bootstrap from 'appium-android-bootstrap';
+import Bootstrap from '../../../lib/bootstrap';
 import AndroidDriver from '../../..';
 import { errors } from 'appium-base-driver';
 
+
 let driver;
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 chai.should();
 chai.use(chaiAsPromised);
 
@@ -35,13 +36,13 @@ describe('Find', function () {
         .should.be.rejectedWith(/provide a selector/);
     });
     it('should be able to find element', async function () {
-      let params = {strategy: 'xpath',  selector: '//*[1]', context: 'context', multiple: false};
+      let params = {strategy: 'xpath', selector: '//*[1]', context: 'context', multiple: false};
       driver.doFindElementOrEls.returns('el1');
       await driver.findElOrEls('xpath', '//*[1]', false, 'context').should.become('el1');
       driver.doFindElementOrEls.calledWithExactly(params).should.be.true;
     });
     it('should be able to find elements', async function () {
-      let params = {strategy: 'xpath',  selector: '//*[1]', context: 'context', multiple: true};
+      let params = {strategy: 'xpath', selector: '//*[1]', context: 'context', multiple: true};
       driver.doFindElementOrEls.returns(['el1', 'el2']);
       await driver.findElOrEls('xpath', '//*[1]', true, 'context')
         .should.eventually.be.deep.equal(['el1', 'el2']);
@@ -52,9 +53,9 @@ describe('Find', function () {
       await driver.findElOrEls('xpaht', '//*[1]', true)
         .should.eventually.be.deep.equal([]);
     });
-    it('should throws NoSuchElementError if element does not exist', async function () {
-      driver.doFindElementOrEls.throws(new Error('An element could not be located'));
-      await driver.findElOrEls('xpaht', '//*[1]', false)
+    it('should throw NoSuchElementError if element does not exist', async function () {
+      driver.doFindElementOrEls.throws(new errors.NoSuchElementError());
+      await driver.findElOrEls('xpath', '//*[1]', false)
         .should.be.rejectedWith(errors.NoSuchElementError);
     });
     it('should fails if locator strategy is not valid', async function () {

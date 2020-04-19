@@ -6,7 +6,7 @@ import { parseSurfaceLine, parseWindows } from '../../../lib/commands/general';
 import helpers from '../../../lib/android-helpers';
 import { withMocks } from 'appium-test-support';
 import { fs } from 'appium-support';
-import Bootstrap from 'appium-android-bootstrap';
+import Bootstrap from '../../../lib/bootstrap';
 import B from 'bluebird';
 import ADB from 'appium-adb';
 
@@ -15,7 +15,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 let driver;
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 let expect = chai.expect;
 
 describe('General', function () {
@@ -51,13 +51,19 @@ describe('General', function () {
   describe('getDeviceTime', function () {
     it('should return device time', async function () {
       sandbox.stub(driver.adb, 'shell');
-      driver.adb.shell.returns(' 11:12 ');
-      await driver.getDeviceTime().should.become('11:12');
-      driver.adb.shell.calledWithExactly(['date']).should.be.true;
+      driver.adb.shell.returns(' 2018-06-09T16:21:54+0900 ');
+      await driver.getDeviceTime().should.become('2018-06-09T16:21:54+09:00');
+      driver.adb.shell.calledWithExactly(['date', '+%Y-%m-%dT%T%z']).should.be.true;
     });
-    it('should thorws error if shell command failed', async function () {
+    it('should return device time with custom format', async function () {
+      sandbox.stub(driver.adb, 'shell');
+      driver.adb.shell.returns(' 2018-06-09T16:21:54+0900 ');
+      await driver.getDeviceTime('YYYY-MM-DD').should.become('2018-06-09');
+      driver.adb.shell.calledWithExactly(['date', '+%Y-%m-%dT%T%z']).should.be.true;
+    });
+    it('should throw error if shell command failed', async function () {
       sandbox.stub(driver.adb, 'shell').throws();
-      await driver.getDeviceTime().should.be.rejectedWith('Could not capture');
+      await driver.getDeviceTime().should.be.rejected;
     });
   });
   describe('getPageSource', function () {
@@ -75,30 +81,52 @@ describe('General', function () {
   });
   describe('isKeyboardShown', function () {
     it('should return true if the keyboard is shown', async function () {
-      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: true, canCloseKeyboard: true}; };
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+        return {isKeyboardShown: true, canCloseKeyboard: true};
+      };
       (await driver.isKeyboardShown()).should.equal(true);
     });
     it('should return false if the keyboard is not shown', async function () {
-      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: false, canCloseKeyboard: true}; };
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+        return {isKeyboardShown: false, canCloseKeyboard: true};
+      };
       (await driver.isKeyboardShown()).should.equal(false);
     });
   });
   describe('hideKeyboard', function () {
-    it('should hide keyboard via back command', async function () {
-      sandbox.stub(driver, 'back');
-      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: true, canCloseKeyboard: true}; };
-      await driver.hideKeyboard();
-      driver.back.calledOnce.should.be.true;
+    it('should hide keyboard with ESC command', async function () {
+      sandbox.stub(driver.adb, 'keyevent');
+      let callIdx = 0;
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+        callIdx++;
+        return {
+          isKeyboardShown: callIdx <= 1,
+          canCloseKeyboard: callIdx <= 1,
+        };
+      };
+      await driver.hideKeyboard().should.eventually.be.fulfilled;
+      driver.adb.keyevent.calledWithExactly(111).should.be.true;
     });
-    it('should not call back command if can\'t close keyboard', async function () {
-      sandbox.stub(driver, 'back');
-      driver.adb.isSoftKeyboardPresent = () => { return {isKeyboardShown: true, canCloseKeyboard: false}; };
-      await driver.hideKeyboard();
-      driver.back.notCalled.should.be.true;
+    it('should throw if cannot close keyboard', async function () {
+      this.timeout(10000);
+      sandbox.stub(driver.adb, 'keyevent');
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+        return {
+          isKeyboardShown: true,
+          canCloseKeyboard: false,
+        };
+      };
+      await driver.hideKeyboard().should.eventually.be.rejected;
+      driver.adb.keyevent.notCalled.should.be.true;
     });
-    it('should throw an error if no keyboard is present', async function () {
-      driver.adb.isSoftKeyboardPresent = () => { return false; };
-      await driver.hideKeyboard().should.be.rejectedWith(/not present/);
+    it('should not throw if no keyboard is present', async function () {
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+        return {
+          isKeyboardShown: false,
+          canCloseKeyboard: false,
+        };
+      };
+      await driver.hideKeyboard().should.eventually.be.fulfilled;
     });
   });
   describe('openSettingsActivity', function () {
@@ -182,19 +210,18 @@ describe('General', function () {
       driver.opts = {appPackage, appActivity, intentAction: 'act',
                      intentCategory: 'cat', intentFlags: 'flgs',
                      optionalIntentArguments: 'opt'};
-      let params = {pkg: appPackage, activity: appActivity, action: 'act', category: 'cat',
-                    flags: 'flgs',
-                    optionalIntentArguments: 'opt', stopApp: false};
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
         .returns({appPackage, appActivity});
       sandbox.stub(B, 'delay');
       sandbox.stub(driver.adb, 'startApp');
+      sandbox.stub(driver, 'activateApp');
       await driver.background(10);
       driver.adb.getFocusedPackageAndActivity.calledOnce.should.be.true;
       driver.adb.goToHome.calledOnce.should.be.true;
       B.delay.calledWithExactly(10000).should.be.true;
-      driver.adb.startApp.calledWithExactly(params).should.be.true;
+      driver.activateApp.calledWithExactly(appPackage).should.be.true;
+      driver.adb.startApp.notCalled.should.be.true;
     });
     it('should bring app to background and back if started after session init', async function () {
       const appPackage = 'newpkg';
@@ -205,17 +232,19 @@ describe('General', function () {
       let params = {pkg: appPackage, activity: appActivity, action: 'act', category: 'cat',
                     flags: 'flgs', waitPkg: 'wpkg', waitActivity: 'wacv',
                     optionalIntentArguments: 'opt', stopApp: false};
-      driver.opts.startActivityArgs = {[`${appPackage}/${appActivity}`]: params};
+      driver._cachedActivityArgs = {[`${appPackage}/${appActivity}`]: params};
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
         .returns({appPackage, appActivity});
       sandbox.stub(B, 'delay');
       sandbox.stub(driver.adb, 'startApp');
+      sandbox.stub(driver, 'activateApp');
       await driver.background(10);
       driver.adb.getFocusedPackageAndActivity.calledOnce.should.be.true;
       driver.adb.goToHome.calledOnce.should.be.true;
       B.delay.calledWithExactly(10000).should.be.true;
       driver.adb.startApp.calledWithExactly(params).should.be.true;
+      driver.activateApp.notCalled.should.be.true;
     });
     it('should bring app to background and back if waiting for other pkg / activity', async function () { //eslint-disable-line
       const appPackage = 'somepkg';
@@ -226,21 +255,18 @@ describe('General', function () {
                      intentAction: 'act', intentCategory: 'cat',
                      intentFlags: 'flgs', optionalIntentArguments: 'opt',
                      stopApp: false};
-      let params = {pkg: appPackage, activity: appActivity,
-                    waitPkg: appWaitPackage, waitActivity: appWaitActivity,
-                    action: 'act', category: 'cat',
-                    flags: 'flgs',
-                    optionalIntentArguments: 'opt', stopApp: false};
       sandbox.stub(driver.adb, 'goToHome');
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
         .returns({appPackage: appWaitPackage, appActivity: appWaitActivity});
       sandbox.stub(B, 'delay');
       sandbox.stub(driver.adb, 'startApp');
+      sandbox.stub(driver, 'activateApp');
       await driver.background(10);
       driver.adb.getFocusedPackageAndActivity.calledOnce.should.be.true;
       driver.adb.goToHome.calledOnce.should.be.true;
       B.delay.calledWithExactly(10000).should.be.true;
-      driver.adb.startApp.calledWithExactly(params).should.be.true;
+      driver.activateApp.calledWithExactly(appWaitPackage).should.be.true;
+      driver.adb.startApp.notCalled.should.be.true;
     });
     it('should not bring app back if seconds are negative', async function () {
       sandbox.stub(driver.adb, 'goToHome');
@@ -252,22 +278,22 @@ describe('General', function () {
   });
   describe('getStrings', withMocks({helpers}, (mocks) => {
     it('should return app strings', async function () {
-      driver.bootstrap.sendAction = () => { return ''; };
-      mocks.helpers.expects("pushStrings")
+      driver.bootstrap.sendAction = () => '';
+      mocks.helpers.expects('pushStrings')
           .returns({test: 'en_value'});
       let strings = await driver.getStrings('en');
       strings.test.should.equal('en_value');
       mocks.helpers.verify();
     });
     it('should return cached app strings for the specified language', async function () {
-      driver.adb.getDeviceLanguage = () => { return 'en'; };
+      driver.adb.getDeviceLanguage = () => 'en';
       driver.apkStrings.en = {test: 'en_value'};
       driver.apkStrings.fr = {test: 'fr_value'};
       let strings = await driver.getStrings('fr');
       strings.test.should.equal('fr_value');
     });
     it('should return cached app strings for the device language', async function () {
-      driver.adb.getDeviceLanguage = () => { return 'en'; };
+      driver.adb.getDeviceLanguage = () => 'en';
       driver.apkStrings.en = {test: 'en_value'};
       driver.apkStrings.fr = {test: 'fr_value'};
       let strings = await driver.getStrings();
@@ -334,13 +360,33 @@ describe('General', function () {
   });
   describe('startAUT', function () {
     it('should start AUT', async function () {
-      driver.opts = {appPackage: 'pkg', appActivity: 'act', intentAction: 'actn',
-                     intentCategory: 'cat', intentFlags: 'flgs', appWaitPackage: 'wpkg',
-                     appWaitActivity: 'wact', appWaitDuration: 'wdur',
-                     optionalIntentArguments: 'opt'};
-      let params = {pkg: 'pkg', activity: 'act', action: 'actn', category: 'cat',
-                    flags: 'flgs', waitPkg: 'wpkg', waitActivity: 'wact',
-                    waitDuration: 'wdur', optionalIntentArguments: 'opt', stopApp: false};
+      driver.opts = {
+        appPackage: 'pkg',
+        appActivity: 'act',
+        intentAction: 'actn',
+        intentCategory: 'cat',
+        intentFlags: 'flgs',
+        appWaitPackage: 'wpkg',
+        appWaitActivity: 'wact',
+        appWaitForLaunch: true,
+        appWaitDuration: 'wdur',
+        optionalIntentArguments: 'opt',
+        userProfile: 1
+      };
+      let params = {
+        pkg: 'pkg',
+        activity: 'act',
+        action: 'actn',
+        category: 'cat',
+        flags: 'flgs',
+        waitPkg: 'wpkg',
+        waitActivity: 'wact',
+        waitForLaunch: true,
+        waitDuration: 'wdur',
+        optionalIntentArguments: 'opt',
+        stopApp: false,
+        user: 1
+      };
       driver.opts.dontStopAppOnReset = true;
       params.stopApp = false;
       sandbox.stub(driver.adb, 'startApp');
@@ -366,7 +412,7 @@ describe('General', function () {
   });
   describe('getDisplayDensity', function () {
     it('should return the display density of a device', async function () {
-      driver.adb.shell = () => { return '123'; };
+      driver.adb.shell = () => '123';
       (await driver.getDisplayDensity()).should.equal(123);
     });
     it('should return the display density of an emulator', async function () {
@@ -384,16 +430,16 @@ describe('General', function () {
       (await driver.getDisplayDensity()).should.equal(456);
     });
     it('should throw an error if the display density property can\'t be found', async function () {
-      driver.adb.shell = () => { return ''; };
+      driver.adb.shell = () => '';
       await driver.getDisplayDensity().should.be.rejectedWith(/Failed to get display density property/);
     });
     it('should throw and error if the display density is not a number', async function () {
-      driver.adb.shell = () => { return 'abc'; };
+      driver.adb.shell = () => 'abc';
       await driver.getDisplayDensity().should.be.rejectedWith(/Failed to get display density property/);
     });
   });
   describe('parseSurfaceLine', function () {
-    it('should return visible true if the surface is visible', async function () {
+    it('should return visible true if the surface is visible', function () {
       parseSurfaceLine('shown=true rect=1 1 1 1').should.be.eql({
         visible: true,
         x: 1,
@@ -402,7 +448,7 @@ describe('General', function () {
         height: 1
       });
     });
-    it('should return visible false if the surface is not visible', async function () {
+    it('should return visible false if the surface is not visible', function () {
       parseSurfaceLine('shown=false rect=1 1 1 1').should.be.eql({
         visible: false,
         x: 1,
@@ -411,7 +457,7 @@ describe('General', function () {
         height: 1
       });
     });
-    it('should return the parsed surface bounds', async function () {
+    it('should return the parsed surface bounds', function () {
       parseSurfaceLine('shown=true rect=(1.0,2.0) 3.0 x 4.0').should.be.eql({
         visible: true,
         x: 1,
@@ -443,11 +489,11 @@ describe('General', function () {
   };
 
   describe('parseWindows', function () {
-    it('should throw an error if the status bar info wasn\'t found', async function () {
+    it('should throw an error if the status bar info wasn\'t found', function () {
       expect(() => { parseWindows(''); })
         .to.throw(Error, /Failed to parse status bar information./);
     });
-    it('should throw an error if the navigation bar info wasn\'t found', async function () {
+    it('should throw an error if the navigation bar info wasn\'t found', function () {
       let windowOutput = [
         '  Window #1 StatusBar',
         '    blah blah blah',
@@ -457,7 +503,7 @@ describe('General', function () {
       expect(() => { parseWindows(windowOutput); })
         .to.throw(Error, /Failed to parse navigation bar information./);
     });
-    it('should return status and navigation bar info when both are given', async function () {
+    it('should return status and navigation bar info when both are given', function () {
       parseWindows(validWindowOutput).should.be.eql(validSystemBars);
     });
   });
@@ -465,13 +511,13 @@ describe('General', function () {
     it('should throw an error if there\'s no window manager output', async function () {
       driver = new AndroidDriver();
       driver.adb = {};
-      driver.adb.shell = () => { return ''; };
+      driver.adb.shell = () => '';
       await driver.getSystemBars().should.be.rejectedWith(/Did not get window manager output./);
     });
     it('should return the parsed system bar info', async function () {
       driver = new AndroidDriver();
       driver.adb = {};
-      driver.adb.shell = () => { return validWindowOutput; };
+      driver.adb.shell = () => validWindowOutput;
       (await driver.getSystemBars()).should.be.eql(validSystemBars);
     });
   });

@@ -33,7 +33,7 @@ describe('execute', function () {
 
   it('should fail if one tries to execute a shell command without relaxed security flag set', async function () {
     await driver.execute('mobile: shell', {command: 'pm', args: ['list']})
-      .should.eventually.be.rejectedWith(/must have relaxed security flag set/);
+      .should.eventually.be.rejectedWith(/Potentially insecure feature/);
   });
 
   it('should fail if no command argument is provided to shell call', async function () {

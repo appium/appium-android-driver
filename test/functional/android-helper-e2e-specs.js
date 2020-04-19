@@ -6,14 +6,13 @@ import ADB from 'appium-adb';
 import { app } from './desired';
 import { MOCHA_TIMEOUT } from './helpers';
 import { exec } from 'teen_process';
-import { path as unlockApkPath } from 'appium-unlock';
 import path from 'path';
 
 
 let opts = {
   app,
-  appPackage : 'io.appium.android.apis',
-  androidInstallTimeout : 90000
+  appPackage: 'io.appium.android.apis',
+  androidInstallTimeout: 90000
 };
 
 chai.should();
@@ -53,6 +52,16 @@ describe('android-helpers e2e', function () {
         await adb.getDeviceLocale().should.eventually.equal('fr-FR');
       }
     });
+    it('should set device language and country with script', async function () {
+      await helpers.ensureDeviceLocale(adb, 'zh', 'CN', 'Hans');
+
+      if (await adb.getApiLevel() < 23) {
+        await adb.getDeviceLanguage().should.eventually.equal('fr');
+        await adb.getDeviceCountry().should.eventually.equal('FR');
+      } else {
+        await adb.getDeviceLocale().should.eventually.equal('fr-Hans-CN');
+      }
+    });
   });
   describe('pushSettingsApp', function () {
     const settingsPkg = 'io.appium.settings';
@@ -74,23 +83,6 @@ describe('android-helpers e2e', function () {
       await exec('npm', ['install', settingsPkg]);
 
       await helpers.pushSettingsApp(adb, true);
-    });
-  });
-  describe('pushUnlock', function () {
-    const unlockPkg = 'appium-unlock';
-    const unlockBundle = 'io.appium.unlock';
-    it('should be able to upgrade from unlock v0.0.1 to latest', async function () {
-      await adb.uninstallApk(unlockBundle);
-
-      // get and install old version of settings app
-      await exec('npm', ['install', `${unlockPkg}@0.0.1`]);
-      await adb.install(unlockApkPath);
-
-      // get latest version of settings app
-      await exec('npm', ['uninstall', unlockPkg]);
-      await exec('npm', ['install', unlockPkg]);
-
-      await helpers.pushUnlock(adb);
     });
   });
 });

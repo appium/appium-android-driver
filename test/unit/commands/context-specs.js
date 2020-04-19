@@ -11,14 +11,14 @@ import { errors } from 'appium-base-driver';
 
 let driver;
 let stubbedChromedriver;
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 let expect = chai.expect;
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('Context', function () {
   beforeEach(function () {
-    sandbox.stub(PortFinder, 'getPort', function (cb) { // eslint-disable-line promise/prefer-await-to-callbacks
+    sandbox.stub(PortFinder, 'getPort').callsFake(function (cb) { // eslint-disable-line promise/prefer-await-to-callbacks
       return cb(null, 4444); // eslint-disable-line promise/prefer-await-to-callbacks
     });
     driver = new AndroidDriver();
@@ -291,9 +291,9 @@ describe('Context', function () {
         .should.be.equal('app_act');
     });
     it('should be able to set loggingPrefs capability', async function () {
-      let chromedriver = await setupNewChromedriver({pageLoadStrategy: "strategy"});
+      let chromedriver = await setupNewChromedriver({pageLoadStrategy: 'strategy'});
       chromedriver.start.getCall(0).args[0].pageLoadStrategy
-        .should.be.equal("strategy");
+        .should.be.equal('strategy');
     });
   });
 });

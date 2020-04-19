@@ -7,7 +7,7 @@ import AndroidDriver from '../../lib/driver';
 import * as asyncbox from 'asyncbox';
 import ADB from 'appium-adb';
 
-const KEYCODE_NUMPAD_ENTER = "66";
+const KEYCODE_NUMPAD_ENTER = 66;
 const INPUT_KEYS_WAIT_TIME = 100;
 const HIDE_KEYBOARD_WAIT_TIME = 100;
 const UNLOCK_WAIT_TIME = 100;
@@ -18,10 +18,10 @@ chai.use(chaiAsPromised);
 describe('Unlock Helpers', function () {
   let adb = new ADB();
   let driver = new AndroidDriver();
-  let sandbox = sinon.sandbox.create();
+  let sandbox = sinon.createSandbox();
   let expect = chai.expect;
   describe('isValidUnlockType', function () {
-    it('should verify the unlock types', async function () {
+    it('should verify the unlock types', function () {
       helpers.isValidUnlockType('pin').should.equal(true);
       helpers.isValidUnlockType('pattern').should.equal(true);
       helpers.isValidUnlockType('password').should.equal(true);
@@ -29,8 +29,8 @@ describe('Unlock Helpers', function () {
       helpers.isValidUnlockType('telepathy').should.equal(false);
     });
   });
-  describe('isValidKey',  function () {
-    it('should verify the unlock keys for each type', async function () {
+  describe('isValidKey', function () {
+    it('should verify the unlock keys for each type', function () {
       helpers.isValidKey('pin').should.equal(false);
       helpers.isValidKey('pin', ' ').should.equal(false);
       helpers.isValidKey('pin', '1111').should.equal(true);
@@ -55,14 +55,16 @@ describe('Unlock Helpers', function () {
       helpers.isValidKey('password').should.equal(false);
       helpers.isValidKey('password', '   ').should.equal(false);
     });
-    it('should throw error if unlock type is invalid', async function () {
+    it('should throw error if unlock type is invalid', function () {
       expect(() => helpers.isValidKey('invalid_unlock_type', '1'))
         .to.throw('Invalid unlock type');
     });
   });
-  describe('dismissKeyguard', withMocks({driver,  adb, asyncbox, helpers}, (mocks) => {
-    it('should hide keyboard if keyboard is snown', async function () {
+  describe('dismissKeyguard', withMocks({driver, adb, asyncbox, helpers}, (mocks) => {
+    it('should hide keyboard if keyboard is shown', async function () {
       mocks.driver.expects('isKeyboardShown').returns(true);
+      mocks.driver.expects('pressKeyCode').withExactArgs(224).once();
+      mocks.driver.expects('pressKeyCode').withExactArgs(26).once();
       mocks.driver.expects('hideKeyboard').once();
       mocks.asyncbox.expects('sleep').withExactArgs(HIDE_KEYBOARD_WAIT_TIME).once();
       mocks.adb.expects('shell').once();
@@ -76,8 +78,10 @@ describe('Unlock Helpers', function () {
     });
     it('should dismiss notifications and dissmiss keyguard via swipping up', async function () {
       mocks.driver.expects('isKeyboardShown').returns(false);
+      mocks.driver.expects('pressKeyCode').withExactArgs(224).once();
+      mocks.driver.expects('pressKeyCode').withExactArgs(26).once();
       mocks.adb.expects('shell')
-        .withExactArgs(["service", "call", "notification", "1"]).once();
+        .withExactArgs(['service', 'call', 'notification', '1']).once();
       mocks.adb.expects('back').once();
       mocks.adb.expects('getApiLevel').returns(21);
       mocks.helpers.expects('swipeUp').withExactArgs(driver).once();
@@ -88,10 +92,12 @@ describe('Unlock Helpers', function () {
     });
     it('should dissmiss keyguard via dismiss-keyguard shell command if API level > 21', async function () {
       mocks.driver.expects('isKeyboardShown').returns(false);
+      mocks.driver.expects('pressKeyCode').withExactArgs(224).once();
+      mocks.driver.expects('pressKeyCode').withExactArgs(26).once();
       mocks.adb.expects('shell').onCall(0).returns('');
       mocks.adb.expects('back').once();
       mocks.adb.expects('getApiLevel').returns(22);
-      mocks.adb.expects('shell').withExactArgs(["wm", "dismiss-keyguard"]).once();
+      mocks.adb.expects('shell').withExactArgs(['wm', 'dismiss-keyguard']).once();
       mocks.helpers.expects('swipeUp').never();
       await helpers.dismissKeyguard(driver, adb);
       mocks.driver.verify();
@@ -114,13 +120,13 @@ describe('Unlock Helpers', function () {
     });
   }));
   describe('encodePassword', function () {
-    it('should verify the password with blank space is encoded', async function () {
-      helpers.encodePassword('a p p i u m').should.equal("a%sp%sp%si%su%sm");
-      helpers.encodePassword('   ').should.equal("%s%s%s");
+    it('should verify the password with blank space is encoded', function () {
+      helpers.encodePassword('a p p i u m').should.equal('a%sp%sp%si%su%sm');
+      helpers.encodePassword('   ').should.equal('%s%s%s');
     });
   });
   describe('stringKeyToArr', function () {
-    it('should cast string keys to array', async function () {
+    it('should cast string keys to array', function () {
       helpers.stringKeyToArr('1234').should.eql(['1', '2', '3', '4']);
       helpers.stringKeyToArr(' 1234 ').should.eql(['1', '2', '3', '4']);
       helpers.stringKeyToArr('1 2 3 4').should.eql(['1', '2', '3', '4']);
@@ -150,9 +156,11 @@ describe('Unlock Helpers', function () {
   describe('pinUnlock', withMocks({adb, helpers, driver, asyncbox}, (mocks) => {
     const caps = {unlockKey: '13579'};
     const keys = ['1', '3', '5', '7', '9'];
-    const els = [{ELEMENT: 1}, {ELEMENT: 2}, {ELEMENT: 3},
-                 {ELEMENT: 4}, {ELEMENT: 5}, {ELEMENT: 6},
-                 {ELEMENT: 7}, {ELEMENT: 8}, {ELEMENT: 9}];
+    const els = [
+      {ELEMENT: 1}, {ELEMENT: 2}, {ELEMENT: 3},
+      {ELEMENT: 4}, {ELEMENT: 5}, {ELEMENT: 6},
+      {ELEMENT: 7}, {ELEMENT: 8}, {ELEMENT: 9},
+    ];
     afterEach(function () {
       sandbox.restore();
     });
@@ -161,16 +169,15 @@ describe('Unlock Helpers', function () {
       mocks.helpers.expects('stringKeyToArr').returns(keys);
       mocks.adb.expects('getApiLevel').returns(21);
       mocks.driver.expects('findElOrEls')
-        .withExactArgs("id", "com.android.systemui:id/digit_text", true)
+        .withExactArgs('id', 'com.android.systemui:id/digit_text', true)
         .returns(els);
-      mocks.driver.expects('findElOrEls')
-        .withExactArgs("id", "com.android.systemui:id/key_enter", false)
-        .returns({ELEMENT: 100});
+      mocks.adb.expects('isScreenLocked').returns(true);
+      mocks.driver.expects('pressKeyCode').withExactArgs(66).once();
       for (let e of els) {
         mocks.driver.expects('getAttribute').withExactArgs('text', e.ELEMENT)
           .returns(e.ELEMENT.toString());
       }
-      mocks.asyncbox.expects('sleep').withExactArgs(UNLOCK_WAIT_TIME).once();
+      mocks.asyncbox.expects('sleep').withExactArgs(UNLOCK_WAIT_TIME).twice();
       sandbox.stub(driver, 'click');
 
       await helpers.pinUnlock(adb, driver, caps);
@@ -180,7 +187,6 @@ describe('Unlock Helpers', function () {
       driver.click.getCall(2).args[0].should.equal(5);
       driver.click.getCall(3).args[0].should.equal(7);
       driver.click.getCall(4).args[0].should.equal(9);
-      driver.click.getCall(5).args[0].should.equal(100);
 
       mocks.helpers.verify();
       mocks.driver.verify();
@@ -193,12 +199,10 @@ describe('Unlock Helpers', function () {
       mocks.adb.expects('getApiLevel').returns(20);
       for (let pin of keys) {
         mocks.driver.expects('findElOrEls')
-          .withExactArgs("id", `com.android.keyguard:id/key${pin}`, false)
+          .withExactArgs('id', `com.android.keyguard:id/key${pin}`, false)
           .returns({ELEMENT: parseInt(pin, 10)});
       }
-      mocks.driver.expects('findElOrEls')
-        .withExactArgs("id", "com.android.keyguard:id/key_enter", false)
-        .returns({ELEMENT: 100});
+      mocks.adb.expects('isScreenLocked').returns(false);
       mocks.asyncbox.expects('sleep').withExactArgs(UNLOCK_WAIT_TIME).once();
       sandbox.stub(driver, 'click');
 
@@ -209,7 +213,6 @@ describe('Unlock Helpers', function () {
       driver.click.getCall(2).args[0].should.equal(5);
       driver.click.getCall(3).args[0].should.equal(7);
       driver.click.getCall(4).args[0].should.equal(9);
-      driver.click.getCall(5).args[0].should.equal(100);
 
       mocks.helpers.verify();
       mocks.driver.verify();
@@ -257,9 +260,9 @@ describe('Unlock Helpers', function () {
     });
   }));
   describe('getPatternKeyPosition', function () {
-    it('should verify pattern pin is aproximatelly to its position', async function () {
-      let pins = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((pin) => {
-        return helpers.getPatternKeyPosition(pin, {x: 33, y:323}, 137.6);
+    it('should verify pattern pin is aproximatelly to its position', function () {
+      let pins = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(function mapPins (pin) {
+        return helpers.getPatternKeyPosition(pin, {x: 33, y: 323}, 137.6);
       });
       let cols = [101, 238, 375];
       let rows = [391, 528, 665];
@@ -284,9 +287,9 @@ describe('Unlock Helpers', function () {
     });
   });
   describe('getPatternActions', function () {
-    it('should generate press, moveTo, relase gesture scheme to unlock by pattern', async function () {
-      let keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
-      let actions = helpers.getPatternActions(keys, {x: 0, y:0}, 1);
+    it('should generate press, moveTo, relase gesture scheme to unlock by pattern', function () {
+      let keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      let actions = helpers.getPatternActions(keys, {x: 0, y: 0}, 1);
       actions.map((action, i) => {
         if (i === 0) {
           action.action.should.equal('press');
@@ -297,33 +300,33 @@ describe('Unlock Helpers', function () {
         }
       });
     });
-    it('should verify pattern gestures moves to non consecutives pins', async function () {
-      let keys = ["7", "2", "9", "8", "5", "6", "1", "4", "3"];
-      let actions = helpers.getPatternActions(keys, {x: 0, y:0}, 1);
+    it('should verify pattern gestures moves to non consecutives pins', function () {
+      let keys = ['7', '2', '9', '8', '5', '6', '1', '4', '3'];
+      let actions = helpers.getPatternActions(keys, {x: 0, y: 0}, 1);
       // Move from pin 7 to pin 2
-      actions[1].options.x.should.equal(1);
-      actions[1].options.y.should.equal(-2);
+      actions[1].options.x.should.equal(2);
+      actions[1].options.y.should.equal(1);
       // Move from pin 2 to pin 9
-      actions[2].options.x.should.equal(1);
-      actions[2].options.y.should.equal(2);
+      actions[2].options.x.should.equal(3);
+      actions[2].options.y.should.equal(3);
       // Move from pin 9 to pin 8
-      actions[3].options.x.should.equal(-1);
-      actions[3].options.y.should.equal(0);
+      actions[3].options.x.should.equal(2);
+      actions[3].options.y.should.equal(3);
       // Move from pin 8 to pin 5
-      actions[4].options.x.should.equal(0);
-      actions[4].options.y.should.equal(-1);
+      actions[4].options.x.should.equal(2);
+      actions[4].options.y.should.equal(2);
       // Move from pin 5 to pin 6
-      actions[5].options.x.should.equal(1);
-      actions[5].options.y.should.equal(0);
+      actions[5].options.x.should.equal(3);
+      actions[5].options.y.should.equal(2);
       // Move from pin 6 to pin 1
-      actions[6].options.x.should.equal(-2);
-      actions[6].options.y.should.equal(-1);
+      actions[6].options.x.should.equal(1);
+      actions[6].options.y.should.equal(1);
       // Move from pin 1 to pin 4
-      actions[7].options.x.should.equal(0);
-      actions[7].options.y.should.equal(1);
+      actions[7].options.x.should.equal(1);
+      actions[7].options.y.should.equal(2);
       // Move from pin 4 to pin 3
-      actions[8].options.x.should.equal(2);
-      actions[8].options.y.should.equal(-1);
+      actions[8].options.x.should.equal(3);
+      actions[8].options.y.should.equal(1);
     });
   });
   describe('patternUnlock', withMocks({driver, helpers, adb, asyncbox}, (mocks) => {

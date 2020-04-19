@@ -15,7 +15,7 @@ describe('Commands', function () {
   afterEach(async function () {
     await driver.deleteSession();
   });
-  describe('Alerts', async function () {
+  describe('Alerts', function () {
     it('should throw a notYetImplemented error for alert methods', async function () {
       await driver.createSession(DEFAULT_CAPS);
       await driver.getAlertText().should.eventually.be.rejectedWith(/implemented/);

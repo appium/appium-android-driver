@@ -1,19 +1,18 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import Bootstrap from 'appium-android-bootstrap';
+import Bootstrap from '../../../lib/bootstrap';
 import path from 'path';
-import mockFS from 'mock-fs';
 import AndroidDriver from '../../..';
 import * as support from 'appium-support';
-import temp from 'temp';
 import ADB from 'appium-adb';
 import jimp from 'jimp';
 import helpers from '../../../lib/commands/actions';
 import * as teen_process from 'teen_process';
 
+
 let driver;
-let sandbox = sinon.sandbox.create();
+let sandbox = sinon.createSandbox();
 chai.should();
 chai.use(chaiAsPromised);
 
@@ -113,7 +112,7 @@ describe('Actions', function () {
       driver.swipe(0, 0, 1, 1, 0, 1);
       driver.bootstrap.sendAction.calledWith('swipe').should.be.true;
     });
-    it('should set start point to (0.5;0.5) if startX and startY are "null"', async function () {
+    it('should set start point to (0.5;0.5) if startX and startY are "null"', function () {
       let swipeOpts = {startX: 0.5, startY: 0.5, endX: 0, endY: 0, steps: 0};
       sandbox.stub(driver, 'doSwipe');
       driver.swipe('null', 'null', 0, 0, 0);
@@ -153,12 +152,12 @@ describe('Actions', function () {
       elementId: 'elem1', destElId: 'elem2',
       startX: 1, startY: 2, endX: 3, endY: 4, steps: 1
     };
-    it('should drag an element', async function () {
+    it('should drag an element', function () {
       driver.drag(1, 2, 3, 4, 0.02, null, 'elem1', 'elem2');
       driver.bootstrap.sendAction.calledWithExactly('element:drag', dragOpts)
         .should.be.true;
     });
-    it('should drag without an element', async function () {
+    it('should drag without an element', function () {
       dragOpts.elementId = null;
       driver.drag(1, 2, 3, 4, 0.02, null, null, 'elem2');
       driver.bootstrap.sendAction.calledWithExactly('drag', dragOpts)
@@ -197,9 +196,11 @@ describe('Actions', function () {
   describe('pullFile', function () {
     it('should be able to pull file from device', async function () {
       let localFile = 'local/tmp_file';
-      sandbox.stub(temp, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'pull');
-      sandbox.stub(support.fs, 'readFile').withArgs(localFile).returns('appium');
+      sandbox.stub(support.util, 'toInMemoryBase64')
+        .withArgs(localFile)
+        .returns(Buffer.from('YXBwaXVt', 'utf8'));
       sandbox.stub(support.fs, 'exists').withArgs(localFile).returns(true);
       sandbox.stub(support.fs, 'unlink');
       await driver.pullFile('remote_path').should.become('YXBwaXVt');
@@ -213,10 +214,12 @@ describe('Actions', function () {
       const packageId = 'com.myapp';
       const remotePath = 'path/in/container';
       const tmpPath = '/data/local/tmp/container';
-      sandbox.stub(temp, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'pull');
       sandbox.stub(driver.adb, 'shell');
-      sandbox.stub(support.fs, 'readFile').withArgs(localFile).returns('appium');
+      sandbox.stub(support.util, 'toInMemoryBase64')
+        .withArgs(localFile)
+        .returns(Buffer.from('YXBwaXVt', 'utf8'));
       sandbox.stub(support.fs, 'exists').withArgs(localFile).returns(true);
       sandbox.stub(support.fs, 'unlink');
       await driver.pullFile(`@${packageId}/${remotePath}`).should.become('YXBwaXVt');
@@ -232,8 +235,9 @@ describe('Actions', function () {
     it('should be able to push file to device', async function () {
       let localFile = 'local/tmp_file';
       let content = 'appium';
-      sandbox.stub(temp, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'push');
+      sandbox.stub(driver.adb, 'shell');
       sandbox.stub(support.fs, 'writeFile');
       sandbox.stub(support.fs, 'exists').withArgs(localFile).returns(true);
       sandbox.stub(support.fs, 'unlink');
@@ -249,7 +253,7 @@ describe('Actions', function () {
       const packageId = 'com.myapp';
       const remotePath = 'path/in/container';
       const tmpPath = '/data/local/tmp/container';
-      sandbox.stub(temp, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').returns(localFile);
       sandbox.stub(driver.adb, 'push');
       sandbox.stub(driver.adb, 'shell');
       sandbox.stub(support.fs, 'writeFile');
@@ -264,60 +268,6 @@ describe('Actions', function () {
       driver.adb.shell.calledWithExactly(['cp', '-f', tmpPath, `/data/data/${packageId}/${remotePath}`]).should.be.true;
       support.fs.unlink.calledWithExactly(localFile).should.be.true;
       driver.adb.shell.calledWithExactly(['rm', '-f', tmpPath]).should.be.true;
-    });
-  });
-  describe('pullFolder', function () {
-    let zippedDir, unzippedDir, tempDir, tempPathStub;
-
-    before(function () {
-      // Create in-memory mock file system for file writes
-      zippedDir = '/mock/path/to/zipped';
-      unzippedDir = '/mock/path/to/unzipped';
-      tempDir = '/mock/path/to/temp-dir';
-      mockFS({
-        [zippedDir]: {},
-        [unzippedDir]: {},
-        [tempDir]: {},
-      });
-
-      // Stub temp.path to use an in-memory filepath
-      tempPathStub = sinon.stub(temp, 'path', () => tempDir);
-    });
-
-    after(function () {
-      tempPathStub.restore();
-      mockFS.restore();
-    });
-
-    it('should pull a folder and return base64 zip', async function () {
-      // Stub in driver.adb and make it pull a folder with two files
-      let adbPullStub;
-      const pull = async (ignore, localPath) => {
-        await support.fs.writeFile(path.resolve(localPath, 'a.txt'), 'hello world', {flags: 'w'});
-        await support.fs.writeFile(path.resolve(localPath, 'b.txt'), 'foobar', {flags: 'w'});
-      };
-      if (!driver.adb) {
-        driver.adb = {pull};
-      } else {
-        adbPullStub = sinon.stub(driver.adb, 'pull', pull);
-      }
-
-      // Call 'driver.pullFolder' and zip the base64 contents to a .zip file
-      const zippedBase64 = await driver.pullFolder('/does/not/matter');
-      (typeof zippedBase64).should.equal('string');
-      await support.fs.writeFile(path.resolve(zippedDir, 'zipped.zip'), zippedBase64, {encoding: 'base64', flags: 'w'});
-
-      // Extract the zip file and verify it's contents
-      await support.zip.extractAllTo(path.resolve(zippedDir, 'zipped.zip'), unzippedDir);
-      await support.fs.readFile(path.resolve(unzippedDir, 'a.txt'), 'utf8').should.eventually.equal('hello world');
-      await support.fs.readFile(path.resolve(unzippedDir, 'b.txt'), 'utf8').should.eventually.equal('foobar');
-
-      // Restore stub
-      if (adbPullStub) {
-        adbPullStub.restore();
-      } else {
-        delete driver.adb;
-      }
     });
   });
   describe('fingerprint', function () {
@@ -349,6 +299,22 @@ describe('Actions', function () {
       await driver.sendSMS(4509, 'Hello Appium')
         .should.be.rejectedWith('sendSMS method is only available for emulators');
       driver.adb.sendSMS.notCalled.should.be.true;
+    });
+  });
+  describe('sensorSet', function () {
+    it('should call sensor adb command for emulator', async function () {
+      sandbox.stub(driver.adb, 'sensorSet');
+      sandbox.stub(driver, 'isEmulator').returns(true);
+      await driver.sensorSet({sensorType: 'light', value: 0});
+      driver.adb.sensorSet.calledWithExactly('light', 0)
+        .should.be.true;
+    });
+    it('should throw exception for real device', async function () {
+      sandbox.stub(driver.adb, 'sensorSet');
+      sandbox.stub(driver, 'isEmulator').returns(false);
+      await driver.sensorSet({sensorType: 'light', value: 0})
+        .should.be.rejectedWith('sensorSet method is only available for emulators');
+      driver.adb.sensorSet.notCalled.should.be.true;
     });
   });
   describe('gsmCall', function () {
@@ -451,7 +417,7 @@ describe('Actions', function () {
     const png = '/path/sc.png';
     const localFile = 'local_file';
     beforeEach(function () {
-      sandbox.stub(temp, 'path');
+      sandbox.stub(support.tempDir, 'path');
       sandbox.stub(support.fs, 'exists');
       sandbox.stub(support.fs, 'unlink');
       sandbox.stub(driver.adb, 'shell');
@@ -459,7 +425,7 @@ describe('Actions', function () {
       sandbox.stub(path.posix, 'resolve');
       sandbox.stub(jimp, 'read');
       sandbox.stub(driver.adb, 'fileSize');
-      temp.path.returns(localFile);
+      support.tempDir.path.returns(localFile);
       support.fs.exists.withArgs(localFile).returns(true);
       support.fs.unlink.withArgs(localFile).returns(true);
       path.posix.resolve.withArgs(defaultDir, 'screenshot.png').returns(png);
@@ -528,8 +494,8 @@ describe('Actions', function () {
       sandbox.stub(driver.adb, 'getScreenOrientation');
       sandbox.stub(driver, 'getScreenshotDataWithAdbExecOut');
       sandbox.stub(driver, 'getScreenshotDataWithAdbShell');
-      sandbox.stub(image, 'getBuffer', function (mime, cb) { // eslint-disable-line promise/prefer-await-to-callbacks
-        return cb.call(this, null, new Buffer('appium'));
+      sandbox.stub(image, 'getBuffer').callsFake(function (mime, cb) { // eslint-disable-line promise/prefer-await-to-callbacks
+        return cb.call(this, null, Buffer.from('appium'));
       });
       sandbox.stub(image, 'rotate');
       driver.adb.getScreenOrientation.returns(2);

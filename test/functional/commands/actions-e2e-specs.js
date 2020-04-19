@@ -29,6 +29,8 @@ describe('actions', function () {
 
   describe('replaceValue', function () {
     it('should replace existing value in a text field', async function () {
+      this.retries(4);
+
       let el = _.last(await driver.findElements('class name', 'android.widget.EditText'));
       el.should.exist;
       await driver.setValue('original value', el.ELEMENT);
@@ -61,7 +63,7 @@ describe('actions', function () {
   describe('getScreenshot', function () {
     it('should return valid base64-encoded screenshot', async function () {
       const base64screenshot = await driver.getScreenshot();
-      const imageMagic = new Buffer(base64screenshot, 'base64').toString('hex', 0, PNG_MAGIC_LENGTH);
+      const imageMagic = Buffer.from(base64screenshot, 'base64').toString('hex', 0, PNG_MAGIC_LENGTH);
       imageMagic.should.be.equal(PNG_MAGIC);
     });
   });
