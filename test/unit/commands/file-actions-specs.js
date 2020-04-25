@@ -1,7 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import Bootstrap from '../../../lib/bootstrap';
 import AndroidDriver from '../../..';
 import * as support from 'appium-support';
 import ADB from 'appium-adb';
@@ -16,8 +15,6 @@ describe('File Actions', function () {
   beforeEach(function () {
     driver = new AndroidDriver();
     driver.adb = new ADB();
-    driver.bootstrap = new Bootstrap();
-    sandbox.stub(driver.bootstrap, 'sendAction');
   });
   afterEach(function () {
     sandbox.restore();
