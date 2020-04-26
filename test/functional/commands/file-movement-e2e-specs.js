@@ -40,6 +40,18 @@ describe('file movement', function () {
     remoteData.should.equal(stringData);
   });
 
+  it('should delete pushed file', async function () {
+    let stringData = `random string data ${Math.random()}`;
+    let base64Data = Buffer.from(stringData).toString('base64');
+    let remotePath = `${getRandomDir()}/remote.txt`;
+
+    await driver.pushFile(remotePath, base64Data);
+
+    (await driver.execute('mobile: deleteFile', {remotePath})).should.be.true;
+    // The file should be already gone
+    (await driver.execute('mobile: deleteFile', {remotePath})).should.be.false;
+  });
+
   it('should pull a folder', async function () {
     const stringData = `random string data ${Math.random()}`;
     const base64Data = Buffer.from(stringData).toString('base64');
