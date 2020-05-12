@@ -126,8 +126,6 @@ describe('Android Helpers', function () {
     });
     it('should add network speed arg', function () {
       let avdArgs = '-wipe-data';
-      mocks.helpers.expects('ensureNetworkSpeed').once()
-        .returns('edge');
       let args = prepareAvdArgs(adb, {networkSpeed: 'edge', avdArgs});
       args.should.eql(['-wipe-data', '-netspeed', 'edge']);
       mocks.adb.verify();
