@@ -48,9 +48,57 @@ describe('Android Helpers', function () {
     it('should launch avd if one is already running', async function () {
       mocks.adb.expects('getRunningAVD').withExactArgs('foobar')
         .returns(null);
-      mocks.adb.expects('launchAVD').withExactArgs('foo@bar', '', 'en', 'us',
-        undefined, undefined)
-        .returns('');
+      mocks.adb.expects('launchAVD').withExactArgs('foo@bar', {
+        args: [],
+        env: undefined,
+        language: 'en',
+        country: 'us',
+        launchTimeout: undefined,
+        readyTimeout: undefined
+      }).returns('');
+      await helpers.prepareEmulator(adb, opts);
+      mocks.adb.verify();
+    });
+    it('should parse avd string command line args', async function () {
+      const opts = {
+        avd: 'foobar',
+        avdArgs: '--arg1 "value 1" --arg2 "value 2"',
+        avdEnv: {
+          k1: 'v1',
+          k2: 'v2',
+        }
+      };
+      mocks.adb.expects('getRunningAVD').withExactArgs('foobar')
+        .returns(null);
+      mocks.adb.expects('launchAVD').withExactArgs('foobar', {
+        args: ['--arg1', 'value 1', '--arg2', 'value 2'],
+        env: {
+          k1: 'v1',
+          k2: 'v2',
+        },
+        language: undefined,
+        country: undefined,
+        launchTimeout: undefined,
+        readyTimeout: undefined
+      }).returns('');
+      await helpers.prepareEmulator(adb, opts);
+      mocks.adb.verify();
+    });
+    it('should parse avd array command line args', async function () {
+      const opts = {
+        avd: 'foobar',
+        avdArgs: ['--arg1', 'value 1', '--arg2', 'value 2'],
+      };
+      mocks.adb.expects('getRunningAVD').withExactArgs('foobar')
+        .returns(null);
+      mocks.adb.expects('launchAVD').withExactArgs('foobar', {
+        args: ['--arg1', 'value 1', '--arg2', 'value 2'],
+        env: undefined,
+        language: undefined,
+        country: undefined,
+        launchTimeout: undefined,
+        readyTimeout: undefined
+      }).returns('');
       await helpers.prepareEmulator(adb, opts);
       mocks.adb.verify();
     });
