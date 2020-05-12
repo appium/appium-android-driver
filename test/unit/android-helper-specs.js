@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import helpers from '../../lib/android-helpers';
+import helpers, { prepareAvdArgs, ensureNetworkSpeed } from '../../lib/android-helpers';
 import ADB from 'appium-adb';
 import { withMocks } from 'appium-test-support';
 import { fs } from 'appium-support';
@@ -114,40 +114,38 @@ describe('Android Helpers', function () {
       await helpers.prepareEmulator(adb, {}).should.eventually.be.rejected;
     });
   }));
-  describe('prepareAVDArgs', withMocks({adb, helpers}, (mocks) => {
+  describe('prepareAvdArgs', withMocks({adb, helpers}, (mocks) => {
     it('should set the correct avdArgs', function () {
       let avdArgs = '-wipe-data';
-      (helpers.prepareAVDArgs({}, adb, avdArgs)).should.equal(avdArgs);
+      (prepareAvdArgs(adb, {avdArgs})).should.eql([avdArgs]);
     });
     it('should add headless arg', function () {
       let avdArgs = '-wipe-data';
-      let args = helpers.prepareAVDArgs({isHeadless: true}, adb, avdArgs);
-      args.should.have.string('-wipe-data');
-      args.should.have.string('-no-window');
+      let args = prepareAvdArgs(adb, {isHeadless: true, avdArgs});
+      args.should.eql(['-wipe-data', '-no-window']);
     });
     it('should add network speed arg', function () {
       let avdArgs = '-wipe-data';
       mocks.helpers.expects('ensureNetworkSpeed').once()
         .returns('edge');
-      let args = helpers.prepareAVDArgs({networkSpeed: 'edge'}, adb, avdArgs);
-      args.should.have.string('-wipe-data');
-      args.should.have.string('-netspeed edge');
+      let args = prepareAvdArgs(adb, {networkSpeed: 'edge', avdArgs});
+      args.should.eql(['-wipe-data', '-netspeed', 'edge']);
       mocks.adb.verify();
     });
     it('should not include empty avdArgs', function () {
       let avdArgs = '';
-      let args = helpers.prepareAVDArgs({isHeadless: true}, adb, avdArgs);
-      args.should.eql('-no-window');
+      let args = prepareAvdArgs(adb, {isHeadless: true, avdArgs});
+      args.should.eql(['-no-window']);
     });
   }));
   describe('ensureNetworkSpeed', function () {
-    it('should return value if network speed is valid', async function () {
+    it('should return value if network speed is valid', function () {
       adb.NETWORK_SPEED = {GSM: 'gsm'};
-      await helpers.ensureNetworkSpeed(adb, 'gsm').should.be.equal('gsm');
+      ensureNetworkSpeed(adb, 'gsm').should.be.equal('gsm');
     });
-    it('should return ADB.NETWORK_SPEED.FULL if network speed is invalid', async function () {
+    it('should return ADB.NETWORK_SPEED.FULL if network speed is invalid', function () {
       adb.NETWORK_SPEED = {FULL: 'full'};
-      await helpers.ensureNetworkSpeed(adb, 'invalid').should.be.equal('full');
+      ensureNetworkSpeed(adb, 'invalid').should.be.equal('full');
     });
   });
   describe('ensureDeviceLocale', withMocks({adb}, (mocks) => {

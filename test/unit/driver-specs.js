@@ -174,13 +174,6 @@ describe('driver', function () {
         .some((x) => x[1].toString().includes('/screenshot'))
         .should.be.true;
     });
-    it('should set networkSpeed before launching app', async function () {
-      sandbox.stub(driver, 'isEmulator').returns(true);
-      sandbox.stub(helpers, 'ensureNetworkSpeed').returns('full');
-      await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', networkSpeed: 'edge'});
-      driver.isEmulator.calledOnce.should.be.true;
-      helpers.ensureNetworkSpeed.calledOnce.should.be.true;
-    });
   });
   describe('deleteSession', function () {
     beforeEach(function () {
