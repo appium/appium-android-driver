@@ -62,21 +62,57 @@ describe('performance data', function () {
   });
   describe('getCPUInfo', function () {
     it('should return cpu data', async function () {
-      adb.shell.withArgs(['dumpsys', 'cpuinfo', '|', 'grep', `'${PACKAGE_NAME}'`])
-        .returns(' +0% 2209/io.appium.android.apis: 14% user + 23% kernel');
-      (await driver.getCPUInfo(PACKAGE_NAME)).should.be.deep
-        .equal([CPU_KEYS, ['14', '23']]);
+      adb.shell.withArgs(['dumpsys', 'cpuinfo'])
+        .returns(`Load: 8.85 / 8.85 / 7.96
+      CPU usage from 339020ms to 38831ms ago (2020-09-05 12:55:08.950 to 2020-09-05 13:00:09.140) with 99% awake:
+        0.6% 811/com.android.systemui: 0.3% user + 0.3% kernel / faults: 564 minor 1 major
+        0.6% 282/android.hardware.bluetooth@1.1-service.sim: 0% user + 0.6% kernel
+        0.3% 6663/com.google.android.youtube: 0.1% user + 0.2% kernel / faults: 4328 minor
+        0.1% 327/surfaceflinger: 0% user + 0.1% kernel
+        0.1% 511/system_server: 0% user + 0.1% kernel / faults: 741 minor
+        0.1% 295/android.hardware.graphics.composer@2.3-service: 0% user + 0.1% kernel
+        0% 787/wpa_supplicant: 0% user + 0% kernel
+        0% 309/android.hardware.wifi@1.0-service: 0% user + 0% kernel
+        0% 433/llkd: 0% user + 0% kernel
+        0% 6602/com.google.android.videos: 0% user + 0% kernel
+        0% 2141/com.android.phone: 0% user + 0% kernel / faults: 144 minor
+        0% 306/android.hardware.sensors@2.1-service.multihal: 0% user + 0% kernel
+        0% 154/logd: 0% user + 0% kernel / faults: 21 minor 1 major
+        0% 7504/kworker/u4:1-flush-251:32: 0% user + 0% kernel
+        0% 16/ksoftirqd/1: 0% user + 0% kernel
+        0% 6825/kworker/0:0-mm_percpu_wq: 0% user + 0% kernel
+        0% 10/rcu_preempt: 0% user + 0% kernel
+        0% 458/hostapd_nohidl: 0% user + 0% kernel
+        0% 179/jbd2/vdc-8: 0% user + 0% kernel
+        0% 157/hwservicemanager: 0% user + 0% kernel
+        0% 1666/com.google.android.gms.persistent: 0% user + 0% kernel / faults: 156 minor
+        0% 270/statsd: 0% user + 0% kernel
+        0% 271/netd: 0% user + 0% kernel / faults: 9 minor
+        0% 341/logcat: 0% user + 0% kernel
+        0% 1072/com.android.networkstack.process: 0% user + 0% kernel / faults: 452 minor
+        0% 183/android.system.suspend@1.0-service: 0% user + 0% kernel
+        0% 7157/kworker/1:1-events_power_efficient: 0% user + 0% kernel
+        0% 7245/${PACKAGE_NAME}:rcs: 14.3% user + 28.2% kernel / faults: 30 minor
+        0% 9/ksoftirqd/0: 0% user + 0% kernel
+        0% 11/migration/0: 0% user + 0% kernel
+        0% 21/kauditd: 0% user + 0% kernel
+        0% 113/kworker/1:1H-kblockd: 0% user + 0% kernel
+        0% 155/lmkd: 0% user + 0% kernel
+        0% 156/servicemanager: 0% user + 0% kernel
+        0% 162/vold: 0% user + 0% kernel
+        0% 407/libgoldfish-rild: 0% user + 0% kernel / faults: 108 minor
+        0% 431/netmgr: 0% user + 0% kernel
+        0% 1020/android.hardware.gnss@2.0-service.ranchu: 0% user + 0% kernel
+        0% 2345/com.google.android.gms: 0% user + 0% kernel / faults: 70 minor
+        +0% 7508/kworker/u4:2-phy0: 0% user + 0% kernel
+      0.2% TOTAL: 0% user + 0.1% kernel + 0% iowait + 0% softirq
+      `);
+      (await driver.getCPUInfo(PACKAGE_NAME)).should.eql([CPU_KEYS, ['14.3', '28.2']]);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
-    });
-    it('should throw error if no data', async function () {
-      adb.shell.returns(null);
-      await driver.getCPUInfo(PACKAGE_NAME, 1).should.be
-        .rejectedWith(/No data from dumpsys/);
     });
     it('should throw error if cpu data is not in valid format', async function () {
       adb.shell.returns('invalid data');
-      await driver.getCPUInfo(PACKAGE_NAME, 1).should.be
-        .rejectedWith(/Unable to parse cpu data/);
+      await driver.getCPUInfo(PACKAGE_NAME, 1).should.eventually.be.rejected;
     });
   });
   describe('getBatteryInfo', function () {
