@@ -346,6 +346,7 @@ describe('Android Helpers', function () {
         remoteAppsCacheLimit: 5,
         buildToolsVersion: '1.2.3',
         allowOfflineDevices: true,
+        allowDelayAdb: undefined,
       }).should.be.true;
       curDeviceId.should.equal('111222');
       emulatorPort.should.equal('111');
