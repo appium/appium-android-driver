@@ -41,7 +41,7 @@
     "appium-chromedriver": "^4.13.0",
     "appium-support": "^2.47.1",
     "async-lock": "^1.2.2",
-    "asyncbox": "^2.0.4",
+    "asyncbox": "^2.8.0",
     "axios": "^0.20.0",
     "bluebird": "^3.4.7",
     "io.appium.settings": "^3.1.0",
