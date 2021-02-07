@@ -10,39 +10,18 @@ parameters:
   type: object
   default:
   - name: sdk22_e2e_tests_functional
-    platformVersion: 5.1
-    sdkVersion: 22
-    emuTag: default
     category: /
   - name: sdk22_e2e_tests_bootstrap
-    platformVersion: 5.1
-    sdkVersion: 22
-    emuTag: default
     category: /bootstrap
   - name: sdk22_e2e_tests_commands
-    platformVersion: 5.1
-    sdkVersion: 22
-    emuTag: default
     category: /commands
   - name: sdk22_e2e_tests_keyboard_commands
-    platformVersion: 5.1
-    sdkVersion: 22
-    emuTag: default
     category: /commands/keyboard
   - name: sdk22_e2e_tests_basic_commands
-    platformVersion: 5.1
-    sdkVersion: 22
-    emuTag: default
     category: /commands/basic
   - name: sdk22_e2e_tests_find_commands
-    platformVersion: 5.1
-    sdkVersion: 22
-    emuTag: default
     category: /commands/find
   - name: sdk22_e2e_tests_touch_commands
-    platformVersion: 5.1
-    sdkVersion: 22
-    emuTag: default
     category: /commands/touch
 
 
@@ -68,7 +47,4 @@ stages:
     - template: .azure-pipelines/android-e2e-template.yml
       parameters:
         name: ${{ job.name }}
-        platformVersion: ${{ job.platformVersion }}
-        sdkVersion: ${{ job.sdkVersion }}
-        emuTag: ${{ job.emuTag }}
         category: ${{ job.category }}
