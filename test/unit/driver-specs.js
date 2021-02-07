@@ -400,11 +400,6 @@ describe('driver', function () {
       await driver.startAndroidSession();
       driver.adb.getPlatformVersion.calledOnce.should.be.true;
     });
-    it('should auto launch app if it is on the device', async function () {
-      driver.opts.autoLaunch = true;
-      await driver.startAndroidSession();
-      driver.initAUT.calledOnce.should.be.true;
-    });
     it('should handle chrome sessions', async function () {
       driver.opts.browserName = 'Chrome';
       await driver.startAndroidSession();
@@ -414,15 +409,15 @@ describe('driver', function () {
       await driver.startAndroidSession();
       helpers.unlock.calledOnce.should.be.true;
     });
-    it('should start AUT if auto lauching', async function () {
+    it('should start AUT if auto launching', async function () {
       driver.opts.autoLaunch = true;
       await driver.startAndroidSession();
-      driver.initAUT.calledOnce.should.be.true;
+      driver.startAUT.calledOnce.should.be.true;
     });
-    it('should not start AUT if not auto lauching', async function () {
+    it('should not start AUT if not auto launching', async function () {
       driver.opts.autoLaunch = false;
       await driver.startAndroidSession();
-      driver.initAUT.calledOnce.should.be.false;
+      driver.startAUT.calledOnce.should.be.false;
     });
     it('should set the context if autoWebview is requested', async function () {
       driver.opts.autoWebview = true;
