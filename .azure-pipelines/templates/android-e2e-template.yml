@@ -1,0 +1,39 @@
+# https://docs.microsoft.com/azure/devops/pipelines/languages/android
+parameters:
+  name: 'android_e2e_tests'
+  vmImage: 'macOS-10.15'
+  sdkVersion: 28
+  platformVersion: 9.0
+  emuTag: default
+  category: /
+
+jobs:
+  - job: ${{ parameters.name }}
+    pool:
+      vmImage: ${{ parameters.vmImage }}
+    variables:
+      TERM: dumb
+      ANDROID_AVD: testemulator
+      ANDROID_SDK_VERSION: ${{ parameters.sdkVersion }}
+      PLATFORM_VERSION: ${{ parameters.platformVersion }}
+      EMU_TAG: ${{ parameters.emuTag }}
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(NODE_VERSION)
+    - script: npm run clean
+      displayName: Install Node dependencies
+    - script: bash .azure-pipelines/scripts/start-emulator.sh
+      displayName: Create and run Emulator
+    - script: nohup adb logcat > logcat.txt &
+      displayName: Capture Logcat
+    - script: npm run clean
+      displayName: Build
+    - script: npx mocha --timeout $MOCHA_TIMEOUT build/test/functional${{ parameters.category }} -g @skip-ci -i --exit
+      displayName: Run tests
+    - task: PublishPipelineArtifact@0
+      condition: always()
+      displayName: Publish Logcat to Artifacts
+      inputs:
+        artifactName: ${{ parameters.name }}-logcat
+        targetPath: logcat.txt

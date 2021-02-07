@@ -1,18 +1,74 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+variables:
+  NODE_VERSION: 12.x
+  _FORCE_LOGS: 1
+  CI: true
+  MOCHA_TIMEOUT: 360000
 
-pool:
-  vmImage: 'macOS-10.15'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '12.x'
-  displayName: 'Install Node.js'
+parameters:
+- name: integrationJobs
+  type: object
+  default:
+  - name: sdk22_e2e_tests_functional
+    platformVersion: 5.1
+    sdkVersion: 22
+    emuTag: default
+    category: /
+  - name: sdk22_e2e_tests_bootstrap
+    platformVersion: 5.1
+    sdkVersion: 22
+    emuTag: default
+    category: /bootstrap
+  - name: sdk22_e2e_tests_commands
+    platformVersion: 5.1
+    sdkVersion: 22
+    emuTag: default
+    category: /commands
+  - name: sdk22_e2e_tests_keyboard_commands
+    platformVersion: 5.1
+    sdkVersion: 22
+    emuTag: default
+    category: /commands/keyboard
+  - name: sdk22_e2e_tests_basic_commands
+    platformVersion: 5.1
+    sdkVersion: 22
+    emuTag: default
+    category: /commands/basic
+  - name: sdk22_e2e_tests_find_commands
+    platformVersion: 5.1
+    sdkVersion: 22
+    emuTag: default
+    category: /commands/find
+  - name: sdk22_e2e_tests_touch_commands
+    platformVersion: 5.1
+    sdkVersion: 22
+    emuTag: default
+    category: /commands/touch
 
-- script: |
-    npm install
-    npm run lint
-  displayName: 'npm install and lint'
+
+stages:
+- stage: Unit_Tests_And_Linters
+  jobs:
+  - job: Unit_Tests
+    pool:
+      vmImage: ubuntu-20.04
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(NODE_VERSION)
+    - script: npm run clean
+      displayName: Install Node dependencies
+    - script: npm run lint
+      displayName: Linter
+    - script: npx mocha -t $MOCHA_TIMEOUT --recursive build/test/unit/ -g @skip-ci -i --exit
+      displayName: Tests
+- stage: Integration_Tests
+  jobs:
+  - ${{ each job in parameters.integrationJobs }}:
+    - template: .azure-pipelines/android-e2e-template.yml
+      parameters:
+        name: ${{ job.name }}
+        platformVersion: ${{ job.platformVersion }}
+        sdkVersion: ${{ job.sdkVersion }}
+        emuTag: ${{ job.emuTag }}
+        category: ${{ job.category }}
