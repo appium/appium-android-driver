@@ -11,16 +11,20 @@ Appium Android Driver is a test automation tool for Android devices. Appium Andr
 
 *Note*: Issue tracking for this repo has been disabled. Please use the [main Appium issue tracker](https://github.com/appium/appium/issues) instead.
 
-## Installation
-```
-npm install appium-android-driver
-```
+## Deprecation Notice
+
+This driver is obsolete and should _not_ be used to automate devices running Android version
+6.0 (codename Marshmallow, API level 23) or greater.
+Consider using [UIAutomator2](https://github.com/appium/appium-uiautomator2-driver) or
+[Espresso](https://github.com/appium/appium-espresso-driver) drivers for such purpose instead.
+Along with the fact that Android Driver is obsolete, parts of its codebase are inherited
+by the aforementioned drivers, so the project itself is still being partially maintained.
 
 ## Usage
 
 Import Android Driver, set [desired capabilities](http://appium.io/docs/en/writing-running-appium/caps/index.html#android-only) and create a session:
 
-```
+```js
 import { AndroidDriver } from `appium-android-driver`
 
 let defaultCaps = {
@@ -33,7 +37,7 @@ let driver = new AndroidDriver();
 await driver.createSession(defaultCaps);
 ```
 Run commands:
-```
+```js
 await driver.setOrientation('LANDSCAPE');
 console.log(await driver.getOrientation()); // -> 'LANDSCAPE'
 ```
@@ -60,7 +64,7 @@ and return the SubProcess. `startDetector` and `extraParams` are optional argume
 `shutdown` will kill UiAutomator process on the device and also kill the subProcess.
 
 
-```
+```js
 import UiAutomator from 'lib/uiautomator';
 import ADB from 'appium-adb';
 
@@ -71,10 +75,10 @@ let startDetector = (s) => { return /Appium Socket Server Ready/.test(s); };
 await uiAutomator.start('foo/bar.jar', 'io.appium.android.bootstrap.Bootstrap',
                         startDetector, '-e', 'disableAndroidWatchers', true);
 await uiAutomator.shutdown();
-
 ```
 
 ### Specifying and selecting devices/emulators
+
 The driver will attempt to connect to a device/emulator based on these properties in the `desiredCapabilities` object:
 
 1. `avd`: Launch or connect to the emulator with the given name.
@@ -84,120 +88,6 @@ The driver will attempt to connect to a device/emulator based on these propertie
 If none of these capabilities are given, the driver will connect to the first device or active emulator returned from the output of `adb devices`.
 
 If more than one of these capabilities are given, the driver will only use first the capability in the order above. That is, `avd` takes priority over `udid`, which takes priority over `platformVersion`.
-
-## Commands
-|          Command           |
-|----------------------------|
-| `activateIMEEngine`        |
-| `availableIMEEngines`      |
-| `back`                     |
-| `background`               |
-| `clear`                    |
-| `click`                    |
-| `complexTap`               |
-| `deactivateIMEEngine`      |
-| `defaultContextName`       |
-| `defaultWebviewName`       |
-| `doKey`                    |
-| `doTouchAction`            |
-| `doTouchDrag`              |
-| `drag`                     |
-| `elementDisplayed`         |
-| `elementEnabled`           |
-| `elementSelected`          |
-| `fakeFlick`                |
-| `fakeFlickElement`         |
-| `findElOrEls`              |
-| `fixRelease`               |
-| `flick`                    |
-| `getActiveIMEEngine`       |
-| `getAlertText`             |
-| `getAttribute`             |
-| `getContexts`              |
-| `getCurrentActivity`       |
-| `getCurrentContext`        |
-| `getDeviceTime`            |
-| `getDisplayDensity`        |
-| `getLocationInView`        |
-| `getLog`                   |
-| `getLogTypes`              |
-| `getName`                  |
-| `getNetworkConnection`     |
-| `getOrientation`           |
-| `getPageSource`            |
-| `getScreenshot`            |
-| `getSize`                  |
-| `getElementRect`           |
-| `getStrings`               |
-| `getSystemBars`            |
-| `getText`                  |
-| `getWindowSize`            |
-| `getWindowRect`            |
-| `hideKeyboard`             |
-| `installApp`               |
-| `isAppInstalled`           |
-| `isIMEActivated`           |
-| `isKeyboardShown`          |
-| `isLocked`                 |
-| `isWebContext`             |
-| `keyevent`                 |
-| `keys`                     |
-| `lock`                     |
-| `longPressKeyCode`         |
-| `onChromedriverStop`       |
-| `openNotifications`        |
-| `openSettingsActivity`     |
-| `parseTouch`               |
-| `performGesture`           |
-| `performMultiAction`       |
-| `performTouch`             |
-| `pinchClose`               |
-| `pinchOpen`                |
-| `postAcceptAlert`          |
-| `postDismissAlert`         |
-| `pressKeyCode`             |
-| `pullFile`                 |
-| `pullFolder`               |
-| `pushFile`                 |
-| `removeApp`                |
-| `replaceValue`             |
-| `reset`                    |
-| `setAlertText`             |
-| `setContext`               |
-| `setGeoLocation`           |
-| `setLocation`              |
-| `setNetworkConnection`     |
-| `setOrientation`           |
-| `setValue`                 |
-| `setUrl`                   |
-| `startActivity`            |
-| `startChromedriverProxy`   |
-| `stopChromedriverProxies`  |
-| `suspendChromedriverProxy` |
-| `swipe`                    |
-| `tap`                      |
-| `toggleData`               |
-| `toggleFlightMode`         |
-| `toggleLocationServices`   |
-| `toggleSetting`            |
-| `toggleWiFi`               |
-| `touchDown`                |
-| `touchLongClick`           |
-| `touchMove`                |
-| `touchUp`                  |
-| `unlock`                   |
-| `unlockWithHelperApp`      |
-| `unlockWithUIAutomation`   |
-| `wrapBootstrapDisconnect`  |
-| `fingerprint`              |
-| `sendSMS`                  |
-| `sensorSet`                |
-| `gsmCall`                  |
-| `gsmSignal`                |
-| `gsmVoice`                 |
-| `powerAC`                  |
-| `powerCapacity`            |
-| `networkSpeed`             |
 
 ## API Notes
 
@@ -240,6 +130,12 @@ npm run build:bootstrap
 The AppiumBootstrap.jar file is committed to source, and isn't built during the publish step. Any updates to it
 need to be committed. To build the jar, run `gulp ant`.
 
+### Install Dependencies
+
+```
+npm run clean
+```
+
 ### Transpile ES2015 code
 
 ```
@@ -252,7 +148,7 @@ npm run build
 npm run watch
 ```
 
-### Test
+### Unit Test
 
 ```
 npm test
