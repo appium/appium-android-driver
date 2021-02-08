@@ -9,14 +9,16 @@
 
 Appium Android Driver is a test automation tool for Android devices. Appium Android Driver automates native, hybrid and mobile web apps, tested on simulators, emulators and real devices. Appium Android Driver is part of the [Appium](https://github.com/appium/appium) mobile test automation tool.
 
-*Note*: This driver is obsolete and should _not_ be used to automate devices running Android version
+*Note*: Issue tracking for this repo has been disabled. Please use the [main Appium issue tracker](https://github.com/appium/appium/issues) instead.
+
+## Deprecation Notice
+
+This driver is obsolete and should _not_ be used to automate devices running Android version
 6.0 (codename Marshmallow, API level 23) or greater.
 Consider using [UIAutomator2](https://github.com/appium/appium-uiautomator2-driver) or
 [Espresso](https://github.com/appium/appium-espresso-driver) drivers for such purpose instead.
 Along with the fact that Android Driver is obsolete, parts of its codebase are inherited
 by the aforementioned drivers, so the project itself is still being partially maintained.
-
-*Note*: Issue tracking for this repo has been disabled. Please use the [main Appium issue tracker](https://github.com/appium/appium/issues) instead.
 
 ## Installation
 ```
