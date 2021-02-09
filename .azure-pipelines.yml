@@ -44,7 +44,7 @@ stages:
 - stage: Integration_Tests
   jobs:
   - ${{ each job in parameters.integrationJobs }}:
-    - template: .azure-pipelines/android-e2e-template.yml
+    - template: .azure-pipelines/templates/android-e2e-template.yml
       parameters:
         name: ${{ job.name }}
         category: ${{ job.category }}
