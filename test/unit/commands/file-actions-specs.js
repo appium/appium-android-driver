@@ -52,7 +52,10 @@ describe('File Actions', function () {
       await driver.pullFile(`@${packageId}/${remotePath}`).should.become('YXBwaXVt');
       driver.adb.pull.calledWithExactly(tmpPath, localFile).should.be.true;
       driver.adb.shell.calledWithExactly(['run-as', packageId, `chmod 777 '/data/data/${packageId}/${remotePath}'`]).should.be.true;
-      driver.adb.shell.calledWithExactly(['cp', '-f', `/data/data/${packageId}/${remotePath}`, tmpPath]).should.be.true;
+      driver.adb.shell.calledWithExactly([
+        'run-as', packageId,
+        `cp -f '/data/data/${packageId}/${remotePath}' '${tmpPath}'`
+      ]).should.be.true;
       support.fs.unlink.calledWithExactly(localFile).should.be.true;
       driver.adb.shell.calledWithExactly(['rm', '-f', tmpPath]).should.be.true;
     });
@@ -92,7 +95,10 @@ describe('File Actions', function () {
       driver.adb.shell.calledWithExactly(['run-as', packageId, `mkdir -p '/data/data/${packageId}/path/in'`]).should.be.true;
       driver.adb.shell.calledWithExactly(['run-as', packageId, `touch '/data/data/${packageId}/${remotePath}'`]).should.be.true;
       driver.adb.shell.calledWithExactly(['run-as', packageId, `chmod 777 '/data/data/${packageId}/${remotePath}'`]).should.be.true;
-      driver.adb.shell.calledWithExactly(['cp', '-f', tmpPath, `/data/data/${packageId}/${remotePath}`]).should.be.true;
+      driver.adb.shell.calledWithExactly([
+        'run-as', packageId,
+        `cp -f '${tmpPath}' '/data/data/${packageId}/${remotePath}'`
+      ]).should.be.true;
       support.fs.unlink.calledWithExactly(localFile).should.be.true;
       driver.adb.shell.calledWithExactly(['rm', '-f', tmpPath]).should.be.true;
     });
