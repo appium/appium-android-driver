@@ -3,7 +3,7 @@ parameters:
   name: 'android_e2e_tests'
   vmImage: 'macOS-10.15'
   platformVersion: 5.1
-  sdkVersion: 22
+  sdkVersion: 29
   emuTag: default
   category: /
 
