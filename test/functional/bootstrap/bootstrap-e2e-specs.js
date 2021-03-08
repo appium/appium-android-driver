@@ -43,7 +43,7 @@ describe('Android Bootstrap', function () {
   });
   it('sendCommand should work', async function () {
     (await androidBootstrap.sendCommand(COMMAND_TYPES.ACTION, {action: 'getDataDir'})).should
-     .equal('/data');
+     .equal('/data/local/tmp');
   });
   it('sendCommand should correctly throw error', async function () {
     await androidBootstrap.sendCommand(COMMAND_TYPES.ACTION, {action: 'unknown'}).should

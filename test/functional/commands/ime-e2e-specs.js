@@ -30,7 +30,7 @@ describe('apidemo - IME', function () {
     await driver.getActiveIMEEngine().should.eventually.equal(unicodeImeId);
   });
   it('should get the available input methods', async function () {
-    await driver.availableIMEEngines().should.eventually.have.length.at.least(4);
+    await driver.availableIMEEngines().should.eventually.have.length.at.least(3);
   });
   it('should activate an installed input method', async function () {
     await driver.activateIMEEngine(unicodeImeId).should.not.be.rejected;

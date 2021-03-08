@@ -56,19 +56,19 @@ describe('Find - basic', function () {
   });
   it('should find multiple elements by resource-id', async function () {
     await driver.findElements('id', 'android:id/text1')
-      .should.eventually.have.length.at.least(10);
+      .should.eventually.have.length.at.least(9);
   });
   it('should find multiple elements by resource-id even when theres just one', async function () {
     await driver.findElements('id', `android:id/${singleResourceId}`)
       .should.eventually.have.length(1);
   });
-  it('should find a single element by resource-id with implicit package', async function () {
+  it('should find a single element by resource-id with implicit package 1', async function () {
     await driver.findElement('id', singleResourceId)
       .should.eventually.exist;
   });
-  it('should find a single element by resource-id with implicit package', async function () {
+  it('should find a single element by resource-id with implicit package 2', async function () {
     await driver.findElements('id', 'text1')
-      .should.eventually.have.length.at.least(10);
+      .should.eventually.have.length.at.least(9);
   });
   it('should find multiple elements by resource-id with implicit package even when theres just one', async function () {
     await driver.findElements('id', singleResourceId)
