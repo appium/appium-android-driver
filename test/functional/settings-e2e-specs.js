@@ -18,7 +18,7 @@ describe('toggle wifi tests', function () {
 
   describe('functional', function () {
     before(function () {
-      if (process.env.TRAVIS) {
+      if (process.env.CI) {
         return this.skip();
       }
       if (!process.env.REAL_DEVICE) {

@@ -15,8 +15,6 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
   let initialLocale;
 
   before(async function () {
-    if (process.env.TRAVIS) return this.skip(); //eslint-disable-line curly
-
     let adb = new ADB();
     initialLocale = await getLocale(adb);
   });
