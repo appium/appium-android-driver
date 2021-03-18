@@ -51,8 +51,7 @@ async function runTextEditTest (driver, testText, keys = false) {
   }
 
   let text = await driver.getText(el);
-  deSamsungify(text).should.be.equal(testText);
-
+  testText.should.include(deSamsungify(text));
   return el;
 }
 

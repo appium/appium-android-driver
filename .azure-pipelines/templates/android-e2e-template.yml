@@ -17,6 +17,7 @@ jobs:
       ANDROID_SDK_VERSION: ${{ parameters.sdkVersion }}
       PLATFORM_VERSION: ${{ parameters.platformVersion }}
       EMU_TAG: ${{ parameters.emuTag }}
+      CI: true
     steps:
     - task: NodeTool@0
       inputs:

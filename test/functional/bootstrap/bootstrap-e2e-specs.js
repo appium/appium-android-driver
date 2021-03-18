@@ -6,12 +6,11 @@ import path from 'path';
 import { AndroidBootstrap, COMMAND_TYPES } from '../../../lib/bootstrap';
 import ADB from 'appium-adb';
 import { errors } from 'appium-base-driver';
+import { MOCHA_TIMEOUT } from '../helpers';
 
 
 chai.should();
 chai.use(chaiAsPromised);
-
-const MOCHA_TIMEOUT = process.env.TRAVIS ? 240000 : 60000;
 
 const dirOffset = process.env.NO_PRECOMPILE ? [] : ['..'];
 const rootDir = path.resolve(__dirname, '..', '..', '..', ...dirOffset);

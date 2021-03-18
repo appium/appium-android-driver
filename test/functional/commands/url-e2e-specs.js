@@ -17,7 +17,7 @@ let caps = {
 describe('setUrl', function () {
   let urlId = 'com.android.browser:id/url';
   before(async function () {
-    if (process.env.TRAVIS) return this.skip(); // eslint-disable-line curly
+    if (process.env.CI) return this.skip(); // eslint-disable-line curly
 
     let adb = new ADB();
     if (!await adb.isAppInstalled('com.android.browser')) {

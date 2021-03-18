@@ -26,7 +26,9 @@ describe('element', function () {
     await driver.deleteSession();
   });
   afterEach(async function () {
-    await driver.clear(el.ELEMENT);
+    try {
+      await driver.clear(el.ELEMENT);
+    } catch (ign) {}
   });
 
   describe('setValueImmediate', function () {

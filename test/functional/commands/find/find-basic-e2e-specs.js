@@ -33,7 +33,7 @@ describe('Find - basic', function () {
   });
   it('should find multiple elements by class name', async function () {
     await driver.findElements('class name', 'android.widget.TextView')
-      .should.eventually.have.length.at.least(10);
+      .should.eventually.have.length.at.least(8);
   });
   it('should not find an element that doesnt exist', async function () {
     await driver.findElement('class name', 'blargimarg')
@@ -56,7 +56,7 @@ describe('Find - basic', function () {
   });
   it('should find multiple elements by resource-id', async function () {
     await driver.findElements('id', 'android:id/text1')
-      .should.eventually.have.length.at.least(10);
+      .should.eventually.have.length.at.least(8);
   });
   it('should find multiple elements by resource-id even when theres just one', async function () {
     await driver.findElements('id', `android:id/${singleResourceId}`)
@@ -68,7 +68,7 @@ describe('Find - basic', function () {
   });
   it('should find a single element by resource-id with implicit package', async function () {
     await driver.findElements('id', 'text1')
-      .should.eventually.have.length.at.least(10);
+      .should.eventually.have.length.at.least(8);
   });
   it('should find multiple elements by resource-id with implicit package even when theres just one', async function () {
     await driver.findElements('id', singleResourceId)
