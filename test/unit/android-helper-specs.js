@@ -676,6 +676,7 @@ describe('Android Helpers', function () {
       await helpers.unlock(helpers, adb, {unlockType: 'pin', unlockKey: '1111'});
       mocks.adb.verify();
       mocks.helpers.verify();
+      mocks.unlocker.verify();
     });
     it('should call pinUnlock if unlockType is pinWithKeyEvent', async function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
@@ -684,6 +685,7 @@ describe('Android Helpers', function () {
       await helpers.unlock(helpers, adb, {unlockType: 'pinWithKeyEvent', unlockKey: '1111'});
       mocks.adb.verify();
       mocks.helpers.verify();
+      mocks.unlocker.verify();
     });
     it('should call passwordUnlock if unlockType is password', async function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
@@ -692,6 +694,7 @@ describe('Android Helpers', function () {
       await helpers.unlock(helpers, adb, {unlockType: 'password', unlockKey: 'appium'});
       mocks.adb.verify();
       mocks.helpers.verify();
+      mocks.unlocker.verify();
     });
     it('should call patternUnlock if unlockType is pattern', async function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
