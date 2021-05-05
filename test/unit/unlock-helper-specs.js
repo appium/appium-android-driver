@@ -228,8 +228,8 @@ describe('Unlock Helpers', function () {
       mocks.helpers.expects('stringKeyToArr').once();
       mocks.adb.expects('getApiLevel').returns(21);
       mocks.driver.expects('findElOrEls').returns(null);
-      await helpers.pinUnlock(adb, driver, caps).should.eventually.be
-        .rejectedWith('Error finding unlock pin buttons!');
+      mocks.helpers.expects('pinUnlockWithKeyEvent').once();
+      await helpers.pinUnlock(adb, driver, caps);
       mocks.helpers.verify();
       mocks.driver.verify();
       mocks.adb.verify();
@@ -241,8 +241,8 @@ describe('Unlock Helpers', function () {
       mocks.driver.expects('findElOrEls')
         .withExactArgs('id', 'com.android.keyguard:id/key1', false)
         .returns(null);
-      await helpers.pinUnlock(adb, driver, caps).should.eventually.be
-        .rejectedWith(`Error finding unlock pin '1' button!`);
+      mocks.helpers.expects('pinUnlockWithKeyEvent').once();
+      await helpers.pinUnlock(adb, driver, caps);
       mocks.helpers.verify();
       mocks.driver.verify();
       mocks.adb.verify();
