@@ -677,6 +677,14 @@ describe('Android Helpers', function () {
       mocks.adb.verify();
       mocks.helpers.verify();
     });
+    it('should call pinUnlock if unlockType is pinWithKeyEvent', async function () {
+      mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
+      mocks.adb.expects('isScreenLocked').returns(false);
+      mocks.unlocker.expects('pinUnlockWithKeyEvent').once();
+      await helpers.unlock(helpers, adb, {unlockType: 'pinWithKeyEvent', unlockKey: '1111'});
+      mocks.adb.verify();
+      mocks.helpers.verify();
+    });
     it('should call passwordUnlock if unlockType is password', async function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
