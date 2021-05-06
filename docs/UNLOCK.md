@@ -16,8 +16,8 @@ In case the *unlockType*  capability is not defined, *Appium* will continue work
 
 `Options:`
 * unlockType: ['pin', 'password', 'pattern', 'fingerprint', 'pinWithKeyEvent']
-    * _fingerprint_ unlock only works for Android 6+ emulators*
-    * _pinWithKeyEvent_ sends pin code as keyevents because some devices do not have system Android resource ids that are used in regular _pin_ unlock type.
+    * _fingerprint_ unlock only works for Android 6+ emulators
+    * _pinWithKeyEvent_ sends pin code as keyevents because some devices do not have system Android resource ids that are used in regular _pin_ unlock type. The type is available since Appium 1.22.0.
 
 
 `Example:`
