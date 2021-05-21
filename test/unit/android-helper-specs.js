@@ -870,4 +870,34 @@ describe('Android Helpers', function () {
       helpers.parseArray('abc').should.eql(['abc']);
     });
   });
+
+  describe('parseReboot', function () {
+    it('should return false if driverArgs is empty', function () {
+      helpers.parseReboot({}).should.equal(false);
+    });
+    it(`should throw error if value of 'reboot' is not a boolean`, function () {
+      (() => helpers.parseReboot({'reboot': 'foo'})).should.throw();
+    });
+    it(`should return false if 'chromedriver-port' key doesnt exist`, function () {
+      helpers.parseReboot({'foo': 'bar'}).should.equal(false);
+    });
+    it('should return true when passed in as a driver arg', function () {
+      helpers.parseReboot({'reboot': true}).should.equal(true);
+    });
+  });
+
+  describe('parseSuppressKillServer', function () {
+    it('should return false if driverArgs is empty', function () {
+      helpers.parseSuppressKillServer({}).should.equal(false);
+    });
+    it(`should throw error if value of 'suppress-adb-kill-server' is not a boolean`, function () {
+      (() => helpers.parseSuppressKillServer({'suppress-adb-kill-server': 'foo'})).should.throw();
+    });
+    it(`should return false if 'chromedriver-port' key doesnt exist`, function () {
+      helpers.parseSuppressKillServer({'foo': 'bar'}).should.equal(false);
+    });
+    it('should return true when passed in as a driver arg', function () {
+      helpers.parseSuppressKillServer({'suppress-adb-kill-server': true}).should.equal(true);
+    });
+  });
 });
