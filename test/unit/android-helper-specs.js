@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import helpers, { prepareAvdArgs, ensureNetworkSpeed, SERVER_ARGS } from '../../lib/android-helpers';
+import helpers, { prepareAvdArgs, ensureNetworkSpeed, DEFAULT_SERVER_ARGS } from '../../lib/android-helpers';
 import ADB from 'appium-adb';
 import { withMocks } from 'appium-test-support';
 import { fs } from 'appium-support';
@@ -894,8 +894,8 @@ describe('Android Helpers', function () {
     });
     it('should return default args if none passed in', function () {
       const defaultArgs = {};
-      _.keys(SERVER_ARGS).forEach((key) => {
-        defaultArgs[key] = SERVER_ARGS[key].default;
+      _.keys(DEFAULT_SERVER_ARGS).forEach((key) => {
+        defaultArgs[key] = DEFAULT_SERVER_ARGS[key];
       });
       helpers.parseArgs({}, {}, ['suppressKillServer', 'reboot', 'chromeDriverPort'
         , 'chromedriverExecutable']).should.eql(defaultArgs);
