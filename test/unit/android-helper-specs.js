@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import helpers, { prepareAvdArgs, ensureNetworkSpeed, DEFAULT_SERVER_ARGS } from '../../lib/android-helpers';
+import helpers, { prepareAvdArgs, ensureNetworkSpeed } from '../../lib/android-helpers';
 import ADB from 'appium-adb';
 import { withMocks } from 'appium-test-support';
 import { fs } from 'appium-support';
@@ -892,17 +892,13 @@ describe('Android Helpers', function () {
       helpers.parseArgs(_.assign(opts, driverArgs), {}, ['suppressKillServer', 'reboot', 'chromeDriverPort'
         , 'chromedriverExecutable']).should.eql(_.assign(opts, driverArgs));
     });
-    it('should return default args if none passed in', function () {
-      const defaultArgs = {};
-      _.keys(DEFAULT_SERVER_ARGS).forEach((key) => {
-        defaultArgs[key] = DEFAULT_SERVER_ARGS[key];
-      });
+    it('should return empty object if no args passed in', function () {
       helpers.parseArgs({}, {}, ['suppressKillServer', 'reboot', 'chromeDriverPort'
-        , 'chromedriverExecutable']).should.eql(defaultArgs);
+        , 'chromedriverExecutable']).should.eql({});
     });
     describe('suppressKillServer', function () {
-      it('should return false if driverArgs is empty', function () {
-        helpers.parseArgs({}, {}, ['suppressKillServer']).suppressKillServer.should.equal(false);
+      it('should return empty object if driverArgs is empty', function () {
+        helpers.parseArgs({}, {}, ['suppressKillServer']).should.eql({});
       });
       it(`should throw error if value of 'suppressKillServer' is not a boolean`, function () {
         (() => helpers.parseArgs({}, {'suppressKillServer': 'foo'}, ['suppressKillServer'])).should.throw();
