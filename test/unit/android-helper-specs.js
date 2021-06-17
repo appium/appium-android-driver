@@ -870,4 +870,45 @@ describe('Android Helpers', function () {
       helpers.parseArray('abc').should.eql(['abc']);
     });
   });
+
+  describe('parseArgs', function () {
+    const reboot = true;
+    const suppressKillServer = true;
+    const chromeDriverPort = 4444;
+    const chromedriverExecutable = '/path/to/foo';
+    const driverArgs = {reboot, chromeDriverPort,
+                        chromedriverExecutable, suppressKillServer};
+    const opts = {'foo': 'bar', 'foobar': 'foobar'};
+
+    it('should return driver args if passed in', function () {
+      helpers.parseArgs({}, driverArgs, ['suppressKillServer', 'reboot', 'chromeDriverPort'
+        , 'chromedriverExecutable']).should.eql(driverArgs);
+    });
+    it('should assign driver args to opts if passed in', function () {
+      helpers.parseArgs(opts, driverArgs, ['suppressKillServer', 'reboot', 'chromeDriverPort'
+        , 'chromedriverExecutable']).should.eql(_.assign(opts, driverArgs));
+    });
+    it('should use opts args if driver args not passed in', function () {
+      helpers.parseArgs(_.assign(opts, driverArgs), {}, ['suppressKillServer', 'reboot', 'chromeDriverPort'
+        , 'chromedriverExecutable']).should.eql(_.assign(opts, driverArgs));
+    });
+    it('should return empty object if no args passed in', function () {
+      helpers.parseArgs({}, {}, ['suppressKillServer', 'reboot', 'chromeDriverPort'
+        , 'chromedriverExecutable']).should.eql({});
+    });
+    describe('suppressKillServer', function () {
+      it('should return empty object if driverArgs is empty', function () {
+        helpers.parseArgs({}, {}, ['suppressKillServer']).should.eql({});
+      });
+      it(`should throw error if value of 'suppressKillServer' is not a boolean`, function () {
+        (() => helpers.parseArgs({}, {'suppressKillServer': 'foo'}, ['suppressKillServer'])).should.throw();
+      });
+      it(`should return throw if unreconized key is passed`, function () {
+        (() => helpers.parseArgs({}, {'foo': 'bar'}, ['suppressKillServer'])).should.throw();
+      });
+      it('should return true when passed in as a driver arg', function () {
+        helpers.parseArgs({}, {'suppressKillServer': true}, ['suppressKillServer']).suppressKillServer.should.equal(true);
+      });
+    });
+  });
 });

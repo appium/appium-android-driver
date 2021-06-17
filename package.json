@@ -52,8 +52,8 @@
     "moment-timezone": "^0.5.26",
     "portfinder": "^1.0.6",
     "portscanner": "2.2.0",
-    "shared-preferences-builder": "^0.0.4",
     "semver": "^7.0.0",
+    "shared-preferences-builder": "^0.0.4",
     "source-map-support": "^0.5.5",
     "teen_process": "^1.9.0",
     "ws": "^7.0.0"
