@@ -56,13 +56,16 @@ describe('Context', function () {
     });
     it('should use ADB to figure out which webviews are available', async function () {
       sandbox.stub(webviewHelpers, 'getWebviews');
+      sandbox.stub(webviewHelpers, 'getWebViewsMapping');
       expect(await driver.getContexts()).to.not.include(CHROMIUM_WIN);
       webviewHelpers.getWebviews.calledOnce.should.be.true;
+      webviewHelpers.getWebViewsMapping.calledOnce.should.be.true;
     });
   });
   describe('setContext', function () {
     beforeEach(function () {
-      sandbox.stub(driver, 'getContexts').returns(['DEFAULT', 'WV', 'ANOTHER']);
+      sandbox.stub(webviewHelpers, 'getWebViewsMapping');
+      sandbox.stub(driver, 'getContextsWithWebviewMappings').returns(['DEFAULT', 'WV', 'ANOTHER']);
       sandbox.stub(driver, 'switchContext');
     });
     it('should switch to default context if name is null', async function () {
