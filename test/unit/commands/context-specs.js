@@ -64,20 +64,23 @@ describe('Context', function () {
   });
   describe('setContext', function () {
     beforeEach(function () {
-      sandbox.stub(webviewHelpers, 'getWebViewsMapping');
-      sandbox.stub(driver, 'getContextsWithWebviewMappings').returns(['DEFAULT', 'WV', 'ANOTHER']);
+      sandbox.stub(webviewHelpers, 'getWebViewsMapping').returns(
+          [{'webviewName': 'DEFAULT'}, {'webviewName': 'WV'}, {'webviewName': 'ANOTHER'}]
+      );
       sandbox.stub(driver, 'switchContext');
     });
     it('should switch to default context if name is null', async function () {
       sandbox.stub(driver, 'defaultContextName').returns('DEFAULT');
       await driver.setContext(null);
-      driver.switchContext.calledWithExactly('DEFAULT', ['DEFAULT', 'WV', 'ANOTHER']).should.be.true;
+      driver.switchContext.calledWithExactly(
+          'DEFAULT', [{'webviewName': 'DEFAULT'}, {'webviewName': 'WV'}, {'webviewName': 'ANOTHER'}]).should.be.true;
       driver.curContext.should.be.equal('DEFAULT');
     });
     it('should switch to default web view if name is WEBVIEW', async function () {
       sandbox.stub(driver, 'defaultWebviewName').returns('WV');
       await driver.setContext(WEBVIEW_WIN);
-      driver.switchContext.calledWithExactly('WV', ['DEFAULT', 'WV', 'ANOTHER']).should.be.true;
+      driver.switchContext.calledWithExactly(
+          'WV', [{'webviewName': 'DEFAULT'}, {'webviewName': 'WV'}, {'webviewName': 'ANOTHER'}]).should.be.true;
       driver.curContext.should.be.equal('WV');
     });
     it('should throw error if context does not exist', async function () {
