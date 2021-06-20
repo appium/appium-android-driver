@@ -55,7 +55,7 @@ describe('Context', function () {
       expect(await driver.getContexts()).to.include(CHROMIUM_WIN);
     });
     it('should use ADB to figure out which webviews are available', async function () {
-      sandbox.stub(webviewHelpers, 'getWebviews');
+      sandbox.stub(webviewHelpers, 'getWebviews').returns(['DEFAULT', 'VW', 'ANOTHER']);
       sandbox.stub(webviewHelpers, 'getWebViewsMapping');
       expect(await driver.getContexts()).to.not.include(CHROMIUM_WIN);
       webviewHelpers.getWebviews.calledOnce.should.be.true;
