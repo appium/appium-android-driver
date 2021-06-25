@@ -55,26 +55,32 @@ describe('Context', function () {
       expect(await driver.getContexts()).to.include(CHROMIUM_WIN);
     });
     it('should use ADB to figure out which webviews are available', async function () {
-      sandbox.stub(webviewHelpers, 'getWebviews');
+      sandbox.stub(webviewHelpers, 'parseWebviewNames').returns(['DEFAULT', 'VW', 'ANOTHER']);
+      sandbox.stub(webviewHelpers, 'getWebViewsMapping');
       expect(await driver.getContexts()).to.not.include(CHROMIUM_WIN);
-      webviewHelpers.getWebviews.calledOnce.should.be.true;
+      webviewHelpers.parseWebviewNames.calledOnce.should.be.true;
+      webviewHelpers.getWebViewsMapping.calledOnce.should.be.true;
     });
   });
   describe('setContext', function () {
     beforeEach(function () {
-      sandbox.stub(driver, 'getContexts').returns(['DEFAULT', 'WV', 'ANOTHER']);
+      sandbox.stub(webviewHelpers, 'getWebViewsMapping').returns(
+          [{'webviewName': 'DEFAULT'}, {'webviewName': 'WV'}, {'webviewName': 'ANOTHER'}]
+      );
       sandbox.stub(driver, 'switchContext');
     });
     it('should switch to default context if name is null', async function () {
       sandbox.stub(driver, 'defaultContextName').returns('DEFAULT');
       await driver.setContext(null);
-      driver.switchContext.calledWithExactly('DEFAULT').should.be.true;
+      driver.switchContext.calledWithExactly(
+          'DEFAULT', [{'webviewName': 'DEFAULT'}, {'webviewName': 'WV'}, {'webviewName': 'ANOTHER'}]).should.be.true;
       driver.curContext.should.be.equal('DEFAULT');
     });
     it('should switch to default web view if name is WEBVIEW', async function () {
       sandbox.stub(driver, 'defaultWebviewName').returns('WV');
       await driver.setContext(WEBVIEW_WIN);
-      driver.switchContext.calledWithExactly('WV').should.be.true;
+      driver.switchContext.calledWithExactly(
+          'WV', [{'webviewName': 'DEFAULT'}, {'webviewName': 'WV'}, {'webviewName': 'ANOTHER'}]).should.be.true;
       driver.curContext.should.be.equal('WV');
     });
     it('should throw error if context does not exist', async function () {
@@ -97,8 +103,8 @@ describe('Context', function () {
     });
     it('should start chrome driver proxy if requested context is webview', async function () {
       driver.isChromedriverContext.returns(true);
-      await driver.switchContext('context');
-      driver.startChromedriverProxy.calledWithExactly('context').should.be.true;
+      await driver.switchContext('context', ['current_cntx', 'context']);
+      driver.startChromedriverProxy.calledWithExactly('context', ['current_cntx', 'context']).should.be.true;
     });
     it('should stop chromedriver proxy if current context is webview and requested context is not', async function () {
       driver.opts = {recreateChromeDriverSessions: true};
