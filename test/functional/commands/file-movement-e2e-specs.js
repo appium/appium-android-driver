@@ -9,9 +9,7 @@ import path from 'path';
 chai.should();
 chai.use(chaiAsPromised);
 
-let caps = _.defaults({
-  autoLaunch: false
-}, DEFAULT_CAPS);
+let caps = _.defaults(DEFAULT_CAPS);
 
 describe('file movement', function () {
   let driver;

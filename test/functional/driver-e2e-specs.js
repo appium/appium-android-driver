@@ -67,7 +67,6 @@ describe('createSession', function () {
     let caps = Object.assign({}, defaultCaps);
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
-    caps.autoLaunch = false;
     await driver.createSession(caps);
     let {appPackage, appActivity} = await getPackageAndActivity(driver);
     expect(appPackage).to.not.equal(caps.appPackage);
