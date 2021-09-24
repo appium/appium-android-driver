@@ -6,6 +6,7 @@ import helpers from '../../lib/unlock-helpers';
 import AndroidDriver from '../../lib/driver';
 import * as asyncbox from 'asyncbox';
 import ADB from 'appium-adb';
+import keyboardHelpers from '../../lib/keyboard-helpers';
 
 const KEYCODE_NUMPAD_ENTER = 66;
 const INPUT_KEYS_WAIT_TIME = 100;
@@ -64,63 +65,47 @@ describe('Unlock Helpers', function () {
         .to.throw('Invalid unlock type');
     });
   });
-  describe('dismissKeyguard', withMocks({driver, adb, asyncbox, helpers}, (mocks) => {
+  describe('dismissKeyguard', withMocks({keyboardHelpers, adb, asyncbox, helpers}, (mocks) => {
     it('should hide keyboard if keyboard is shown', async function () {
-      mocks.driver.expects('isKeyboardShown').returns(true);
-      mocks.driver.expects('pressKeyCode').withExactArgs(224).once();
-      mocks.driver.expects('pressKeyCode').withExactArgs(26).once();
-      mocks.driver.expects('hideKeyboard').once();
+      mocks.adb.expects('isSoftKeyboardPresent').returns({isKeyboardShown: true});
+      mocks.adb.expects('keyevent').withExactArgs(224).once();
+      mocks.adb.expects('keyevent').withExactArgs(26).once();
+      mocks.keyboardHelpers.expects('hideKeyboard').once();
       mocks.asyncbox.expects('sleep').withExactArgs(HIDE_KEYBOARD_WAIT_TIME).once();
       mocks.adb.expects('shell').once();
       mocks.adb.expects('back').once();
       mocks.adb.expects('getApiLevel').returns(20);
       mocks.helpers.expects('swipeUp').once();
-      await helpers.dismissKeyguard(driver, adb);
-      mocks.driver.verify();
+      await helpers.dismissKeyguard(adb);
       mocks.asyncbox.verify();
       mocks.helpers.verify();
+      mocks.keyboardHelpers.verify();
     });
     it('should dismiss notifications and dissmiss keyguard via swipping up', async function () {
-      mocks.driver.expects('isKeyboardShown').returns(false);
-      mocks.driver.expects('pressKeyCode').withExactArgs(224).once();
-      mocks.driver.expects('pressKeyCode').withExactArgs(26).once();
+      mocks.adb.expects('isSoftKeyboardPresent').returns({isKeyboardShown: false});
+      mocks.adb.expects('keyevent').withExactArgs(224).once();
+      mocks.adb.expects('keyevent').withExactArgs(26).once();
       mocks.adb.expects('shell')
         .withExactArgs(['service', 'call', 'notification', '1']).once();
       mocks.adb.expects('back').once();
       mocks.adb.expects('getApiLevel').returns(21);
-      mocks.helpers.expects('swipeUp').withExactArgs(driver).once();
-      await helpers.dismissKeyguard(driver, adb);
-      mocks.driver.verify();
+      mocks.helpers.expects('swipeUp').withExactArgs(adb).once();
+      await helpers.dismissKeyguard(adb);
       mocks.adb.verify();
       mocks.helpers.verify();
     });
     it('should dissmiss keyguard via dismiss-keyguard shell command if API level > 21', async function () {
-      mocks.driver.expects('isKeyboardShown').returns(false);
-      mocks.driver.expects('pressKeyCode').withExactArgs(224).once();
-      mocks.driver.expects('pressKeyCode').withExactArgs(26).once();
+      mocks.adb.expects('isSoftKeyboardPresent').returns({isKeyboardShown: false});
+      mocks.adb.expects('keyevent').withExactArgs(224).once();
+      mocks.adb.expects('keyevent').withExactArgs(26).once();
       mocks.adb.expects('shell').onCall(0).returns('');
       mocks.adb.expects('back').once();
       mocks.adb.expects('getApiLevel').returns(22);
       mocks.adb.expects('shell').withExactArgs(['wm', 'dismiss-keyguard']).once();
       mocks.helpers.expects('swipeUp').never();
-      await helpers.dismissKeyguard(driver, adb);
-      mocks.driver.verify();
+      await helpers.dismissKeyguard(adb);
       mocks.adb.verify();
       mocks.helpers.verify();
-    });
-  }));
-  describe('swipeUp', withMocks({driver, helpers}, (mocks) => {
-    it('should perform swipe up touch action', async function () {
-      let windowSize = {x: 475, y: 800};
-      let actions = [
-        {action: 'press', options: {element: null, x: 237, y: 790}},
-        {action: 'moveTo', options: {element: null, x: 237, y: 100}},
-        {action: 'release'}
-      ];
-      mocks.driver.expects('getWindowSize').returns(windowSize);
-      mocks.driver.expects('performTouch').withExactArgs(actions).once;
-      await helpers.swipeUp(driver);
-      mocks.driver.verify();
     });
   }));
   describe('encodePassword', function () {
@@ -176,7 +161,7 @@ describe('Unlock Helpers', function () {
         .withExactArgs('id', 'com.android.systemui:id/digit_text', true)
         .returns(els);
       mocks.adb.expects('isScreenLocked').returns(true);
-      mocks.driver.expects('pressKeyCode').withExactArgs(66).once();
+      mocks.adb.expects('keyevent').withExactArgs(66).once();
       for (let e of els) {
         mocks.driver.expects('getAttribute').withExactArgs('text', e.ELEMENT)
           .returns(e.ELEMENT.toString());
@@ -251,13 +236,13 @@ describe('Unlock Helpers', function () {
   describe('passwordUnlock', withMocks({adb, helpers, driver, asyncbox}, (mocks) => {
     it('should be able to unlock device using password', async function () {
       let caps = {unlockKey: 'psswrd'};
-      mocks.helpers.expects('dismissKeyguard').withExactArgs(driver, adb).once();
+      mocks.helpers.expects('dismissKeyguard').withExactArgs(adb).once();
       mocks.helpers.expects('encodePassword').withExactArgs(caps.unlockKey).returns(caps.unlockKey);
       mocks.adb.expects('shell').withExactArgs(['input', 'text', caps.unlockKey]).once();
       mocks.asyncbox.expects('sleep').withExactArgs(INPUT_KEYS_WAIT_TIME).once();
       mocks.adb.expects('shell').withExactArgs(['input', 'keyevent', KEYCODE_NUMPAD_ENTER]);
       mocks.adb.expects('isScreenLocked').returns(true);
-      mocks.driver.expects('pressKeyCode').withExactArgs(66).once();
+      mocks.adb.expects('keyevent').withExactArgs(66).once();
       mocks.asyncbox.expects('sleep').withExactArgs(UNLOCK_WAIT_TIME).twice();
       await helpers.passwordUnlock(adb, driver, caps);
       mocks.helpers.verify();
@@ -342,7 +327,7 @@ describe('Unlock Helpers', function () {
     const keys = ['1', '3', '5', '7', '9'];
     const caps = {unlockKey: '13579'};
     beforeEach(function () {
-      mocks.helpers.expects('dismissKeyguard').withExactArgs(driver, adb).once();
+      mocks.helpers.expects('dismissKeyguard').withExactArgs(adb).once();
       mocks.helpers.expects('stringKeyToArr').returns(keys);
       mocks.driver.expects('getLocation').withExactArgs(el.ELEMENT).returns(pos);
       mocks.driver.expects('getSize').withExactArgs(el.ELEMENT).returns(size);
