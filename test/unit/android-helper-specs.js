@@ -666,7 +666,7 @@ describe('Android Helpers', function () {
     it('should raise an error on undefined unlockKey when unlockType is defined', async function () {
       mocks.adb.expects('isScreenLocked').once().returns(true);
       mocks.adb.expects('isLockManagementSupported').never();
-      await helpers.unlock(helpers, adb, {unlockType: 'pin'}).should.be.rejectedWith('unlockKey');
+      await helpers.unlock(helpers, adb, {unlockType: 'pin'}).should.be.rejected;
       mocks.adb.verify();
       mocks.unlocker.verify();
       mocks.helpers.verify();
