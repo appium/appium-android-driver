@@ -6,11 +6,9 @@ import helpers from '../../lib/unlock-helpers';
 import AndroidDriver from '../../lib/driver';
 import * as asyncbox from 'asyncbox';
 import ADB from 'appium-adb';
-import keyboardHelpers from '../../lib/keyboard-helpers';
 
 const KEYCODE_NUMPAD_ENTER = 66;
 const INPUT_KEYS_WAIT_TIME = 100;
-const HIDE_KEYBOARD_WAIT_TIME = 100;
 const UNLOCK_WAIT_TIME = 100;
 
 chai.should();
@@ -65,49 +63,6 @@ describe('Unlock Helpers', function () {
         .to.throw('Invalid unlock type');
     });
   });
-  describe('dismissKeyguard', withMocks({keyboardHelpers, adb, asyncbox, helpers}, (mocks) => {
-    it('should hide keyboard if keyboard is shown', async function () {
-      mocks.adb.expects('isSoftKeyboardPresent').returns({isKeyboardShown: true});
-      mocks.adb.expects('keyevent').withExactArgs(224).once();
-      mocks.adb.expects('keyevent').withExactArgs(26).once();
-      mocks.keyboardHelpers.expects('hideKeyboard').once();
-      mocks.asyncbox.expects('sleep').withExactArgs(HIDE_KEYBOARD_WAIT_TIME).once();
-      mocks.adb.expects('shell').once();
-      mocks.adb.expects('back').once();
-      mocks.adb.expects('getApiLevel').returns(20);
-      mocks.helpers.expects('swipeUp').once();
-      await helpers.dismissKeyguard(adb);
-      mocks.asyncbox.verify();
-      mocks.helpers.verify();
-      mocks.keyboardHelpers.verify();
-    });
-    it('should dismiss notifications and dissmiss keyguard via swipping up', async function () {
-      mocks.adb.expects('isSoftKeyboardPresent').returns({isKeyboardShown: false});
-      mocks.adb.expects('keyevent').withExactArgs(224).once();
-      mocks.adb.expects('keyevent').withExactArgs(26).once();
-      mocks.adb.expects('shell')
-        .withExactArgs(['service', 'call', 'notification', '1']).once();
-      mocks.adb.expects('back').once();
-      mocks.adb.expects('getApiLevel').returns(21);
-      mocks.helpers.expects('swipeUp').withExactArgs(adb).once();
-      await helpers.dismissKeyguard(adb);
-      mocks.adb.verify();
-      mocks.helpers.verify();
-    });
-    it('should dissmiss keyguard via dismiss-keyguard shell command if API level > 21', async function () {
-      mocks.adb.expects('isSoftKeyboardPresent').returns({isKeyboardShown: false});
-      mocks.adb.expects('keyevent').withExactArgs(224).once();
-      mocks.adb.expects('keyevent').withExactArgs(26).once();
-      mocks.adb.expects('shell').onCall(0).returns('');
-      mocks.adb.expects('back').once();
-      mocks.adb.expects('getApiLevel').returns(22);
-      mocks.adb.expects('shell').withExactArgs(['wm', 'dismiss-keyguard']).once();
-      mocks.helpers.expects('swipeUp').never();
-      await helpers.dismissKeyguard(adb);
-      mocks.adb.verify();
-      mocks.helpers.verify();
-    });
-  }));
   describe('encodePassword', function () {
     it('should verify the password with blank space is encoded', function () {
       helpers.encodePassword('a p p i u m').should.equal('a%sp%sp%si%su%sm');
@@ -154,7 +109,7 @@ describe('Unlock Helpers', function () {
       sandbox.restore();
     });
     it('should be able to unlock device using pin (API level >= 21)', async function () {
-      mocks.helpers.expects('dismissKeyguard').once();
+      mocks.adb.expects('dismissKeyguard').once();
       mocks.helpers.expects('stringKeyToArr').returns(keys);
       mocks.adb.expects('getApiLevel').returns(21);
       mocks.driver.expects('findElOrEls')
@@ -183,7 +138,7 @@ describe('Unlock Helpers', function () {
       mocks.asyncbox.verify();
     });
     it('should be able to unlock device using pin (API level < 21)', async function () {
-      mocks.helpers.expects('dismissKeyguard').once();
+      mocks.adb.expects('dismissKeyguard').once();
       mocks.helpers.expects('stringKeyToArr').returns(keys);
       mocks.adb.expects('getApiLevel').returns(20);
       for (let pin of keys) {
@@ -209,7 +164,7 @@ describe('Unlock Helpers', function () {
       mocks.asyncbox.verify();
     });
     it('should throw error if pin buttons does not exist (API level >= 21)', async function () {
-      mocks.helpers.expects('dismissKeyguard').once();
+      mocks.adb.expects('dismissKeyguard').once();
       mocks.helpers.expects('stringKeyToArr').once();
       mocks.adb.expects('getApiLevel').returns(21);
       mocks.driver.expects('findElOrEls').returns(null);
@@ -220,7 +175,7 @@ describe('Unlock Helpers', function () {
       mocks.adb.verify();
     });
     it('should throw error if pin buttons does not exist (API level < 21)', async function () {
-      mocks.helpers.expects('dismissKeyguard').once();
+      mocks.adb.expects('dismissKeyguard').once();
       mocks.helpers.expects('stringKeyToArr').returns(keys);
       mocks.adb.expects('getApiLevel').returns(20);
       mocks.driver.expects('findElOrEls')
@@ -236,7 +191,7 @@ describe('Unlock Helpers', function () {
   describe('passwordUnlock', withMocks({adb, helpers, driver, asyncbox}, (mocks) => {
     it('should be able to unlock device using password', async function () {
       let caps = {unlockKey: 'psswrd'};
-      mocks.helpers.expects('dismissKeyguard').withExactArgs(adb).once();
+      mocks.adb.expects('dismissKeyguard').once();
       mocks.helpers.expects('encodePassword').withExactArgs(caps.unlockKey).returns(caps.unlockKey);
       mocks.adb.expects('shell').withExactArgs(['input', 'text', caps.unlockKey]).once();
       mocks.asyncbox.expects('sleep').withExactArgs(INPUT_KEYS_WAIT_TIME).once();
@@ -327,7 +282,7 @@ describe('Unlock Helpers', function () {
     const keys = ['1', '3', '5', '7', '9'];
     const caps = {unlockKey: '13579'};
     beforeEach(function () {
-      mocks.helpers.expects('dismissKeyguard').withExactArgs(adb).once();
+      mocks.adb.expects('dismissKeyguard').once();
       mocks.helpers.expects('stringKeyToArr').returns(keys);
       mocks.driver.expects('getLocation').withExactArgs(el.ELEMENT).returns(pos);
       mocks.driver.expects('getSize').withExactArgs(el.ELEMENT).returns(size);

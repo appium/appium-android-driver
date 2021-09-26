@@ -695,10 +695,12 @@ describe('Android Helpers', function () {
     it('should call fastUnlock if unlockKey is provided', async function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isLockManagementSupported').onCall(0).returns(true);
+      mocks.helpers.expects('verifyUnlock').once();
       mocks.unlocker.expects('fastUnlock').once();
-      await helpers.unlock(helpers, adb, {unlockKey: 'appium'});
+      await helpers.unlock(helpers, adb, {unlockKey: 'appium', unlockType: 'password'});
       mocks.adb.verify();
       mocks.unlocker.verify();
+      mocks.helpers.verify();
     });
     it('should call passwordUnlock if unlockType is password', async function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
