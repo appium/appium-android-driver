@@ -665,7 +665,6 @@ describe('Android Helpers', function () {
     });
     it('should raise an error on undefined unlockKey when unlockType is defined', async function () {
       mocks.adb.expects('isScreenLocked').once().returns(true);
-      mocks.unlocker.expects('isValidKey').once();
       mocks.adb.expects('isLockManagementSupported').never();
       await helpers.unlock(helpers, adb, {unlockType: 'pin'}).should.be.rejectedWith('unlockKey');
       mocks.adb.verify();
@@ -724,7 +723,7 @@ describe('Android Helpers', function () {
     it('should call fingerprintUnlock if unlockType is fingerprint', async function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
       mocks.adb.expects('isScreenLocked').returns(false);
-      mocks.adb.expects('isLockManagementSupported').onCall(0).returns(false);
+      mocks.adb.expects('isLockManagementSupported').never();
       mocks.unlocker.expects('fingerprintUnlock').once();
       await helpers.unlock(helpers, adb, {unlockType: 'fingerprint', unlockKey: '1111'});
       mocks.adb.verify();

@@ -19,48 +19,48 @@ describe('Unlock Helpers', function () {
   let driver = new AndroidDriver();
   let sandbox = sinon.createSandbox();
   let expect = chai.expect;
-  describe('isValidUnlockType', function () {
-    it('should verify the unlock types', function () {
-      helpers.isValidUnlockType('pin').should.equal(true);
-      helpers.isValidUnlockType('pattern').should.equal(true);
-      helpers.isValidUnlockType('password').should.equal(true);
-      helpers.isValidUnlockType('fingerprint').should.equal(true);
-      helpers.isValidUnlockType('telepathy').should.equal(false);
+  describe('validateUnlockCapabilities', function () {
+    function toCaps (unlockType, unlockKey) {
+      return {
+        unlockType,
+        unlockKey,
+      };
+    }
+
+    it('should verify the unlock keys for pin/pinWithKeyEvent', function () {
+      for (const invalidValue of [undefined, ' ', '1abc']) {
+        expect(() => helpers.validateUnlockCapabilities(toCaps('pin', invalidValue))).to.throw;
+        expect(() => helpers.validateUnlockCapabilities(toCaps('pinWithKeyEvent', invalidValue))).to.throw;
+      }
+      helpers.validateUnlockCapabilities(toCaps('pin', '1111'));
+      helpers.validateUnlockCapabilities(toCaps('pinWithKeyEvent', '1111'));
     });
-  });
-  describe('isValidKey', function () {
-    it('should verify the unlock keys for each type', function () {
-      helpers.isValidKey('pin').should.equal(false);
-      helpers.isValidKey('pin', ' ').should.equal(false);
-      helpers.isValidKey('pin', '1111').should.equal(true);
-      helpers.isValidKey('pin', '1abc').should.equal(false);
-      helpers.isValidKey('pinWithKeyEvent').should.equal(false);
-      helpers.isValidKey('pinWithKeyEvent', ' ').should.equal(false);
-      helpers.isValidKey('pinWithKeyEvent', '1111').should.equal(true);
-      helpers.isValidKey('pinWithKeyEvent', '1abc').should.equal(false);
-      helpers.isValidKey('fingerprint').should.equal(false);
-      helpers.isValidKey('fingerprint', ' ').should.equal(false);
-      helpers.isValidKey('fingerprint', '1111').should.equal(true);
-      helpers.isValidKey('fingerprint', '1abc').should.equal(false);
-      helpers.isValidKey('pattern', '1').should.equal(false);
-      helpers.isValidKey('pattern', '1234').should.equal(true);
-      helpers.isValidKey('pattern', '123456789').should.equal(true);
-      helpers.isValidKey('pattern', '01234').should.equal(false);
-      helpers.isValidKey('pattern').should.equal(false);
-      helpers.isValidKey('pattern', ' ').should.equal(false);
-      helpers.isValidKey('pattern', '1abc').should.equal(false);
-      helpers.isValidKey('pattern', '1213').should.equal(false);
-      helpers.isValidKey('password', '121c3').should.equal(true);
-      helpers.isValidKey('password', 'appium').should.equal(true);
-      helpers.isValidKey('password', 'appium-android-driver').should.equal(true);
-      helpers.isValidKey('password', '@#$%&-+()*"\':;!?,_ ./~`|={}\\[]').should.equal(true);
-      helpers.isValidKey('password', '123').should.equal(false);
-      helpers.isValidKey('password').should.equal(false);
-      helpers.isValidKey('password', '   ').should.equal(false);
+    it('should verify the unlock keys for fingerprint', function () {
+      for (const invalidValue of [undefined, ' ', '1abc']) {
+        expect(() => helpers.validateUnlockCapabilities(toCaps('fingerprint', invalidValue))).to.throw;
+      }
+      helpers.validateUnlockCapabilities(toCaps('fingerprint', '1'));
+    });
+    it('should verify the unlock keys for pattern', function () {
+      for (const invalidValue of [undefined, '1abc', '', '1', '1213', '01234', ' ']) {
+        expect(() => helpers.validateUnlockCapabilities(toCaps('pattern', invalidValue))).to.throw;
+      }
+      for (const validValue of ['1234', '123456789']) {
+        helpers.validateUnlockCapabilities(toCaps('pattern', validValue));
+      }
+    });
+    it('should verify the unlock keys for password', function () {
+      for (const invalidValue of [undefined, '123', '   ']) {
+        expect(() => helpers.validateUnlockCapabilities(toCaps('password', invalidValue))).to.throw;
+      }
+      for (const validValue of [
+        '121c3', 'appium', 'appium-android-driver', '@#$%&-+()*"\':;!?,_ ./~`|={}\\[]'
+      ]) {
+        helpers.validateUnlockCapabilities(toCaps('password', validValue));
+      }
     });
     it('should throw error if unlock type is invalid', function () {
-      expect(() => helpers.isValidKey('invalid_unlock_type', '1'))
-        .to.throw('Invalid unlock type');
+      expect(() => helpers.validateUnlockCapabilities(toCaps('invalid_unlock_type', '1'))).to.throw;
     });
   });
   describe('encodePassword', function () {
