@@ -510,6 +510,9 @@ describe('driver', function () {
       sandbox.stub(driver, 'setupNewChromedriver').returns({
         on: _.noop,
         proxyReq: _.noop,
+        jwproxy: {
+          command: _.noop
+        }
       });
       sandbox.stub(driver, 'dismissChromeWelcome');
     });
