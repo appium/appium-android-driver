@@ -30,6 +30,9 @@ describe('Context', function () {
     sandbox.stub(Chromedriver.prototype.proxyReq, 'bind').returns('proxy');
 
     stubbedChromedriver = sinon.stub();
+    stubbedChromedriver.jwproxy = sinon.stub();
+    stubbedChromedriver.jwproxy.command = sinon.stub();
+    stubbedChromedriver.jwproxy.command.bind = sinon.stub();
     stubbedChromedriver.proxyReq = sinon.stub();
     stubbedChromedriver.proxyReq.bind = sinon.stub();
     stubbedChromedriver.restart = sinon.stub();
