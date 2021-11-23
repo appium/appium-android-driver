@@ -134,6 +134,17 @@ describe('performance data', function () {
   });
   describe('getMemoryInfo', function () {
     const shellArgs = ['dumpsys', 'meminfo', `'${PACKAGE_NAME}'`, '|', 'grep', '-E', "'Native|Dalvik|EGL|GL|TOTAL'"];
+    const dumpsysDataAPI30 = `
+                         Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                       Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                      ------   ------   ------   ------   ------   ------   ------   ------
+         Native Heap      107      102        0        0     120         112      111      555
+         Dalvik Heap      108      103        0        0     121         555      555      555
+        Dalvik Other      555      555        0        0     123
+          EGL mtrack      109      104        0      555     124           0        0        0
+           GL mtrack      110      105        0      555     125           0        0        0
+               TOTAL      555      555      555        0     126         555      555
+               TOTAL      106      101      555        0     127         555      555      555`;
     const dumpsysDataAPI19 = `
                           Pss  Private  Private  Swapped     Heap     Heap     Heap
                         Total    Dirty    Clean    Dirty     Size    Alloc     Free
@@ -158,10 +169,26 @@ describe('performance data', function () {
       [
         '101', '102', '103', '104', '105', // private dirty total|native|dalvik|egl|gl
         '106', '107', '108', '109', '110', // pss           total|native|dalvik|egl|gl
-        '111', '112' // native        heap_alloc|heap_size
+        '111', '112', // native        heap_alloc|heap_size
+        undefined, undefined, undefined
       ],
     ];
-    it('should return memory info for API>18', async function () {
+    it('should return memory info for API>=30', async function () {
+      const expectedResult30 = [MEMORY_KEYS,
+        [
+          '101', '102', '103', '104', '105', // private dirty total|native|dalvik|egl|gl
+          '106', '107', '108', '109', '110', // pss           total|native|dalvik|egl|gl
+          '111', '112', // native        heap_alloc|heap_size
+          '120', '121', '127', // Rss        |native|dalvik|total
+        ],
+      ];
+      adb.getApiLevel.returns(30);
+      adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI30);
+      (await driver.getMemoryInfo(PACKAGE_NAME)).should.be.deep
+        .equal(expectedResult30);
+      asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
+    });
+    it('should return memory info for 18<API<30', async function () {
       adb.getApiLevel.returns(19);
       adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI19);
       (await driver.getMemoryInfo(PACKAGE_NAME)).should.be.deep
