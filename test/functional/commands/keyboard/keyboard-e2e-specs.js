@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
-import AndroidDriver from '../../../..';
+import AndroidDriver from '../../../../lib/driver';
 import B from 'bluebird';
 import DEFAULT_CAPS from '../../desired';
 

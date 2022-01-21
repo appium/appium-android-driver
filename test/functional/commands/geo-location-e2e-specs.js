@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { retryInterval } from 'asyncbox';
-import AndroidDriver from '../../..';
+import AndroidDriver from '../../../lib/driver';
 import DEFAULT_CAPS from '../desired';
 
 

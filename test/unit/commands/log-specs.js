@@ -4,7 +4,7 @@ import _ from 'lodash';
 import sinon from 'sinon';
 import ADB from 'appium-adb';
 import os from 'os';
-import AndroidDriver from '../../..';
+import AndroidDriver from '../../../lib/driver';
 
 
 chai.should();
