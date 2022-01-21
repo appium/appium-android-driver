@@ -1,7 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
-import { AndroidDriver, startServer } from '../..';
+import { AndroidDriver } from '../../lib/driver';
+import { startServer } from '../../lib/server';
 import { util } from '@appium/support';
 import DEFAULT_CAPS from './desired';
 import WebSocket from 'ws';

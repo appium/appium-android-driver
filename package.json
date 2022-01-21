@@ -39,7 +39,7 @@
     "@appium/support": "^2.55.3",
     "@babel/runtime": "^7.0.0",
     "appium-adb": "^9.0.0",
-    "appium-chromedriver": "^5.0.0",
+    "appium-chromedriver": "^5.0.1",
     "asyncbox": "^2.8.0",
     "axios": "^0.x",
     "bluebird": "^3.4.7",
