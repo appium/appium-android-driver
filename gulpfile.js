@@ -1,9 +1,9 @@
 'use strict';
 
 const { exec } = require('teen_process');
-const system = require('appium-support').system;
+const system = require('@appium/support').system;
 const gulp = require('gulp');
-const boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp);
+const boilerplate = require('@appium/gulp-plugins').boilerplate.use(gulp);
 
 
 const ANT_CMD = system.isWindows() ? 'ant.bat' : 'ant';

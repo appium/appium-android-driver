@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import { AndroidDriver, startServer } from '../..';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 import DEFAULT_CAPS from './desired';
 import WebSocket from 'ws';
 import B from 'bluebird';

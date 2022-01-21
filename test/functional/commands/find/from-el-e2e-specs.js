@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../../..';
 import DEFAULT_CAPS from '../../desired';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 
 
 chai.should();

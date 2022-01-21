@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../..';
 import _ from 'lodash';
 import DEFAULT_CAPS from '../desired';
-import { fs, tempDir, zip } from 'appium-support';
+import { fs, tempDir, zip } from '@appium/support';
 import path from 'path';
 
 chai.should();

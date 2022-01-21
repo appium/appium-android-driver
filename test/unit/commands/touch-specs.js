@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../..';
-import { withMocks } from 'appium-test-support';
+import { withMocks } from '@appium/test-support';
 import ADB from 'appium-adb';
 
 
