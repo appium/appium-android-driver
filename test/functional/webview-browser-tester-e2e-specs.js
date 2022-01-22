@@ -1,10 +1,11 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { AndroidDriver, startServer } from '../..';
+import { AndroidDriver } from '../../lib/driver';
+import { startServer } from '../../lib/server';
 import { ensureAVDExists, getChromedriver220Asset } from './helpers';
 import { CHROME_CAPS } from './desired';
 import _ from 'lodash';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 
 
 chai.should();

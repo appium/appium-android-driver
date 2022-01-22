@@ -1,9 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import AndroidDriver from '../../..';
+import AndroidDriver from '../../../lib/driver';
 import ADB from 'appium-adb';
-import { errors } from 'appium-base-driver';
+import { errors } from '@appium/base-driver';
 
 chai.should();
 chai.use(chaiAsPromised);

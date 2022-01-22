@@ -5,7 +5,7 @@ import chaiAsPromised from 'chai-as-promised';
 import path from 'path';
 import { AndroidBootstrap, COMMAND_TYPES } from '../../../lib/bootstrap';
 import ADB from 'appium-adb';
-import { errors } from 'appium-base-driver';
+import { errors } from '@appium/base-driver';
 import { MOCHA_TIMEOUT } from '../helpers';
 
 

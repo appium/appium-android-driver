@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import AndroidDriver from '../../..';
+import AndroidDriver from '../../../lib/driver';
 
 let driver;
 let sandbox = sinon.createSandbox();

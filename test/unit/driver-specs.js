@@ -3,11 +3,11 @@ import chaiAsPromised from 'chai-as-promised';
 import log from '../../lib/logger';
 import sinon from 'sinon';
 import { helpers, SETTINGS_HELPER_PKG_ID } from '../../lib/android-helpers';
-import { withMocks } from 'appium-test-support';
-import AndroidDriver from '../..';
+import { withMocks } from '@appium/test-support';
+import AndroidDriver from '../../lib/driver';
 import ADB from 'appium-adb';
-import { errors } from 'appium-base-driver';
-import { fs } from 'appium-support';
+import { errors } from '@appium/base-driver';
+import { fs } from '@appium/support';
 import { SharedPrefsBuilder } from 'shared-preferences-builder';
 import _ from 'lodash';
 
@@ -139,37 +139,96 @@ describe('driver', function () {
     });
     it('should get browser package details if browserName is provided', async function () {
       sandbox.spy(helpers, 'getChromePkg');
-      await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'Chrome'});
+      await driver.createSession(null, null, {
+        firstMatch: [{}],
+        alwaysMatch: {
+          platformName: 'Android',
+          'appium:deviceName': 'device',
+          browserName: 'Chrome'
+        }
+      });
       helpers.getChromePkg.calledOnce.should.be.true;
     });
-    it('should check an app is present', async function () {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
+    it.skip('should check an app is present', async function () {
+      await driver.createSession(null, null, {
+        firstMatch: [{}],
+        alwaysMatch: {
+          platformName: 'Android',
+          'appium:deviceName': 'device',
+          'appium:app': '/path/to/some.apk'
+        }
+      });
       driver.checkAppPresent.calledOnce.should.be.true;
     });
     it('should check a package is present', async function () {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
+      await driver.createSession(null, null, {
+        firstMatch: [{}],
+        alwaysMatch: {
+          platformName: 'Android',
+          'appium:deviceName': 'device',
+          'appium:appPackage': 'some.app.package'
+        }
+      });
       driver.checkPackagePresent.calledOnce.should.be.true;
     });
     it('should accept a package via the app capability', async function () {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', app: 'some.app.package'});
+      await driver.createSession(null, null, {
+        firstMatch: [{}],
+        alwaysMatch: {
+          platformName: 'Android',
+          'appium:deviceName': 'device',
+          'appium:app': 'some.app.package'
+        }
+      });
       driver.checkPackagePresent.calledOnce.should.be.true;
     });
     it('should add server details to caps', async function () {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
+      await driver.createSession(null, null, {
+        firstMatch: [{}],
+        alwaysMatch: {
+          platformName: 'Android',
+          'appium:deviceName': 'device',
+          'appium:appPackage': 'some.app.package'
+        }
+      });
       driver.caps.webStorageEnabled.should.exist;
     });
     it('should pass along adbPort capability to ADB', async function () {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package', adbPort: 1111});
+      await driver.createSession(null, null, {
+        firstMatch: [{}],
+        alwaysMatch: {
+          platformName: 'Android',
+          'appium:deviceName': 'device',
+          'appium:appPackage': 'some.app.package',
+          'appium:adbPort': 1111
+        }
+      });
       driver.adb.adbPort.should.equal(1111);
     });
     it('should proxy screenshot if nativeWebScreenshot is off', async function () {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: false});
+      await driver.createSession(null, null, {
+        firstMatch: [{}],
+        alwaysMatch: {
+          platformName: 'Android',
+          'appium:deviceName': 'device',
+          browserName: 'chrome',
+          'appium:nativeWebScreenshot': false
+        }
+      });
       driver.getProxyAvoidList()
         .some((x) => x[1].toString().includes('/screenshot'))
         .should.be.false;
     });
     it('should not proxy screenshot if nativeWebScreenshot is on', async function () {
-      await driver.createSession({platformName: 'Android', deviceName: 'device', browserName: 'chrome', nativeWebScreenshot: true});
+      await driver.createSession(null, null, {
+        firstMatch: [{}],
+        alwaysMatch: {
+          platformName: 'Android',
+          'appium:deviceName': 'device',
+          browserName: 'chrome',
+          'appium:nativeWebScreenshot': true
+        }
+      });
       driver.getProxyAvoidList()
         .some((x) => x[1].toString().includes('/screenshot'))
         .should.be.true;

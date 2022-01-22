@@ -4,10 +4,10 @@ import sinon from 'sinon';
 import { default as webviewHelpers,
          NATIVE_WIN, WEBVIEW_BASE, WEBVIEW_WIN, CHROMIUM_WIN } from '../../../lib/webview-helpers';
 import { setupNewChromedriver } from '../../../lib/commands/context';
-import AndroidDriver from '../../..';
+import AndroidDriver from '../../../lib/driver';
 import Chromedriver from 'appium-chromedriver';
 import PortFinder from 'portfinder';
-import { errors } from 'appium-base-driver';
+import { errors } from '@appium/base-driver';
 
 let driver;
 let stubbedChromedriver;

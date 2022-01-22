@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import AndroidDriver from '../../..';
+import AndroidDriver from '../../../lib/driver';
 import { SUPPORTED_PERFORMANCE_DATA_TYPES, NETWORK_KEYS, CPU_KEYS, BATTERY_KEYS,
          MEMORY_KEYS} from '../../../lib/commands/performance.js';
 import _ from 'lodash';

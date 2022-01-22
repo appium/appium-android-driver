@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { withMocks } from 'appium-test-support';
+import { withMocks } from '@appium/test-support';
 import sinon from 'sinon';
 import helpers from '../../lib/unlock-helpers';
 import AndroidDriver from '../../lib/driver';

@@ -1,11 +1,11 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import AndroidDriver from '../../..';
+import AndroidDriver from '../../../lib/driver';
 import { parseSurfaceLine, parseWindows } from '../../../lib/commands/general';
 import helpers from '../../../lib/android-helpers';
-import { withMocks } from 'appium-test-support';
-import { fs } from 'appium-support';
+import { withMocks } from '@appium/test-support';
+import { fs } from '@appium/support';
 import Bootstrap from '../../../lib/bootstrap';
 import B from 'bluebird';
 import ADB from 'appium-adb';
