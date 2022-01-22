@@ -9,7 +9,7 @@ parameters:
 - name: integrationJobs
   type: object
   default:
-    - name: sdk22_e2e_tests_bootstrap
+  - name: sdk22_e2e_tests_bootstrap
     category: /bootstrap
   # TODO: Update tests to comply with W3C
   # - name: sdk22_e2e_tests_functional
