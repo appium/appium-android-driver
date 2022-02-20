@@ -794,11 +794,11 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
   describe('getSystemBars', function () {
     let driver;
 
-    it('should throw an error if there\'s no window manager output', async function () {
+    it('should throw an error if was unable to retrieve dumpsys output', async function () {
       driver = new AndroidDriver();
       driver.adb = {};
-      driver.adb.shell = () => '';
-      await driver.getSystemBars().should.be.rejectedWith(/Did not get window manager output./);
+      driver.adb.shell = () => { throw new Error(); };
+      await driver.getSystemBars().should.be.rejected;
     });
     it('should return the parsed system bar info below Android 11', async function () {
       driver = new AndroidDriver();
