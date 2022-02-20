@@ -1,7 +1,5 @@
 [![NPM version](http://img.shields.io/npm/v/appium-android-driver.svg)](https://npmjs.org/package/appium-android-driver)
 [![Downloads](http://img.shields.io/npm/dm/appium-android-driver.svg)](https://npmjs.org/package/appium-android-driver)
-[![Dependency Status](https://david-dm.org/appium/appium-android-driver.svg)](https://david-dm.org/appium/appium-android-driver)
-[![devDependency Status](https://david-dm.org/appium/appium-android-driver/dev-status.svg)](https://david-dm.org/appium/appium-android-driver#info=devDependencies)
 
 [![Build Status](https://travis-ci.org/appium/appium-android-driver.svg?branch=master)](https://travis-ci.org/appium/appium-android-driver)
 
