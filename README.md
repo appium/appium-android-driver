@@ -161,3 +161,4 @@ Some tests need particular emulators. Currently they are twofold:
 Some tests also also need a specific version of Chromedriver (specifically, `2.20`),
 which is available in the `test/assets` folder, or can be specified with the
 `CHROME_2_20_EXECUTABLE` environment variable.
+
