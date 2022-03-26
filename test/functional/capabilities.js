@@ -5,7 +5,7 @@ function amendCapabilities (baseCaps, ...newCaps) {
   const capsToAmend = Object.assign({}, ...newCaps);
   const alwaysMatch = Object.assign({}, baseCaps.alwaysMatch, capsToAmend);
   return Object.freeze({
-    alwaysMatch,
+    alwaysMatch: _.cloneDeep(alwaysMatch),
     firstMatch: [{}],
   });
 }

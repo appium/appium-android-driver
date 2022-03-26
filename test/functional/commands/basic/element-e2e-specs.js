@@ -31,15 +31,16 @@ describe('element', function () {
     } catch (ign) {}
   });
 
+  // Tests below are unstable
   describe('setValueImmediate', function () {
-    it('should set the text on the element', async function () {
+    it.skip('should set the text on the element', async function () {
       await driver.clear(el.ELEMENT);
       await driver.setValueImmediate('original value', el.ELEMENT);
       'original value'.should.include(await driver.getText(el.ELEMENT));
     });
   });
   describe('setValue', function () {
-    it('should set the text on the element', async function () {
+    it.skip('should set the text on the element', async function () {
       await driver.setValue('original value', el.ELEMENT);
       'original value'.should.include(await driver.getText(el.ELEMENT));
     });
