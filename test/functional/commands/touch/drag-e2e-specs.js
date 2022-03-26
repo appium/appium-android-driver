@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
 import AndroidDriver from '../../../../lib/driver';
-import DEFAULT_CAPS from '../../desired';
+import DEFAULT_CAPS from '../../capabilities';
 
 
 chai.should();

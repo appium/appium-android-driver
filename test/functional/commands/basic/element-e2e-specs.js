@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../../../lib/driver';
 import _ from 'lodash';
-import DEFAULT_CAPS from '../../desired';
+import DEFAULT_CAPS from '../../capabilities';
 
 
 chai.should();
@@ -10,7 +10,7 @@ chai.use(chaiAsPromised);
 
 let driver;
 let caps = _.defaults({
-  appActivity: '.view.TextFields'
+  'appium:appActivity': '.view.TextFields'
 }, DEFAULT_CAPS);
 
 describe('element', function () {

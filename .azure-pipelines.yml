@@ -18,8 +18,8 @@ parameters:
   #   category: /commands
   # - name: sdk22_e2e_tests_keyboard_commands
   #   category: /commands/keyboard
-  # - name: sdk22_e2e_tests_basic_commands
-  #   category: /commands/basic
+  - name: sdk22_e2e_tests_basic_commands
+    category: /commands/basic
   # - name: sdk22_e2e_tests_find_commands
   #   category: /commands/find
   # - name: sdk22_e2e_tests_touch_commands

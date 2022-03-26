@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../../../lib/driver';
 import B from 'bluebird';
-import DEFAULT_CAPS from '../../desired';
+import DEFAULT_CAPS from '../../capabilities';
 
 
 chai.should();
@@ -21,21 +21,21 @@ describe('apidemo - orientation -', function () {
     });
     it('should have portrait orientation if requested', async function () {
       await driver.createSession(Object.assign({}, DEFAULT_CAPS, {
-        appActivity: '.view.TextFields',
-        orientation: 'PORTRAIT',
+        'appium:appActivity': '.view.TextFields',
+        'appium:orientation': 'PORTRAIT',
       }));
       await driver.getOrientation().should.eventually.eql('PORTRAIT');
     });
     it('should have landscape orientation if requested', async function () {
       await driver.createSession(Object.assign({}, DEFAULT_CAPS, {
-        appActivity: '.view.TextFields',
-        orientation: 'LANDSCAPE',
+        'appium:appActivity': '.view.TextFields',
+        'appium:orientation': 'LANDSCAPE',
       }));
       await driver.getOrientation().should.eventually.eql('LANDSCAPE');
     });
     it('should have portrait orientation if nothing requested', async function () {
       await driver.createSession(Object.assign({}, DEFAULT_CAPS, {
-        appActivity: '.view.TextFields',
+        'appium:appActivity': '.view.TextFields',
       }));
       await driver.getOrientation().should.eventually.eql('PORTRAIT');
     });
@@ -44,7 +44,7 @@ describe('apidemo - orientation -', function () {
     before(async function () {
       driver = new AndroidDriver();
       await driver.createSession(Object.assign({}, DEFAULT_CAPS, {
-        appActivity: '.view.TextFields'
+        'appium:appActivity': '.view.TextFields'
       }));
     });
     after(async function () {

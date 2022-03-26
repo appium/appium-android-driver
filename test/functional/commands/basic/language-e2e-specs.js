@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import ADB from 'appium-adb';
 import AndroidDriver from '../../../../lib/driver';
-import DEFAULT_CAPS from '../../desired';
+import DEFAULT_CAPS from '../../capabilities';
 import { MOCHA_TIMEOUT } from '../../helpers';
 
 
@@ -41,12 +41,18 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
   }
 
   it('should start as FR', async function () {
-    let frCaps = Object.assign({}, DEFAULT_CAPS, {language: 'fr', locale: 'FR'});
+    let frCaps = Object.assign({}, DEFAULT_CAPS, {
+      'appium:language': 'fr',
+      'appium:locale': 'FR'
+    });
     await driver.createSession(frCaps);
     await getLocale(driver.adb).should.eventually.equal('fr-FR');
   });
   it('should start as US', async function () {
-    let usCaps = Object.assign({}, DEFAULT_CAPS, {language: 'en', locale: 'US'});
+    let usCaps = Object.assign({}, DEFAULT_CAPS, {
+      'appium:language': 'en',
+      'appium:locale': 'US'
+    });
     await driver.createSession(usCaps);
     await getLocale(driver.adb).should.eventually.equal('en-US');
   });
