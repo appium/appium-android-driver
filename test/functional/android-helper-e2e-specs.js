@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { retryInterval } from 'asyncbox';
 import helpers from '../../lib/android-helpers';
 import ADB from 'appium-adb';
-import { app } from './desired';
+import { app } from './capabilities';
 import { MOCHA_TIMEOUT } from './helpers';
 import { exec } from 'teen_process';
 import path from 'path';

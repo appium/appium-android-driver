@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../lib/driver';
 import { ensureAVDExists } from './helpers';
-import { CHROME_CAPS } from './desired';
+import { CHROME_CAPS } from './capabilities';
 import _ from 'lodash';
 import path from 'path';
 

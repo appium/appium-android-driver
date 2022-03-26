@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { AndroidDriver } from '../../lib/driver';
 import { startServer } from '../../lib/server';
 import { util } from '@appium/support';
-import DEFAULT_CAPS from './desired';
+import DEFAULT_CAPS from './capabilities';
 import WebSocket from 'ws';
 import B from 'bluebird';
 

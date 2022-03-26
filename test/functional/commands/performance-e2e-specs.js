@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../../lib/driver';
 import { SUPPORTED_PERFORMANCE_DATA_TYPES, CPU_KEYS, MEMORY_KEYS, BATTERY_KEYS, NETWORK_KEYS } from '../../../lib/commands/performance';
 import _ from 'lodash';
-import DEFAULT_CAPS from '../desired';
+import DEFAULT_CAPS from '../capabilities';
 
 
 chai.should();
