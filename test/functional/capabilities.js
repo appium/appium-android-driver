@@ -1,22 +1,33 @@
 import path from 'path';
 import _ from 'lodash';
 
+function amendCapabilities (baseCaps, ...newCaps) {
+  const capsToAmend = Object.assign({}, ...newCaps);
+  const alwaysMatch = Object.assign({}, baseCaps.alwaysMatch, capsToAmend);
+  return Object.freeze({
+    alwaysMatch,
+    firstMatch: [{}],
+  });
+}
 
 const app = require.resolve('android-apidemos');
 
 const DEFAULT_CAPS = Object.freeze({
-  'appium:app': app,
-  'appium:deviceName': 'Android',
-  platformName: 'Android',
+  alwaysMatch: {
+    'appium:app': app,
+    'appium:deviceName': 'Android',
+    platformName: 'Android',
+  },
+  firstMatch: [{}],
 });
 
-const CONTACT_MANAGER_CAPS = Object.freeze(_.defaults({
+const CONTACT_MANAGER_CAPS = amendCapabilities(DEFAULT_CAPS, {
   'appium:app': path.resolve(__dirname, '..', '..', '..', 'test', 'assets', 'ContactManager.apk'),
-}, DEFAULT_CAPS));
+});
 
-const CHROME_CAPS = Object.freeze(_.omit(_.defaults({
+const CHROME_CAPS = amendCapabilities(_.omit(DEFAULT_CAPS, 'alwaysMatch.appium:app'), {
   browserName: 'chrome',
-}, DEFAULT_CAPS), 'appium:app'));
+});
 
-export { app, DEFAULT_CAPS, CONTACT_MANAGER_CAPS, CHROME_CAPS };
+export { app, DEFAULT_CAPS, CONTACT_MANAGER_CAPS, CHROME_CAPS, amendCapabilities };
 export default DEFAULT_CAPS;
