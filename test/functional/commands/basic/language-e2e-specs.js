@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import ADB from 'appium-adb';
 import AndroidDriver from '../../../../lib/driver';
-import DEFAULT_CAPS, { amendCapabilities } from '../../capabilities';
+import { DEFAULT_CAPS, amendCapabilities } from '../../capabilities';
 import { MOCHA_TIMEOUT } from '../../helpers';
 
 

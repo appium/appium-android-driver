@@ -4,18 +4,17 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import AndroidDriver from '../../../lib/driver';
-import DEFAULT_CAPS from '../capabilities';
+import { DEFAULT_CAPS, amendCapabilities } from '../capabilities';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 let driver;
-let caps = _.defaults({
-  appActivity: '.view.TextFields'
-}, DEFAULT_CAPS);
+let caps = amendCapabilities(DEFAULT_CAPS, {
+  'appium:appActivity': '.view.TextFields'
+});
 
 describe.skip('network connection', function () {
   this.timeout(120000);

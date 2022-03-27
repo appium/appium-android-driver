@@ -2,14 +2,14 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import AndroidDriver from '../../lib/driver';
-import DEFAULT_CAPS from './capabilities';
+import { DEFAULT_CAPS, amendCapabilities } from './capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let defaultCaps = _.defaults({
+let defaultCaps = amendCapabilities(DEFAULT_CAPS, {
   androidInstallTimeout: 90000
-}, DEFAULT_CAPS);
+});
 
 const AVD_ANDROID_19_PIN_UNLOCK = 'ANDROID_API_19_PIN_UNLOCK';
 const AVD_ANDROID_23_PIN_UNLOCK = 'ANDROID_API_23_PIN_UNLOCK';

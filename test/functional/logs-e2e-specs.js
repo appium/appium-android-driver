@@ -1,10 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import { AndroidDriver } from '../../lib/driver';
 import { startServer } from '../../lib/server';
 import { util } from '@appium/support';
-import DEFAULT_CAPS from './capabilities';
+import { DEFAULT_CAPS, amendCapabilities } from './capabilities';
 import WebSocket from 'ws';
 import B from 'bluebird';
 
@@ -15,9 +14,9 @@ chai.use(chaiAsPromised);
 const HOST = util.localIp();
 const PORT = 4723;
 
-const caps = _.defaults({
-  androidInstallTimeout: 90000
-}, DEFAULT_CAPS);
+const caps = amendCapabilities(DEFAULT_CAPS, {
+  'appium:androidInstallTimeout': 90000
+});
 
 describe('logs', function () {
   let driver;

@@ -1,17 +1,16 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import AndroidDriver from '../..';
-import DEFAULT_CAPS from './capabilities';
+import { DEFAULT_CAPS, amendCapabilities } from './capabilities';
 import { sleep } from 'asyncbox';
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let defaultCaps = _.defaults({
-  androidInstallTimeout: 90000,
+let defaultCaps = amendCapabilities(DEFAULT_CAPS, {
+  'appium:androidInstallTimeout': 90000,
   browserName: 'chrome'
-}, DEFAULT_CAPS);
+});
 
 describe('toggle wifi tests', function () {
   let driver;

@@ -2,8 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../lib/driver';
 import { ensureAVDExists } from './helpers';
-import { CHROME_CAPS } from './capabilities';
-import _ from 'lodash';
+import { CHROME_CAPS, amendCapabilities } from './capabilities';
 import path from 'path';
 
 
@@ -17,15 +16,15 @@ function getChromedriver () {
 }
 
 const avd = process.env.ANDROID_25_AVD || 'Nexus_5_API_25';
-const capabilities = _.defaults({
-  avd,
-  platformVersion: '7.1',
-  chromeOptions: {
+const capabilities = amendCapabilities(CHROME_CAPS, {
+  'appium:avd': avd,
+  'appium:platformVersion': '7.1',
+  'appium:chromeOptions': {
     args: ['--no-first-run'],
   },
-  chromedriverExecutable: getChromedriver(),
-  showChromedriverLog: true,
-}, CHROME_CAPS);
+  'appium:chromedriverExecutable': getChromedriver(),
+  'appium:showChromedriverLog': true,
+});
 
 describe('createSession', function () {
   let driver;

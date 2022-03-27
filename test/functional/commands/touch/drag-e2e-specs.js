@@ -1,18 +1,17 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
 import AndroidDriver from '../../../../lib/driver';
-import DEFAULT_CAPS from '../../capabilities';
+import { DEFAULT_CAPS, amendCapabilities } from '../../capabilities';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let caps = _.defaults({
-  appPackage: 'io.appium.android.apis',
-  appActivity: '.view.DragAndDropDemo'
-}, DEFAULT_CAPS);
+let caps = amendCapabilities(DEFAULT_CAPS, {
+  'appium:appPackage': 'io.appium.android.apis',
+  'appium:appActivity': '.view.DragAndDropDemo'
+});
 
 describe('apidemo - touch', function () {
   let driver;

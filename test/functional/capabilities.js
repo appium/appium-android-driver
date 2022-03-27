@@ -1,18 +1,27 @@
 import path from 'path';
 import _ from 'lodash';
 
+function deepFreeze (object) {
+  const propNames = Object.getOwnPropertyNames(object);
+  for (const name of propNames) {
+    const value = object[name];
+    if (value && typeof value === 'object') {
+      deepFreeze(value);
+    }
+  }
+  return Object.freeze(object);
+}
+
 function amendCapabilities (baseCaps, ...newCaps) {
-  const capsToAmend = Object.assign({}, ...newCaps);
-  const alwaysMatch = Object.assign({}, baseCaps.alwaysMatch, capsToAmend);
-  return Object.freeze({
-    alwaysMatch: _.cloneDeep(alwaysMatch),
+  return deepFreeze({
+    alwaysMatch: _.cloneDeep(Object.assign({}, baseCaps.alwaysMatch, ...newCaps)),
     firstMatch: [{}],
   });
 }
 
 const app = require.resolve('android-apidemos');
 
-const DEFAULT_CAPS = Object.freeze({
+const DEFAULT_CAPS = deepFreeze({
   alwaysMatch: {
     'appium:app': app,
     'appium:deviceName': 'Android',
@@ -30,4 +39,3 @@ const CHROME_CAPS = amendCapabilities(_.omit(DEFAULT_CAPS, 'alwaysMatch.appium:a
 });
 
 export { app, DEFAULT_CAPS, CONTACT_MANAGER_CAPS, CHROME_CAPS, amendCapabilities };
-export default DEFAULT_CAPS;
