@@ -54,8 +54,10 @@ describe('Context', function () {
   });
   describe('getContexts', function () {
     it('should get Chromium context where appropriate', async function () {
+      sandbox.stub(webviewHelpers, 'getWebViewsMapping');
       driver = new AndroidDriver({browserName: 'Chrome'});
       expect(await driver.getContexts()).to.include(CHROMIUM_WIN);
+      webviewHelpers.getWebViewsMapping.calledOnce.should.be.true;
     });
     it('should use ADB to figure out which webviews are available', async function () {
       sandbox.stub(webviewHelpers, 'parseWebviewNames').returns(['DEFAULT', 'VW', 'ANOTHER']);
