@@ -1,17 +1,16 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../../lib/driver';
-import _ from 'lodash';
-import DEFAULT_CAPS from '../desired';
+import { DEFAULT_CAPS, amendCapabilities } from '../capabilities';
 import { fs, tempDir, zip } from '@appium/support';
 import path from 'path';
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let caps = _.defaults({
-  autoLaunch: false
-}, DEFAULT_CAPS);
+let caps = amendCapabilities(DEFAULT_CAPS, {
+  'appium:autoLaunch': false
+});
 
 describe('file movement', function () {
   let driver;

@@ -1,16 +1,15 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import AndroidDriver from '../../../../lib/driver';
-import DEFAULT_CAPS from '../../desired';
+import { DEFAULT_CAPS, amendCapabilities } from '../../capabilities';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let caps = _.defaults({
-  appActivity: '.view.SplitTouchView'
-}, DEFAULT_CAPS);
+let caps = amendCapabilities(DEFAULT_CAPS, {
+  'appium:appActivity': '.view.SplitTouchView'
+});
 
 describe('apidemo - touch - multi-actions', function () {
   let driver;

@@ -1,18 +1,17 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import ADB from 'appium-adb';
 import AndroidDriver from '../../lib/driver';
-import DEFAULT_CAPS from './desired';
+import { DEFAULT_CAPS, amendCapabilities } from './capabilities';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-const defaultCaps = _.defaults({
-  androidInstallTimeout: 90000
-}, DEFAULT_CAPS);
+const defaultCaps = amendCapabilities(DEFAULT_CAPS, {
+  'appium:androidInstallTimeout': 90000
+});
 
 describe('createSession', function () {
   let driver;

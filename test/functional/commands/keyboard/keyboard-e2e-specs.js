@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
 import AndroidDriver from '../../../../lib/driver';
 import B from 'bluebird';
-import DEFAULT_CAPS from '../../desired';
+import { DEFAULT_CAPS, amendCapabilities } from '../../capabilities';
 
 
 chai.should();
@@ -18,15 +18,15 @@ const PACKAGE = 'io.appium.android.apis';
 const TEXTFIELD_ACTIVITY = '.view.TextFields';
 const KEYEVENT_ACTIVITY = '.text.KeyEventText';
 
-const defaultAsciiCaps = _.defaults({
-  newCommandTimeout: 90,
-  appActivity: TEXTFIELD_ACTIVITY,
-}, DEFAULT_CAPS);
+const defaultAsciiCaps = amendCapabilities(DEFAULT_CAPS, {
+  'appium:newCommandTimeout': 90,
+  'appium:appActivity': TEXTFIELD_ACTIVITY,
+});
 
-const defaultUnicodeCaps = _.defaults({
-  unicodeKeyboard: true,
-  resetKeyboard: true
-}, defaultAsciiCaps);
+const defaultUnicodeCaps = amendCapabilities(defaultAsciiCaps, {
+  'appium:unicodeKeyboard': true,
+  'appium:resetKeyboard': true
+});
 
 function deSamsungify (text) {
   // For samsung S5 text is appended with ". Editing."

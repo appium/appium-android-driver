@@ -1,18 +1,17 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import AndroidDriver from '../../../lib/driver';
-import _ from 'lodash';
-import DEFAULT_CAPS from '../desired';
+import { DEFAULT_CAPS, amendCapabilities } from '../capabilities';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 let driver;
-let caps = _.defaults({
-  appPackage: 'io.appium.android.apis',
-  appActivity: '.view.TextFields'
-}, DEFAULT_CAPS);
+let caps = amendCapabilities(DEFAULT_CAPS, {
+  'appium:appPackage': 'io.appium.android.apis',
+  'appium:appActivity': '.view.TextFields'
+});
 
 describe('recording the screen', function () {
   before(async function () {
