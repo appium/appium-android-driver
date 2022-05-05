@@ -1,19 +1,10 @@
 import path from 'path';
 import _ from 'lodash';
+import { node } from '@appium/support';
 
-function deepFreeze (object) {
-  const propNames = Object.getOwnPropertyNames(object);
-  for (const name of propNames) {
-    const value = object[name];
-    if (value && typeof value === 'object') {
-      deepFreeze(value);
-    }
-  }
-  return Object.freeze(object);
-}
 
 function amendCapabilities (baseCaps, ...newCaps) {
-  return deepFreeze({
+  return node.deepFreeze({
     alwaysMatch: _.cloneDeep(Object.assign({}, baseCaps.alwaysMatch, ...newCaps)),
     firstMatch: [{}],
   });
@@ -21,7 +12,7 @@ function amendCapabilities (baseCaps, ...newCaps) {
 
 const app = require.resolve('android-apidemos');
 
-const DEFAULT_CAPS = deepFreeze({
+const DEFAULT_CAPS = node.deepFreeze({
   alwaysMatch: {
     'appium:app': app,
     'appium:deviceName': 'Android',
