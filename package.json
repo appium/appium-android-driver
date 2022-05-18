@@ -38,7 +38,7 @@
     "@appium/base-driver": "^8.5.2",
     "@appium/support": "^2.58.0",
     "@babel/runtime": "^7.0.0",
-    "appium-adb": "^9.0.0",
+    "appium-adb": "^9.5.0",
     "appium-chromedriver": "^5.0.1",
     "asyncbox": "^2.8.0",
     "axios": "^0.x",
