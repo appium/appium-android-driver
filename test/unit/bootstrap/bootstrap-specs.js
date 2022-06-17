@@ -8,7 +8,7 @@ import ADB from 'appium-adb';
 import { withSandbox } from '@appium/test-support';
 import events from 'events';
 import net from 'net';
-import { errors } from '@appium/base-driver';
+import { errors } from 'appium/driver';
 import _ from 'lodash';
 
 

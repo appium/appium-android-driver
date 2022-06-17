@@ -6,8 +6,8 @@ import { helpers, SETTINGS_HELPER_PKG_ID } from '../../lib/android-helpers';
 import { withMocks } from '@appium/test-support';
 import AndroidDriver from '../../lib/driver';
 import ADB from 'appium-adb';
-import { errors } from '@appium/base-driver';
-import { fs } from '@appium/support';
+import { errors } from 'appium/driver';
+import { fs } from 'appium/support';
 import { SharedPrefsBuilder } from 'shared-preferences-builder';
 import _ from 'lodash';
 

@@ -1,13 +1,12 @@
 'use strict';
 
 const { exec } = require('teen_process');
-const system = require('@appium/support').system;
 const gulp = require('gulp');
 const boilerplate = require('@appium/gulp-plugins').boilerplate.use(gulp);
 const DEFAULTS = require('@appium/gulp-plugins').boilerplate.DEFAULTS;
 
 
-const ANT_CMD = system.isWindows() ? 'ant.bat' : 'ant';
+const ANT_CMD = process.platform === 'win32' ? 'ant.bat' : 'ant';
 
 gulp.task('ant-clean', function clean () {
   return exec(ANT_CMD, ['clean'], {cwd: 'bootstrap'});

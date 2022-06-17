@@ -1,6 +1,6 @@
 import ADB from 'appium-adb';
 import path from 'path';
-import { system } from '@appium/support';
+import { system } from 'appium/support';
 
 
 const MOCHA_TIMEOUT = process.env.MOCHA_TIMEOUT || 60000;

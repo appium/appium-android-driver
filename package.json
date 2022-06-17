@@ -35,8 +35,6 @@
     "bootstrap/bin/AppiumBootstrap.jar"
   ],
   "dependencies": {
-    "@appium/base-driver": "^8.5.2",
-    "@appium/support": "^2.58.0",
     "@babel/runtime": "^7.0.0",
     "appium-adb": "^9.6.0",
     "appium-chromedriver": "^5.0.1",
@@ -76,6 +74,9 @@
     "precommit-msg",
     "precommit-test"
   ],
+  "peerDependencies": {
+    "appium": "^2.0.0-beta.40"
+  },
   "devDependencies": {
     "@appium/gulp-plugins": "^7.0.0",
     "@appium/eslint-config-appium": "^6.0.0",
@@ -84,6 +85,7 @@
     "@babel/eslint-parser": "^7.16.3",
     "@semantic-release/git": "^10.0.1",
     "@xmldom/xmldom": "^0.x",
+    "appium": "^2.0.0-beta.40",
     "android-apidemos": "^4.0.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
