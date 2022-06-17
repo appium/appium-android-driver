@@ -1,8 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { AndroidDriver } from '../../lib/driver';
-import { startServer } from '../../lib/server';
-import { util } from '@appium/support';
+import { startServer } from '../server';
+import { util } from 'appium/support';
 import { DEFAULT_CAPS, amendCapabilities } from './capabilities';
 import WebSocket from 'ws';
 import B from 'bluebird';

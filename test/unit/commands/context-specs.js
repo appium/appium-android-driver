@@ -7,7 +7,7 @@ import { setupNewChromedriver } from '../../../lib/commands/context';
 import AndroidDriver from '../../../lib/driver';
 import Chromedriver from 'appium-chromedriver';
 import PortFinder from 'portfinder';
-import { errors } from '@appium/base-driver';
+import { errors } from 'appium/driver';
 
 let driver;
 let stubbedChromedriver;

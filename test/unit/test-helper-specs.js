@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { withMocks } from '@appium/test-support';
-import { system } from '@appium/support';
+import { withMocks } from 'appium/test-support';
+import { system } from 'appium/support';
 import path from 'path';
 import { getChromedriver220Asset } from '../functional/helpers';
 

@@ -5,10 +5,10 @@ import chaiAsPromised from 'chai-as-promised';
 import { AndroidBootstrap, COMMAND_TYPES } from '../../../lib/bootstrap';
 import { UiAutomator } from '../../../lib/uiautomator';
 import ADB from 'appium-adb';
-import { withSandbox } from '@appium/test-support';
+import { withSandbox } from 'appium/test-support';
 import events from 'events';
 import net from 'net';
-import { errors } from '@appium/base-driver';
+import { errors } from 'appium/driver';
 import _ from 'lodash';
 
 

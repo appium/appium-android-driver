@@ -1,6 +1,6 @@
 import path from 'path';
 import _ from 'lodash';
-import { node } from '@appium/support';
+import { node } from 'appium/support';
 
 
 function amendCapabilities (baseCaps, ...newCaps) {

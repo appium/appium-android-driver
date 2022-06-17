@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import Bootstrap from '../../../lib/bootstrap';
 import AndroidDriver from '../../../lib/driver';
-import { errors } from '@appium/base-driver';
+import { errors } from 'appium/driver';
 
 
 let driver;
