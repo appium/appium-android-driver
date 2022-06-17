@@ -6,7 +6,7 @@ import sinon from 'sinon';
 import { UiAutomator } from '../../../lib/uiautomator';
 import path from 'path';
 import ADB from 'appium-adb';
-import { withSandbox } from 'appium/test-support';
+import { withSandbox } from '@appium/test-support';
 import * as teen_process from 'teen_process';
 import events from 'events';
 import _ from 'lodash';

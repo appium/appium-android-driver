@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import log from '../../lib/logger';
 import sinon from 'sinon';
 import { helpers, SETTINGS_HELPER_PKG_ID } from '../../lib/android-helpers';
-import { withMocks } from 'appium/test-support';
+import { withMocks } from '@appium/test-support';
 import AndroidDriver from '../../lib/driver';
 import ADB from 'appium-adb';
 import { errors } from 'appium/driver';
