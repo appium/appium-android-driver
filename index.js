@@ -17,7 +17,7 @@ const { helpers: androidHelpers, SETTINGS_HELPER_PKG_ID } = androidHelperIndex;
 
 export default AndroidDriver;
 export {
-  androidHelpers, androidCommands, AndroidDriver, startServer,
+  androidHelpers, androidCommands, AndroidDriver,
   commonCapConstraints, webviewHelpers, NATIVE_WIN, WEBVIEW_WIN,
   WEBVIEW_BASE, CHROMIUM_WIN, SETTINGS_HELPER_PKG_ID,
 };
