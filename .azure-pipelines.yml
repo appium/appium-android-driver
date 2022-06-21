@@ -36,7 +36,9 @@ stages:
     - task: NodeTool@0
       inputs:
         versionSpec: $(NODE_VERSION)
-    - script: npm run clean
+    - script: |
+        npm install -g appium@next
+        npm run clean
       displayName: Install Node dependencies
     - script: npm run lint
       displayName: Linter
