@@ -1,7 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { AndroidDriver } from '../../lib/driver';
-import { startServer } from '../server';
 import { ensureAVDExists, getChromedriver220Asset } from './helpers';
 import { CHROME_CAPS } from './capabilities';
 import _ from 'lodash';
@@ -21,7 +20,6 @@ const PORT = 4723;
 
 describe('Android 7 Webview Browser tester', function () {
   let driver;
-  let server;
 
   before(async function () {
     if (process.env.REAL_DEVICE) {
@@ -41,14 +39,10 @@ describe('Android 7 Webview Browser tester', function () {
 
     driver = new AndroidDriver();
     await driver.createSession(capabilities);
-    server = await startServer(PORT, HOST);
   });
   afterEach(async function () {
     if (driver) {
       await driver.deleteSession();
-    }
-    if (server) {
-      await server.close();
     }
   });
 

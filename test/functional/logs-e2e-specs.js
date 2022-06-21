@@ -1,7 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { AndroidDriver } from '../../lib/driver';
-import { startServer } from '../server';
 import { util } from 'appium/support';
 import { DEFAULT_CAPS, amendCapabilities } from './capabilities';
 import WebSocket from 'ws';
@@ -20,20 +19,14 @@ const caps = amendCapabilities(DEFAULT_CAPS, {
 
 describe('logs', function () {
   let driver;
-  let server;
 
   before(async function () {
     driver = new AndroidDriver();
     await driver.createSession(caps);
-    server = await startServer(PORT, HOST);
-    driver.server = server;
   });
   after(async function () {
     if (driver) {
       await driver.deleteSession();
-    }
-    if (server) {
-      await server.close();
     }
   });
 
