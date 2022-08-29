@@ -12,10 +12,7 @@ import { MOCHA_TIMEOUT } from '../helpers';
 chai.should();
 chai.use(chaiAsPromised);
 
-const dirOffset = process.env.NO_PRECOMPILE ? [] : ['..'];
-const rootDir = path.resolve(__dirname, '..', '..', '..', ...dirOffset);
-
-const apiDemos = path.resolve(rootDir, 'test', 'assets', 'ApiDemos-debug.apk');
+const apiDemos = path.resolve(__dirname, '..', '..', 'assets', 'ApiDemos-debug.apk');
 const systemPort = 4724;
 
 describe('Android Bootstrap', function () {
