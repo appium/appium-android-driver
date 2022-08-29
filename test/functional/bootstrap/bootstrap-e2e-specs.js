@@ -2,17 +2,16 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'path';
 import { AndroidBootstrap, COMMAND_TYPES } from '../../../lib/bootstrap';
 import ADB from 'appium-adb';
 import { errors } from 'appium/driver';
 import { MOCHA_TIMEOUT } from '../helpers';
+import { app as apiDemos } from '../capabilities';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const apiDemos = path.resolve(__dirname, '..', '..', 'assets', 'ApiDemos-debug.apk');
 const systemPort = 4724;
 
 describe('Android Bootstrap', function () {
