@@ -1,6 +1,7 @@
 import path from 'path';
 import _ from 'lodash';
 import { node } from 'appium/support';
+import { API_DEMOS_APK_PATH } from 'android-apidemos';
 
 
 function amendCapabilities (baseCaps, ...newCaps) {
@@ -10,11 +11,9 @@ function amendCapabilities (baseCaps, ...newCaps) {
   });
 }
 
-const app = require.resolve('android-apidemos');
-
 const DEFAULT_CAPS = node.deepFreeze({
   alwaysMatch: {
-    'appium:app': app,
+    'appium:app': API_DEMOS_APK_PATH,
     'appium:deviceName': 'Android',
     platformName: 'Android',
   },
@@ -29,4 +28,4 @@ const CHROME_CAPS = amendCapabilities(_.omit(DEFAULT_CAPS, 'alwaysMatch.appium:a
   browserName: 'chrome',
 });
 
-export { app, DEFAULT_CAPS, CONTACT_MANAGER_CAPS, CHROME_CAPS, amendCapabilities };
+export { API_DEMOS_APK_PATH as app, DEFAULT_CAPS, CONTACT_MANAGER_CAPS, CHROME_CAPS, amendCapabilities };
