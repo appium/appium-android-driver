@@ -30,7 +30,7 @@ jobs:
       displayName: Create and run Emulator
     - script: nohup adb logcat > logcat.txt &
       displayName: Capture Logcat
-    - script: npx mocha --timeout $MOCHA_TIMEOUT build/test/functional${{ parameters.category }} -g @skip-ci -i --exit
+    - script: npx mocha --timeout $MOCHA_TIMEOUT ./test/functional${{ parameters.category }} -g @skip-ci -i --exit
       displayName: Run tests
     - task: PublishPipelineArtifact@0
       condition: always()
