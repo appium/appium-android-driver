@@ -38,6 +38,7 @@ stages:
         versionSpec: $(NODE_VERSION)
     - script: |
         npm install -g appium@next
+        npm install
         npm run build
       displayName: Install Node dependencies
     - script: npm run lint
