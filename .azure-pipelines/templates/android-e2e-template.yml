@@ -1,7 +1,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 parameters:
   name: 'android_e2e_tests'
-  vmImage: 'ubuntu-latest'
+  vmImage: 'macOS-12'
   platformVersion: 5.1
   sdkVersion: 22
   emuTag: default
