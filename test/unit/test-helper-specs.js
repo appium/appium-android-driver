@@ -11,19 +11,19 @@ chai.use(chaiAsPromised);
 
 describe('test helpers', function () {
   describe('getChromedriver220Asset', withMocks({system}, (mocks) => {
-    let basePath = path.resolve(__dirname, '..', '..', '..');
+    let basePath = path.resolve(__dirname, '..', 'assets', 'chromedriver-2.20');
 
     it('should get the correct path for Windows', async function () {
       mocks.system.expects('isWindows').once().returns(true);
       let cdPath = path.normalize(await getChromedriver220Asset());
-      cdPath.should.eql(path.normalize(`${basePath}/test/assets/chromedriver-2.20/windows/chromedriver.exe`));
+      cdPath.should.eql(path.resolve(basePath, 'windows', 'chromedriver.exe'));
       mocks.system.verify();
     });
     it('should get the correct path for Mac', async function () {
       mocks.system.expects('isWindows').once().returns(false);
       mocks.system.expects('isMac').once().returns(true);
       let cdPath = path.normalize(await getChromedriver220Asset());
-      cdPath.should.eql(path.normalize(`${basePath}/test/assets/chromedriver-2.20/mac/chromedriver`));
+      cdPath.should.eql(path.resolve(basePath, 'mac', 'chromedriver'));
       mocks.system.verify();
     });
     it('should get the correct path for Unix 32-bit', async function () {
@@ -31,7 +31,7 @@ describe('test helpers', function () {
       mocks.system.expects('isMac').once().returns(false);
       mocks.system.expects('arch').once().returns('32');
       let cdPath = path.normalize(await getChromedriver220Asset());
-      cdPath.should.eql(path.normalize(`${basePath}/test/assets/chromedriver-2.20/linux-32/chromedriver`));
+      cdPath.should.eql(path.resolve(basePath, 'linux-32', 'chromedriver'));
       mocks.system.verify();
     });
     it('should get the correct path for Unix 64-bit', async function () {
@@ -39,7 +39,7 @@ describe('test helpers', function () {
       mocks.system.expects('isMac').once().returns(false);
       mocks.system.expects('arch').once().returns('64');
       let cdPath = path.normalize(await getChromedriver220Asset());
-      cdPath.should.eql(path.normalize(`${basePath}/test/assets/chromedriver-2.20/linux-64/chromedriver`));
+      cdPath.should.eql(path.resolve(basePath, 'linux-64', 'chromedriver'));
       mocks.system.verify();
     });
   }));

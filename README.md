@@ -102,48 +102,10 @@ These can be enabled when running this driver through Appium, via the `--allow-i
 
 ## Development
 
-### Building the Bootstrap Jar
-
-This package builds with an older version of the Android tools, using [ant](https://ant.apache.org/).
-
-To build the Java system, make sure [ant](https://ant.apache.org/) is installed.
-
-In order to have both the current Android tools and the ones needed for this package,
-do the following:
-1. Copy your `$ANDROID_HOME` directory (where the Android SDK is installed) to another location.
-1. Download the Android 22 tools
-    * MacOS: http://dl-ssl.google.com/android/repository/tools_r22-macosx.zip
-    * Linux: http://dl-ssl.google.com/android/repository/tools_r22-linux.zip
-    * Windows: http://dl-ssl.google.com/android/repository/tools_r22-windows.zip
-1. Replace the `tools` directory in the copied Android SDK directory with the Android 22
-  `tools` just downloaded
-1. Create/edit `bootstrap/local.properties` file, adding
-    * `sdk.dir=/path/to/copied/android/sdk`
-
-Now you should be able to build the Jar file by running
-```sh
-npm run build:bootstrap
-```
-
-The AppiumBootstrap.jar file is committed to source, and isn't built during the publish step. Any updates to it
-need to be committed. To build the jar, run `gulp ant`.
-
-### Install Dependencies
-
-```
-npm run clean
-```
-
 ### Transpile ES2015 code
 
 ```
 npm run build
-```
-
-### Watch
-
-```
-npm run watch
 ```
 
 ### Unit Test

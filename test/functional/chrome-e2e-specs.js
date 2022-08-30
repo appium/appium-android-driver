@@ -12,7 +12,7 @@ chai.use(chaiAsPromised);
 function getChromedriver () {
   return process.env.CHROMEDRIVER_EXECUTABLE
     ? process.env.CHROMEDRIVER_EXECUTABLE
-    : path.resolve(__dirname, '..', '..', '..', 'test', 'assets', 'chromedriver-2.20', 'mac', 'chromedriver');
+    : path.resolve(__dirname, '..', 'assets', 'chromedriver-2.20', 'mac', 'chromedriver');
 }
 
 const avd = process.env.ANDROID_25_AVD || 'Nexus_5_API_25';

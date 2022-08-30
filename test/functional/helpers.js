@@ -13,7 +13,7 @@ const CHROMEDRIVER_2_20_ASSET_MAP = {
 };
 
 async function getChromedriver220Asset () {
-  let basePath = path.resolve(__dirname, '..', '..', '..', 'test', 'assets', 'chromedriver-2.20');
+  let basePath = path.resolve(__dirname, '..', 'assets', 'chromedriver-2.20');
   let dir;
   let cmd;
   if (system.isWindows()) {

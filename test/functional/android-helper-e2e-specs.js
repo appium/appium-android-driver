@@ -6,7 +6,7 @@ import ADB from 'appium-adb';
 import { app } from './capabilities';
 import { MOCHA_TIMEOUT } from './helpers';
 import { exec } from 'teen_process';
-import path from 'path';
+import { path as SETTINGS_APK_PATH } from 'io.appium.settings';
 
 
 let opts = {
@@ -70,13 +70,7 @@ describe('android-helpers e2e', function () {
 
       // get and install old version of settings app
       await exec('npm', ['install', `${settingsPkg}@2.0.0`]);
-      // old version has a different apk path, so manually enter
-      // otherwise pushing the app will fail because import will have the old
-      // path cached
-      const settingsApkPath = path.resolve(__dirname, '..', '..', '..',
-        'node_modules', 'io.appium.settings', 'bin', 'settings_apk-debug.apk');
-
-      await adb.install(settingsApkPath);
+      await adb.install(SETTINGS_APK_PATH);
 
       // get latest version of settings app
       await exec('npm', ['uninstall', settingsPkg]);

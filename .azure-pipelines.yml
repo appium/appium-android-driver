@@ -31,18 +31,18 @@ stages:
   jobs:
   - job: Unit_Tests
     pool:
-      vmImage: ubuntu-20.04
+      vmImage: ubuntu-latest
     steps:
     - task: NodeTool@0
       inputs:
         versionSpec: $(NODE_VERSION)
     - script: |
         npm install -g appium@next
-        npm run clean
+        npm run build
       displayName: Install Node dependencies
     - script: npm run lint
       displayName: Linter
-    - script: npx mocha -t $MOCHA_TIMEOUT --recursive build/test/unit/ -g @skip-ci -i --exit
+    - script: npm run test
       displayName: Tests
 - stage: Integration_Tests
   jobs:

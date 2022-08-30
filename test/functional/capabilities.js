@@ -21,7 +21,7 @@ const DEFAULT_CAPS = node.deepFreeze({
 });
 
 const CONTACT_MANAGER_CAPS = amendCapabilities(DEFAULT_CAPS, {
-  'appium:app': path.resolve(__dirname, '..', '..', '..', 'test', 'assets', 'ContactManager.apk'),
+  'appium:app': path.resolve(__dirname, '..', 'assets', 'ContactManager.apk'),
 });
 
 const CHROME_CAPS = amendCapabilities(_.omit(DEFAULT_CAPS, 'alwaysMatch.appium:app'), {

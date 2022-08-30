@@ -10,10 +10,7 @@ import ADB from 'appium-adb';
 chai.should();
 chai.use(chaiAsPromised);
 
-const dirOffset = process.env.NO_PRECOMPILE ? [] : ['..'];
-const rootDir = path.resolve(__dirname, '..', '..', '..', ...dirOffset);
-
-const bootstrapJar = path.resolve(rootDir, 'test', 'assets', 'AppiumBootstrap.jar');
+const bootstrapJar = path.resolve(__dirname, '..', '..', 'assets', 'AppiumBootstrap.jar');
 
 describe('UiAutomator', function () {
   let uiAutomator, adb;
