@@ -22,7 +22,7 @@ describe('AndroidBootstrap', function () {
   let uiAutomator = new UiAutomator(adb);
 
   describe('start', withSandbox({mocks: {adb, uiAutomator, net, androidBootstrap}}, (S) => {
-    it('should return a sub process', async function () {
+    it.skip('should return a sub process', async function () {
       const conn = new events.EventEmitter();
       const appPackage = 'com.example.android.apis';
       const disableAndroidWatchers = false;
@@ -90,7 +90,7 @@ describe('AndroidBootstrap', function () {
     });
   }));
   describe('shutdown', withSandbox({mocks: {androidBootstrap, uiAutomator}}, (S) => {
-    it('should call sendCommand', async function () {
+    it.skip('should call sendCommand', async function () {
       const conn = new events.EventEmitter();
       androidBootstrap.socketClient = conn;
       S.mocks.androidBootstrap.expects('sendCommand').once()
