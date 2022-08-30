@@ -593,6 +593,7 @@ describe('Android Helpers', function () {
       mocks.adb.expects('getApiLevel').returns(B.resolve(18));
       mocks.adb.expects('shell').withExactArgs(['settings', 'put', 'secure', 'mock_location', '1']).once()
         .returns('');
+      mocks.adb.expects('fileExists').throws();
       await helpers.setMockLocationApp(adb, 'io.appium.settings');
       mocks.adb.verify();
     });
@@ -600,6 +601,7 @@ describe('Android Helpers', function () {
       mocks.adb.expects('getApiLevel').returns(B.resolve(23));
       mocks.adb.expects('shell').withExactArgs(['appops', 'set', 'io.appium.settings', 'android:mock_location', 'allow']).once()
         .returns('');
+      mocks.adb.expects('fileExists').throws();
       await helpers.setMockLocationApp(adb, 'io.appium.settings');
       mocks.adb.verify();
     });
