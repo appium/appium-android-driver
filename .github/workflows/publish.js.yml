@@ -17,9 +17,12 @@ jobs:
     - run: |
         npm install -g appium@next
         npm install --no-package-lock
+        npm run build
       name: Install dev dependencies
-    - run: npm test
-      name: Run NPM Test
+    - run: npm run lint
+      name: Linter
+    - run: npm run test
+      name: Unit Test
     - run: npx semantic-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

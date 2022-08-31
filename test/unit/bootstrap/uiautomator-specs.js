@@ -17,10 +17,8 @@ chai.use(chaiAsPromised);
 
 describe('UiAutomator', function () {
   const adb = new ADB();
-  const rootDir = path.resolve(__dirname,
-                             process.env.NO_PRECOMPILE ? '../..' : '../../..');
-  const bootstrapJar = path.resolve(rootDir, 'test', 'fixtures', 'AppiumBootstrap.jar'),
-        bootstrapClassName = 'io.appium.android.bootstrap.Bootstrap';
+  const bootstrapJar = path.resolve(__dirname, '..', '..', 'assets', 'AppiumBootstrap.jar');
+  const bootstrapClassName = 'io.appium.android.bootstrap.Bootstrap';
 
   let uiAutomator;
   before(function () {

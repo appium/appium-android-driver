@@ -1,7 +1,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 parameters:
   name: 'android_e2e_tests'
-  vmImage: 'macOS-10.15'
+  vmImage: 'macOS-12'
   platformVersion: 5.1
   sdkVersion: 22
   emuTag: default
@@ -23,15 +23,14 @@ jobs:
         versionSpec: $(NODE_VERSION)
     - script: |
         npm install -g appium@next
-        npm run clean
+        npm install
+        npm run build
       displayName: Install Node dependencies
     - script: bash .azure-pipelines/scripts/start-emulator.sh
       displayName: Create and run Emulator
     - script: nohup adb logcat > logcat.txt &
       displayName: Capture Logcat
-    - script: npm run clean
-      displayName: Build
-    - script: npx mocha --timeout $MOCHA_TIMEOUT build/test/functional${{ parameters.category }} -g @skip-ci -i --exit
+    - script: npx mocha --timeout $MOCHA_TIMEOUT ./test/functional${{ parameters.category }} -g @skip-ci -i --exit
       displayName: Run tests
     - task: PublishPipelineArtifact@0
       condition: always()
