@@ -61,7 +61,7 @@ jobs:
         path: |
           ~/.android/avd/*
           ~/.android/adb*
-        key: avd-${{ matrix.apiLevel }}
+        key: avd-${{ env.ANDROID_SDK_VERSION }}
     # https://github.com/marketplace/actions/android-emulator-runner
     - uses: reactivecircus/android-emulator-runner@v2
       if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -92,5 +92,5 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@master
       with:
-        name: logcat-api${{ matrix.apiLevel }}
+        name: logcat-${{ matrix.name }}
         path: logcat.log
