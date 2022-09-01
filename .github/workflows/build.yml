@@ -1,0 +1,96 @@
+name: Build
+
+on: [pull_request, push]
+
+
+jobs:
+  unit_test:
+    strategy:
+      matrix:
+        node: [14, 16, 18]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node }}
+    - run: npm i -g npm
+      name: Update NPM
+    - run: npm install --no-package-lock
+      name: Install dev dependencies
+    - run: npm run lint
+      name: Run linter
+    - run: npm run test
+      name: Run unit tests
+
+  e2e_test:
+    strategy:
+      matrix:
+        include:
+        - name: sdk22_e2e_tests_bootstrap
+          category: bootstrap
+        - name: sdk22_e2e_tests_basic_commands
+          category: commands/basic
+
+    env:
+      CI: true
+      ANDROID_AVD: emulator
+      ANDROID_SDK_VERSION: 22
+      PLATFORM_VERSION: "5.1"
+      EMU_TAG: default
+      _FORCE_LOGS: 1
+    # No hardware acceleration is available for emulators on Ubuntu:
+    # https://github.com/marketplace/actions/android-emulator-runner#can-i-use-this-action-on-linux-vms
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: lts/*
+        check-latest: true
+    - run: npm install --no-package-lock
+      name: Install dev dependencies
+    - uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+    - name: AVD cache
+      uses: actions/cache@v3
+      id: avd-cache
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-${{ env.ANDROID_SDK_VERSION }}
+    # https://github.com/marketplace/actions/android-emulator-runner
+    - uses: reactivecircus/android-emulator-runner@v2
+      if: steps.avd-cache.outputs.cache-hit != 'true'
+      name: Generate AVD snapshot for caching
+      with:
+        script: echo "Generated AVD snapshot for caching."
+        avd-name: ${{ env.ANDROID_AVD }}
+        force-avd-creation: false
+        sdcard-path-or-size: 1500M
+        api-level: ${{ env.ANDROID_SDK_VERSION }}
+        disable-spellchecker: true
+        target: ${{ env.EMU_TAG }}
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+    - run: nohup adb logcat > logcat.log &
+      name: Capture Logcat
+    - uses: reactivecircus/android-emulator-runner@v2
+      name: ${{ matrix.name }}
+      with:
+        script: npx mocha --timeout 10m ./test/functional/${{ matrix.category }} -g @skip-ci -i --exit
+        avd-name: ${{ env.ANDROID_AVD }}
+        force-avd-creation: false
+        sdcard-path-or-size: 1500M
+        api-level: ${{ env.ANDROID_SDK_VERSION }}
+        disable-spellchecker: true
+        target: ${{ env.EMU_TAG }}
+        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+    - name: Save logcat output
+      if: ${{ always() }}
+      uses: actions/upload-artifact@master
+      with:
+        name: logcat-${{ matrix.name }}
+        path: logcat.log
