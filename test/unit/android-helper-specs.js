@@ -38,16 +38,16 @@ describe('Android Helpers', function () {
   describe('prepareEmulator', withMocks({adb, helpers}, (mocks) => {
     const opts = {avd: 'foo@bar', avdArgs: '', language: 'en', locale: 'us'};
     it('should not launch avd if one is already running', async function () {
-      mocks.adb.expects('getRunningAVDWithRetry').withExactArgs('foobar')
+      mocks.adb.expects('getRunningAVDWithRetry').withArgs('foobar')
         .returns('foo');
       mocks.adb.expects('launchAVD').never();
       mocks.adb.expects('killEmulator').never();
       await helpers.prepareEmulator(adb, opts);
       mocks.adb.verify();
     });
-    it('should launch avd if one is already running', async function () {
-      mocks.adb.expects('getRunningAVDWithRetry').withExactArgs('foobar')
-        .returns(null);
+    it('should launch avd if one is not running', async function () {
+      mocks.adb.expects('getRunningAVDWithRetry').withArgs('foobar')
+        .throws();
       mocks.adb.expects('launchAVD').withExactArgs('foo@bar', {
         args: [],
         env: undefined,
@@ -68,8 +68,8 @@ describe('Android Helpers', function () {
           k2: 'v2',
         }
       };
-      mocks.adb.expects('getRunningAVDWithRetry').withExactArgs('foobar')
-        .returns(null);
+      mocks.adb.expects('getRunningAVDWithRetry').withArgs('foobar')
+        .throws();
       mocks.adb.expects('launchAVD').withExactArgs('foobar', {
         args: ['--arg1', 'value 1', '--arg2', 'value 2'],
         env: {
@@ -89,8 +89,8 @@ describe('Android Helpers', function () {
         avd: 'foobar',
         avdArgs: ['--arg1', 'value 1', '--arg2', 'value 2'],
       };
-      mocks.adb.expects('getRunningAVDWithRetry').withExactArgs('foobar')
-        .returns(null);
+      mocks.adb.expects('getRunningAVDWithRetry').withArgs('foobar')
+        .throws();
       mocks.adb.expects('launchAVD').withExactArgs('foobar', {
         args: ['--arg1', 'value 1', '--arg2', 'value 2'],
         env: undefined,
@@ -104,7 +104,7 @@ describe('Android Helpers', function () {
     });
     it('should kill emulator if avdArgs contains -wipe-data', async function () {
       const opts = {avd: 'foo@bar', avdArgs: '-wipe-data'};
-      mocks.adb.expects('getRunningAVDWithRetry').withExactArgs('foobar').returns('foo');
+      mocks.adb.expects('getRunningAVDWithRetry').withArgs('foobar').returns('foo');
       mocks.adb.expects('killEmulator').withExactArgs('foobar').once();
       mocks.adb.expects('launchAVD').once();
       await helpers.prepareEmulator(adb, opts);
