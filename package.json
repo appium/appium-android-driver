@@ -50,7 +50,7 @@
     "appium-adb": "^9.10.9",
     "appium-chromedriver": "^5.2.0",
     "asyncbox": "^2.8.0",
-    "axios": "^0.x",
+    "axios": "^1.x",
     "bluebird": "^3.4.7",
     "io.appium.settings": "^4.2.1",
     "jimp": "^0.x",
