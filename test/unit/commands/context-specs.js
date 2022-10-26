@@ -138,9 +138,13 @@ describe('Context', function () {
     });
   });
   describe('defaultWebviewName', function () {
-    it('should return WEBVIEW with package', async function () {
+    it('should return WEBVIEW with package if "autoWebviewName" option is not set', async function () {
       driver.opts = {appPackage: 'pkg'};
       await driver.defaultWebviewName().should.be.equal(WEBVIEW_BASE + 'pkg');
+    });
+    it('should return WEBVIEW with value from "autoWebviewName" option', async function () {
+      driver.opts = {appPackage: 'pkg', autoWebviewName: 'foo'};
+      await driver.defaultWebviewName().should.be.equal(WEBVIEW_BASE + 'foo');
     });
   });
   describe('isWebContext', function () {
