@@ -4,7 +4,7 @@ import { AndroidDriver } from '../../lib/driver';
 import { ensureAVDExists, getChromedriver220Asset } from './helpers';
 import { CHROME_CAPS } from './capabilities';
 import _ from 'lodash';
-import { util } from 'appium/support';
+import { util } from '@appium/support';
 
 
 chai.should();

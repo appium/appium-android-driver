@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import helpers, { prepareAvdArgs, ensureNetworkSpeed } from '../../lib/android-helpers';
 import ADB from 'appium-adb';
 import { withMocks } from '@appium/test-support';
-import { fs } from 'appium/support';
+import { fs } from '@appium/support';
 import unlocker from '../../lib/unlock-helpers';
 import _ from 'lodash';
 import B from 'bluebird';

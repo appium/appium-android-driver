@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import Bootstrap from '../../../lib/bootstrap';
 import path from 'path';
 import AndroidDriver from '../../../lib/driver';
-import * as support from 'appium/support';
+import * as support from '@appium/support';
 import ADB from 'appium-adb';
 import jimp from 'jimp';
 import helpers from '../../../lib/commands/actions';
