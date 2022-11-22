@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import AndroidDriver from '../../../lib/driver';
-import * as support from 'appium/support';
+import * as support from '@appium/support';
 import ADB from 'appium-adb';
 
 
