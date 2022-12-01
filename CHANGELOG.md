@@ -1,3 +1,10 @@
+## [5.8.1](https://github.com/appium/appium-android-driver/compare/v5.8.0...v5.8.1) (2022-12-01)
+
+
+### Miscellaneous Chores
+
+* update releaserc ([#775](https://github.com/appium/appium-android-driver/issues/775)) ([2db920a](https://github.com/appium/appium-android-driver/commit/2db920a338f017440a4a9713ee6daa0902d71786))
+
 # [5.8.0](https://github.com/appium/appium-android-driver/compare/v5.7.3...v5.8.0) (2022-11-29)
 
 
