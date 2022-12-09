@@ -1,3 +1,10 @@
+## [5.8.2](https://github.com/appium/appium-android-driver/compare/v5.8.1...v5.8.2) (2022-12-09)
+
+
+### Miscellaneous Chores
+
+* Improve logging for websocket stuff ([#776](https://github.com/appium/appium-android-driver/issues/776)) ([7d583ed](https://github.com/appium/appium-android-driver/commit/7d583edccab3e410212d81b65628be8d4ff1cf3f))
+
 ## [5.8.1](https://github.com/appium/appium-android-driver/compare/v5.8.0...v5.8.1) (2022-12-01)
 
 
