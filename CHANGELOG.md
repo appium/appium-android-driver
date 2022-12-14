@@ -1,3 +1,10 @@
+## [5.8.3](https://github.com/appium/appium-android-driver/compare/v5.8.2...v5.8.3) (2022-12-14)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @appium/support from 2.61.1 to 3.0.0 ([#778](https://github.com/appium/appium-android-driver/issues/778)) ([3040087](https://github.com/appium/appium-android-driver/commit/304008778d6f5c3e3a33a8b9a13763ffbaae8ff0))
+
 ## [5.8.2](https://github.com/appium/appium-android-driver/compare/v5.8.1...v5.8.2) (2022-12-09)
 
 
