@@ -42,19 +42,19 @@ jobs:
         path: |
           ~/.android/avd/*
           ~/.android/adb*
-        key: avd-${{ env.ANDROID_SDK_VERSION }}
+        key: avd-$ANDROID_SDK_VERSION
     # https://github.com/marketplace/actions/android-emulator-runner
     - uses: reactivecircus/android-emulator-runner@v2
       if: steps.avd-cache.outputs.cache-hit != 'true'
       name: Generate AVD snapshot for caching
       with:
         script: echo "Generated AVD snapshot for caching."
-        avd-name: ${{ env.ANDROID_AVD }}
+        avd-name: $ANDROID_AVD
         force-avd-creation: false
         sdcard-path-or-size: 1500M
-        api-level: ${{ env.ANDROID_SDK_VERSION }}
+        api-level: $ANDROID_SDK_VERSION
         disable-spellchecker: true
-        target: ${{ env.EMU_TAG }}
+        target: $EMU_TAG
         emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
     - run: nohup adb logcat > logcat.log &
       name: Capture Logcat
@@ -62,12 +62,12 @@ jobs:
       name: ${{ matrix.name }}
       with:
         script: npx mocha --timeout 10m ./test/functional/${{ matrix.category }} -g @skip-ci -i --exit
-        avd-name: ${{ env.ANDROID_AVD }}
+        avd-name: $ANDROID_AVD
         force-avd-creation: false
         sdcard-path-or-size: 1500M
-        api-level: ${{ env.ANDROID_SDK_VERSION }}
+        api-level: $ANDROID_SDK_VERSION
         disable-spellchecker: true
-        target: ${{ env.EMU_TAG }}
+        target: $EMU_TAG
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
     - name: Save logcat output
       if: ${{ always() }}
