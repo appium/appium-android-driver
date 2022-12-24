@@ -659,7 +659,7 @@ describe('Android Helpers', function () {
     });
     it('should start unlock app', async function () {
       mocks.adb.expects('isScreenLocked').onCall(0).returns(true);
-      mocks.adb.expects('shell').once().returns('');
+      mocks.adb.expects('dismissKeyguard').once();
       mocks.adb.expects('isLockManagementSupported').never();
       await helpers.unlock(helpers, adb, {});
       mocks.adb.verify();
