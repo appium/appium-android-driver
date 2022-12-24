@@ -19,6 +19,9 @@ jobs:
       ANDROID_SDK_VERSION: 22
       PLATFORM_VERSION: "5.1"
       EMU_TAG: default
+      # This is the recent confirmed emulator version that does not crash on startup
+      # with GH macOS VMs
+      EMU_BUILD: 9322596
       _FORCE_LOGS: 1
     # No hardware acceleration is available for emulators on Ubuntu:
     # https://github.com/marketplace/actions/android-emulator-runner#can-i-use-this-action-on-linux-vms
@@ -46,9 +49,11 @@ jobs:
     # https://github.com/marketplace/actions/android-emulator-runner
     - uses: reactivecircus/android-emulator-runner@v2
       if: steps.avd-cache.outputs.cache-hit != 'true'
+      continue-on-error: true
       name: Generate AVD snapshot for caching
       with:
         script: echo "Generated AVD snapshot for caching."
+        emulator-build: ${{ env.EMU_BUILD }}
         avd-name: ${{ env.ANDROID_AVD }}
         force-avd-creation: false
         sdcard-path-or-size: 1500M
@@ -60,8 +65,10 @@ jobs:
       name: Capture Logcat
     - uses: reactivecircus/android-emulator-runner@v2
       name: ${{ matrix.name }}
+      continue-on-error: true
       with:
         script: npx mocha --timeout 10m ./test/functional/${{ matrix.category }} -g @skip-ci -i --exit
+        emulator-build: ${{ env.EMU_BUILD }}
         avd-name: ${{ env.ANDROID_AVD }}
         force-avd-creation: false
         sdcard-path-or-size: 1500M
