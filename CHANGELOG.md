@@ -1,3 +1,10 @@
+## [5.8.5](https://github.com/appium/appium-android-driver/compare/v5.8.4...v5.8.5) (2022-12-24)
+
+
+### Miscellaneous Chores
+
+* Bump Appium Settings dependency ([#779](https://github.com/appium/appium-android-driver/issues/779)) ([8d96ec9](https://github.com/appium/appium-android-driver/commit/8d96ec99a2e9f0215d96d822aa23293582a3187f))
+
 ## [5.8.4](https://github.com/appium/appium-android-driver/compare/v5.8.3...v5.8.4) (2022-12-16)
 
 
