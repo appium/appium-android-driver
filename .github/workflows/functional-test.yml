@@ -49,6 +49,7 @@ jobs:
     # https://github.com/marketplace/actions/android-emulator-runner
     - uses: reactivecircus/android-emulator-runner@v2
       if: steps.avd-cache.outputs.cache-hit != 'true'
+      continue-on-error: true
       name: Generate AVD snapshot for caching
       with:
         script: echo "Generated AVD snapshot for caching."
@@ -64,6 +65,7 @@ jobs:
       name: Capture Logcat
     - uses: reactivecircus/android-emulator-runner@v2
       name: ${{ matrix.name }}
+      continue-on-error: true
       with:
         script: npx mocha --timeout 10m ./test/functional/${{ matrix.category }} -g @skip-ci -i --exit
         emulator-build: ${{ env.EMU_BUILD }}
