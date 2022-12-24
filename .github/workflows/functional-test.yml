@@ -19,6 +19,7 @@ jobs:
       ANDROID_SDK_VERSION: 22
       PLATFORM_VERSION: "5.1"
       EMU_TAG: default
+      EMU_BUILD: 9322596
       _FORCE_LOGS: 1
     # No hardware acceleration is available for emulators on Ubuntu:
     # https://github.com/marketplace/actions/android-emulator-runner#can-i-use-this-action-on-linux-vms
@@ -42,19 +43,20 @@ jobs:
         path: |
           ~/.android/avd/*
           ~/.android/adb*
-        key: avd-$ANDROID_SDK_VERSION
+        key: avd-${{ env.ANDROID_SDK_VERSION }}
     # https://github.com/marketplace/actions/android-emulator-runner
     - uses: reactivecircus/android-emulator-runner@v2
       if: steps.avd-cache.outputs.cache-hit != 'true'
       name: Generate AVD snapshot for caching
       with:
         script: echo "Generated AVD snapshot for caching."
-        avd-name: $ANDROID_AVD
+        emulator-build: ${{ env.EMU_BUILD }}
+        avd-name: ${{ env.ANDROID_AVD }}
         force-avd-creation: false
         sdcard-path-or-size: 1500M
-        api-level: $ANDROID_SDK_VERSION
+        api-level: ${{ env.ANDROID_SDK_VERSION }}
         disable-spellchecker: true
-        target: $EMU_TAG
+        target: ${{ env.EMU_TAG }}
         emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
     - run: nohup adb logcat > logcat.log &
       name: Capture Logcat
@@ -62,12 +64,13 @@ jobs:
       name: ${{ matrix.name }}
       with:
         script: npx mocha --timeout 10m ./test/functional/${{ matrix.category }} -g @skip-ci -i --exit
-        avd-name: $ANDROID_AVD
+        emulator-build: ${{ env.EMU_BUILD }}
+        avd-name: ${{ env.ANDROID_AVD }}
         force-avd-creation: false
         sdcard-path-or-size: 1500M
-        api-level: $ANDROID_SDK_VERSION
+        api-level: ${{ env.ANDROID_SDK_VERSION }}
         disable-spellchecker: true
-        target: $EMU_TAG
+        target: ${{ env.EMU_TAG }}
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
     - name: Save logcat output
       if: ${{ always() }}
