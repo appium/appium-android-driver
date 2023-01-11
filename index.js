@@ -6,7 +6,6 @@ import * as commandIndex from './lib/commands/index';
 import * as webview from './lib/webview-helpers';
 import * as caps from './lib/desired-caps';
 
-
 const { AndroidDriver } = driver;
 const { helpers: webviewHelpers, NATIVE_WIN, WEBVIEW_WIN, WEBVIEW_BASE,
         CHROMIUM_WIN } = webview;
