@@ -1,3 +1,10 @@
+## [5.8.6](https://github.com/appium/appium-android-driver/compare/v5.8.5...v5.8.6) (2023-01-11)
+
+
+### Bug Fixes
+
+* Correct adb method name ([0499d9a](https://github.com/appium/appium-android-driver/commit/0499d9a08e085c49bdd131810d7eda102ffa81ec))
+
 ## [5.8.5](https://github.com/appium/appium-android-driver/compare/v5.8.4...v5.8.5) (2022-12-24)
 
 
