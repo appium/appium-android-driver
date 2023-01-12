@@ -1,3 +1,10 @@
+## [5.8.7](https://github.com/appium/appium-android-driver/compare/v5.8.6...v5.8.7) (2023-01-12)
+
+
+### Bug Fixes
+
+* specify supported non-standard commands in newMethodMap ([5514755](https://github.com/appium/appium-android-driver/commit/551475580f5b239860c3597d25f96682148a3bc5))
+
 ## [5.8.6](https://github.com/appium/appium-android-driver/compare/v5.8.5...v5.8.6) (2023-01-11)
 
 
