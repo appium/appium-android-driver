@@ -1,3 +1,10 @@
+## [5.8.8](https://github.com/appium/appium-android-driver/compare/v5.8.7...v5.8.8) (2023-01-13)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump rimraf from 3.0.2 to 4.0.4 ([#783](https://github.com/appium/appium-android-driver/issues/783)) ([8f89741](https://github.com/appium/appium-android-driver/commit/8f89741d2cbba912b68ae533372dd8503db9eef1))
+
 ## [5.8.7](https://github.com/appium/appium-android-driver/compare/v5.8.6...v5.8.7) (2023-01-12)
 
 
