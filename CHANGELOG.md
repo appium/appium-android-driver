@@ -1,3 +1,10 @@
+## [5.8.10](https://github.com/appium/appium-android-driver/compare/v5.8.9...v5.8.10) (2023-02-22)
+
+
+### Bug Fixes
+
+* Increase interval for the helper app install ([#785](https://github.com/appium/appium-android-driver/issues/785)) ([d03c0ba](https://github.com/appium/appium-android-driver/commit/d03c0baf9a82295c7fe4665a128bb67ea3300cf0))
+
 ## [5.8.9](https://github.com/appium/appium-android-driver/compare/v5.8.8...v5.8.9) (2023-01-17)
 
 
