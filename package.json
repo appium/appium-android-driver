@@ -67,9 +67,6 @@
     "teen_process": "^2.0.0",
     "ws": "^8.0.0"
   },
-  "overrides": {
-    "jpeg-js": "0.4.4"
-  },
   "scripts": {
     "build": "rimraf build && babel --out-dir=build/lib lib && babel --out-dir=build index.js",
     "dev": "npm run build -- --watch",
