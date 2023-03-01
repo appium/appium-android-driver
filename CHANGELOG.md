@@ -1,3 +1,10 @@
+## [5.8.11](https://github.com/appium/appium-android-driver/compare/v5.8.10...v5.8.11) (2023-03-01)
+
+
+### Miscellaneous Chores
+
+* Remove the obsolete override ([4e427e2](https://github.com/appium/appium-android-driver/commit/4e427e2883d2cb08bb7a08b73d754df8b3c3f376))
+
 ## [5.8.10](https://github.com/appium/appium-android-driver/compare/v5.8.9...v5.8.10) (2023-02-22)
 
 
