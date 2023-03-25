@@ -1,3 +1,10 @@
+## [5.8.12](https://github.com/appium/appium-android-driver/compare/v5.8.11...v5.8.12) (2023-03-25)
+
+
+### Miscellaneous Chores
+
+* ignore an error in collectWebviewsDetails ([#789](https://github.com/appium/appium-android-driver/issues/789)) ([9aaa6c5](https://github.com/appium/appium-android-driver/commit/9aaa6c54c619d33dee35e60fb8ae5ad1d9cf9d95))
+
 ## [5.8.11](https://github.com/appium/appium-android-driver/compare/v5.8.10...v5.8.11) (2023-03-01)
 
 
