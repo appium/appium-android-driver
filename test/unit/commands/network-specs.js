@@ -74,6 +74,7 @@ describe('Network', function () {
     });
     it('should turn on and broadcast airplane mode', async function () {
       sandbox.stub(driver, 'getNetworkConnection').returns(0);
+      adb.getApiLevel.returns(29);
       await driver.setNetworkConnection(1);
       adb.setAirplaneMode.calledWithExactly(true).should.be.true;
       adb.broadcastAirplaneMode.calledWithExactly(true).should.be.true;
@@ -133,13 +134,21 @@ describe('Network', function () {
     });
   });
   describe('toggleFlightMode', function () {
-    it('should toggle flight mode', async function () {
+    it('should toggle flight mode on API < 30', async function () {
       adb.isAirplaneModeOn.returns(false);
+      adb.getApiLevel.returns(29);
       adb.setAirplaneMode.returns('');
       adb.broadcastAirplaneMode.returns('');
       await driver.toggleFlightMode();
       adb.setAirplaneMode.calledWithExactly(true).should.be.true;
       adb.broadcastAirplaneMode.calledWithExactly(true).should.be.true;
+    });
+    it('should toggle flight mode on API > 29', async function () {
+      adb.isAirplaneModeOn.returns(false);
+      adb.getApiLevel.returns(30);
+      adb.setAirplaneMode.returns('');
+      await driver.toggleFlightMode();
+      adb.setAirplaneMode.calledWithExactly(true).should.be.true;
     });
   });
   describe('setGeoLocation', function () {
