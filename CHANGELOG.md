@@ -1,3 +1,10 @@
+## [5.9.0](https://github.com/appium/appium-android-driver/compare/v5.8.12...v5.9.0) (2023-04-03)
+
+
+### Features
+
+* Add mobile extensions to set and get connectivity ([#791](https://github.com/appium/appium-android-driver/issues/791)) ([315d893](https://github.com/appium/appium-android-driver/commit/315d8936536e96077e00edf5949e21a7831fba2a))
+
 ## [5.8.12](https://github.com/appium/appium-android-driver/compare/v5.8.11...v5.8.12) (2023-03-25)
 
 
