@@ -1,3 +1,10 @@
+## [5.9.1](https://github.com/appium/appium-android-driver/compare/v5.9.0...v5.9.1) (2023-04-11)
+
+
+### Performance Improvements
+
+* check the device state via waitForDevice only for a emulator ([#796](https://github.com/appium/appium-android-driver/issues/796)) ([e3248e8](https://github.com/appium/appium-android-driver/commit/e3248e894c398029b1aadf3b1cffcd85148269da))
+
 ## [5.9.0](https://github.com/appium/appium-android-driver/compare/v5.8.12...v5.9.0) (2023-04-03)
 
 
