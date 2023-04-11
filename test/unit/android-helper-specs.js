@@ -742,9 +742,9 @@ describe('Android Helpers', function () {
     });
   }));
   describe('initDevice', withMocks({helpers, adb}, (mocks) => {
-    it('should init device', async function () {
+    it('should init a real device', async function () {
       const opts = {language: 'en', locale: 'us', localeScript: 'Script'};
-      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('waitForDevice').never();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').withExactArgs(adb, opts.language, opts.locale, opts.localeScript).once();
@@ -755,7 +755,7 @@ describe('Android Helpers', function () {
     });
     it('should init device without locale and language', async function () {
       const opts = {};
-      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('waitForDevice').never();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').never();
@@ -766,7 +766,7 @@ describe('Android Helpers', function () {
     });
     it('should init device with either locale or language', async function () {
       const opts = {language: 'en'};
-      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('waitForDevice').never();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').withExactArgs(adb, opts.language, opts.locale, opts.localeScript).once();
@@ -788,7 +788,7 @@ describe('Android Helpers', function () {
     });
     it('should return defaultIME if unicodeKeyboard is setted to true', async function () {
       const opts = {unicodeKeyboard: true};
-      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('waitForDevice').never();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').never();
@@ -800,7 +800,7 @@ describe('Android Helpers', function () {
     });
     it('should return undefined if unicodeKeyboard is setted to false', async function () {
       const opts = {unicodeKeyboard: false};
-      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('waitForDevice').never();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').never();
@@ -812,7 +812,7 @@ describe('Android Helpers', function () {
     });
     it('should not push unlock app if unlockType is defined', async function () {
       const opts = {unlockType: 'unlock_type'};
-      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('waitForDevice').never();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').never();
@@ -824,7 +824,7 @@ describe('Android Helpers', function () {
     });
     it('should init device without starting logcat', async function () {
       const opts = { skipLogcatCapture: true };
-      mocks.adb.expects('waitForDevice').once();
+      mocks.adb.expects('waitForDevice').never();
       mocks.adb.expects('startLogcat').never();
       mocks.helpers.expects('pushSettingsApp').once();
       mocks.helpers.expects('ensureDeviceLocale').never();
