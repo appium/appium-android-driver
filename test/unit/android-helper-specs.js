@@ -12,7 +12,6 @@ import B from 'bluebird';
 
 const should = chai.should();
 const REMOTE_TEMP_PATH = '/data/local/tmp';
-let sandbox = sinon.createSandbox();
 chai.use(chaiAsPromised);
 
 
@@ -745,7 +744,6 @@ describe('Android Helpers', function () {
   describe('initDevice', withMocks({helpers, adb}, (mocks) => {
     it('should init a real device', async function () {
       const opts = {language: 'en', locale: 'us', localeScript: 'Script'};
-      sandbox.stub(helpers, 'isEmulator').returns(false);
       mocks.adb.expects('waitForDevice').never();
       mocks.adb.expects('startLogcat').once();
       mocks.helpers.expects('pushSettingsApp').once();
