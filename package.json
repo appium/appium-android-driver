@@ -56,7 +56,7 @@
     "io.appium.settings": "^5.0.0",
     "jimp": "^0.x",
     "lodash": "^4.17.4",
-    "lru-cache": "^7.3.0",
+    "lru-cache": "^9.0.3",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
     "portfinder": "^1.0.6",
