@@ -1,3 +1,15 @@
+## [5.10.0](https://github.com/appium/appium-android-driver/compare/v5.9.1...v5.10.0) (2023-04-17)
+
+
+### Features
+
+* Park keyboard commands to extensions ([#801](https://github.com/appium/appium-android-driver/issues/801)) ([6fd53bd](https://github.com/appium/appium-android-driver/commit/6fd53bd2ebb6882779ac679f8d672625da622b8e))
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump rimraf from 4.4.1 to 5.0.0 ([#794](https://github.com/appium/appium-android-driver/issues/794)) ([7ab3933](https://github.com/appium/appium-android-driver/commit/7ab39337b1190803d8bb064255570aa6b50d6c48))
+
 ## [5.9.1](https://github.com/appium/appium-android-driver/compare/v5.9.0...v5.9.1) (2023-04-11)
 
 
