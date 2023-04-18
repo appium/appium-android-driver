@@ -1,3 +1,10 @@
+## [5.10.1](https://github.com/appium/appium-android-driver/compare/v5.10.0...v5.10.1) (2023-04-18)
+
+
+### Bug Fixes
+
+* increase pull recent timeout ([#802](https://github.com/appium/appium-android-driver/issues/802)) ([fd9b8ea](https://github.com/appium/appium-android-driver/commit/fd9b8ea6659ddc1b6ce3d5295d72bbbe820b91ae))
+
 ## [5.10.0](https://github.com/appium/appium-android-driver/compare/v5.9.1...v5.10.0) (2023-04-17)
 
 
