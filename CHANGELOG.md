@@ -1,3 +1,15 @@
+## [5.10.3](https://github.com/appium/appium-android-driver/compare/v5.10.2...v5.10.3) (2023-04-20)
+
+
+### Bug Fixes
+
+* Linter errors ([b4bf16d](https://github.com/appium/appium-android-driver/commit/b4bf16dbc8fdaf8983bfbf825ef538766c413f08))
+
+
+### Miscellaneous Chores
+
+* Rename the timeout option ([0dcf09c](https://github.com/appium/appium-android-driver/commit/0dcf09cdc0ab3e3aceb20bc36c73b8b90f51ce14))
+
 ## [5.10.2](https://github.com/appium/appium-android-driver/compare/v5.10.1...v5.10.2) (2023-04-20)
 
 
