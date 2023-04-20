@@ -1,3 +1,10 @@
+## [5.10.2](https://github.com/appium/appium-android-driver/compare/v5.10.1...v5.10.2) (2023-04-20)
+
+
+### Bug Fixes
+
+* make request timeout an option in mobileStopMediaProjectionRecording ([#803](https://github.com/appium/appium-android-driver/issues/803)) ([04ac966](https://github.com/appium/appium-android-driver/commit/04ac966f230ac410ff29bff1931f2fad839cbfcd))
+
 ## [5.10.1](https://github.com/appium/appium-android-driver/compare/v5.10.0...v5.10.1) (2023-04-18)
 
 
