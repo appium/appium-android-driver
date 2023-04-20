@@ -1,3 +1,10 @@
+## [5.10.4](https://github.com/appium/appium-android-driver/compare/v5.10.3...v5.10.4) (2023-04-20)
+
+
+### Miscellaneous Chores
+
+* Use values from session capabilities if none are passed to mobile: unlock ([#804](https://github.com/appium/appium-android-driver/issues/804)) ([16180c9](https://github.com/appium/appium-android-driver/commit/16180c9ed1d971fdf97f119af49bb8c1ad192b8f))
+
 ## [5.10.3](https://github.com/appium/appium-android-driver/compare/v5.10.2...v5.10.3) (2023-04-20)
 
 
