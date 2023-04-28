@@ -1,3 +1,10 @@
+## [5.11.0](https://github.com/appium/appium-android-driver/compare/v5.10.4...v5.11.0) (2023-04-28)
+
+
+### Features
+
+* Add mobile wrapper for emulator helper functions ([#805](https://github.com/appium/appium-android-driver/issues/805)) ([59197f9](https://github.com/appium/appium-android-driver/commit/59197f93e3b46e756a379159e97735f103613a8f))
+
 ## [5.10.4](https://github.com/appium/appium-android-driver/compare/v5.10.3...v5.10.4) (2023-04-20)
 
 
