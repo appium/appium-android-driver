@@ -1,3 +1,15 @@
+## [5.11.2](https://github.com/appium/appium-android-driver/compare/v5.11.1...v5.11.2) (2023-04-29)
+
+
+### Code Refactoring
+
+* Replace jimp with sharp ([#808](https://github.com/appium/appium-android-driver/issues/808)) ([af45a7e](https://github.com/appium/appium-android-driver/commit/af45a7e36e5ab45f0cf0df2b8a6c1006e985e46e))
+
+
+### Miscellaneous Chores
+
+* Enable automatic access to notifications for the settings helper ([#807](https://github.com/appium/appium-android-driver/issues/807)) ([046b970](https://github.com/appium/appium-android-driver/commit/046b97024dbf21650ae4726e2a15ead5e5eb067e))
+
 ## [5.11.1](https://github.com/appium/appium-android-driver/compare/v5.11.0...v5.11.1) (2023-04-29)
 
 
