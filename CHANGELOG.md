@@ -1,3 +1,10 @@
+## [5.11.1](https://github.com/appium/appium-android-driver/compare/v5.11.0...v5.11.1) (2023-04-29)
+
+
+### Bug Fixes
+
+* Update GPS toggle logic ([#806](https://github.com/appium/appium-android-driver/issues/806)) ([5ea946f](https://github.com/appium/appium-android-driver/commit/5ea946ffcceb5803026319f4742e1d978cda7ed9))
+
 ## [5.11.0](https://github.com/appium/appium-android-driver/compare/v5.10.4...v5.11.0) (2023-04-28)
 
 
