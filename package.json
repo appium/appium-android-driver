@@ -48,7 +48,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "appium-adb": "^9.11.0",
+    "appium-adb": "^9.11.2",
     "appium-chromedriver": "^5.2.0",
     "asyncbox": "^2.8.0",
     "axios": "^1.x",
