@@ -1,3 +1,10 @@
+## [5.12.0](https://github.com/appium/appium-android-driver/compare/v5.11.2...v5.12.0) (2023-05-05)
+
+
+### Features
+
+* Add mobile endpoint for getting performance data ([#810](https://github.com/appium/appium-android-driver/issues/810)) ([70a0144](https://github.com/appium/appium-android-driver/commit/70a0144751c085d5e4c4c28ffa61ca49cfc59553))
+
 ## [5.11.2](https://github.com/appium/appium-android-driver/compare/v5.11.1...v5.11.2) (2023-04-29)
 
 
