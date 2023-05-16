@@ -1,3 +1,10 @@
+## [5.12.1](https://github.com/appium/appium-android-driver/compare/v5.12.0...v5.12.1) (2023-05-16)
+
+
+### Bug Fixes
+
+* Select proper service names in mobileGetConnectivity API ([e8f1a27](https://github.com/appium/appium-android-driver/commit/e8f1a27dc6cf906c821753206dd97f7b8fbf5dcb))
+
 ## [5.12.0](https://github.com/appium/appium-android-driver/compare/v5.11.2...v5.12.0) (2023-05-05)
 
 
