@@ -1,3 +1,10 @@
+## [5.12.2](https://github.com/appium/appium-android-driver/compare/v5.12.1...v5.12.2) (2023-05-18)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @appium/support from 3.1.11 to 4.0.0 ([#811](https://github.com/appium/appium-android-driver/issues/811)) ([527c6a5](https://github.com/appium/appium-android-driver/commit/527c6a502024ebed157ffd8a416bfd726eb3034a))
+
 ## [5.12.1](https://github.com/appium/appium-android-driver/compare/v5.12.0...v5.12.1) (2023-05-16)
 
 
