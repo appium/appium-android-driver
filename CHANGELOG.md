@@ -1,3 +1,10 @@
+## [5.13.0](https://github.com/appium/appium-android-driver/compare/v5.12.2...v5.13.0) (2023-05-22)
+
+
+### Features
+
+* Add a wrapper over status bar commands ([#812](https://github.com/appium/appium-android-driver/issues/812)) ([dc9163a](https://github.com/appium/appium-android-driver/commit/dc9163a70ae921e4712f3ec7b7f8b7eb12656038))
+
 ## [5.12.2](https://github.com/appium/appium-android-driver/compare/v5.12.1...v5.12.2) (2023-05-18)
 
 
