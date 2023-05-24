@@ -1,5 +1,3 @@
-// transpile :mocha
-
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { AndroidBootstrap, COMMAND_TYPES } from '../../../lib/bootstrap';

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-// transpile:main
+import {install} from 'source-map-support';
+install();
+
 import * as driver from './lib/driver';
 import * as androidHelperIndex from './lib/android-helpers';
 import * as commandIndex from './lib/commands/index';
