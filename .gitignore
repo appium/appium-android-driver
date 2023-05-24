@@ -16,3 +16,4 @@ bootstrap/bin/*
 bootstrap/local.properties
 bootstrap/.classpath
 bootstrap/target/
+.vscode
