@@ -1,3 +1,10 @@
+## [5.13.1](https://github.com/appium/appium-android-driver/compare/v5.13.0...v5.13.1) (2023-05-25)
+
+
+### Miscellaneous Chores
+
+* build with typescript instead of babel ([368b7da](https://github.com/appium/appium-android-driver/commit/368b7dabab752792b100982278e3459775255918))
+
 ## [5.13.0](https://github.com/appium/appium-android-driver/compare/v5.12.2...v5.13.0) (2023-05-22)
 
 
