@@ -1,3 +1,10 @@
+## [5.13.3](https://github.com/appium/appium-android-driver/compare/v5.13.2...v5.13.3) (2023-06-07)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump conventional-changelog-conventionalcommits ([#817](https://github.com/appium/appium-android-driver/issues/817)) ([e04698d](https://github.com/appium/appium-android-driver/commit/e04698d95e6ee0a3f13c8bdb7c9c20c3cd383a6f))
+
 ## [5.13.2](https://github.com/appium/appium-android-driver/compare/v5.13.1...v5.13.2) (2023-05-25)
 
 
