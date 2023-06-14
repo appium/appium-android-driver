@@ -1,6 +1,9 @@
 import sinon from 'sinon';
-import {helpers, DEVTOOLS_SOCKET_PATTERN} from '../../lib/webview-helpers';
+import helpers, {DEVTOOLS_SOCKET_PATTERN} from '../../lib/helpers/webview';
 import ADB from 'appium-adb';
+import chai from 'chai';
+
+chai.should();
 
 let sandbox = sinon.createSandbox();
 

@@ -1,7 +1,5 @@
-import AndroidDriver from '../../../lib/driver';
-import {
-  parseWindowProperties, parseWindows
-} from '../../../lib/commands/system-bars';
+import {AndroidDriver} from '../../../lib/driver';
+import {parseWindowProperties, parseWindows} from '../../../lib/commands/system-bars';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -12,7 +10,9 @@ const expect = chai.expect;
 describe('System Bars', function () {
   describe('parseWindowProperties', function () {
     it('should return visible true if the surface is visible', function () {
-      parseWindowProperties('yolo', `
+      parseWindowProperties(
+        'yolo',
+        `
       mDisplayId=0 rootTaskId=1 mSession=Session{6fdbba 684:u0a10144} mClient=android.os.BinderProxy@dbd59e0
       mOwnerUid=10144 showForAllUsers=true package=com.android.systemui appop=NONE
       mAttrs={(0,0)(fillxfill) sim={adjust=pan} ty=NAVIGATION_BAR fmt=TRANSLUCENT
@@ -48,7 +48,8 @@ describe('System Bars', function () {
       isOnScreen=true
       isVisible=true
       mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
-      `.split('\n')).should.be.eql({
+      `.split('\n')
+      ).should.be.eql({
         visible: true,
         x: 0,
         y: 1794,
@@ -57,7 +58,9 @@ describe('System Bars', function () {
       });
     });
     it('should return visible false if the surface is not visible', function () {
-      parseWindowProperties('foo', `
+      parseWindowProperties(
+        'foo',
+        `
       mDisplayId=0 rootTaskId=1 mSession=Session{6fdbba 684:u0a10144} mClient=android.os.BinderProxy@dbd59e0
       mOwnerUid=10144 showForAllUsers=true package=com.android.systemui appop=NONE
       mAttrs={(0,0)(fillxfill) sim={adjust=pan} ty=NAVIGATION_BAR fmt=TRANSLUCENT
@@ -93,7 +96,8 @@ describe('System Bars', function () {
       isOnScreen=true
       isVisible=true
       mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
-      `.split('\n')).should.be.eql({
+      `.split('\n')
+      ).should.be.eql({
         visible: false,
         x: 0,
         y: 1794,
@@ -102,7 +106,9 @@ describe('System Bars', function () {
       });
     });
     it('should throw an error if no info is found', function () {
-      expect(() => { parseWindowProperties('bar', []); }).to.throw(Error);
+      expect(() => {
+        parseWindowProperties('bar', []);
+      }).to.throw(Error);
     });
   });
 
@@ -1118,20 +1124,22 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
   `;
   const validSystemBarsA11 = {
     statusBar: {visible: true, x: 0, y: 0, width: 1080, height: 63},
-    navigationBar: {visible: true, x: 0, y: 1794, width: 1080, height: 126}
+    navigationBar: {visible: true, x: 0, y: 1794, width: 1080, height: 126},
   };
   const validSystemBarsA12 = {
     statusBar: {visible: true, x: 0, y: 0, width: 1080, height: 83},
-    navigationBar: {visible: true, x: 0, y: 2148, width: 1080, height: 132}
+    navigationBar: {visible: true, x: 0, y: 2148, width: 1080, height: 132},
   };
   const validSystemBarsA13 = {
     statusBar: {visible: true, x: 0, y: 0, width: 1080, height: 66},
-    navigationBar: {visible: true, x: 0, y: 2148, width: 1080, height: 132}
+    navigationBar: {visible: true, x: 0, y: 2148, width: 1080, height: 132},
   };
 
   describe('parseWindows', function () {
     it('should throw an error if no windows were found', function () {
-      expect(() => { parseWindows(''); }).to.throw(Error);
+      expect(() => {
+        parseWindows('');
+      }).to.throw(Error);
     });
     it('should return defaults if only non matching windows were found', function () {
       parseWindows(`
@@ -1168,7 +1176,7 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
           mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
       `).should.be.eql({
         statusBar: {visible: false, x: 0, y: 0, width: 0, height: 0},
-        navigationBar: {visible: false, x: 0, y: 0, width: 0, height: 0}
+        navigationBar: {visible: false, x: 0, y: 0, width: 0, height: 0},
       });
     });
     it('should return status and navigation bar for Android 11 and below', function () {
@@ -1188,7 +1196,9 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
     it('should throw an error if was unable to retrieve dumpsys output', async function () {
       driver = new AndroidDriver();
       driver.adb = {};
-      driver.adb.shell = () => { throw new Error(); };
+      driver.adb.shell = () => {
+        throw new Error();
+      };
       await driver.getSystemBars().should.be.rejected;
     });
     it('should return the parsed system bar info below Android 11', async function () {

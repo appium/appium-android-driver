@@ -1,15 +1,14 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../lib/driver';
-import { ensureAVDExists } from './helpers';
-import { CHROME_CAPS, amendCapabilities } from './capabilities';
+import {AndroidDriver} from '../../lib/driver';
+import {ensureAVDExists} from './helpers';
+import {CHROME_CAPS, amendCapabilities} from './capabilities';
 import path from 'path';
-
 
 chai.should();
 chai.use(chaiAsPromised);
 
-function getChromedriver () {
+function getChromedriver() {
   return process.env.CHROMEDRIVER_EXECUTABLE
     ? process.env.CHROMEDRIVER_EXECUTABLE
     : path.resolve(__dirname, '..', 'assets', 'chromedriver-2.20', 'mac', 'chromedriver');
@@ -22,6 +21,7 @@ const capabilities = amendCapabilities(CHROME_CAPS, {
   'appium:chromeOptions': {
     args: ['--no-first-run'],
   },
+
   'appium:chromedriverExecutable': getChromedriver(),
   'appium:showChromedriverLog': true,
 });
@@ -29,8 +29,11 @@ const capabilities = amendCapabilities(CHROME_CAPS, {
 describe('createSession', function () {
   let driver;
   before(async function () {
-    if (!await ensureAVDExists(this, capabilities.avd)) {
-      console.log(`Not running Chrome tests (file: '${__filename}') because the AVD '${avd}' does not exist`); // eslint-disable-line
+    if (!(await ensureAVDExists(this, capabilities.avd))) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `Not running Chrome tests (file: '${__filename}') because the AVD '${avd}' does not exist`
+      );
       return;
     }
 

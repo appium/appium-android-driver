@@ -3,6 +3,5 @@
  * @module
  */
 
-declare module 'appium-adb';
 declare module 'shared-preferences-builder';
 declare module 'io.appium.settings';

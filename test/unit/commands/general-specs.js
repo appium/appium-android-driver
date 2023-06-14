@@ -1,14 +1,13 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import AndroidDriver from '../../../lib/driver';
-import helpers from '../../../lib/android-helpers';
-import { withMocks } from '@appium/test-support';
-import { fs } from '@appium/support';
+import {AndroidDriver} from '../../../lib/driver';
+import helpers from '../../../lib/helpers/android';
+import {withMocks} from '@appium/test-support';
+import {fs} from '@appium/support';
 import Bootstrap from '../../../lib/bootstrap';
 import B from 'bluebird';
 import ADB from 'appium-adb';
-
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -33,17 +32,17 @@ describe('General', function () {
       sandbox.stub(driver.bootstrap, 'sendAction');
       driver.opts.unicodeKeyboard = true;
       await driver.keys('keys');
-      driver.bootstrap.sendAction
-        .calledWithExactly('setText',
-          {text: 'keys', replace: false, unicodeKeyboard: true})
-        .should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('setText', {
+        text: 'keys',
+        replace: false,
+        unicodeKeyboard: true,
+      }).should.be.true;
     });
     it('should join keys if keys is array', async function () {
       sandbox.stub(driver.bootstrap, 'sendAction');
       driver.opts.unicodeKeyboard = false;
       await driver.keys(['k', 'e', 'y', 's']);
-      driver.bootstrap.sendAction
-        .calledWithExactly('setText', {text: 'keys', replace: false})
+      driver.bootstrap.sendAction.calledWithExactly('setText', {text: 'keys', replace: false})
         .should.be.true;
     });
   });
@@ -80,13 +79,13 @@ describe('General', function () {
   });
   describe('isKeyboardShown', function () {
     it('should return true if the keyboard is shown', async function () {
-      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
         return {isKeyboardShown: true, canCloseKeyboard: true};
       };
       (await driver.isKeyboardShown()).should.equal(true);
     });
     it('should return false if the keyboard is not shown', async function () {
-      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
         return {isKeyboardShown: false, canCloseKeyboard: true};
       };
       (await driver.isKeyboardShown()).should.equal(false);
@@ -96,7 +95,7 @@ describe('General', function () {
     it('should hide keyboard with ESC command', async function () {
       sandbox.stub(driver.adb, 'keyevent');
       let callIdx = 0;
-      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
         callIdx++;
         return {
           isKeyboardShown: callIdx <= 1,
@@ -109,7 +108,7 @@ describe('General', function () {
     it('should throw if cannot close keyboard', async function () {
       this.timeout(10000);
       sandbox.stub(driver.adb, 'keyevent');
-      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
         return {
           isKeyboardShown: true,
           canCloseKeyboard: false,
@@ -119,7 +118,7 @@ describe('General', function () {
       driver.adb.keyevent.notCalled.should.be.true;
     });
     it('should not throw if no keyboard is present', async function () {
-      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent () {
+      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
         return {
           isKeyboardShown: false,
           canCloseKeyboard: false,
@@ -130,28 +129,29 @@ describe('General', function () {
   });
   describe('openSettingsActivity', function () {
     it('should open settings activity', async function () {
-      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
+      sandbox
+        .stub(driver.adb, 'getFocusedPackageAndActivity')
         .returns({appPackage: 'pkg', appActivity: 'act'});
       sandbox.stub(driver.adb, 'shell');
       sandbox.stub(driver.adb, 'waitForNotActivity');
       await driver.openSettingsActivity('set1');
-      driver.adb.shell.calledWithExactly(['am', 'start', '-a', 'android.settings.set1'])
-        .should.be.true;
-      driver.adb.waitForNotActivity.calledWithExactly('pkg', 'act', 5000)
-        .should.be.true;
+      driver.adb.shell.calledWithExactly(['am', 'start', '-a', 'android.settings.set1']).should.be
+        .true;
+      driver.adb.waitForNotActivity.calledWithExactly('pkg', 'act', 5000).should.be.true;
     });
   });
   describe('getWindowSize', function () {
     it('should get window size', async function () {
-      sandbox.stub(driver.bootstrap, 'sendAction')
-        .withArgs('getDeviceSize').returns('size');
+      sandbox.stub(driver.bootstrap, 'sendAction').withArgs('getDeviceSize').returns('size');
       (await driver.getWindowSize()).should.be.equal('size');
     });
   });
   describe('getWindowRect', function () {
     it('should get window size', async function () {
-      sandbox.stub(driver.bootstrap, 'sendAction')
-        .withArgs('getDeviceSize').returns({width: 300, height: 400});
+      sandbox
+        .stub(driver.bootstrap, 'sendAction')
+        .withArgs('getDeviceSize')
+        .returns({width: 300, height: 400});
       const rect = await driver.getWindowRect();
       rect.width.should.be.equal(300);
       rect.height.should.be.equal(400);
@@ -161,15 +161,13 @@ describe('General', function () {
   });
   describe('getCurrentActivity', function () {
     it('should get current activity', async function () {
-      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
-        .returns({appActivity: 'act'});
+      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appActivity: 'act'});
       await driver.getCurrentActivity().should.eventually.be.equal('act');
     });
   });
   describe('getCurrentPackage', function () {
     it('should get current activity', async function () {
-      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
-        .returns({appPackage: 'pkg'});
+      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appPackage: 'pkg'});
       await driver.getCurrentPackage().should.eventually.equal('pkg');
     });
   });
@@ -188,8 +186,7 @@ describe('General', function () {
   describe('installApp', function () {
     it('should install app', async function () {
       let app = 'app.apk';
-      sandbox.stub(driver.helpers, 'configureApp').withArgs(app, '.apk')
-        .returns(app);
+      sandbox.stub(driver.helpers, 'configureApp').withArgs(app, '.apk').returns(app);
       sandbox.stub(fs, 'rimraf').returns();
       sandbox.stub(driver.adb, 'install').returns(true);
       await driver.installApp(app);
@@ -198,20 +195,25 @@ describe('General', function () {
       driver.adb.install.calledOnce.should.be.true;
     });
     it('should throw an error if APK does not exist', async function () {
-      await driver.installApp('non/existent/app.apk').should.be
-        .rejectedWith(/does not exist or is not accessible/);
+      await driver
+        .installApp('non/existent/app.apk')
+        .should.be.rejectedWith(/does not exist or is not accessible/);
     });
   });
   describe('background', function () {
     it('should bring app to background and back', async function () {
       const appPackage = 'wpkg';
       const appActivity = 'wacv';
-      driver.opts = {appPackage, appActivity, intentAction: 'act',
-                     intentCategory: 'cat', intentFlags: 'flgs',
-                     optionalIntentArguments: 'opt'};
+      driver.opts = {
+        appPackage,
+        appActivity,
+        intentAction: 'act',
+        intentCategory: 'cat',
+        intentFlags: 'flgs',
+        optionalIntentArguments: 'opt',
+      };
       sandbox.stub(driver.adb, 'goToHome');
-      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
-        .returns({appPackage, appActivity});
+      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appPackage, appActivity});
       sandbox.stub(B, 'delay');
       sandbox.stub(driver.adb, 'startApp');
       sandbox.stub(driver, 'activateApp');
@@ -225,16 +227,28 @@ describe('General', function () {
     it('should bring app to background and back if started after session init', async function () {
       const appPackage = 'newpkg';
       const appActivity = 'newacv';
-      driver.opts = {appPackage: 'pkg', appActivity: 'acv', intentAction: 'act',
-                     intentCategory: 'cat', intentFlags: 'flgs',
-                     optionalIntentArguments: 'opt'};
-      let params = {pkg: appPackage, activity: appActivity, action: 'act', category: 'cat',
-                    flags: 'flgs', waitPkg: 'wpkg', waitActivity: 'wacv',
-                    optionalIntentArguments: 'opt', stopApp: false};
+      driver.opts = {
+        appPackage: 'pkg',
+        appActivity: 'acv',
+        intentAction: 'act',
+        intentCategory: 'cat',
+        intentFlags: 'flgs',
+        optionalIntentArguments: 'opt',
+      };
+      let params = {
+        pkg: appPackage,
+        activity: appActivity,
+        action: 'act',
+        category: 'cat',
+        flags: 'flgs',
+        waitPkg: 'wpkg',
+        waitActivity: 'wacv',
+        optionalIntentArguments: 'opt',
+        stopApp: false,
+      };
       driver._cachedActivityArgs = {[`${appPackage}/${appActivity}`]: params};
       sandbox.stub(driver.adb, 'goToHome');
-      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
-        .returns({appPackage, appActivity});
+      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appPackage, appActivity});
       sandbox.stub(B, 'delay');
       sandbox.stub(driver.adb, 'startApp');
       sandbox.stub(driver, 'activateApp');
@@ -245,17 +259,26 @@ describe('General', function () {
       driver.adb.startApp.calledWithExactly(params).should.be.true;
       driver.activateApp.notCalled.should.be.true;
     });
-    it('should bring app to background and back if waiting for other pkg / activity', async function () { //eslint-disable-line
+    it('should bring app to background and back if waiting for other pkg / activity', async function () {
+      //eslint-disable-line
       const appPackage = 'somepkg';
       const appActivity = 'someacv';
       const appWaitPackage = 'somewaitpkg';
       const appWaitActivity = 'somewaitacv';
-      driver.opts = {appPackage, appActivity, appWaitPackage, appWaitActivity,
-                     intentAction: 'act', intentCategory: 'cat',
-                     intentFlags: 'flgs', optionalIntentArguments: 'opt',
-                     stopApp: false};
+      driver.opts = {
+        appPackage,
+        appActivity,
+        appWaitPackage,
+        appWaitActivity,
+        intentAction: 'act',
+        intentCategory: 'cat',
+        intentFlags: 'flgs',
+        optionalIntentArguments: 'opt',
+        stopApp: false,
+      };
       sandbox.stub(driver.adb, 'goToHome');
-      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity')
+      sandbox
+        .stub(driver.adb, 'getFocusedPackageAndActivity')
         .returns({appPackage: appWaitPackage, appActivity: appWaitActivity});
       sandbox.stub(B, 'delay');
       sandbox.stub(driver.adb, 'startApp');
@@ -275,30 +298,32 @@ describe('General', function () {
       driver.adb.startApp.notCalled.should.be.true;
     });
   });
-  describe('getStrings', withMocks({helpers}, (mocks) => {
-    it('should return app strings', async function () {
-      driver.bootstrap.sendAction = () => '';
-      mocks.helpers.expects('pushStrings')
-          .returns({test: 'en_value'});
-      let strings = await driver.getStrings('en');
-      strings.test.should.equal('en_value');
-      mocks.helpers.verify();
-    });
-    it('should return cached app strings for the specified language', async function () {
-      driver.adb.getDeviceLanguage = () => 'en';
-      driver.apkStrings.en = {test: 'en_value'};
-      driver.apkStrings.fr = {test: 'fr_value'};
-      let strings = await driver.getStrings('fr');
-      strings.test.should.equal('fr_value');
-    });
-    it('should return cached app strings for the device language', async function () {
-      driver.adb.getDeviceLanguage = () => 'en';
-      driver.apkStrings.en = {test: 'en_value'};
-      driver.apkStrings.fr = {test: 'fr_value'};
-      let strings = await driver.getStrings();
-      strings.test.should.equal('en_value');
-    });
-  }));
+  describe(
+    'getStrings',
+    withMocks({helpers}, (mocks) => {
+      it('should return app strings', async function () {
+        driver.bootstrap.sendAction = () => '';
+        mocks.helpers.expects('pushStrings').returns({test: 'en_value'});
+        let strings = await driver.getStrings('en');
+        strings.test.should.equal('en_value');
+        mocks.helpers.verify();
+      });
+      it('should return cached app strings for the specified language', async function () {
+        driver.adb.getDeviceLanguage = () => 'en';
+        driver.apkStrings.en = {test: 'en_value'};
+        driver.apkStrings.fr = {test: 'fr_value'};
+        let strings = await driver.getStrings('fr');
+        strings.test.should.equal('fr_value');
+      });
+      it('should return cached app strings for the device language', async function () {
+        driver.adb.getDeviceLanguage = () => 'en';
+        driver.apkStrings.en = {test: 'en_value'};
+        driver.apkStrings.fr = {test: 'fr_value'};
+        let strings = await driver.getStrings();
+        strings.test.should.equal('en_value');
+      });
+    })
+  );
   describe('launchApp', function () {
     it('should init and start app', async function () {
       sandbox.stub(driver, 'initAUT');
@@ -311,15 +336,22 @@ describe('General', function () {
   describe('startActivity', function () {
     let params;
     beforeEach(function () {
-      params = {pkg: 'pkg', activity: 'act', waitPkg: 'wpkg', waitActivity: 'wact',
-                action: 'act', category: 'cat', flags: 'flgs', optionalIntentArguments: 'opt'};
+      params = {
+        pkg: 'pkg',
+        activity: 'act',
+        waitPkg: 'wpkg',
+        waitActivity: 'wact',
+        action: 'act',
+        category: 'cat',
+        flags: 'flgs',
+        optionalIntentArguments: 'opt',
+      };
       sandbox.stub(driver.adb, 'startApp');
     });
     it('should start activity', async function () {
       params.optionalIntentArguments = 'opt';
       params.stopApp = false;
-      await driver.startActivity('pkg', 'act', 'wpkg', 'wact', 'act',
-        'cat', 'flgs', 'opt', true);
+      await driver.startActivity('pkg', 'act', 'wpkg', 'wact', 'act', 'cat', 'flgs', 'opt', true);
       driver.adb.startApp.calledWithExactly(params).should.be.true;
     });
     it('should use dontStopAppOnReset from opts if it is not passed as param', async function () {
@@ -370,7 +402,7 @@ describe('General', function () {
         appWaitForLaunch: true,
         appWaitDuration: 'wdur',
         optionalIntentArguments: 'opt',
-        userProfile: 1
+        userProfile: 1,
       };
       let params = {
         pkg: 'pkg',
@@ -384,7 +416,7 @@ describe('General', function () {
         waitDuration: 'wdur',
         optionalIntentArguments: 'opt',
         stopApp: false,
-        user: 1
+        user: 1,
       };
       driver.opts.dontStopAppOnReset = true;
       params.stopApp = false;
@@ -428,13 +460,17 @@ describe('General', function () {
       };
       (await driver.getDisplayDensity()).should.equal(456);
     });
-    it('should throw an error if the display density property can\'t be found', async function () {
+    it("should throw an error if the display density property can't be found", async function () {
       driver.adb.shell = () => '';
-      await driver.getDisplayDensity().should.be.rejectedWith(/Failed to get display density property/);
+      await driver
+        .getDisplayDensity()
+        .should.be.rejectedWith(/Failed to get display density property/);
     });
     it('should throw and error if the display density is not a number', async function () {
       driver.adb.shell = () => 'abc';
-      await driver.getDisplayDensity().should.be.rejectedWith(/Failed to get display density property/);
+      await driver
+        .getDisplayDensity()
+        .should.be.rejectedWith(/Failed to get display density property/);
     });
   });
 });

@@ -2,10 +2,9 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import Bootstrap from '../../../lib/bootstrap';
-import AndroidDriver from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver';
 import ADB from 'appium-adb';
-import androidHelpers from '../../../lib/android-helpers';
-
+import androidHelpers from '../../../lib/helpers/android';
 
 let driver;
 let sandbox = sinon.createSandbox();
@@ -28,9 +27,10 @@ describe('Element', function () {
     it('should get element attribute', async function () {
       driver.bootstrap.sendAction.withArgs('element:getAttribute').returns('attr_value');
       await driver.getAttribute('attr', 'el1').should.become('attr_value');
-      driver.bootstrap.sendAction
-        .calledWithExactly('element:getAttribute', {attribute: 'attr', elementId: 'el1'})
-        .should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('element:getAttribute', {
+        attribute: 'attr',
+        elementId: 'el1',
+      }).should.be.true;
     });
   });
   describe('getName', function () {
@@ -110,8 +110,7 @@ describe('Element', function () {
   describe('doSetElementValue', function () {
     it('should call setText to set element value', async function () {
       await driver.doSetElementValue('params');
-      driver.bootstrap.sendAction.calledWithExactly('element:setText',
-        'params').should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('element:setText', 'params').should.be.true;
     });
   });
   describe('setValue', function () {
@@ -147,9 +146,8 @@ describe('Element', function () {
     it('should get element text', async function () {
       driver.bootstrap.sendAction.withArgs('element:getText').returns('el_text');
       await driver.getText('el1').should.become('el_text');
-      driver.bootstrap.sendAction
-        .calledWithExactly('element:getText', {elementId: 'el1'})
-        .should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('element:getText', {elementId: 'el1'}).should.be
+        .true;
     });
   });
   describe('clear', function () {
@@ -190,17 +188,15 @@ describe('Element', function () {
   describe('click', function () {
     it('should click an element', async function () {
       await driver.click('el1');
-      driver.bootstrap.sendAction.calledWithExactly('element:click', {elementId: 'el1'})
-        .should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('element:click', {elementId: 'el1'}).should.be
+        .true;
     });
   });
   describe('getLocation', function () {
     it('should get location of an element', async function () {
-      driver.bootstrap.sendAction
-        .withArgs('element:getLocation').returns('loc_info');
+      driver.bootstrap.sendAction.withArgs('element:getLocation').returns('loc_info');
       await driver.getLocation('el1').should.become('loc_info');
-      driver.bootstrap.sendAction
-        .calledWithExactly('element:getLocation', {elementId: 'el1'})
+      driver.bootstrap.sendAction.calledWithExactly('element:getLocation', {elementId: 'el1'})
         .should.be.true;
     });
   });
@@ -214,82 +210,72 @@ describe('Element', function () {
   });
   describe('getSize', function () {
     it('should get size of an element', async function () {
-      driver.bootstrap.sendAction
-        .withArgs('element:getSize').returns('size_info');
+      driver.bootstrap.sendAction.withArgs('element:getSize').returns('size_info');
       await driver.getSize('el1').should.become('size_info');
-      driver.bootstrap.sendAction
-        .calledWithExactly('element:getSize', {elementId: 'el1'})
-        .should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('element:getSize', {elementId: 'el1'}).should.be
+        .true;
     });
   });
   describe('getElementRect', function () {
     it('should get rect of an element', async function () {
-      driver.bootstrap.sendAction
-        .withArgs('element:getRect').returns('rect_info');
+      driver.bootstrap.sendAction.withArgs('element:getRect').returns('rect_info');
       await driver.getElementRect('el1').should.become('rect_info');
-      driver.bootstrap.sendAction
-        .calledWithExactly('element:getRect', {elementId: 'el1'})
-        .should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('element:getRect', {elementId: 'el1'}).should.be
+        .true;
     });
   });
   describe('touchLongClick', function () {
     it('should do touch long click on element', async function () {
       let params = {elementId: 'el1', x: 12, y: 34, duration: 5};
       await driver.touchLongClick('el1', 12, 34, 5);
-      androidHelpers.removeNullProperties.calledWithExactly(params)
-        .should.be.true;
-      driver.bootstrap.sendAction.calledWithExactly('element:touchLongClick', params)
-        .should.be.true;
+      androidHelpers.removeNullProperties.calledWithExactly(params).should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('element:touchLongClick', params).should.be
+        .true;
     });
   });
   describe('touchDown', function () {
     it('should do touch down on element', async function () {
       let params = {elementId: 'el1', x: 12, y: 34};
       await driver.touchDown('el1', 12, 34);
-      androidHelpers.removeNullProperties.calledWithExactly(params)
-        .should.be.true;
-      driver.bootstrap.sendAction.calledWithExactly('element:touchDown', params)
-        .should.be.true;
+      androidHelpers.removeNullProperties.calledWithExactly(params).should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('element:touchDown', params).should.be.true;
     });
   });
   describe('touchUp', function () {
     it('should do touch up on element', async function () {
       let params = {elementId: 'el1', x: 12, y: 34};
       await driver.touchUp('el1', 12, 34);
-      androidHelpers.removeNullProperties.calledWithExactly(params)
-        .should.be.true;
-      driver.bootstrap.sendAction.calledWithExactly('element:touchUp', params)
-        .should.be.true;
+      androidHelpers.removeNullProperties.calledWithExactly(params).should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('element:touchUp', params).should.be.true;
     });
   });
   describe('touchMove', function () {
     it('should get element attribute', async function () {
       let params = {elementId: 'el1', x: 12, y: 34};
       await driver.touchMove('el1', 12, 34);
-      androidHelpers.removeNullProperties.calledWithExactly(params)
-        .should.be.true;
-      driver.bootstrap.sendAction.calledWithExactly('element:touchMove', params)
-        .should.be.true;
+      androidHelpers.removeNullProperties.calledWithExactly(params).should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('element:touchMove', params).should.be.true;
     });
   });
   describe('complexTap', function () {
     it('should tap an element', async function () {
       await driver.complexTap(null, null, null, 12, 34);
-      driver.bootstrap.sendAction.calledWithExactly('click', {x: 12, y: 34})
-        .should.be.true;
+      driver.bootstrap.sendAction.calledWithExactly('click', {x: 12, y: 34}).should.be.true;
     });
   });
   describe('tap', function () {
     it('should tap element with coordinates', async function () {
       await driver.tap('el1', 12, 34, 3);
-      driver.bootstrap.sendAction.alwaysCalledWith('element:click',
-        {elementId: 'el1', x: 12, y: 34}).should.be.true;
+      driver.bootstrap.sendAction.alwaysCalledWith('element:click', {
+        elementId: 'el1',
+        x: 12,
+        y: 34,
+      }).should.be.true;
       driver.bootstrap.sendAction.calledThrice.should.be.true;
     });
     it('should tap without an element', async function () {
       await driver.tap(null, 12, 34, 3);
-      driver.bootstrap.sendAction.alwaysCalledWith('click', {x: 12, y: 34})
-        .should.be.true;
+      driver.bootstrap.sendAction.alwaysCalledWith('click', {x: 12, y: 34}).should.be.true;
       driver.bootstrap.sendAction.calledThrice.should.be.true;
     });
     it('should perform single tap on element if x, y and count are not passed', async function () {

@@ -1,8 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../lib/driver';
-import { DEFAULT_CAPS, amendCapabilities } from '../capabilities';
-
+import {AndroidDriver} from '../../../lib/driver';
+import {DEFAULT_CAPS, amendCapabilities} from '../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -10,7 +9,7 @@ chai.use(chaiAsPromised);
 let driver;
 let defaultCaps = amendCapabilities(DEFAULT_CAPS, {
   'appium:unicodeKeyboard': true,
-  'appium:resetKeyboard': true
+  'appium:resetKeyboard': true,
 });
 let unicodeImeId = 'io.appium.settings/.UnicodeIME';
 

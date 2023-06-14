@@ -1,300 +1,303 @@
-let commonCapConstraints = {
+import {type Constraints} from '@appium/types';
+
+export const ANDROID_DRIVER_CONSTRAINTS = {
   platformName: {
     isString: true,
     inclusionCaseInsensitive: ['Android'],
-    presence: true
+    presence: true,
   },
-  app: {
-    isString: true
+  deviceName: {
+    isString: true,
   },
   appActivity: {
-    isString: true
+    isString: true,
   },
   appPackage: {
-    isString: true
+    isString: true,
   },
   appWaitActivity: {
-    isString: true
+    isString: true,
   },
   appWaitPackage: {
-    isString: true
+    isString: true,
   },
   appWaitDuration: {
-    isNumber: true
+    isNumber: true,
   },
   deviceReadyTimeout: {
-    isNumber: true
+    isNumber: true,
   },
   androidCoverage: {
-    isString: true
+    isString: true,
   },
   androidDeviceReadyTimeout: {
-    isNumber: true
+    isNumber: true,
   },
   androidDeviceSocket: {
-    isString: true
+    isString: true,
   },
   androidInstallTimeout: {
-    isNumber: true
+    isNumber: true,
   },
   adbPort: {
-    isNumber: true
+    isNumber: true,
   },
   remoteAdbHost: {
-    isString: true
+    isString: true,
   },
   adbExecTimeout: {
-    isNumber: true
+    isNumber: true,
   },
   avd: {
-    isString: true
+    isString: true,
   },
   avdLaunchTimeout: {
-    isNumber: true
+    isNumber: true,
   },
   avdReadyTimeout: {
-    isNumber: true
+    isNumber: true,
   },
   avdArgs: {
     // could be a string or an array
   },
   avdEnv: {
-    isObject: true
+    isObject: true,
   },
   useKeystore: {
-    isBoolean: true
+    isBoolean: true,
   },
   keystorePath: {
-    isString: true
+    isString: true,
   },
   keystorePassword: {
-    isString: true
+    isString: true,
   },
   keyAlias: {
-    isString: true
+    isString: true,
   },
   keyPassword: {
-    isString: true
+    isString: true,
   },
   webviewDevtoolsPort: {
-    isNumber: true
+    isNumber: true,
   },
   ensureWebviewsHavePages: {
-    isBoolean: true
+    isBoolean: true,
   },
   enableWebviewDetailsCollection: {
-    isBoolean: true
+    isBoolean: true,
   },
   // this one is deprecated
   chromeDriverPort: {
-    isNumber: true
+    isNumber: true,
   },
   // duplicate of above with better spelling
   chromedriverPort: {
-    isNumber: true
+    isNumber: true,
   },
   chromedriverPorts: {
-    isArray: true
+    isArray: true,
   },
   chromedriverArgs: {
     isObject: true,
   },
   chromedriverExecutable: {
-    isString: true
+    isString: true,
   },
   chromedriverExecutableDir: {
-    isString: true
+    isString: true,
   },
   chromedriverChromeMappingFile: {
-    isString: true
+    isString: true,
   },
   chromedriverUseSystemExecutable: {
-    isBoolean: true
+    isBoolean: true,
   },
   chromedriverDisableBuildCheck: {
-    isBoolean: true
+    isBoolean: true,
   },
   chromeLoggingPrefs: {
-    isObject: true
+    isObject: true,
   },
   autoWebviewTimeout: {
-    isNumber: true
+    isNumber: true,
   },
   autoWebviewName: {
-    isString: true
+    isString: true,
   },
   intentAction: {
-    isString: true
+    isString: true,
   },
   intentCategory: {
-    isString: true
+    isString: true,
   },
   intentFlags: {
-    isString: true
+    isString: true,
   },
   optionalIntentArguments: {
-    isString: true
+    isString: true,
   },
   dontStopAppOnReset: {
-    isBoolean: true
+    isBoolean: true,
   },
   unicodeKeyboard: {
-    isBoolean: true
+    isBoolean: true,
   },
   resetKeyboard: {
-    isBoolean: true
+    isBoolean: true,
   },
   noSign: {
-    isBoolean: true
+    isBoolean: true,
   },
   recreateChromeDriverSessions: {
-    isBoolean: false
+    isBoolean: false,
   },
   autoLaunch: {
-    isBoolean: true
+    isBoolean: true,
   },
   nativeWebScreenshot: {
-    isBoolean: true
+    isBoolean: true,
   },
   androidScreenshotPath: {
-    isString: true
+    isString: true,
   },
   androidInstallPath: {
-    isString: true
+    isString: true,
   },
   clearSystemFiles: {
-    isBoolean: true
+    isBoolean: true,
   },
   extractChromeAndroidPackageFromContextName: {
-    isBoolean: true
+    isBoolean: true,
   },
   autoGrantPermissions: {
-    isBoolean: true
+    isBoolean: true,
   },
   sharedPreferences: {
-    isObject: true
+    isObject: true,
   },
   networkSpeed: {
-    isString: true
+    isString: true,
   },
   gpsEnabled: {
-    isBoolean: true
+    isBoolean: true,
   },
   isHeadless: {
-    isBoolean: true
+    isBoolean: true,
   },
   showChromedriverLog: {
-    isBoolean: true
+    isBoolean: true,
   },
   skipUnlock: {
-    isBoolean: true
+    isBoolean: true,
   },
   clearDeviceLogsOnStart: {
-    isBoolean: true
+    isBoolean: true,
   },
   unlockType: {
-    isString: true
+    isString: true,
   },
   unlockKey: {
-    isString: true
+    isString: true,
   },
   unlockStrategy: {
     isString: true,
     inclusionCaseInsensitive: ['locksettings', 'uiautomator'],
   },
   otherApps: {
-    isString: true
+    isString: true,
   },
   uninstallOtherPackages: {
-    isString: true
+    isString: true,
   },
   allowTestPackages: {
-    isBoolean: true
+    isBoolean: true,
   },
   pageLoadStrategy: {
-    isString: true
+    isString: true,
   },
   localeScript: {
-    isString: true
+    isString: true,
   },
   skipDeviceInitialization: {
-    isBoolean: true
+    isBoolean: true,
   },
   remoteAppsCacheLimit: {
-    isNumber: true
+    isNumber: true,
   },
   buildToolsVersion: {
-    isString: true
+    isString: true,
   },
   skipLogcatCapture: {
-    isBoolean: true
+    isBoolean: true,
   },
   chromeOptions: {
-    isObject: true
+    isObject: true,
   },
   enablePerformanceLogging: {
-    isBoolean: true
+    isBoolean: true,
   },
   userProfile: {
-    isNumber: true
+    isNumber: true,
   },
   browserName: {
-    isString: true
+    isString: true,
   },
   enforceAppInstall: {
-    isBoolean: true
+    isBoolean: true,
   },
   suppressKillServer: {
-    isBoolean: true
+    isBoolean: true,
   },
   allowOfflineDevices: {
-    isBoolean: true
+    isBoolean: true,
   },
   ignoreHiddenApiPolicyError: {
-    isBoolean: true
+    isBoolean: true,
   },
   unlockSuccessTimeout: {
-    isNumber: true
+    isNumber: true,
   },
   mockLocationApp: {
-    isString: true
+    isString: true,
   },
   logcatFormat: {
-    isString: true
+    isString: true,
   },
   logcatFilterSpecs: {
-    isArray: true
+    isArray: true,
   },
   allowDelayAdb: {
-    isBoolean: true
-  }
-};
+    isBoolean: true,
+  },
 
-let uiautomatorCapConstraints = {
+  /*-----------------------------------+
+   | UI-AUTOMATOR-SPECIFIC CONSTRAINTS |
+   +-----------------------------------+*/
+
   ignoreUnimportantViews: {
-    isBoolean: true
+    isBoolean: true,
   },
   disableAndroidWatchers: {
-    isBoolean: true
+    isBoolean: true,
   },
   acceptSslCerts: {
-    isBoolean: true
+    isBoolean: true,
   },
   androidNaturalOrientation: {
-    isBoolean: true
+    isBoolean: true,
   },
   disableWindowAnimation: {
-    isBoolean: true
+    isBoolean: true,
   },
   bootstrapPort: {
-    isNumber: true
+    isNumber: true,
   },
-};
+  appWaitForLaunch: {
+    isBoolean: true,
+  },
+} as const satisfies Constraints;
 
-let desiredCapConstraints = {};
+export default ANDROID_DRIVER_CONSTRAINTS;
 
-Object.assign(desiredCapConstraints, commonCapConstraints,
-              uiautomatorCapConstraints);
-
-export default desiredCapConstraints;
-export { commonCapConstraints };
+export type AndroidDriverConstraints = typeof ANDROID_DRIVER_CONSTRAINTS;

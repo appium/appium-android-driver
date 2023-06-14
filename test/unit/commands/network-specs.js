@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import ADB from 'appium-adb';
-import AndroidDriver from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver';
 import B from 'bluebird';
 
 let driver;
@@ -119,8 +119,7 @@ describe('Network', function () {
       driver.isEmulator.returns('is_emu');
       adb.setWifiAndData.returns('');
       await driver.toggleData();
-      adb.setWifiAndData.calledWithExactly({data: true}, 'is_emu')
-        .should.be.true;
+      adb.setWifiAndData.calledWithExactly({data: true}, 'is_emu').should.be.true;
     });
   });
   describe('toggleWiFi', function () {
@@ -129,8 +128,7 @@ describe('Network', function () {
       driver.isEmulator.returns('is_emu');
       adb.setWifiAndData.returns('');
       await driver.toggleWiFi();
-      adb.setWifiAndData.calledWithExactly({wifi: true}, 'is_emu')
-        .should.be.true;
+      adb.setWifiAndData.calledWithExactly({wifi: true}, 'is_emu').should.be.true;
     });
   });
   describe('toggleFlightMode', function () {
@@ -161,9 +159,9 @@ describe('Network', function () {
       });
       driver.isEmulator.returns('is_emu');
       const {latitude, longitude, altitude} = await driver.setGeoLocation('location');
-      (Number.isNaN(latitude)).should.be.false;
-      (Number.isNaN(longitude)).should.be.false;
-      (Number.isNaN(altitude)).should.be.false;
+      Number.isNaN(latitude).should.be.false;
+      Number.isNaN(longitude).should.be.false;
+      Number.isNaN(altitude).should.be.false;
     });
   });
   describe('getGeoLocation', function () {
@@ -173,9 +171,9 @@ describe('Network', function () {
         longitude: '2.2',
       });
       const {latitude, longitude, altitude} = await driver.getGeoLocation();
-      (Number.isNaN(latitude)).should.be.false;
-      (Number.isNaN(longitude)).should.be.false;
-      (Number.isNaN(altitude)).should.be.false;
+      Number.isNaN(latitude).should.be.false;
+      Number.isNaN(longitude).should.be.false;
+      Number.isNaN(altitude).should.be.false;
     });
   });
   describe('wrapBootstrapDisconnect', function () {
