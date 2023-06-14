@@ -1,18 +1,17 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { retryInterval } from 'asyncbox';
-import helpers from '../../lib/android-helpers';
+import {retryInterval} from 'asyncbox';
+import helpers from '../../lib/helpers/android';
 import ADB from 'appium-adb';
-import { app } from './capabilities';
-import { MOCHA_TIMEOUT } from './helpers';
-import { exec } from 'teen_process';
-import { path as SETTINGS_APK_PATH } from 'io.appium.settings';
-
+import {app} from './capabilities';
+import {MOCHA_TIMEOUT} from './helpers';
+import {exec} from 'teen_process';
+import {path as SETTINGS_APK_PATH} from 'io.appium.settings';
 
 let opts = {
   app,
   appPackage: 'io.appium.android.apis',
-  androidInstallTimeout: 90000
+  androidInstallTimeout: 90000,
 };
 
 chai.should();
@@ -45,7 +44,7 @@ describe('android-helpers e2e', function () {
     it('should set device language and country', async function () {
       await helpers.ensureDeviceLocale(adb, 'fr', 'FR');
 
-      if (await adb.getApiLevel() < 23) {
+      if ((await adb.getApiLevel()) < 23) {
         await adb.getDeviceLanguage().should.eventually.equal('fr');
         await adb.getDeviceCountry().should.eventually.equal('FR');
       } else {
@@ -55,7 +54,7 @@ describe('android-helpers e2e', function () {
     it('should set device language and country with script', async function () {
       await helpers.ensureDeviceLocale(adb, 'zh', 'CN', 'Hans');
 
-      if (await adb.getApiLevel() < 23) {
+      if ((await adb.getApiLevel()) < 23) {
         await adb.getDeviceLanguage().should.eventually.equal('fr');
         await adb.getDeviceCountry().should.eventually.equal('FR');
       } else {

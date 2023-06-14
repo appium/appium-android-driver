@@ -2,13 +2,13 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import log from '../../lib/logger';
 import sinon from 'sinon';
-import { helpers, SETTINGS_HELPER_PKG_ID } from '../../lib/android-helpers';
-import { withMocks } from '@appium/test-support';
+import {helpers, SETTINGS_HELPER_PKG_ID} from '../../lib/helpers/android';
+import {withMocks} from '@appium/test-support';
 import AndroidDriver from '../../lib/driver';
 import ADB from 'appium-adb';
-import { errors } from 'appium/driver';
-import { fs } from 'appium/support';
-import { SharedPrefsBuilder } from 'shared-preferences-builder';
+import {errors} from 'appium/driver';
+import {fs} from 'appium/support';
+import {SharedPrefsBuilder} from 'shared-preferences-builder';
 import _ from 'lodash';
 
 let driver;
@@ -36,7 +36,9 @@ describe('driver', function () {
       it('should be rejected if isEmulator is false', function () {
         let driver = new AndroidDriver();
         sandbox.stub(driver, 'isEmulator').returns(false);
-        driver.fingerprint(1111).should.eventually.be.rejectedWith('fingerprint method is only available for emulators');
+        driver
+          .fingerprint(1111)
+          .should.eventually.be.rejectedWith('fingerprint method is only available for emulators');
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
@@ -44,7 +46,9 @@ describe('driver', function () {
       it('sendSMS should be rejected if isEmulator is false', function () {
         let driver = new AndroidDriver();
         sandbox.stub(driver, 'isEmulator').returns(false);
-        driver.sendSMS(4509, 'Hello Appium').should.eventually.be.rejectedWith('sendSMS method is only available for emulators');
+        driver
+          .sendSMS(4509, 'Hello Appium')
+          .should.eventually.be.rejectedWith('sendSMS method is only available for emulators');
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
@@ -52,7 +56,9 @@ describe('driver', function () {
       it('sensorSet should be rejected if isEmulator is false', function () {
         let driver = new AndroidDriver();
         sandbox.stub(driver, 'isEmulator').returns(false);
-        driver.sensorSet({sensorType: 'light', value: 0}).should.eventually.be.rejectedWith('sensorSet method is only available for emulators');
+        driver
+          .sensorSet({sensorType: 'light', value: 0})
+          .should.eventually.be.rejectedWith('sensorSet method is only available for emulators');
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
@@ -62,39 +68,53 @@ describe('driver', function () {
     let adb = new ADB();
     driver.adb = adb;
     let builder = new SharedPrefsBuilder();
-    describe('should skip setting sharedPreferences', withMocks({driver}, (mocks) => {
-      it('on undefined name', async function () {
-        driver.opts.sharedPreferences = {};
-        (await driver.setSharedPreferences()).should.be.false;
-        mocks.driver.verify();
-      });
-    }));
-    describe('should set sharedPreferences', withMocks({driver, adb, builder, fs}, (mocks) => {
-      it('on defined sharedPreferences object', async function () {
-        driver.opts.appPackage = 'io.appium.test';
-        driver.opts.sharedPreferences = {
-          name: 'com.appium.prefs',
-          prefs: [{type: 'string', name: 'mystr', value: 'appium rocks!'}]
-        };
-        mocks.driver.expects('getPrefsBuilder').once().returns(builder);
-        mocks.builder.expects('build').once();
-        mocks.builder.expects('toFile').once();
-        mocks.adb.expects('shell').once()
-          .withExactArgs(['mkdir', '-p', '/data/data/io.appium.test/shared_prefs']);
-        mocks.adb.expects('push').once()
-          .withExactArgs('/tmp/com.appium.prefs.xml', '/data/data/io.appium.test/shared_prefs/com.appium.prefs.xml');
-        mocks.fs.expects('exists').once()
-          .withExactArgs('/tmp/com.appium.prefs.xml')
-          .returns(true);
-        mocks.fs.expects('unlink').once()
-          .withExactArgs('/tmp/com.appium.prefs.xml');
-        await driver.setSharedPreferences();
-        mocks.driver.verify();
-        mocks.adb.verify();
-        mocks.builder.verify();
-        mocks.fs.verify();
-      });
-    }));
+    describe(
+      'should skip setting sharedPreferences',
+      withMocks({driver}, (mocks) => {
+        it('on undefined name', async function () {
+          driver.opts.sharedPreferences = {};
+          (await driver.setSharedPreferences()).should.be.false;
+          mocks.driver.verify();
+        });
+      })
+    );
+    describe(
+      'should set sharedPreferences',
+      withMocks({driver, adb, builder, fs}, (mocks) => {
+        it('on defined sharedPreferences object', async function () {
+          driver.opts.appPackage = 'io.appium.test';
+          driver.opts.sharedPreferences = {
+            name: 'com.appium.prefs',
+            prefs: [{type: 'string', name: 'mystr', value: 'appium rocks!'}],
+          };
+          mocks.driver.expects('getPrefsBuilder').once().returns(builder);
+          mocks.builder.expects('build').once();
+          mocks.builder.expects('toFile').once();
+          mocks.adb
+            .expects('shell')
+            .once()
+            .withExactArgs(['mkdir', '-p', '/data/data/io.appium.test/shared_prefs']);
+          mocks.adb
+            .expects('push')
+            .once()
+            .withExactArgs(
+              '/tmp/com.appium.prefs.xml',
+              '/data/data/io.appium.test/shared_prefs/com.appium.prefs.xml'
+            );
+          mocks.fs
+            .expects('exists')
+            .once()
+            .withExactArgs('/tmp/com.appium.prefs.xml')
+            .returns(true);
+          mocks.fs.expects('unlink').once().withExactArgs('/tmp/com.appium.prefs.xml');
+          await driver.setSharedPreferences();
+          mocks.driver.verify();
+          mocks.adb.verify();
+          mocks.builder.verify();
+          mocks.fs.verify();
+        });
+      })
+    );
   });
 
   describe('createSession', function () {
@@ -105,13 +125,10 @@ describe('driver', function () {
       sandbox.stub(driver, 'startAndroidSession');
       sandbox.stub(ADB, 'createADB').callsFake(function (opts) {
         return {
-          getDevicesWithRetry () {
-            return [
-              {udid: 'emulator-1234'},
-              {udid: 'rotalume-1337'}
-            ];
+          getDevicesWithRetry() {
+            return [{udid: 'emulator-1234'}, {udid: 'rotalume-1337'}];
           },
-          getPortFromEmulatorString () {
+          getPortFromEmulatorString() {
             return 1234;
           },
           setDeviceId: () => {},
@@ -121,7 +138,8 @@ describe('driver', function () {
           getApiLevel: () => 22,
         };
       });
-      sandbox.stub(driver.helpers, 'configureApp')
+      sandbox
+        .stub(driver.helpers, 'configureApp')
         .withArgs('/path/to/some', '.apk')
         .returns('/path/to/some.apk');
     });
@@ -144,8 +162,8 @@ describe('driver', function () {
         alwaysMatch: {
           platformName: 'Android',
           'appium:deviceName': 'device',
-          browserName: 'Chrome'
-        }
+          browserName: 'Chrome',
+        },
       });
       helpers.getChromePkg.calledOnce.should.be.true;
     });
@@ -155,8 +173,8 @@ describe('driver', function () {
         alwaysMatch: {
           platformName: 'Android',
           'appium:deviceName': 'device',
-          'appium:app': '/path/to/some.apk'
-        }
+          'appium:app': '/path/to/some.apk',
+        },
       });
       driver.checkAppPresent.calledOnce.should.be.true;
     });
@@ -166,8 +184,8 @@ describe('driver', function () {
         alwaysMatch: {
           platformName: 'Android',
           'appium:deviceName': 'device',
-          'appium:appPackage': 'some.app.package'
-        }
+          'appium:appPackage': 'some.app.package',
+        },
       });
       driver.checkPackagePresent.calledOnce.should.be.true;
     });
@@ -177,8 +195,8 @@ describe('driver', function () {
         alwaysMatch: {
           platformName: 'Android',
           'appium:deviceName': 'device',
-          'appium:app': 'some.app.package'
-        }
+          'appium:app': 'some.app.package',
+        },
       });
       driver.checkPackagePresent.calledOnce.should.be.true;
     });
@@ -188,8 +206,8 @@ describe('driver', function () {
         alwaysMatch: {
           platformName: 'Android',
           'appium:deviceName': 'device',
-          'appium:appPackage': 'some.app.package'
-        }
+          'appium:appPackage': 'some.app.package',
+        },
       });
       driver.caps.webStorageEnabled.should.exist;
     });
@@ -200,8 +218,8 @@ describe('driver', function () {
           platformName: 'Android',
           'appium:deviceName': 'device',
           'appium:appPackage': 'some.app.package',
-          'appium:adbPort': 1111
-        }
+          'appium:adbPort': 1111,
+        },
       });
       driver.adb.adbPort.should.equal(1111);
     });
@@ -212,12 +230,11 @@ describe('driver', function () {
           platformName: 'Android',
           'appium:deviceName': 'device',
           browserName: 'chrome',
-          'appium:nativeWebScreenshot': false
-        }
+          'appium:nativeWebScreenshot': false,
+        },
       });
-      driver.getProxyAvoidList()
-        .some((x) => x[1].toString().includes('/screenshot'))
-        .should.be.false;
+      driver.getProxyAvoidList().some((x) => x[1].toString().includes('/screenshot')).should.be
+        .false;
     });
     it('should not proxy screenshot if nativeWebScreenshot is on', async function () {
       await driver.createSession(null, null, {
@@ -226,12 +243,11 @@ describe('driver', function () {
           platformName: 'Android',
           'appium:deviceName': 'device',
           browserName: 'chrome',
-          'appium:nativeWebScreenshot': true
-        }
+          'appium:nativeWebScreenshot': true,
+        },
       });
-      driver.getProxyAvoidList()
-        .some((x) => x[1].toString().includes('/screenshot'))
-        .should.be.true;
+      driver.getProxyAvoidList().some((x) => x[1].toString().includes('/screenshot')).should.be
+        .true;
     });
   });
   describe('deleteSession', function () {
@@ -322,116 +338,148 @@ describe('driver', function () {
       driver.shouldDismissChromeWelcome().should.be.true;
     });
   });
-  describe('initAUT', withMocks({helpers}, (mocks) => {
-    beforeEach(function () {
-      driver = new AndroidDriver();
-      driver.caps = {};
-    });
-    it('should throw error if run with full reset', async function () {
-      driver.opts = {appPackage: 'app.package', appActivity: 'act', fullReset: true};
-      await driver.initAUT().should.be.rejectedWith(/Full reset requires an app capability/);
-    });
-    it('should reset if run with fast reset', async function () {
-      driver.opts = {appPackage: 'app.package', appActivity: 'act', fullReset: false, fastReset: true};
-      driver.adb = 'mock_adb';
-      mocks.helpers.expects('resetApp').withArgs('mock_adb');
-      await driver.initAUT();
-      mocks.helpers.verify();
-    });
-    it('should keep data if run without reset', async function () {
-      driver.opts = {appPackage: 'app.package', appActivity: 'act', fullReset: false, fastReset: false};
-      mocks.helpers.expects('resetApp').never();
-      await driver.initAUT();
-      mocks.helpers.verify();
-    });
-    it('should install "otherApps" if set in capabilities', async function () {
-      const otherApps = ['http://URL_FOR/fake/app.apk'];
-      const tempApps = ['/path/to/fake/app.apk'];
-      driver.opts = {
-        appPackage: 'app.package',
-        appActivity: 'act',
-        fullReset: false,
-        fastReset: false,
-        otherApps: `["${otherApps[0]}"]`,
-      };
-      sandbox.stub(driver.helpers, 'configureApp')
-        .withArgs(otherApps[0], '.apk')
-        .returns(tempApps[0]);
-      mocks.helpers.expects('installOtherApks').once().withArgs(tempApps, driver.adb, driver.opts);
-      await driver.initAUT();
-      mocks.helpers.verify();
-    });
-    it('should uninstall a package "uninstallOtherPackages" if set in capabilities', async function () {
-      const uninstallOtherPackages = 'app.bundle.id1';
-      driver.opts = {
-        appPackage: 'app.package',
-        appActivity: 'act',
-        fullReset: false,
-        fastReset: false,
-        uninstallOtherPackages,
-      };
-      driver.adb = new ADB();
-      sandbox.stub(driver.adb, 'uninstallApk')
-        .withArgs('app.bundle.id1')
-        .returns(true);
-      mocks.helpers.expects('uninstallOtherPackages').once().withArgs(driver.adb, [uninstallOtherPackages], [SETTINGS_HELPER_PKG_ID]);
-      await driver.initAUT();
-      mocks.helpers.verify();
-    });
+  describe(
+    'initAUT',
+    withMocks({helpers}, (mocks) => {
+      beforeEach(function () {
+        driver = new AndroidDriver();
+        driver.caps = {};
+      });
+      it('should throw error if run with full reset', async function () {
+        driver.opts = {appPackage: 'app.package', appActivity: 'act', fullReset: true};
+        await driver.initAUT().should.be.rejectedWith(/Full reset requires an app capability/);
+      });
+      it('should reset if run with fast reset', async function () {
+        driver.opts = {
+          appPackage: 'app.package',
+          appActivity: 'act',
+          fullReset: false,
+          fastReset: true,
+        };
+        driver.adb = 'mock_adb';
+        mocks.helpers.expects('resetApp').withArgs('mock_adb');
+        await driver.initAUT();
+        mocks.helpers.verify();
+      });
+      it('should keep data if run without reset', async function () {
+        driver.opts = {
+          appPackage: 'app.package',
+          appActivity: 'act',
+          fullReset: false,
+          fastReset: false,
+        };
+        mocks.helpers.expects('resetApp').never();
+        await driver.initAUT();
+        mocks.helpers.verify();
+      });
+      it('should install "otherApps" if set in capabilities', async function () {
+        const otherApps = ['http://URL_FOR/fake/app.apk'];
+        const tempApps = ['/path/to/fake/app.apk'];
+        driver.opts = {
+          appPackage: 'app.package',
+          appActivity: 'act',
+          fullReset: false,
+          fastReset: false,
+          otherApps: `["${otherApps[0]}"]`,
+        };
+        sandbox
+          .stub(driver.helpers, 'configureApp')
+          .withArgs(otherApps[0], '.apk')
+          .returns(tempApps[0]);
+        mocks.helpers
+          .expects('installOtherApks')
+          .once()
+          .withArgs(tempApps, driver.adb, driver.opts);
+        await driver.initAUT();
+        mocks.helpers.verify();
+      });
+      it('should uninstall a package "uninstallOtherPackages" if set in capabilities', async function () {
+        const uninstallOtherPackages = 'app.bundle.id1';
+        driver.opts = {
+          appPackage: 'app.package',
+          appActivity: 'act',
+          fullReset: false,
+          fastReset: false,
+          uninstallOtherPackages,
+        };
+        driver.adb = new ADB();
+        sandbox.stub(driver.adb, 'uninstallApk').withArgs('app.bundle.id1').returns(true);
+        mocks.helpers
+          .expects('uninstallOtherPackages')
+          .once()
+          .withArgs(driver.adb, [uninstallOtherPackages], [SETTINGS_HELPER_PKG_ID]);
+        await driver.initAUT();
+        mocks.helpers.verify();
+      });
 
-    it('should uninstall multiple packages "uninstallOtherPackages" if set in capabilities', async function () {
-      const uninstallOtherPackages = ['app.bundle.id1', 'app.bundle.id2'];
-      driver.opts = {
-        appPackage: 'app.package',
-        appActivity: 'act',
-        fullReset: false,
-        fastReset: false,
-        uninstallOtherPackages: `["${uninstallOtherPackages[0]}", "${uninstallOtherPackages[1]}"]`,
-      };
-      driver.adb = new ADB();
-      sandbox.stub(driver.adb, 'uninstallApk')
-        .returns(true);
-      mocks.helpers.expects('uninstallOtherPackages').once().withArgs(driver.adb, uninstallOtherPackages, [SETTINGS_HELPER_PKG_ID]);
-      await driver.initAUT();
-      mocks.helpers.verify();
-    });
+      it('should uninstall multiple packages "uninstallOtherPackages" if set in capabilities', async function () {
+        const uninstallOtherPackages = ['app.bundle.id1', 'app.bundle.id2'];
+        driver.opts = {
+          appPackage: 'app.package',
+          appActivity: 'act',
+          fullReset: false,
+          fastReset: false,
+          uninstallOtherPackages: `["${uninstallOtherPackages[0]}", "${uninstallOtherPackages[1]}"]`,
+        };
+        driver.adb = new ADB();
+        sandbox.stub(driver.adb, 'uninstallApk').returns(true);
+        mocks.helpers
+          .expects('uninstallOtherPackages')
+          .once()
+          .withArgs(driver.adb, uninstallOtherPackages, [SETTINGS_HELPER_PKG_ID]);
+        await driver.initAUT();
+        mocks.helpers.verify();
+      });
 
-    it('get all 3rd party packages', async function () {
-      driver.adb = new ADB();
-      sandbox.stub(driver.adb, 'shell')
-        .returns('package:app.bundle.id1\npackage:io.appium.settings\npackage:io.appium.uiautomator2.server\npackage:io.appium.uiautomator2.server.test\n');
-      (await helpers.getThirdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID]))
-        .should.eql(['app.bundle.id1', 'io.appium.uiautomator2.server', 'io.appium.uiautomator2.server.test']);
-    });
+      it('get all 3rd party packages', async function () {
+        driver.adb = new ADB();
+        sandbox
+          .stub(driver.adb, 'shell')
+          .returns(
+            'package:app.bundle.id1\npackage:io.appium.settings\npackage:io.appium.uiautomator2.server\npackage:io.appium.uiautomator2.server.test\n'
+          );
+        (await helpers.getThirdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID])).should.eql([
+          'app.bundle.id1',
+          'io.appium.uiautomator2.server',
+          'io.appium.uiautomator2.server.test',
+        ]);
+      });
 
-    it('get all 3rd party packages with multiple package filter', async function () {
-      driver.adb = new ADB();
-      sandbox.stub(driver.adb, 'shell')
-        .returns('package:app.bundle.id1\npackage:io.appium.settings\npackage:io.appium.uiautomator2.server\npackage:io.appium.uiautomator2.server.test\n');
-      (await helpers.getThirdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID, 'io.appium.uiautomator2.server']))
-        .should.eql(['app.bundle.id1', 'io.appium.uiautomator2.server.test']);
-    });
+      it('get all 3rd party packages with multiple package filter', async function () {
+        driver.adb = new ADB();
+        sandbox
+          .stub(driver.adb, 'shell')
+          .returns(
+            'package:app.bundle.id1\npackage:io.appium.settings\npackage:io.appium.uiautomator2.server\npackage:io.appium.uiautomator2.server.test\n'
+          );
+        (
+          await helpers.getThirdPartyPackages(driver.adb, [
+            SETTINGS_HELPER_PKG_ID,
+            'io.appium.uiautomator2.server',
+          ])
+        ).should.eql(['app.bundle.id1', 'io.appium.uiautomator2.server.test']);
+      });
 
-    it('get no 3rd party packages', async function () {
-      driver.adb = new ADB();
-      sandbox.stub(driver.adb, 'shell').throws('');
-      (await helpers.getThirdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID]))
-        .should.eql([]);
-    });
-  }));
+      it('get no 3rd party packages', async function () {
+        driver.adb = new ADB();
+        sandbox.stub(driver.adb, 'shell').throws('');
+        (await helpers.getThirdPartyPackages(driver.adb, [SETTINGS_HELPER_PKG_ID])).should.eql([]);
+      });
+    })
+  );
   describe('startAndroidSession', function () {
     beforeEach(function () {
       driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.bootstrap = new helpers.bootstrap(driver.adb);
-      driver.settings = { update () {} };
+      driver.settings = {update() {}};
       driver.caps = {};
 
       // create a fake bootstrap because we can't mock
       // driver.bootstrap.<whatever> in advance
       let fakeBootstrap = {
-        start () {},
-        onUnexpectedShutdown: {catch () {}}
+        start() {},
+        onUnexpectedShutdown: {catch() {}},
       };
 
       sandbox.stub(helpers, 'initDevice');
@@ -563,15 +611,15 @@ describe('driver', function () {
       driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.bootstrap = new helpers.bootstrap(driver.adb);
-      driver.settings = { update () { } };
+      driver.settings = {update() {}};
       driver.caps = {};
 
       sandbox.stub(driver, 'setupNewChromedriver').returns({
         on: _.noop,
         proxyReq: _.noop,
         jwproxy: {
-          command: _.noop
-        }
+          command: _.noop,
+        },
       });
       sandbox.stub(driver, 'dismissChromeWelcome');
     });
@@ -581,7 +629,7 @@ describe('driver', function () {
     it('should call dismissChromeWelcome', async function () {
       driver.opts.browserName = 'Chrome';
       driver.opts.chromeOptions = {
-        'args': ['--no-first-run']
+        args: ['--no-first-run'],
       };
       await driver.startChromeSession();
       driver.dismissChromeWelcome.calledOnce.should.be.true;
@@ -596,33 +644,63 @@ describe('driver', function () {
         driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device'});
       }).to.throw(/must include/);
       expect(() => {
-        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', browserName: 'Netscape Navigator'});
+        driver.validateDesiredCaps({
+          platformName: 'Android',
+          deviceName: 'device',
+          browserName: 'Netscape Navigator',
+        });
       }).to.throw(/must include/);
     });
     it('should not throw an error if caps contain an app, package or valid browser', function () {
       expect(() => {
-        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk'});
+        driver.validateDesiredCaps({
+          platformName: 'Android',
+          deviceName: 'device',
+          app: '/path/to/some.apk',
+        });
       }).to.not.throw(Error);
       expect(() => {
-        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', browserName: 'Chrome'});
+        driver.validateDesiredCaps({
+          platformName: 'Android',
+          deviceName: 'device',
+          browserName: 'Chrome',
+        });
       }).to.not.throw(Error);
       expect(() => {
-        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', appPackage: 'some.app.package'});
+        driver.validateDesiredCaps({
+          platformName: 'Android',
+          deviceName: 'device',
+          appPackage: 'some.app.package',
+        });
       }).to.not.throw(/must include/);
     });
     it('should not be sensitive to platform name casing', function () {
       expect(() => {
-        driver.validateDesiredCaps({platformName: 'AnDrOiD', deviceName: 'device', app: '/path/to/some.apk'});
+        driver.validateDesiredCaps({
+          platformName: 'AnDrOiD',
+          deviceName: 'device',
+          app: '/path/to/some.apk',
+        });
       }).to.not.throw(Error);
     });
     it('should not throw an error if caps contain both an app and browser, for grid compatibility', function () {
       expect(() => {
-        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk', browserName: 'iPhone'});
+        driver.validateDesiredCaps({
+          platformName: 'Android',
+          deviceName: 'device',
+          app: '/path/to/some.apk',
+          browserName: 'iPhone',
+        });
       }).to.not.throw(Error);
     });
     it('should not throw an error if caps contain androidScreenshotPath capability', function () {
       expect(() => {
-        driver.validateDesiredCaps({platformName: 'Android', deviceName: 'device', app: '/path/to/some.apk', androidScreenshotPath: '/path/to/screenshotdir'});
+        driver.validateDesiredCaps({
+          platformName: 'Android',
+          deviceName: 'device',
+          app: '/path/to/some.apk',
+          androidScreenshotPath: '/path/to/screenshotdir',
+        });
       }).to.not.throw(Error);
     });
   });
@@ -639,7 +717,9 @@ describe('driver', function () {
         driver.proxyActive('abc').should.be.false;
       });
       it('should throw an error if session id is wrong', function () {
-        (() => { driver.proxyActive('aaa'); }).should.throw;
+        (() => {
+          driver.proxyActive('aaa');
+        }).should.throw;
       });
     });
 
@@ -653,7 +733,9 @@ describe('driver', function () {
         avoidList.should.eql(driver.jwpProxyAvoid);
       });
       it('should throw an error if session id is wrong', function () {
-        (() => { driver.getProxyAvoidList('aaa'); }).should.throw;
+        (() => {
+          driver.getProxyAvoidList('aaa');
+        }).should.throw;
       });
     });
 
@@ -665,7 +747,9 @@ describe('driver', function () {
         driver.canProxy('abc').should.be.false;
       });
       it('should throw an error if session id is wrong', function () {
-        (() => { driver.canProxy('aaa'); }).should.throw;
+        (() => {
+          driver.canProxy('aaa');
+        }).should.throw;
       });
     });
   });
