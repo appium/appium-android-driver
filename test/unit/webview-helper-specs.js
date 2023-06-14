@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import helpers from '../../lib/webview-helpers';
+import helpers from '../../lib/helpers/webview';
 import ADB from 'appium-adb';
 
 let sandbox = sinon.createSandbox();
@@ -17,13 +17,17 @@ describe('Webview Helpers', function () {
 
       beforeEach(async function () {
         sandbox.stub(adb, 'shell').callsFake(function () {
-          return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @webview_devtools_remote_123\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n';
+          return (
+            'Num       RefCount Protocol Flags    Type St Inode Path\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @webview_devtools_remote_123\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n'
+          );
         });
-        const webviewsMapping = await helpers.getWebViewsMapping(adb, {androidDeviceSocket: 'webview_devtools_remote_123'});
+        const webviewsMapping = await helpers.getWebViewsMapping(adb, {
+          androidDeviceSocket: 'webview_devtools_remote_123',
+        });
         webViews = helpers.parseWebviewNames(webviewsMapping);
       });
 
@@ -43,14 +47,18 @@ describe('Webview Helpers', function () {
 
       beforeEach(async function () {
         sandbox.stub(adb, 'shell').callsFake(function () {
-          return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @chrome_devtools_remote\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n';
+          return (
+            'Num       RefCount Protocol Flags    Type St Inode Path\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @chrome_devtools_remote\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n'
+          );
         });
 
-        const webviewsMapping = await helpers.getWebViewsMapping(adb, {androidDeviceSocket: 'chrome_devtools_remote'});
+        const webviewsMapping = await helpers.getWebViewsMapping(adb, {
+          androidDeviceSocket: 'chrome_devtools_remote',
+        });
         webViews = helpers.parseWebviewNames(webviewsMapping);
       });
 
@@ -70,10 +78,12 @@ describe('Webview Helpers', function () {
 
       beforeEach(async function () {
         sandbox.stub(adb, 'shell').callsFake(function () {
-          return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n';
+          return (
+            'Num       RefCount Protocol Flags    Type St Inode Path\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n'
+          );
         });
 
         const webviewsMapping = await helpers.getWebViewsMapping(adb);
@@ -95,11 +105,13 @@ describe('Webview Helpers', function () {
 
       beforeEach(function () {
         sandbox.stub(adb, 'shell').callsFake(function () {
-          return 'Num       RefCount Protocol Flags    Type St Inode Path\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @com.application.myapp_devtools_remote\n' +
-                '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n';
+          return (
+            'Num       RefCount Protocol Flags    Type St Inode Path\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @com.application.myapp_devtools_remote\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n'
+          );
         });
       });
 
@@ -122,7 +134,9 @@ describe('Webview Helpers', function () {
 
       describe('and the device socket is specified', function () {
         beforeEach(async function () {
-          const webviewsMapping = await helpers.getWebViewsMapping(adb, {androidDeviceSocket: 'com.application.myapp_devtools_remote'});
+          const webviewsMapping = await helpers.getWebViewsMapping(adb, {
+            androidDeviceSocket: 'com.application.myapp_devtools_remote',
+          });
           webViews = helpers.parseWebviewNames(webviewsMapping);
         });
 
@@ -139,7 +153,9 @@ describe('Webview Helpers', function () {
 
       describe('and the device socket is specified but is not found', function () {
         beforeEach(async function () {
-          const webviewsMapping = await helpers.getWebViewsMapping(adb, {androidDeviceSocket: 'com.application.myotherapp_devtools_remote'});
+          const webviewsMapping = await helpers.getWebViewsMapping(adb, {
+            androidDeviceSocket: 'com.application.myotherapp_devtools_remote',
+          });
           webViews = helpers.parseWebviewNames(webviewsMapping);
         });
 

@@ -1,13 +1,18 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import { default as webviewHelpers,
-         NATIVE_WIN, WEBVIEW_BASE, WEBVIEW_WIN, CHROMIUM_WIN } from '../../../lib/webview-helpers';
-import { setupNewChromedriver } from '../../../lib/commands/context';
+import {
+  default as webviewHelpers,
+  NATIVE_WIN,
+  WEBVIEW_BASE,
+  WEBVIEW_WIN,
+  CHROMIUM_WIN,
+} from '../../../lib/helpers/webview';
+import {setupNewChromedriver} from '../../../lib/commands/context';
 import AndroidDriver from '../../../lib/driver';
 import Chromedriver from 'appium-chromedriver';
 import PortFinder from 'portfinder';
-import { errors } from 'appium/driver';
+import {errors} from 'appium/driver';
 
 let driver;
 let stubbedChromedriver;
@@ -18,7 +23,8 @@ chai.use(chaiAsPromised);
 
 describe('Context', function () {
   beforeEach(function () {
-    sandbox.stub(PortFinder, 'getPort').callsFake(function (cb) { // eslint-disable-line promise/prefer-await-to-callbacks
+    sandbox.stub(PortFinder, 'getPort').callsFake(function (cb) {
+      // eslint-disable-line promise/prefer-await-to-callbacks
       return cb(null, 4444); // eslint-disable-line promise/prefer-await-to-callbacks
     });
     driver = new AndroidDriver();
@@ -69,28 +75,33 @@ describe('Context', function () {
   });
   describe('setContext', function () {
     beforeEach(function () {
-      sandbox.stub(webviewHelpers, 'getWebViewsMapping').returns(
-          [{'webviewName': 'DEFAULT'}, {'webviewName': 'WV'}, {'webviewName': 'ANOTHER'}]
-      );
+      sandbox
+        .stub(webviewHelpers, 'getWebViewsMapping')
+        .returns([{webviewName: 'DEFAULT'}, {webviewName: 'WV'}, {webviewName: 'ANOTHER'}]);
       sandbox.stub(driver, 'switchContext');
     });
     it('should switch to default context if name is null', async function () {
       sandbox.stub(driver, 'defaultContextName').returns('DEFAULT');
       await driver.setContext(null);
-      driver.switchContext.calledWithExactly(
-          'DEFAULT', [{'webviewName': 'DEFAULT'}, {'webviewName': 'WV'}, {'webviewName': 'ANOTHER'}]).should.be.true;
+      driver.switchContext.calledWithExactly('DEFAULT', [
+        {webviewName: 'DEFAULT'},
+        {webviewName: 'WV'},
+        {webviewName: 'ANOTHER'},
+      ]).should.be.true;
       driver.curContext.should.be.equal('DEFAULT');
     });
     it('should switch to default web view if name is WEBVIEW', async function () {
       sandbox.stub(driver, 'defaultWebviewName').returns('WV');
       await driver.setContext(WEBVIEW_WIN);
-      driver.switchContext.calledWithExactly(
-          'WV', [{'webviewName': 'DEFAULT'}, {'webviewName': 'WV'}, {'webviewName': 'ANOTHER'}]).should.be.true;
+      driver.switchContext.calledWithExactly('WV', [
+        {webviewName: 'DEFAULT'},
+        {webviewName: 'WV'},
+        {webviewName: 'ANOTHER'},
+      ]).should.be.true;
       driver.curContext.should.be.equal('WV');
     });
     it('should throw error if context does not exist', async function () {
-      await driver.setContext('fake')
-        .should.be.rejectedWith(errors.NoSuchContextError);
+      await driver.setContext('fake').should.be.rejectedWith(errors.NoSuchContextError);
     });
     it('should not switch to context if already in it', async function () {
       driver.curContext = 'ANOTHER';
@@ -109,7 +120,8 @@ describe('Context', function () {
     it('should start chrome driver proxy if requested context is webview', async function () {
       driver.isChromedriverContext.returns(true);
       await driver.switchContext('context', ['current_cntx', 'context']);
-      driver.startChromedriverProxy.calledWithExactly('context', ['current_cntx', 'context']).should.be.true;
+      driver.startChromedriverProxy.calledWithExactly('context', ['current_cntx', 'context']).should
+        .be.true;
     });
     it('should stop chromedriver proxy if current context is webview and requested context is not', async function () {
       driver.opts = {recreateChromeDriverSessions: true};
@@ -128,8 +140,7 @@ describe('Context', function () {
     it('should throw error if requested and current context are not webview', async function () {
       driver.isChromedriverContext.withArgs('requested_cntx').returns(false);
       driver.isChromedriverContext.withArgs('current_cntx').returns(false);
-      await driver.switchContext('requested_cntx')
-        .should.be.rejectedWith(/switching to context/);
+      await driver.switchContext('requested_cntx').should.be.rejectedWith(/switching to context/);
     });
   });
   describe('defaultContextName', function () {
@@ -160,8 +171,9 @@ describe('Context', function () {
     it('should start new chromedriver session', async function () {
       await driver.startChromedriverProxy('WEBVIEW_1');
       driver.sessionChromedrivers.WEBVIEW_1.should.be.equal(driver.chromedriver);
-      driver.chromedriver.start.getCall(0).args[0]
-        .chromeOptions.androidDeviceSerial.should.be.equal('device_id');
+      driver.chromedriver.start
+        .getCall(0)
+        .args[0].chromeOptions.androidDeviceSerial.should.be.equal('device_id');
       driver.chromedriver.proxyPort.should.be.equal(4444);
       driver.chromedriver.proxyReq.bind.calledWithExactly(driver.chromedriver);
       driver.proxyReqRes.should.be.equal('proxy');
@@ -171,26 +183,28 @@ describe('Context', function () {
       driver.opts.appPackage = 'pkg';
       driver.opts.extractChromeAndroidPackageFromContextName = true;
       await driver.startChromedriverProxy('WEBVIEW_com.pkg');
-      driver.chromedriver.start.getCall(0).args[0]
-        .chromeOptions.should.be.deep.include({androidPackage: 'com.pkg'});
+      driver.chromedriver.start
+        .getCall(0)
+        .args[0].chromeOptions.should.be.deep.include({androidPackage: 'com.pkg'});
     });
     it('should use package from opts if package extracted from context is empty', async function () {
       driver.opts.appPackage = 'pkg';
       driver.opts.extractChromeAndroidPackageFromContextName = true;
       await driver.startChromedriverProxy('WEBVIEW_');
-      driver.chromedriver.start.getCall(0).args[0]
-        .chromeOptions.should.be.deep.include({androidPackage: 'pkg'});
+      driver.chromedriver.start
+        .getCall(0)
+        .args[0].chromeOptions.should.be.deep.include({androidPackage: 'pkg'});
     });
     it('should handle chromedriver event with STATE_STOPPED state', async function () {
       await driver.startChromedriverProxy('WEBVIEW_1');
-      await driver.chromedriver.emit(Chromedriver.EVENT_CHANGED,
-        {state: Chromedriver.STATE_STOPPED});
+      await driver.chromedriver.emit(Chromedriver.EVENT_CHANGED, {
+        state: Chromedriver.STATE_STOPPED,
+      });
       driver.onChromedriverStop.calledWithExactly('WEBVIEW_1').should.be.true;
     });
     it('should ignore events if status is not STATE_STOPPED', async function () {
       await driver.startChromedriverProxy('WEBVIEW_1');
-      await driver.chromedriver.emit(Chromedriver.EVENT_CHANGED,
-        {state: 'unhandled_state'});
+      await driver.chromedriver.emit(Chromedriver.EVENT_CHANGED, {state: 'unhandled_state'});
       driver.onChromedriverStop.notCalled.should.be.true;
     });
     it('should reconnect if session already exists', async function () {
@@ -233,12 +247,15 @@ describe('Context', function () {
   });
   describe('stopChromedriverProxies', function () {
     it('should stop all chromedriver', async function () {
-      driver.sessionChromedrivers = {WEBVIEW_1: stubbedChromedriver, WEBVIEW_2: stubbedChromedriver};
+      driver.sessionChromedrivers = {
+        WEBVIEW_1: stubbedChromedriver,
+        WEBVIEW_2: stubbedChromedriver,
+      };
       sandbox.stub(driver, 'suspendChromedriverProxy');
       await driver.stopChromedriverProxies();
       driver.suspendChromedriverProxy.calledOnce.should.be.true;
-      stubbedChromedriver.removeAllListeners
-        .calledWithExactly(Chromedriver.EVENT_CHANGED).should.be.true;
+      stubbedChromedriver.removeAllListeners.calledWithExactly(Chromedriver.EVENT_CHANGED).should.be
+        .true;
       stubbedChromedriver.removeAllListeners.calledTwice.should.be.true;
       stubbedChromedriver.stop.calledTwice.should.be.true;
       driver.sessionChromedrivers.should.be.empty;
@@ -253,8 +270,7 @@ describe('Context', function () {
   describe('setupNewChromedriver', function () {
     it('should be able to set app package from chrome options', async function () {
       let chromedriver = await setupNewChromedriver({chromeOptions: {androidPackage: 'apkg'}});
-      chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage
-        .should.be.equal('apkg');
+      chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage.should.be.equal('apkg');
     });
     it('should use prefixed chromeOptions', async function () {
       let chromedriver = await setupNewChromedriver({
@@ -262,8 +278,7 @@ describe('Context', function () {
           androidPackage: 'apkg',
         },
       });
-      chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage
-        .should.be.equal('apkg');
+      chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage.should.be.equal('apkg');
     });
     it('should merge chromeOptions', async function () {
       let chromedriver = await setupNewChromedriver({
@@ -277,38 +292,36 @@ describe('Context', function () {
           androidActivity: 'aact',
         },
       });
-      chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage
-        .should.be.equal('apkg');
-      chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity
-        .should.be.equal('aact');
-      chromedriver.start.getCall(0).args[0].chromeOptions.androidWaitPackage
-        .should.be.equal('bpkg');
+      chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage.should.be.equal('apkg');
+      chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity.should.be.equal('aact');
+      chromedriver.start
+        .getCall(0)
+        .args[0].chromeOptions.androidWaitPackage.should.be.equal('bpkg');
     });
     it('should be able to set androidActivity chrome option', async function () {
       let chromedriver = await setupNewChromedriver({chromeAndroidActivity: 'act'});
-      chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity
-        .should.be.equal('act');
+      chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity.should.be.equal('act');
     });
     it('should be able to set androidProcess chrome option', async function () {
       let chromedriver = await setupNewChromedriver({chromeAndroidProcess: 'proc'});
-      chromedriver.start.getCall(0).args[0].chromeOptions.androidProcess
-        .should.be.equal('proc');
+      chromedriver.start.getCall(0).args[0].chromeOptions.androidProcess.should.be.equal('proc');
     });
     it('should be able to set loggingPrefs capability', async function () {
       let chromedriver = await setupNewChromedriver({enablePerformanceLogging: true});
-      chromedriver.start.getCall(0).args[0].loggingPrefs
-        .should.deep.equal({performance: 'ALL'});
+      chromedriver.start.getCall(0).args[0].loggingPrefs.should.deep.equal({performance: 'ALL'});
     });
     it('should set androidActivity to appActivity if browser name is chromium-webview', async function () {
-      let chromedriver = await setupNewChromedriver({browserName: 'chromium-webview',
-                                                     appActivity: 'app_act'});
-      chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity
-        .should.be.equal('app_act');
+      let chromedriver = await setupNewChromedriver({
+        browserName: 'chromium-webview',
+        appActivity: 'app_act',
+      });
+      chromedriver.start
+        .getCall(0)
+        .args[0].chromeOptions.androidActivity.should.be.equal('app_act');
     });
     it('should be able to set loggingPrefs capability', async function () {
       let chromedriver = await setupNewChromedriver({pageLoadStrategy: 'strategy'});
-      chromedriver.start.getCall(0).args[0].pageLoadStrategy
-        .should.be.equal('strategy');
+      chromedriver.start.getCall(0).args[0].pageLoadStrategy.should.be.equal('strategy');
     });
   });
 });
