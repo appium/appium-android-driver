@@ -1,11 +1,18 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import AndroidDriver from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver';
 import {
-  SUPPORTED_PERFORMANCE_DATA_TYPES, NETWORK_KEYS, CPU_KEYS, BATTERY_KEYS,
-  MEMORY_KEYS, getBatteryInfo, getCPUInfo, getMemoryInfo, getNetworkTrafficInfo,
-} from '../../../lib/commands/performance.js';
+  SUPPORTED_PERFORMANCE_DATA_TYPES,
+  NETWORK_KEYS,
+  CPU_KEYS,
+  BATTERY_KEYS,
+  MEMORY_KEYS,
+  getBatteryInfo,
+  getCPUInfo,
+  getMemoryInfo,
+  getNetworkTrafficInfo,
+} from '../../../lib/commands/performance';
 import _ from 'lodash';
 import ADB from 'appium-adb';
 import * as asyncbox from 'asyncbox';
@@ -35,15 +42,14 @@ describe('performance data', function () {
     sandbox.restore();
   });
   describe('getPerformanceDataTypes', function () {
-    it('should get the list of available getPerformance data type', function () {
-      let types = driver.getPerformanceDataTypes();
+    it('should get the list of available getPerformance data type', async function () {
+      let types = await driver.getPerformanceDataTypes();
       types.should.eql(_.keys(SUPPORTED_PERFORMANCE_DATA_TYPES));
     });
   });
   describe('getCPUInfo', function () {
     it('should return cpu data', async function () {
-      adb.shell.withArgs(['dumpsys', 'cpuinfo'])
-        .returns(`Load: 8.85 / 8.85 / 7.96
+      adb.shell.withArgs(['dumpsys', 'cpuinfo']).returns(`Load: 8.85 / 8.85 / 7.96
       CPU usage from 339020ms to 38831ms ago (2020-09-05 12:55:08.950 to 2020-09-05 13:00:09.140) with 99% awake:
         0.6% 811/com.android.systemui: 0.3% user + 0.3% kernel / faults: 564 minor 1 major
         0.6% 282/android.hardware.bluetooth@1.1-service.sim: 0% user + 0.6% kernel
@@ -97,23 +103,35 @@ describe('performance data', function () {
   });
   describe('getBatteryInfo', function () {
     it('should return battery info', async function () {
-      adb.shell.withArgs(['dumpsys', 'battery', '|', 'grep', 'level'])
-        .returns('  level: 47');
-      await getBatteryInfo.bind(driver)().should.become([BATTERY_KEYS, ['47']]);
+      adb.shell.withArgs(['dumpsys', 'battery', '|', 'grep', 'level']).returns('  level: 47');
+      await getBatteryInfo
+        .bind(driver)()
+        .should.become([BATTERY_KEYS, ['47']]);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
     it('should throw error if data is not valid', async function () {
       adb.shell.returns('invalid data');
-      await getBatteryInfo.bind(driver)(1).should.be
-        .rejectedWith(/Unable to parse battery data/);
+      await getBatteryInfo
+        .bind(driver)(1)
+        .should.be.rejectedWith(/Unable to parse battery data/);
     });
     it('should throw error if no data', async function () {
       adb.shell.returns(null);
-      await getBatteryInfo.bind(driver)(1).should.be.rejectedWith(/No data from dumpsys/);
+      await getBatteryInfo
+        .bind(driver)(1)
+        .should.be.rejectedWith(/No data from dumpsys/);
     });
   });
   describe('getMemoryInfo', function () {
-    const shellArgs = ['dumpsys', 'meminfo', `'${PACKAGE_NAME}'`, '|', 'grep', '-E', "'Native|Dalvik|EGL|GL|TOTAL'"];
+    const shellArgs = [
+      'dumpsys',
+      'meminfo',
+      `'${PACKAGE_NAME}'`,
+      '|',
+      'grep',
+      '-E',
+      "'Native|Dalvik|EGL|GL|TOTAL'",
+    ];
     const dumpsysDataAPI30 = `
                          Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
                        Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
@@ -145,52 +163,75 @@ describe('performance data', function () {
                  EGL      109      555      104      555        0        0
                   GL      110      555      105      555        0        0
                TOTAL      106      555      101      555      555      555`;
-    const expectedResult = [MEMORY_KEYS,
+    const expectedResult = [
+      MEMORY_KEYS,
       [
-        '101', '102', '103', '104', '105', // private dirty total|native|dalvik|egl|gl
-        '106', '107', '108', '109', '110', // pss           total|native|dalvik|egl|gl
-        '111', '112', // native        heap_alloc|heap_size
-        undefined, undefined, undefined
+        '101',
+        '102',
+        '103',
+        '104',
+        '105', // private dirty total|native|dalvik|egl|gl
+        '106',
+        '107',
+        '108',
+        '109',
+        '110', // pss           total|native|dalvik|egl|gl
+        '111',
+        '112', // native        heap_alloc|heap_size
+        undefined,
+        undefined,
+        undefined,
       ],
     ];
     it('should return memory info for API>=30', async function () {
-      const expectedResult30 = [MEMORY_KEYS,
+      const expectedResult30 = [
+        MEMORY_KEYS,
         [
-          '101', '102', '103', '104', '105', // private dirty total|native|dalvik|egl|gl
-          '106', '107', '108', '109', '110', // pss           total|native|dalvik|egl|gl
-          '111', '112', // native        heap_alloc|heap_size
-          '120', '121', '127', // Rss        |native|dalvik|total
+          '101',
+          '102',
+          '103',
+          '104',
+          '105', // private dirty total|native|dalvik|egl|gl
+          '106',
+          '107',
+          '108',
+          '109',
+          '110', // pss           total|native|dalvik|egl|gl
+          '111',
+          '112', // native        heap_alloc|heap_size
+          '120',
+          '121',
+          '127', // Rss        |native|dalvik|total
         ],
       ];
       adb.getApiLevel.returns(30);
       adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI30);
-      (await getMemoryInfo.bind(driver)(PACKAGE_NAME)).should.be.deep
-        .equal(expectedResult30);
+      (await getMemoryInfo.bind(driver)(PACKAGE_NAME)).should.be.deep.equal(expectedResult30);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
     it('should return memory info for 18<API<30', async function () {
       adb.getApiLevel.returns(19);
       adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI19);
-      (await getMemoryInfo.bind(driver)(PACKAGE_NAME)).should.be.deep
-        .equal(expectedResult);
+      (await getMemoryInfo.bind(driver)(PACKAGE_NAME)).should.be.deep.equal(expectedResult);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
     it('should return memory info for API<=18', async function () {
       adb.getApiLevel.returns(18);
       adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI18);
-      (await getMemoryInfo.bind(driver)(PACKAGE_NAME)).should.be.deep
-        .equal(expectedResult);
+      (await getMemoryInfo.bind(driver)(PACKAGE_NAME)).should.be.deep.equal(expectedResult);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
     it('should throw error if data is not valid', async function () {
       adb.shell.returns('TOTAL nodex nodex nodex nodex nodex nodex nodex');
-      await getMemoryInfo.bind(driver)(PACKAGE_NAME, 1).should.be
-        .rejectedWith(/Unable to parse memory data/);
+      await getMemoryInfo
+        .bind(driver)(PACKAGE_NAME, 1)
+        .should.be.rejectedWith(/Unable to parse memory data/);
     });
     it('should throw error if no data', async function () {
       adb.shell.returns(null);
-      await getMemoryInfo.bind(driver)(PACKAGE_NAME, 1).should.be
-        .rejectedWith(/No data from dumpsys/);
+      await getMemoryInfo
+        .bind(driver)(PACKAGE_NAME, 1)
+        .should.be.rejectedWith(/No data from dumpsys/);
     });
   });
   describe('getNetworkTrafficInfo', function () {
@@ -201,30 +242,32 @@ describe('performance data', function () {
         History since boot:
         ident=[[type=MOBILE, subType=COMBINED, subscriberId=555]] uid=-1 set=ALL tag=0x0
           NetworkStatsHistory: bucketDuration=dur`;
-    const data = header + `
+    const data =
+      header +
+      `
             st=start1 rb=rb1 rp=rp1 tb=tb1 tp=tp1 op=op1
             st=start2 rb=rb2 rp=rp2 tb=tb2 tp=tp2 op=op2`;
-    const dataInOldFormat = header + `
+    const dataInOldFormat =
+      header +
+      `
             bucketStart=start1 activeTime=time1 rxBytes=rb1 rxPackets=rp1 txBytes=tb1 txPackets=tp1 operations=op1
             bucketStart=start2 activeTime=time2 rxBytes=rb2 rxPackets=rp2 txBytes=tb2 txPackets=tp2 operations=op2`;
     it('should return network stats', async function () {
       adb.shell.withArgs(shellArgs).returns(data);
-      (await getNetworkTrafficInfo.bind(driver)()).should.be.deep
-        .equal([
-          NETWORK_KEYS[1],
-          ['start1', undefined, 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
-          ['start2', undefined, 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur']
-        ]);
+      (await getNetworkTrafficInfo.bind(driver)()).should.be.deep.equal([
+        NETWORK_KEYS[1],
+        ['start1', undefined, 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
+        ['start2', undefined, 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur'],
+      ]);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
     it('should be able to parse data in old format', async function () {
       adb.shell.withArgs(shellArgs).returns(dataInOldFormat);
-      (await getNetworkTrafficInfo.bind(driver)()).should.be.deep
-        .equal([
-          NETWORK_KEYS[0],
-          ['start1', 'time1', 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
-          ['start2', 'time2', 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur']
-        ]);
+      (await getNetworkTrafficInfo.bind(driver)()).should.be.deep.equal([
+        NETWORK_KEYS[0],
+        ['start1', 'time1', 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
+        ['start2', 'time2', 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur'],
+      ]);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
     it('should be fulfilled if history is empty', async function () {
@@ -233,13 +276,15 @@ describe('performance data', function () {
     });
     it('should throw error if data is not valid', async function () {
       adb.shell.returns('nodex');
-      await getNetworkTrafficInfo.bind(driver)(1).should.be
-        .rejectedWith(/Unable to parse network traffic data/);
+      await getNetworkTrafficInfo
+        .bind(driver)(1)
+        .should.be.rejectedWith(/Unable to parse network traffic data/);
     });
     it('should throw error if no data', async function () {
       adb.shell.returns(null);
-      await getNetworkTrafficInfo.bind(driver)(1).should.be
-        .rejectedWith(/No data from dumpsys/);
+      await getNetworkTrafficInfo
+        .bind(driver)(1)
+        .should.be.rejectedWith(/No data from dumpsys/);
     });
   });
 });

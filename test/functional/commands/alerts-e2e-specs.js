@@ -1,8 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../lib/driver';
-import { DEFAULT_CAPS } from '../capabilities';
-
+import {AndroidDriver} from '../../../lib/driver';
+import {DEFAULT_CAPS} from '../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);

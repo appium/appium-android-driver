@@ -1,15 +1,15 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../lib/driver';
-import { DEFAULT_CAPS, amendCapabilities } from '../capabilities';
-import { fs, tempDir, zip } from '@appium/support';
+import {AndroidDriver} from '../../../lib/driver';
+import {DEFAULT_CAPS, amendCapabilities} from '../capabilities';
+import {fs, tempDir, zip} from '@appium/support';
 import path from 'path';
 
 chai.should();
 chai.use(chaiAsPromised);
 
 let caps = amendCapabilities(DEFAULT_CAPS, {
-  'appium:autoLaunch': false
+  'appium:autoLaunch': false,
 });
 
 describe('file movement', function () {
@@ -22,7 +22,7 @@ describe('file movement', function () {
     await driver.deleteSession();
   });
 
-  function getRandomDir () {
+  function getRandomDir() {
     return `/data/local/tmp/test${Math.random()}`;
   }
 

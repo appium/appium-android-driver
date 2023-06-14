@@ -1,6 +1,6 @@
 {
   "name": "appium-android-driver",
-  "version": "5.14.7",
+  "version": "5.14.0-alpha.3",
   "description": "Android UiAutomator and Chrome support for Appium",
   "keywords": [
     "appium",
@@ -19,18 +19,18 @@
   },
   "license": "Apache-2.0",
   "author": "Appium Contributors",
-  "main": "./build/index.js",
+  "main": "./build/lib/index.js",
   "bin": {},
   "directories": {
     "lib": "lib"
   },
   "files": [
-    "index.js",
     "lib",
-    "build/index.js",
-    "build/lib",
+    "build",
     "bootstrap/bin/AppiumBootstrap.jar",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "!build/test",
+    "!build/tsconfig.tsbuildinfo"
   ],
   "scripts": {
     "build": "tsc -b",
@@ -41,8 +41,8 @@
     "lint:commit": "commitlint",
     "lint:fix": "npm run lint -- --fix",
     "lint:staged": "lint-staged",
-    "prepare": "husky install && npm run rebuild",
-    "rebuild": "npm run clean && npm run build",
+    "prepare": "husky install; npm run rebuild",
+    "rebuild": "npm run clean; npm run build",
     "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\""
   },
   "lint-staged": {
@@ -57,8 +57,8 @@
     "singleQuote": true
   },
   "dependencies": {
-    "appium-adb": "^9.11.2",
-    "appium-chromedriver": "^5.2.0",
+    "appium-adb": "^9.12.0",
+    "appium-chromedriver": "^5.5.1",
     "asyncbox": "^2.8.0",
     "axios": "^1.x",
     "bluebird": "^3.4.7",
@@ -73,12 +73,14 @@
     "shared-preferences-builder": "^0.x",
     "source-map-support": "^0.x",
     "teen_process": "^2.0.0",
+    "type-fest": "^3.11.1",
     "ws": "^8.0.0"
   },
   "devDependencies": {
-    "@appium/eslint-config-appium": "^6.0.0",
-    "@appium/support": "^4.0.1",
-    "@appium/test-support": "^3.0.0",
+    "@appium/eslint-config-appium": "^8.0.4",
+    "@appium/eslint-config-appium-ts": "^0.3.1",
+    "@appium/support": "^4.1.2",
+    "@appium/test-support": "^3.0.20",
     "@appium/tsconfig": "^0.3.0",
     "@appium/types": "^0.13.4",
     "@commitlint/cli": "^17.6.3",
@@ -97,16 +99,20 @@
     "@types/source-map-support": "^0.5.6",
     "@types/teen_process": "^2.0.0",
     "@types/ws": "^8.5.4",
+    "@typescript-eslint/eslint-plugin": "^5.59.5",
+    "@typescript-eslint/parser": "^5.59.5",
     "@xmldom/xmldom": "^0.x",
     "android-apidemos": "^4.1.0",
+    "appium": "^2.0.0-rc.5",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "conventional-changelog-conventionalcommits": "^7.0.1",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-mocha": "^9.0.0",
-    "eslint-plugin-promise": "^6.0.0",
+    "conventional-changelog-conventionalcommits": "^6.0.0",
+    "eslint": "^8.40.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-import-resolver-typescript": "^3.5.5",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-mocha": "^10.1.0",
+    "eslint-plugin-promise": "^6.1.1",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.0",
     "mocha": "^10.0.0",
@@ -124,5 +130,6 @@
   "engines": {
     "node": ">=14",
     "npm": ">=8"
-  }
+  },
+  "types": "./build/lib/index.d.ts"
 }

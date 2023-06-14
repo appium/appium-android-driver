@@ -4,16 +4,15 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../lib/driver';
-import { DEFAULT_CAPS, amendCapabilities } from '../capabilities';
-
+import {AndroidDriver} from '../../../lib/driver';
+import {DEFAULT_CAPS, amendCapabilities} from '../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
 
 let driver;
 let caps = amendCapabilities(DEFAULT_CAPS, {
-  'appium:appActivity': '.view.TextFields'
+  'appium:appActivity': '.view.TextFields',
 });
 
 describe.skip('network connection', function () {
@@ -26,7 +25,7 @@ describe.skip('network connection', function () {
     await driver.deleteSession();
   });
   describe('setNetworkConnection @skip-ci', function () {
-    function test (value) {
+    function test(value) {
       it(`should be able to set to ${value}`, async function () {
         await driver.setNetworkConnection(value);
         await driver.getNetworkConnection().should.eventually.equal(value);

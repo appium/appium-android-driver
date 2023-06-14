@@ -1,11 +1,10 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
-import { retryInterval } from 'asyncbox';
-import AndroidDriver from '../../../../lib/driver';
+import {retryInterval} from 'asyncbox';
+import {AndroidDriver} from '../../../../lib/driver';
 import B from 'bluebird';
-import { DEFAULT_CAPS, amendCapabilities } from '../../capabilities';
-
+import {DEFAULT_CAPS, amendCapabilities} from '../../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -25,22 +24,22 @@ const defaultAsciiCaps = amendCapabilities(DEFAULT_CAPS, {
 
 const defaultUnicodeCaps = amendCapabilities(defaultAsciiCaps, {
   'appium:unicodeKeyboard': true,
-  'appium:resetKeyboard': true
+  'appium:resetKeyboard': true,
 });
 
-function deSamsungify (text) {
+function deSamsungify(text) {
   // For samsung S5 text is appended with ". Editing."
   return text.replace('. Editing.', '');
 }
 
-async function getElement (driver, className) {
+async function getElement(driver, className) {
   const els = await driver.findElements('class name', className);
   els.should.have.length.at.least(1);
   let el = _.last(els);
   return el.ELEMENT;
 }
 
-async function runTextEditTest (driver, testText, keys = false) {
+async function runTextEditTest(driver, testText, keys = false) {
   let el = await getElement(driver, EDITTEXT_CLASS);
   await driver.clear(el);
 
@@ -60,7 +59,7 @@ async function runTextEditTest (driver, testText, keys = false) {
  * positives from previously run tests. The page has a single button that
  * removes all text from within the main TextView.
  */
-async function clearKeyEvents (driver) {
+async function clearKeyEvents(driver) {
   let el = await getElement(driver, BUTTON_CLASS);
   driver.click(el);
 
@@ -68,7 +67,7 @@ async function clearKeyEvents (driver) {
   await B.delay(500);
 }
 
-async function runCombinationKeyEventTest (driver) {
+async function runCombinationKeyEventTest(driver) {
   let runTest = async function () {
     await driver.pressKeyCode(29, 193);
     let el = await getElement(driver, TEXTVIEW_CLASS);
@@ -86,7 +85,7 @@ async function runCombinationKeyEventTest (driver) {
   text.should.include('metaState=META_SHIFT_ON');
 }
 
-async function runKeyEventTest (driver) {
+async function runKeyEventTest(driver) {
   let runTest = async function () {
     await driver.pressKeyCode(82);
     let el = await getElement(driver, TEXTVIEW_CLASS);
@@ -106,18 +105,21 @@ async function runKeyEventTest (driver) {
 
 const tests = [
   {label: 'editing a text field', text: 'Life, the Universe and Everything.'},
-  {label: 'sending \'&-\'', text: '&-'},
-  {label: 'sending \'&\' and \'-\' in other text', text: 'In the mid-1990s he ate fish & chips as mayor-elect.'},
-  {label: 'sending \'-\' in text', text: 'Super-test.'},
+  {label: "sending '&-'", text: '&-'},
+  {
+    label: "sending '&' and '-' in other text",
+    text: 'In the mid-1990s he ate fish & chips as mayor-elect.',
+  },
+  {label: "sending '-' in text", text: 'Super-test.'},
   {label: 'sending numbers', text: '0123456789'},
 ];
 
 const unicodeTests = [
-  {label: 'should be able to send \'-\' in unicode text', text: 'परीक्षा-परीक्षण'},
-  {label: 'should be able to send \'&\' in text', text: 'Fish & chips'},
-  {label: 'should be able to send \'&\' in unicode text', text: 'Mīna & chips'},
+  {label: "should be able to send '-' in unicode text", text: 'परीक्षा-परीक्षण'},
+  {label: "should be able to send '&' in text", text: 'Fish & chips'},
+  {label: "should be able to send '&' in unicode text", text: 'Mīna & chips'},
   {label: 'should be able to send roman characters with diacritics', text: 'Áé Œ ù ḍ'},
-  {label: 'should be able to send a \'u\' with an umlaut', text: 'ü'},
+  {label: "should be able to send a 'u' with an umlaut", text: 'ü'},
 ];
 
 const languageTests = [
@@ -127,10 +129,10 @@ const languageTests = [
   {label: 'should be able to send Hebrew', text: 'בדיקות'},
 ];
 
-async function ensureUnlocked (driver) {
+async function ensureUnlocked(driver) {
   // on Travis the device is sometimes not unlocked
   await retryInterval(10, 1000, async function () {
-    if (!await driver.isLocked()) {
+    if (!(await driver.isLocked())) {
       return;
     }
     console.log(`\n\nDevice locked. Attempting to unlock`); // eslint-disable-line

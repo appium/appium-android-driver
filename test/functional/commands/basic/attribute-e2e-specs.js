@@ -1,8 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../../lib/driver';
-import { DEFAULT_CAPS } from '../../capabilities';
-
+import {AndroidDriver} from '../../../../lib/driver';
+import {DEFAULT_CAPS} from '../../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -21,7 +20,9 @@ describe('apidemo - attributes', function () {
     await driver.deleteSession();
   });
   it('should be able to find resourceId attribute', async function () {
-    await driver.getAttribute('resourceId', animationEl).should.eventually.become('android:id/text1');
+    await driver
+      .getAttribute('resourceId', animationEl)
+      .should.eventually.become('android:id/text1');
   });
   it('should be able to find text attribute', async function () {
     await driver.getAttribute('text', animationEl).should.eventually.become('Animation');
@@ -37,7 +38,9 @@ describe('apidemo - attributes', function () {
     await driver.back();
   });
   it('should be able to find content description attribute', async function () {
-    await driver.getAttribute('contentDescription', animationEl).should.eventually.become('Animation');
+    await driver
+      .getAttribute('contentDescription', animationEl)
+      .should.eventually.become('Animation');
   });
   it('should be able to find displayed attribute', async function () {
     await driver.getAttribute('displayed', animationEl).should.eventually.become('true');

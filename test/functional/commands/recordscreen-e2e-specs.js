@@ -1,8 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../lib/driver';
-import { DEFAULT_CAPS, amendCapabilities } from '../capabilities';
-
+import {AndroidDriver} from '../../../lib/driver';
+import {DEFAULT_CAPS, amendCapabilities} from '../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -10,7 +9,7 @@ chai.use(chaiAsPromised);
 let driver;
 let caps = amendCapabilities(DEFAULT_CAPS, {
   'appium:appPackage': 'io.appium.android.apis',
-  'appium:appActivity': '.view.TextFields'
+  'appium:appActivity': '.view.TextFields',
 });
 
 describe('recording the screen', function () {
@@ -24,7 +23,7 @@ describe('recording the screen', function () {
   });
 
   it('should start and stop recording the screen', async function () {
-    if (await driver.isEmulator() || await driver.adb.getApiLevel() < 19) {
+    if ((await driver.isEmulator()) || (await driver.adb.getApiLevel()) < 19) {
       return this.skip();
     }
 

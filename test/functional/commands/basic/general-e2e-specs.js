@@ -1,8 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../../lib/driver';
-import { DEFAULT_CAPS, CONTACT_MANAGER_CAPS } from '../../capabilities';
-
+import {AndroidDriver} from '../../../../lib/driver';
+import {DEFAULT_CAPS, CONTACT_MANAGER_CAPS} from '../../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -28,7 +27,8 @@ describe('general', function () {
 
       await driver.startActivity(startAppPackage, startAppActivity);
 
-      let {appPackage: newAppPackage, appActivity: newAppActivity} = await driver.adb.getFocusedPackageAndActivity();
+      let {appPackage: newAppPackage, appActivity: newAppActivity} =
+        await driver.adb.getFocusedPackageAndActivity();
       newAppPackage.should.equal(startAppPackage);
       newAppActivity.should.equal(startAppActivity);
     });
@@ -37,7 +37,13 @@ describe('general', function () {
       let startAppActivity = 'io.appium.android.apis.app.HelloWorld';
       let startIntentCategory = 'appium.android.intent.category.SAMPLE_CODE';
 
-      await driver.startActivity(startAppPackage, startAppActivity, undefined, undefined, startIntentCategory);
+      await driver.startActivity(
+        startAppPackage,
+        startAppActivity,
+        undefined,
+        undefined,
+        startIntentCategory
+      );
 
       let {appActivity} = await driver.adb.getFocusedPackageAndActivity();
       appActivity.should.include('HelloWorld');
@@ -45,11 +51,17 @@ describe('general', function () {
     it('should be able to launch activity with dontStopAppOnReset = true', async function () {
       let startAppPackage = 'io.appium.android.apis';
       let startAppActivity = '.os.MorseCode';
-      await driver.startActivity(startAppPackage, startAppActivity,
-                                 startAppPackage, startAppActivity,
-                                 undefined, undefined,
-                                 undefined, undefined,
-                                 true);
+      await driver.startActivity(
+        startAppPackage,
+        startAppActivity,
+        startAppPackage,
+        startAppActivity,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
       let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
       appPackage.should.equal(startAppPackage);
       appActivity.should.equal(startAppActivity);
@@ -57,11 +69,17 @@ describe('general', function () {
     it('should be able to launch activity with dontStopAppOnReset = false', async function () {
       let startAppPackage = 'io.appium.android.apis';
       let startAppActivity = '.os.MorseCode';
-      await driver.startActivity(startAppPackage, startAppActivity,
-                                 startAppPackage, startAppActivity,
-                                 undefined, undefined,
-                                 undefined, undefined,
-                                 false);
+      await driver.startActivity(
+        startAppPackage,
+        startAppActivity,
+        startAppPackage,
+        startAppActivity,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        false
+      );
       let {appPackage, appActivity} = await driver.adb.getFocusedPackageAndActivity();
       appPackage.should.equal(startAppPackage);
       appActivity.should.equal(startAppActivity);
