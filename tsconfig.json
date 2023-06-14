@@ -3,11 +3,8 @@
   "extends": "@appium/tsconfig/tsconfig.json",
   "compilerOptions": {
     "outDir": "build",
-    "types": ["node", "mocha", "chai", "chai-as-promised", "sinon"]  
+    "types": ["node", "mocha", "chai", "chai-as-promised", "sinon"],
+    "strict": true
   },
-  "include": [
-    "index.js",
-    "lib",
-    "test"
-  ]
+  "include": ["index.js", "lib", "test"]
 }
