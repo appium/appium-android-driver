@@ -6,7 +6,7 @@
 import _ from 'lodash';
 import {mixin, type FindMixin} from './mixins';
 import {errors, isErrorType} from 'appium/driver';
-import type AndroidDriver from '../driver';
+import type {AndroidDriver} from '../driver';
 import type {Element} from '@appium/types';
 import type {FindElementOpts} from './types';
 import type AndroidBootstrap from '../bootstrap';

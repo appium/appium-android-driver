@@ -1,8 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../../lib/driver';
-import { DEFAULT_CAPS } from '../../capabilities';
-
+import {AndroidDriver} from '../../../../lib/driver';
+import {DEFAULT_CAPS} from '../../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -20,10 +19,14 @@ describe('Find - xpath', function () {
     await driver.deleteSession();
   });
   it('should throw when matching nothing', async function () {
-    await driver.findElement('xpath', '//whatthat').should.eventually.be.rejectedWith(/could not be located/);
+    await driver
+      .findElement('xpath', '//whatthat')
+      .should.eventually.be.rejectedWith(/could not be located/);
   });
   it('should throw with status 7 for hierarchy root', async function () {
-    await driver.findElement('xpath', '/*').should.eventually.be.rejectedWith(/could not be located/);
+    await driver
+      .findElement('xpath', '/*')
+      .should.eventually.be.rejectedWith(/could not be located/);
   });
   it('should find element by type', async function () {
     let el = await driver.findElement('xpath', `//${atv}`);

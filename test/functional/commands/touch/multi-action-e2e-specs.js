@@ -1,14 +1,13 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../../lib/driver';
-import { DEFAULT_CAPS, amendCapabilities } from '../../capabilities';
-
+import {AndroidDriver} from '../../../../lib/driver';
+import {DEFAULT_CAPS, amendCapabilities} from '../../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
 
 let caps = amendCapabilities(DEFAULT_CAPS, {
-  'appium:appActivity': '.view.SplitTouchView'
+  'appium:appActivity': '.view.SplitTouchView',
 });
 
 describe('apidemo - touch - multi-actions', function () {
@@ -28,13 +27,13 @@ describe('apidemo - touch - multi-actions', function () {
       {action: 'press', options: {element: leftList}},
       {action: 'moveTo', options: {element: leftList, x: 10, y: 0}},
       {action: 'moveTo', options: {element: leftList, x: 10, y: -75}},
-      {action: 'moveTo', options: {element: leftList, x: 10, y: -150}}
+      {action: 'moveTo', options: {element: leftList, x: 10, y: -150}},
     ];
     let rightGestures = [
       {action: 'press', options: {element: rightList}},
       {action: 'moveTo', options: {element: rightList, x: 10, y: 0}},
       {action: 'moveTo', options: {element: rightList, x: 10, y: -75}},
-      {action: 'moveTo', options: {element: rightList, x: 10, y: -150}}
+      {action: 'moveTo', options: {element: rightList, x: 10, y: -150}},
     ];
     await driver.performMultiAction([leftGestures, rightGestures]);
   });

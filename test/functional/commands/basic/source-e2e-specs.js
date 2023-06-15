@@ -1,10 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../../lib/driver';
-import { DOMParser } from '@xmldom/xmldom';
+import {AndroidDriver} from '../../../../lib/driver';
+import {DOMParser} from '@xmldom/xmldom';
 import xpath from 'xpath';
-import { DEFAULT_CAPS } from '../../capabilities';
-
+import {DEFAULT_CAPS} from '../../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);

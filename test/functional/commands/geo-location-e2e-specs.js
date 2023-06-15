@@ -1,9 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { retryInterval } from 'asyncbox';
-import AndroidDriver from '../../../lib/driver';
-import { DEFAULT_CAPS } from '../capabilities';
-
+import {retryInterval} from 'asyncbox';
+import {AndroidDriver} from '../../../lib/driver';
+import {DEFAULT_CAPS} from '../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -35,7 +34,7 @@ describe.skip('geo-location', function () {
 
     // wait for the text to change
     await retryInterval(6, 1000, async () => {
-      if (await getText() === 'GPS Tutorial') {
+      if ((await getText()) === 'GPS Tutorial') {
         throw new Error('Location not set yet. Retry.');
       }
     });

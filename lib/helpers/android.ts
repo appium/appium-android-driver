@@ -70,7 +70,7 @@ const APP_STATE = {
 } as const;
 
 function ensureNetworkSpeed(adb: ADB, networkSpeed: string) {
-  if (networkSpeed in adb.NETWORK_SPEED) {
+  if (networkSpeed.toUpperCase() in adb.NETWORK_SPEED) {
     return networkSpeed;
   }
   logger.warn(
@@ -113,7 +113,7 @@ function toCredentialType(unlockType: UnlockType) {
 }
 
 interface AndroidHelpers {
-  createBaseADB(opts: AndroidDriverOpts): Promise<ADB>;
+  createBaseADB(opts?: AndroidDriverOpts): Promise<ADB>;
 
   prepareEmulator(adb: ADB, opts?: any): Promise<void>;
 
@@ -131,9 +131,9 @@ interface AndroidHelpers {
    */
   ensureDeviceLocale(adb: ADB, language?: string, country?: string, script?: string): Promise<void>;
 
-  getDeviceInfoFromCaps(opts: AndroidDriverOpts): Promise<ADBDeviceInfo>;
+  getDeviceInfoFromCaps(opts?: AndroidDriverOpts): Promise<ADBDeviceInfo>;
 
-  createADB(opts: AndroidDriverOpts): Promise<ADB>;
+  createADB(opts?: AndroidDriverOpts): Promise<ADB>;
 
   validatePackageActivityNames(opts: AndroidDriverOpts): void;
   getLaunchInfo(adb: ADB, opts: AndroidDriverOpts): Promise<ADBLaunchInfo | undefined>;
@@ -242,7 +242,7 @@ interface AndroidHelpers {
    * @param opts - driver options mapping
    * @returns `true` if the device is an Android emulator
    */
-  isEmulator(adb: ADB, opts: AndroidDriverOpts): boolean;
+  isEmulator(adb?: ADB, opts?: AndroidDriverOpts): boolean;
   bootstrap: typeof Bootstrap;
   unlocker: typeof Unlocker;
 }
@@ -266,7 +266,7 @@ const AndroidHelpers: AndroidHelpers = {
       buildToolsVersion,
       allowOfflineDevices,
       allowDelayAdb,
-    } = opts;
+    } = opts ?? {};
     return await ADB.createADB({
       adbPort,
       suppressKillServer,
@@ -349,11 +349,11 @@ const AndroidHelpers: AndroidHelpers = {
     // we can only use this ADB object for commands that would not be confused
     // if multiple devices are connected
     const adb = await AndroidHelpers.createBaseADB(opts);
-    let udid: string | undefined = opts.udid;
+    let udid: string | undefined = opts?.udid;
     let emPort: number | false | undefined;
 
     // a specific avd name was given. try to initialize with that
-    if (opts.avd) {
+    if (opts?.avd) {
       await AndroidHelpers.prepareEmulator(adb, opts);
       udid = adb.curDeviceId;
       emPort = adb.emulatorPort;
@@ -368,7 +368,7 @@ const AndroidHelpers: AndroidHelpers = {
           logger.errorAndThrow(`Device ${udid} was not in the list of connected devices`);
         }
         emPort = adb.getPortFromEmulatorString(udid);
-      } else if (opts.platformVersion) {
+      } else if (opts?.platformVersion) {
         opts.platformVersion = `${opts.platformVersion}`.trim();
 
         // a platform version was given. lets try to find a device with the same os
@@ -449,7 +449,7 @@ const AndroidHelpers: AndroidHelpers = {
 
   async createADB(opts) {
     // @ts-expect-error do not put arbitrary properties on opts
-    const {udid, emPort} = opts;
+    const {udid, emPort} = opts ?? {};
     const adb = await AndroidHelpers.createBaseADB(opts);
     adb.setDeviceId(udid);
     if (emPort) {
@@ -1114,8 +1114,8 @@ const AndroidHelpers: AndroidHelpers = {
   },
 
   isEmulator(adb, opts) {
-    const possibleNames = [opts.udid, adb.curDeviceId];
-    return !!opts.avd || possibleNames.some((x) => EMULATOR_PATTERN.test(String(x)));
+    const possibleNames = [opts?.udid, adb?.curDeviceId];
+    return !!opts?.avd || possibleNames.some((x) => EMULATOR_PATTERN.test(String(x)));
   },
   bootstrap: Bootstrap,
   unlocker: Unlocker,

@@ -1,10 +1,15 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../lib/driver';
-import { SUPPORTED_PERFORMANCE_DATA_TYPES, CPU_KEYS, MEMORY_KEYS, BATTERY_KEYS, NETWORK_KEYS } from '../../../lib/commands/performance';
+import {AndroidDriver} from '../../../lib/driver';
+import {
+  SUPPORTED_PERFORMANCE_DATA_TYPES,
+  CPU_KEYS,
+  MEMORY_KEYS,
+  BATTERY_KEYS,
+  NETWORK_KEYS,
+} from '../../../lib/commands/performance';
 import _ from 'lodash';
-import { DEFAULT_CAPS, amendCapabilities } from '../capabilities';
-
+import {DEFAULT_CAPS, amendCapabilities} from '../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -12,7 +17,7 @@ chai.use(chaiAsPromised);
 let driver;
 let caps = amendCapabilities(DEFAULT_CAPS, {
   'appium:appPackage': 'io.appium.android.apis',
-  'appium:appActivity': '.view.TextFields'
+  'appium:appActivity': '.view.TextFields',
 });
 
 describe('performance', function () {
@@ -77,7 +82,7 @@ describe('performance', function () {
     });
     it('should get the network statistics', async function () {
       // TODO: why does adb fail with a null pointer exception on 5.1
-      if (await driver.adb.getApiLevel() === 22) {
+      if ((await driver.adb.getApiLevel()) === 22) {
         return this.skip();
       }
       let network = await driver.getPerformanceData(caps.appPackage, 'networkinfo', 2);

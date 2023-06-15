@@ -4,7 +4,7 @@ import log from '../../lib/logger';
 import sinon from 'sinon';
 import {helpers, SETTINGS_HELPER_PKG_ID} from '../../lib/helpers/android';
 import {withMocks} from '@appium/test-support';
-import AndroidDriver from '../../lib/driver';
+import {AndroidDriver} from '../../lib/driver';
 import ADB from 'appium-adb';
 import {errors} from 'appium/driver';
 import {fs} from 'appium/support';
@@ -38,7 +38,7 @@ describe('driver', function () {
         sandbox.stub(driver, 'isEmulator').returns(false);
         driver
           .fingerprint(1111)
-          .should.eventually.be.rejectedWith('fingerprint method is only available for emulators');
+          .should.be.rejectedWith('fingerprint method is only available for emulators');
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
@@ -48,7 +48,7 @@ describe('driver', function () {
         sandbox.stub(driver, 'isEmulator').returns(false);
         driver
           .sendSMS(4509, 'Hello Appium')
-          .should.eventually.be.rejectedWith('sendSMS method is only available for emulators');
+          .should.be.rejectedWith('sendSMS method is only available for emulators');
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
@@ -58,7 +58,7 @@ describe('driver', function () {
         sandbox.stub(driver, 'isEmulator').returns(false);
         driver
           .sensorSet({sensorType: 'light', value: 0})
-          .should.eventually.be.rejectedWith('sensorSet method is only available for emulators');
+          .should.be.rejectedWith('sensorSet method is only available for emulators');
         driver.isEmulator.calledOnce.should.be.true;
       });
     });
