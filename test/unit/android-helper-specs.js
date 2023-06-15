@@ -232,15 +232,19 @@ describe('Android Helpers', function () {
               return {udid: device.udid};
             });
           },
+
           getPortFromEmulatorString() {
             return 1234;
           },
+
           getRunningAVDWithRetry() {
             return {udid: 'emulator-1234', port: 1234};
           },
+
           setDeviceId(udid) {
             curDeviceId = udid;
           },
+
           getPlatformVersion() {
             return _.filter(devices, {udid: curDeviceId})[0].os;
           },
@@ -342,6 +346,7 @@ describe('Android Helpers', function () {
           setDeviceId: (udid) => {
             curDeviceId = udid;
           },
+
           setEmulatorPort: (emPort) => {
             emulatorPort = emPort;
           },
@@ -995,36 +1000,28 @@ describe('Android Helpers', function () {
         .should.deep.equal({pkg: 'org.chromium.chrome.shell', activity: '.ChromeShellActivity'});
     });
     it('should return pakage for chromebeta', function () {
-      helpers
-        .getChromePkg('chromebeta')
-        .should.deep.equal({
-          pkg: 'com.chrome.beta',
-          activity: 'com.google.android.apps.chrome.Main',
-        });
+      helpers.getChromePkg('chromebeta').should.deep.equal({
+        pkg: 'com.chrome.beta',
+        activity: 'com.google.android.apps.chrome.Main',
+      });
     });
     it('should return pakage for browser', function () {
-      helpers
-        .getChromePkg('browser')
-        .should.deep.equal({
-          pkg: 'com.android.browser',
-          activity: 'com.android.browser.BrowserActivity',
-        });
+      helpers.getChromePkg('browser').should.deep.equal({
+        pkg: 'com.android.browser',
+        activity: 'com.android.browser.BrowserActivity',
+      });
     });
     it('should return pakage for chromium-browser', function () {
-      helpers
-        .getChromePkg('chromium-browser')
-        .should.deep.equal({
-          pkg: 'org.chromium.chrome',
-          activity: 'com.google.android.apps.chrome.Main',
-        });
+      helpers.getChromePkg('chromium-browser').should.deep.equal({
+        pkg: 'org.chromium.chrome',
+        activity: 'com.google.android.apps.chrome.Main',
+      });
     });
     it('should return pakage for chromium-webview', function () {
-      helpers
-        .getChromePkg('chromium-webview')
-        .should.deep.equal({
-          pkg: 'org.chromium.webview_shell',
-          activity: 'org.chromium.webview_shell.WebViewBrowserActivity',
-        });
+      helpers.getChromePkg('chromium-webview').should.deep.equal({
+        pkg: 'org.chromium.webview_shell',
+        activity: 'org.chromium.webview_shell.WebViewBrowserActivity',
+      });
     });
   });
 

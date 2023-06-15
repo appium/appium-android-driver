@@ -284,6 +284,7 @@ const AndroidHelpers: AndroidHelpers = {
       allowDelayAdb,
     });
   },
+
   async prepareEmulator(adb, opts) {
     const {
       avd,
@@ -324,6 +325,7 @@ const AndroidHelpers: AndroidHelpers = {
       readyTimeout,
     });
   },
+
   async ensureDeviceLocale(adb, language, country, script) {
     if (!_.isString(language) && !_.isString(country)) {
       logger.warn(`setDeviceLanguageCountry requires language or country.`);
@@ -340,6 +342,7 @@ const AndroidHelpers: AndroidHelpers = {
       throw new Error(`Failed to set ${message}`);
     }
   },
+
   async getDeviceInfoFromCaps(opts) {
     // we can create a throwaway ADB instance here, so there is no dependency
     // on instantiating on earlier (at this point, we have no udid)
@@ -443,6 +446,7 @@ const AndroidHelpers: AndroidHelpers = {
     logger.info(`Using device: ${udid}`);
     return {udid: udid as string, emPort: emPort as number | false};
   },
+
   async createADB(opts) {
     // @ts-expect-error do not put arbitrary properties on opts
     const {udid, emPort} = opts;
@@ -454,6 +458,7 @@ const AndroidHelpers: AndroidHelpers = {
 
     return adb;
   },
+
   validatePackageActivityNames(opts) {
     for (const key of ['appPackage', 'appActivity', 'appWaitPackage', 'appWaitActivity']) {
       const name = opts[key as keyof typeof opts];
@@ -476,6 +481,7 @@ const AndroidHelpers: AndroidHelpers = {
       );
     }
   },
+
   async getLaunchInfo(adb, opts) {
     if (!opts.app) {
       logger.warn('No app sent in, not parsing package/activity');
@@ -507,6 +513,7 @@ const AndroidHelpers: AndroidHelpers = {
     logger.debug(`Parsed package and activity are: ${apkPackage}/${apkActivity}`);
     return {appPackage, appWaitPackage, appActivity, appWaitActivity};
   },
+
   async resetApp(adb, opts) {
     const {
       app,
@@ -570,6 +577,7 @@ const AndroidHelpers: AndroidHelpers = {
       allowTestPackages,
     });
   },
+
   async installApk(adb, opts) {
     const {
       app,
@@ -606,6 +614,7 @@ const AndroidHelpers: AndroidHelpers = {
       await AndroidHelpers.resetApp(adb, opts);
     }
   },
+
   async installOtherApks(otherApps, adb, opts) {
     const {
       androidInstallTimeout = PACKAGE_INSTALL_TIMEOUT_MS,
@@ -625,6 +634,7 @@ const AndroidHelpers: AndroidHelpers = {
       })
     );
   },
+
   async uninstallOtherPackages(adb, appPackages, filterPackages = []) {
     if (appPackages.includes('*')) {
       logger.debug('Uninstall third party packages');
@@ -634,6 +644,7 @@ const AndroidHelpers: AndroidHelpers = {
     logger.debug(`Uninstalling packages: ${appPackages}`);
     await B.all(appPackages.map((appPackage) => adb.uninstallApk(appPackage)));
   },
+
   async getThirdPartyPackages(adb, filterPackages = []) {
     try {
       const packagesString = await adb.shell(['pm', 'list', 'packages', '-3']);
@@ -650,6 +661,7 @@ const AndroidHelpers: AndroidHelpers = {
       return [];
     }
   },
+
   async initUnicodeKeyboard(adb) {
     logger.debug('Enabling Unicode keyboard support');
 
@@ -663,6 +675,7 @@ const AndroidHelpers: AndroidHelpers = {
     await adb.setIME(appiumIME);
     return defaultIME;
   },
+
   async setMockLocationApp(adb, app) {
     try {
       if ((await adb.getApiLevel()) < 23) {
@@ -697,6 +710,7 @@ const AndroidHelpers: AndroidHelpers = {
       logger.warn(`Unable to persist mock location app id '${app}': ${(e as Error).message}`);
     }
   },
+
   async resetMockLocation(adb) {
     try {
       if ((await adb.getApiLevel()) < 23) {
@@ -739,6 +753,7 @@ const AndroidHelpers: AndroidHelpers = {
       logger.warn(`Unable to reset mock location: ${(err as Error).message}`);
     }
   },
+
   async installHelperApp(adb, apkPath, packageId) {
     // Sometimes adb push or adb instal take more time than expected to install an app
     // e.g. https://github.com/appium/io.appium.settings/issues/40#issuecomment-476593174
@@ -750,6 +765,7 @@ const AndroidHelpers: AndroidHelpers = {
       }
     );
   },
+
   async pushSettingsApp(adb, throwError, opts) {
     logger.debug('Pushing settings apk to device...');
 
@@ -822,6 +838,7 @@ const AndroidHelpers: AndroidHelpers = {
       }
     }
   },
+
   async pushStrings(language, adb, opts) {
     const remoteDir = '/data/local/tmp';
     const stringsJson = 'strings.json';
@@ -866,6 +883,7 @@ const AndroidHelpers: AndroidHelpers = {
     }
     return {};
   },
+
   async unlock(driver, adb, capabilities) {
     if (!(await adb.isScreenLocked())) {
       logger.info('Screen already unlocked, doing nothing');
@@ -906,6 +924,7 @@ const AndroidHelpers: AndroidHelpers = {
     }
     await AndroidHelpers.verifyUnlock(adb, unlockSuccessTimeout);
   },
+
   async verifyUnlock(adb, timeoutMs = null) {
     try {
       await waitForCondition(async () => !(await adb.isScreenLocked()), {
@@ -917,6 +936,7 @@ const AndroidHelpers: AndroidHelpers = {
     }
     logger.info('The device has been successfully unlocked');
   },
+
   async initDevice(adb, opts) {
     const {
       skipDeviceInitialization,
@@ -981,6 +1001,7 @@ const AndroidHelpers: AndroidHelpers = {
       return await AndroidHelpers.initUnicodeKeyboard(adb);
     }
   },
+
   removeNullProperties(obj) {
     for (const key of _.keys(obj)) {
       if (_.isNull(obj[key]) || _.isUndefined(obj[key])) {
@@ -988,6 +1009,7 @@ const AndroidHelpers: AndroidHelpers = {
       }
     }
   },
+
   truncateDecimals(number, digits) {
     const multiplier = Math.pow(10, digits),
       adjustedNum = number * multiplier,
@@ -995,9 +1017,11 @@ const AndroidHelpers: AndroidHelpers = {
 
     return truncatedNum / multiplier;
   },
+
   isChromeBrowser(browser) {
     return _.includes(Object.keys(CHROME_BROWSER_PACKAGE_ACTIVITY), (browser || '').toLowerCase());
   },
+
   getChromePkg(browser) {
     return (
       CHROME_BROWSER_PACKAGE_ACTIVITY[
@@ -1005,6 +1029,7 @@ const AndroidHelpers: AndroidHelpers = {
       ] || CHROME_BROWSER_PACKAGE_ACTIVITY.default
     );
   },
+
   async removeAllSessionWebSocketHandlers(server, sessionId) {
     if (!server || !_.isFunction(server.getWebSocketHandlers)) {
       return;
@@ -1015,6 +1040,7 @@ const AndroidHelpers: AndroidHelpers = {
       await server.removeWebSocketHandler(pathname);
     }
   },
+
   parseArray(cap) {
     let parsedCaps: string | string[] | undefined;
     try {
@@ -1029,6 +1055,7 @@ const AndroidHelpers: AndroidHelpers = {
 
     throw new Error(`must provide a string or JSON Array; received ${cap}`);
   },
+
   validateDesiredCaps(caps) {
     if (caps.browserName) {
       if (caps.app) {
@@ -1056,6 +1083,7 @@ const AndroidHelpers: AndroidHelpers = {
 
     return true;
   },
+
   adjustBrowserSessionCaps(caps) {
     const {browserName} = caps;
     logger.info(`The current session is considered browser-based`);
@@ -1084,6 +1112,7 @@ const AndroidHelpers: AndroidHelpers = {
     );
     return caps;
   },
+
   isEmulator(adb, opts) {
     const possibleNames = [opts.udid, adb.curDeviceId];
     return !!opts.avd || possibleNames.some((x) => EMULATOR_PATTERN.test(String(x)));

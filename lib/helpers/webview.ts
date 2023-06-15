@@ -380,6 +380,7 @@ const WebviewHelpers: WebviewHelpers = {
     logger.debug(`Got process name: '${pkg}'`);
     return pkg;
   },
+
   parseWebviewNames(
     webviewsMapping: WebviewsMapping[],
     {ensureWebviewsHavePages = true, isChromeSession = false}: GetWebviewsOpts = {}
@@ -406,6 +407,7 @@ const WebviewHelpers: WebviewHelpers = {
     );
     return result;
   },
+
   async getWebViewsMapping(
     adb: ADB,
     {
@@ -461,10 +463,12 @@ const WebviewHelpers: WebviewHelpers = {
     }
     return webviewsMapping;
   },
+
   getWebviewDetails(adb: ADB, webview: string): WebViewDetails | undefined {
     const key = toDetailsCacheKey(adb, webview);
     return WEBVIEWS_DETAILS_CACHE.get(key);
   },
+
   createChromedriverCaps(
     opts: any,
     deviceId: string,

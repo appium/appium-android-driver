@@ -41,8 +41,8 @@
     "lint:commit": "commitlint",
     "lint:fix": "npm run lint -- --fix",
     "lint:staged": "lint-staged",
-    "prepare": "husky install && npm run rebuild",
-    "rebuild": "npm run clean && npm run build",
+    "prepare": "husky install; npm run rebuild",
+    "rebuild": "npm run clean; npm run build",
     "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\""
   },
   "lint-staged": {
