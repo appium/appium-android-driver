@@ -1,3 +1,10 @@
+## [5.13.4](https://github.com/appium/appium-android-driver/compare/v5.13.3...v5.13.4) (2023-06-15)
+
+
+### Miscellaneous Chores
+
+* add prettier, commitlint, swap husky ([4c906bc](https://github.com/appium/appium-android-driver/commit/4c906bce594d2b59bc933bed27be2f4bd3a2cc49))
+
 ## [5.13.3](https://github.com/appium/appium-android-driver/compare/v5.13.2...v5.13.3) (2023-06-07)
 
 
