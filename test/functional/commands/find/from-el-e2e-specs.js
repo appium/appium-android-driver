@@ -1,9 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../../lib/driver';
-import { DEFAULT_CAPS } from '../../capabilities';
-import { util } from '@appium/support';
-
+import {AndroidDriver} from '../../../../lib/driver';
+import {DEFAULT_CAPS} from '../../capabilities';
+import {util} from '@appium/support';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -33,11 +32,13 @@ describe('Find - from element', function () {
     await driver.getText(innerEl[0].ELEMENT).should.eventually.have.length.above(10);
   });
   it('should not find an element that does not exist', async function () {
-    await driver.findElementFromElement('class name', 'blargimarg', parentEl)
+    await driver
+      .findElementFromElement('class name', 'blargimarg', parentEl)
       .should.be.rejectedWith(/could not be located/);
   });
   it('should not find multiple elements that do not exist', async function () {
-    await driver.findElementFromElement('class name', 'blargimarg', parentEl)
+    await driver
+      .findElementFromElement('class name', 'blargimarg', parentEl)
       .should.be.rejectedWith(/could not be located/);
   });
 });

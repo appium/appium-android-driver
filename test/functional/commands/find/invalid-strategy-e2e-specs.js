@@ -1,8 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../../lib/driver';
-import { DEFAULT_CAPS } from '../../capabilities';
-
+import {AndroidDriver} from '../../../../lib/driver';
+import {DEFAULT_CAPS} from '../../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -17,7 +16,8 @@ describe('Find - invalid strategy', function () {
     await driver.deleteSession();
   });
   it('should not accept -ios uiautomation locator strategy', async function () {
-    await driver.findElement('-ios uiautomation', '.elements()')
+    await driver
+      .findElement('-ios uiautomation', '.elements()')
       .should.eventually.be.rejectedWith(/not supported/);
   });
 });

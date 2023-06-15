@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../lib/driver';
+import {AndroidDriver} from '../../lib/driver';
 import {ensureAVDExists} from './helpers';
 import {CHROME_CAPS, amendCapabilities} from './capabilities';
 import path from 'path';
@@ -30,9 +30,10 @@ describe('createSession', function () {
   let driver;
   before(async function () {
     if (!(await ensureAVDExists(this, capabilities.avd))) {
+      // eslint-disable-next-line no-console
       console.log(
         `Not running Chrome tests (file: '${__filename}') because the AVD '${avd}' does not exist`
-      ); // eslint-disable-line
+      );
       return;
     }
 

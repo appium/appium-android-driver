@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import AndroidDriver from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver';
 import {
   SUPPORTED_PERFORMANCE_DATA_TYPES,
   NETWORK_KEYS,
@@ -42,8 +42,8 @@ describe('performance data', function () {
     sandbox.restore();
   });
   describe('getPerformanceDataTypes', function () {
-    it('should get the list of available getPerformance data type', function () {
-      let types = driver.getPerformanceDataTypes();
+    it('should get the list of available getPerformance data type', async function () {
+      let types = await driver.getPerformanceDataTypes();
       types.should.eql(_.keys(SUPPORTED_PERFORMANCE_DATA_TYPES));
     });
   });

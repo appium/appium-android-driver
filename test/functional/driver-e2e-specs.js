@@ -1,16 +1,15 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import ADB from 'appium-adb';
-import AndroidDriver from '../../lib/driver';
-import { DEFAULT_CAPS, amendCapabilities } from './capabilities';
-
+import {AndroidDriver} from '../../lib/driver';
+import {DEFAULT_CAPS, amendCapabilities} from './capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 const defaultCaps = amendCapabilities(DEFAULT_CAPS, {
-  'appium:androidInstallTimeout': 90000
+  'appium:androidInstallTimeout': 90000,
 });
 
 describe('createSession', function () {
@@ -22,7 +21,7 @@ describe('createSession', function () {
     await driver.deleteSession();
   });
 
-  async function getPackageAndActivity (driver) {
+  async function getPackageAndActivity(driver) {
     let appPackage = await driver.getCurrentPackage();
     let appActivity = await driver.getCurrentActivity();
     return {appPackage, appActivity};
@@ -48,7 +47,9 @@ describe('createSession', function () {
     caps.app = 'foo';
     caps.appPackage = 'io.appium.android.apis';
     caps.appActivity = '.view.SplitTouchView';
-    await driver.createSession(caps).should.eventually.be.rejectedWith(/does not exist or is not accessible/);
+    await driver
+      .createSession(caps)
+      .should.eventually.be.rejectedWith(/does not exist or is not accessible/);
   });
   it('should error out if neither an app or a browser is defined', async function () {
     let caps = Object.assign({}, defaultCaps);
@@ -139,7 +140,9 @@ describe('createSession', function () {
     caps.intentCategory = 'appium.android.intent.category.SAMPLE_CODE';
     caps.autoGrantPermissions = true;
     await driver.createSession(caps);
-    expect(await driver.adb.getGrantedPermissions('io.appium.android.apis')).to.include.members(['android.permission.RECEIVE_SMS']);
+    expect(await driver.adb.getGrantedPermissions('io.appium.android.apis')).to.include.members([
+      'android.permission.RECEIVE_SMS',
+    ]);
   });
   describe('W3C compliance', function () {
     it('should accept W3C parameters', async function () {

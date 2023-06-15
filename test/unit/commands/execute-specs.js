@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import AndroidDriver from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver';
 
 let driver;
 let sandbox = sinon.createSandbox();
@@ -22,9 +22,11 @@ describe('Execute', function () {
       driver.sensorSet.calledWithExactly({sensorType: 'light', value: 0}).should.be.true;
     });
     it('should be reject if arguments are missing', function () {
-      driver.executeMobile('sensorSet', {sensor: 'light', value: 0})
+      driver
+        .executeMobile('sensorSet', {sensor: 'light', value: 0})
         .should.eventually.be.rejectedWith(`'sensorType' argument is required`);
-      driver.executeMobile('sensorSet', {sensorType: 'light', val: 0})
+      driver
+        .executeMobile('sensorSet', {sensorType: 'light', val: 0})
         .should.eventually.be.rejectedWith(`'value' argument is required`);
     });
   });

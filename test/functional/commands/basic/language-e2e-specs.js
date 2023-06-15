@@ -1,10 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import ADB from 'appium-adb';
-import AndroidDriver from '../../../../lib/driver';
-import { DEFAULT_CAPS, amendCapabilities } from '../../capabilities';
-import { MOCHA_TIMEOUT } from '../../helpers';
-
+import {AndroidDriver} from '../../../../lib/driver';
+import {DEFAULT_CAPS, amendCapabilities} from '../../capabilities';
+import {MOCHA_TIMEOUT} from '../../helpers';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -30,8 +29,8 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
     }
   });
 
-  async function getLocale (adb) {
-    if (await adb.getApiLevel() < 23) {
+  async function getLocale(adb) {
+    if ((await adb.getApiLevel()) < 23) {
       const language = await adb.getDeviceLanguage();
       const country = await adb.getDeviceCountry();
       return `${language}-${country}`;
@@ -43,7 +42,7 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
   it('should start as FR', async function () {
     let frCaps = amendCapabilities(DEFAULT_CAPS, {
       'appium:language': 'fr',
-      'appium:locale': 'FR'
+      'appium:locale': 'FR',
     });
     await driver.createSession(frCaps);
     await getLocale(driver.adb).should.eventually.equal('fr-FR');
@@ -51,7 +50,7 @@ describe('Localization - locale @skip-ci @skip-real-device', function () {
   it('should start as US', async function () {
     let usCaps = amendCapabilities(DEFAULT_CAPS, {
       'appium:language': 'en',
-      'appium:locale': 'US'
+      'appium:locale': 'US',
     });
     await driver.createSession(usCaps);
     await getLocale(driver.adb).should.eventually.equal('en-US');

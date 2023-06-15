@@ -1,9 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver';
 import _ from 'lodash';
-import { DEFAULT_CAPS, amendCapabilities } from '../capabilities';
-
+import {DEFAULT_CAPS, amendCapabilities} from '../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -14,9 +13,8 @@ const PNG_MAGIC_LENGTH = 4;
 let driver;
 let caps = amendCapabilities(DEFAULT_CAPS, {
   'appium:appPackage': 'io.appium.android.apis',
-  'appium:appActivity': '.view.TextFields'
+  'appium:appActivity': '.view.TextFields',
 });
-
 
 describe('actions', function () {
   before(async function () {
@@ -66,7 +64,11 @@ describe('actions', function () {
   describe('getScreenshot', function () {
     it('should return valid base64-encoded screenshot', async function () {
       const base64screenshot = await driver.getScreenshot();
-      const imageMagic = Buffer.from(base64screenshot, 'base64').toString('hex', 0, PNG_MAGIC_LENGTH);
+      const imageMagic = Buffer.from(base64screenshot, 'base64').toString(
+        'hex',
+        0,
+        PNG_MAGIC_LENGTH
+      );
       imageMagic.should.be.equal(PNG_MAGIC);
     });
   });

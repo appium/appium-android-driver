@@ -1,9 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import AndroidDriver from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver';
 import ADB from 'appium-adb';
-import { errors } from 'appium/driver';
+import {errors} from 'appium/driver';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -26,8 +26,7 @@ describe('IME', function () {
   describe('availableIMEEngines', function () {
     it('should return available IMEEngines', async function () {
       sandbox.stub(driver.adb, 'availableIMEs').returns(['IME1', 'IME2']);
-      await driver.availableIMEEngines()
-        .should.eventually.be.deep.equal(['IME1', 'IME2']);
+      await driver.availableIMEEngines().should.eventually.be.deep.equal(['IME1', 'IME2']);
     });
   });
   describe('getActiveIMEEngine', function () {
@@ -47,8 +46,7 @@ describe('IME', function () {
     });
     it('should throws error if IME not found', async function () {
       sandbox.stub(driver.adb, 'availableIMEs').returns(['IME1', 'IME2']);
-      await driver.activateIMEEngine ('IME3')
-        .should.be.rejectedWith(errors.IMENotAvailableError);
+      await driver.activateIMEEngine('IME3').should.be.rejectedWith(errors.IMENotAvailableError);
     });
   });
   describe('deactivateIMEEngine', function () {

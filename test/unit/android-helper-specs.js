@@ -17,20 +17,20 @@ describe('Android Helpers', function () {
   let adb = new ADB();
 
   describe('isEmulator', function () {
-    it('should be true if driver opts contain avd', async function () {
-      (await helpers.isEmulator(null, {avd: 'yolo'})).should.be.true;
+    it('should be true if driver opts contain avd', function () {
+      helpers.isEmulator(null, {avd: 'yolo'}).should.be.true;
     });
-    it('should be true if driver opts contain emulator udid', async function () {
-      (await helpers.isEmulator({}, {udid: 'Emulator-5554'})).should.be.true;
+    it('should be true if driver opts contain emulator udid', function () {
+      helpers.isEmulator({}, {udid: 'Emulator-5554'}).should.be.true;
     });
-    it('should be false if driver opts do not contain emulator udid', async function () {
-      (await helpers.isEmulator({}, {udid: 'ABCD1234'})).should.be.false;
+    it('should be false if driver opts do not contain emulator udid', function () {
+      helpers.isEmulator({}, {udid: 'ABCD1234'}).should.be.false;
     });
-    it('should be true if device id in adb contains emulator', async function () {
-      (await helpers.isEmulator({curDeviceId: 'emulator-5554'}, {})).should.be.true;
+    it('should be true if device id in adb contains emulator', function () {
+      helpers.isEmulator({curDeviceId: 'emulator-5554'}, {}).should.be.true;
     });
-    it('should be false if device id in adb does not contain emulator', async function () {
-      (await helpers.isEmulator({curDeviceId: 'ABCD1234'}, {})).should.be.false;
+    it('should be false if device id in adb does not contain emulator', function () {
+      helpers.isEmulator({curDeviceId: 'ABCD1234'}, {}).should.be.false;
     });
   });
   describe(
@@ -159,20 +159,20 @@ describe('Android Helpers', function () {
     'ensureDeviceLocale',
     withMocks({adb}, (mocks) => {
       it('should call setDeviceLanguageCountry', async function () {
-        mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US', null).once();
+        mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US', undefined).once();
         mocks.adb
           .expects('ensureCurrentLocale')
-          .withExactArgs('en', 'US', null)
+          .withExactArgs('en', 'US', undefined)
           .once()
           .returns(true);
-        await helpers.ensureDeviceLocale(adb, 'en', 'US');
+        await helpers.ensureDeviceLocale(adb, 'en', 'US', undefined);
         mocks.adb.verify();
       });
       it('should call setDeviceLanguageCountry without script', async function () {
-        mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US', null).once();
+        mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US', undefined).once();
         mocks.adb
           .expects('ensureCurrentLocale')
-          .withExactArgs('en', 'US', null)
+          .withExactArgs('en', 'US', undefined)
           .once()
           .returns(true);
         await helpers.ensureDeviceLocale(adb, 'en', 'US', undefined);
@@ -195,15 +195,15 @@ describe('Android Helpers', function () {
         mocks.adb.verify();
       });
       it('should call setDeviceLanguageCountry with throw', async function () {
-        mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('fr', 'FR', null).once();
+        mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('fr', 'FR', undefined).once();
         mocks.adb
           .expects('ensureCurrentLocale')
-          .withExactArgs('fr', 'FR', null)
+          .withExactArgs('fr', 'FR', undefined)
           .once()
           .returns(false);
         await helpers
           .ensureDeviceLocale(adb, 'fr', 'FR')
-          .should.eventually.be.rejectedWith(Error, `Failed to set language: fr and country: FR`);
+          .should.be.rejectedWith(Error, `Failed to set language: fr and country: FR`);
         mocks.adb.verify();
       });
     })
@@ -503,7 +503,7 @@ describe('Android Helpers', function () {
       const localApkPath = 'local';
       const pkg = 'pkg';
       it('should complain if opts arent passed correctly', async function () {
-        await helpers.resetApp(adb, {}).should.eventually.be.rejectedWith(/appPackage/);
+        await helpers.resetApp(adb, {}).should.be.rejectedWith(/appPackage/);
       });
       it('should be able to do full reset', async function () {
         mocks.adb.expects('install').once().withArgs(localApkPath);
@@ -548,7 +548,7 @@ describe('Android Helpers', function () {
         androidInstallTimeout: 90000,
       };
       it('should complain if appPackage is not passed', async function () {
-        await helpers.installApk(adb, {}).should.eventually.be.rejectedWith(/appPackage/);
+        await helpers.installApk(adb, {}).should.be.rejectedWith(/appPackage/);
       });
       it('should install/upgrade and reset app if fast reset is set to true', async function () {
         mocks.adb
@@ -619,7 +619,7 @@ describe('Android Helpers', function () {
         mocks.adb
           .expects('installOrUpgrade')
           .once()
-          .withArgs(fakeApk, null, expectedADBInstallOpts);
+          .withArgs(fakeApk, undefined, expectedADBInstallOpts);
         await helpers.installOtherApks([fakeApk], adb, opts);
         mocks.adb.verify();
       });
@@ -758,7 +758,7 @@ describe('Android Helpers', function () {
         mocks.adb.expects('extractStringsFromApk').throws();
         mocks.adb
           .expects('shell')
-          .withExactArgs('echo', [`'{}' > ${REMOTE_TEMP_PATH}/strings.json`]);
+          .withExactArgs(['echo', `'{}' > ${REMOTE_TEMP_PATH}/strings.json`]);
         (await helpers.pushStrings('en', adb, opts)).should.be.deep.equal({});
         mocks.adb.verify();
         mocks.fs.verify();
@@ -857,7 +857,7 @@ describe('Android Helpers', function () {
         mocks.adb.expects('getApiLevel').once().returns(21);
         await helpers
           .unlock(helpers, adb, {unlockType: 'fingerprint', unlockKey: '1111'})
-          .should.eventually.be.rejectedWith('Fingerprint');
+          .should.be.rejectedWith('Fingerprint');
         mocks.helpers.verify();
       });
     })

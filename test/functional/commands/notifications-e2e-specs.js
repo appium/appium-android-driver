@@ -1,18 +1,17 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver';
 import B from 'bluebird';
 import ADB from 'appium-adb';
-import { retry } from 'asyncbox';
-import { DEFAULT_CAPS, amendCapabilities } from '../capabilities';
-
+import {retry} from 'asyncbox';
+import {DEFAULT_CAPS, amendCapabilities} from '../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
 
 let driver;
 let defaultCaps = amendCapabilities(DEFAULT_CAPS, {
-  'appium:appActivity': '.app.StatusBarNotifications'
+  'appium:appActivity': '.app.StatusBarNotifications',
 });
 
 describe('apidemo - notifications', function () {

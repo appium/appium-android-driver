@@ -8,8 +8,7 @@ import {
   WEBVIEW_WIN,
   CHROMIUM_WIN,
 } from '../../../lib/helpers/webview';
-import {setupNewChromedriver} from '../../../lib/commands/context';
-import AndroidDriver from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver';
 import Chromedriver from 'appium-chromedriver';
 import PortFinder from 'portfinder';
 import {errors} from 'appium/driver';
@@ -174,7 +173,7 @@ describe('Context', function () {
       driver.chromedriver.start
         .getCall(0)
         .args[0].chromeOptions.androidDeviceSerial.should.be.equal('device_id');
-      driver.chromedriver.proxyPort.should.be.equal(4444);
+      driver.chromedriver.proxyPort.should.be.equal('4444');
       driver.chromedriver.proxyReq.bind.calledWithExactly(driver.chromedriver);
       driver.proxyReqRes.should.be.equal('proxy');
       driver.jwpProxyActive.should.be.true;
@@ -269,11 +268,13 @@ describe('Context', function () {
   });
   describe('setupNewChromedriver', function () {
     it('should be able to set app package from chrome options', async function () {
-      let chromedriver = await setupNewChromedriver({chromeOptions: {androidPackage: 'apkg'}});
+      let chromedriver = await driver.setupNewChromedriver({
+        chromeOptions: {androidPackage: 'apkg'},
+      });
       chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage.should.be.equal('apkg');
     });
     it('should use prefixed chromeOptions', async function () {
-      let chromedriver = await setupNewChromedriver({
+      let chromedriver = await driver.setupNewChromedriver({
         'goog:chromeOptions': {
           androidPackage: 'apkg',
         },
@@ -281,7 +282,7 @@ describe('Context', function () {
       chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage.should.be.equal('apkg');
     });
     it('should merge chromeOptions', async function () {
-      let chromedriver = await setupNewChromedriver({
+      let chromedriver = await driver.setupNewChromedriver({
         chromeOptions: {
           androidPackage: 'apkg',
         },
@@ -299,19 +300,19 @@ describe('Context', function () {
         .args[0].chromeOptions.androidWaitPackage.should.be.equal('bpkg');
     });
     it('should be able to set androidActivity chrome option', async function () {
-      let chromedriver = await setupNewChromedriver({chromeAndroidActivity: 'act'});
+      let chromedriver = await driver.setupNewChromedriver({chromeAndroidActivity: 'act'});
       chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity.should.be.equal('act');
     });
     it('should be able to set androidProcess chrome option', async function () {
-      let chromedriver = await setupNewChromedriver({chromeAndroidProcess: 'proc'});
+      let chromedriver = await driver.setupNewChromedriver({chromeAndroidProcess: 'proc'});
       chromedriver.start.getCall(0).args[0].chromeOptions.androidProcess.should.be.equal('proc');
     });
     it('should be able to set loggingPrefs capability', async function () {
-      let chromedriver = await setupNewChromedriver({enablePerformanceLogging: true});
+      let chromedriver = await driver.setupNewChromedriver({enablePerformanceLogging: true});
       chromedriver.start.getCall(0).args[0].loggingPrefs.should.deep.equal({performance: 'ALL'});
     });
     it('should set androidActivity to appActivity if browser name is chromium-webview', async function () {
-      let chromedriver = await setupNewChromedriver({
+      let chromedriver = await driver.setupNewChromedriver({
         browserName: 'chromium-webview',
         appActivity: 'app_act',
       });
@@ -320,7 +321,7 @@ describe('Context', function () {
         .args[0].chromeOptions.androidActivity.should.be.equal('app_act');
     });
     it('should be able to set loggingPrefs capability', async function () {
-      let chromedriver = await setupNewChromedriver({pageLoadStrategy: 'strategy'});
+      let chromedriver = await driver.setupNewChromedriver({pageLoadStrategy: 'strategy'});
       chromedriver.start.getCall(0).args[0].pageLoadStrategy.should.be.equal('strategy');
     });
   });

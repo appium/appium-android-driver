@@ -1,16 +1,15 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { retryInterval } from 'asyncbox';
-import AndroidDriver from '../../../../lib/driver';
-import { DEFAULT_CAPS, amendCapabilities } from '../../capabilities';
-
+import {retryInterval} from 'asyncbox';
+import {AndroidDriver} from '../../../../lib/driver';
+import {DEFAULT_CAPS, amendCapabilities} from '../../capabilities';
 
 chai.should();
 chai.use(chaiAsPromised);
 
 let caps = amendCapabilities(DEFAULT_CAPS, {
   'appium:appPackage': 'io.appium.android.apis',
-  'appium:appActivity': '.view.DragAndDropDemo'
+  'appium:appActivity': '.view.DragAndDropDemo',
 });
 
 describe('apidemo - touch', function () {
@@ -30,10 +29,7 @@ describe('apidemo - touch', function () {
     it('should drag by element', async function () {
       let dot3 = await driver.findElement('id', 'io.appium.android.apis:id/drag_dot_3');
       let dot2 = await driver.findElement('id', 'io.appium.android.apis:id/drag_dot_2');
-      let gestures = [
-        {options: {element: dot3.ELEMENT}},
-        {options: {element: dot2.ELEMENT}}
-      ];
+      let gestures = [{options: {element: dot3.ELEMENT}}, {options: {element: dot2.ELEMENT}}];
       await driver.doTouchDrag(gestures);
 
       let results = await driver.findElement('id', 'io.appium.android.apis:id/drag_result_text');
@@ -44,7 +40,7 @@ describe('apidemo - touch', function () {
       let dot2 = await driver.findElement('id', 'io.appium.android.apis:id/drag_dot_2');
       let gestures = [
         {options: {element: dot3.ELEMENT, x: 5, y: 5}},
-        {options: {element: dot2.ELEMENT, x: 5, y: 5}}
+        {options: {element: dot2.ELEMENT, x: 5, y: 5}},
       ];
       await driver.doTouchDrag(gestures);
       let results = await driver.findElement('id', 'io.appium.android.apis:id/drag_result_text');
@@ -59,7 +55,7 @@ describe('apidemo - touch', function () {
       let gestures = [
         {action: 'longPress', options: {element: startEle.ELEMENT}},
         {action: 'moveTo', options: {element: endEle.ELEMENT}},
-        {action: 'release', options: {}}
+        {action: 'release', options: {}},
       ];
       await driver.performTouch(gestures);
       let resultEle = await driver.findElement('id', 'io.appium.android.apis:id/drag_result_text');
@@ -71,7 +67,7 @@ describe('apidemo - touch', function () {
       let gestures = [
         {action: 'longPress', options: {element: startEle.ELEMENT, x: 5, y: 5}},
         {action: 'moveTo', options: {element: endEle.ELEMENT, x: 5, y: 5}},
-        {action: 'release', options: {}}
+        {action: 'release', options: {}},
       ];
       await driver.performTouch(gestures);
       await retryInterval(3, 500, async () => {
@@ -87,15 +83,21 @@ describe('apidemo - touch', function () {
       let endLoc = await driver.getLocationInView(endEle.ELEMENT);
       let endSize = await driver.getSize(endEle.ELEMENT);
       let gestures = [
-        {action: 'longPress', options: {
-          x: startLoc.x + (startSize.width / 2),
-          y: startLoc.y + (startSize.height / 2)
-        }},
-        {action: 'moveTo', options: {
-          x: endLoc.x + (endSize.width / 2),
-          y: endLoc.y + (endSize.height / 2)
-        }},
-        {action: 'release', options: {}}
+        {
+          action: 'longPress',
+          options: {
+            x: startLoc.x + startSize.width / 2,
+            y: startLoc.y + startSize.height / 2,
+          },
+        },
+        {
+          action: 'moveTo',
+          options: {
+            x: endLoc.x + endSize.width / 2,
+            y: endLoc.y + endSize.height / 2,
+          },
+        },
+        {action: 'release', options: {}},
       ];
       await driver.performTouch(gestures);
       let resultEle = await driver.findElement('id', 'io.appium.android.apis:id/drag_result_text');

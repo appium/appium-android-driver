@@ -1,8 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import AndroidDriver from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver';
 import ADB from 'appium-adb';
-
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -11,7 +10,7 @@ let driver;
 let caps = {
   browserName: 'Browser',
   deviceName: 'Android',
-  platformName: 'Android'
+  platformName: 'Android',
 };
 
 describe('setUrl', function () {
@@ -20,8 +19,8 @@ describe('setUrl', function () {
     if (process.env.CI) return this.skip(); // eslint-disable-line curly
 
     let adb = new ADB();
-    if (!await adb.isAppInstalled('com.android.browser')) {
-      if (!await adb.isAppInstalled('com.android.chrome')) {
+    if (!(await adb.isAppInstalled('com.android.browser'))) {
+      if (!(await adb.isAppInstalled('com.android.chrome'))) {
         throw new Error('Neither default browser nor chrome available');
       }
       // `browser` is not available, so use `Chrome`

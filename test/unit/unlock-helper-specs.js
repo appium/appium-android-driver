@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import {withMocks} from '@appium/test-support';
 import sinon from 'sinon';
 import helpers from '../../lib/helpers/unlock';
-import AndroidDriver from '../../lib/driver';
+import {AndroidDriver} from '../../lib/driver';
 import * as asyncbox from 'asyncbox';
 import ADB from 'appium-adb';
 
@@ -223,7 +223,9 @@ describe('Unlock Helpers', function () {
           .returns(caps.unlockKey);
         mocks.adb.expects('shell').withExactArgs(['input', 'text', caps.unlockKey]).once();
         mocks.asyncbox.expects('sleep').withExactArgs(INPUT_KEYS_WAIT_TIME).once();
-        mocks.adb.expects('shell').withExactArgs(['input', 'keyevent', KEYCODE_NUMPAD_ENTER]);
+        mocks.adb
+          .expects('shell')
+          .withExactArgs(['input', 'keyevent', String(KEYCODE_NUMPAD_ENTER)]);
         mocks.adb.expects('isScreenLocked').returns(true);
         mocks.adb.expects('keyevent').withExactArgs(66).once();
         mocks.asyncbox.expects('sleep').withExactArgs(UNLOCK_WAIT_TIME).twice();
