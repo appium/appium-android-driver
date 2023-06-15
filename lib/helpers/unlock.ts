@@ -128,6 +128,7 @@ const UnlockHelpers: UnlockHelpers = {
     }
     return caps;
   },
+
   async fastUnlock(adb, opts) {
     const {credential, credentialType} = opts;
     logger.info(`Unlocking the device via ADB using ${credentialType} credential '${credential}'`);
@@ -148,12 +149,15 @@ const UnlockHelpers: UnlockHelpers = {
       }
     }
   },
+
   encodePassword(key) {
     return `${key}`.replace(/\s/gi, '%s');
   },
+
   stringKeyToArr(key) {
     return `${key}`.trim().replace(/\s+/g, '').split(/\s*/);
   },
+
   async fingerprintUnlock(adb, driver, capabilities) {
     if ((await adb.getApiLevel()) < 23) {
       throw new Error('Fingerprint unlock only works for Android 6+ emulators');
@@ -161,6 +165,7 @@ const UnlockHelpers: UnlockHelpers = {
     await adb.fingerprint(String(capabilities.unlockKey));
     await sleep(UNLOCK_WAIT_TIME);
   },
+
   async pinUnlock(adb, driver, capabilities) {
     logger.info(`Trying to unlock device using pin ${capabilities.unlockKey}`);
     await adb.dismissKeyguard();
@@ -192,6 +197,7 @@ const UnlockHelpers: UnlockHelpers = {
     }
     await waitForUnlock(adb);
   },
+
   async pinUnlockWithKeyEvent(adb, driver, capabilities) {
     logger.info(`Trying to unlock device using pin with keycode ${capabilities.unlockKey}`);
     await adb.dismissKeyguard();
@@ -206,6 +212,7 @@ const UnlockHelpers: UnlockHelpers = {
     }
     await waitForUnlock(adb);
   },
+
   async passwordUnlock(adb, driver, capabilities) {
     const {unlockKey} = capabilities;
     logger.info(`Trying to unlock device using password ${unlockKey}`);
@@ -220,6 +227,7 @@ const UnlockHelpers: UnlockHelpers = {
     // Waits a bit for the device to be unlocked
     await waitForUnlock(adb);
   },
+
   getPatternKeyPosition(key, initPos, piece) {
     /*
     How the math works:
@@ -238,6 +246,7 @@ const UnlockHelpers: UnlockHelpers = {
       y: yPos(key, initPos.y, piece),
     };
   },
+
   getPatternActions(keys, initPos, piece) {
     const actions: TouchAction[] = [];
     keys = keys.map((key: string | number) => (_.isString(key) ? _.parseInt(key) : key));
@@ -283,6 +292,7 @@ const UnlockHelpers: UnlockHelpers = {
     actions.push({action: 'release'});
     return actions;
   },
+
   async patternUnlock(adb, driver, capabilities) {
     const {unlockKey} = capabilities;
     logger.info(`Trying to unlock device using pattern ${unlockKey}`);

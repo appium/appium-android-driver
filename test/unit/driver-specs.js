@@ -128,9 +128,11 @@ describe('driver', function () {
           getDevicesWithRetry() {
             return [{udid: 'emulator-1234'}, {udid: 'rotalume-1337'}];
           },
+
           getPortFromEmulatorString() {
             return 1234;
           },
+
           setDeviceId: () => {},
           setEmulatorPort: () => {},
           adbPort: opts.adbPort,
