@@ -1,3 +1,10 @@
+## [5.13.5](https://github.com/appium/appium-android-driver/compare/v5.13.4...v5.13.5) (2023-06-16)
+
+
+### Miscellaneous Chores
+
+* Make sharp to an optional dependency ([#824](https://github.com/appium/appium-android-driver/issues/824)) ([598388b](https://github.com/appium/appium-android-driver/commit/598388be58ab4e5ece4f3606ce78cabddc1574bb))
+
 ## [5.13.4](https://github.com/appium/appium-android-driver/compare/v5.13.3...v5.13.4) (2023-06-15)
 
 
