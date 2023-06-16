@@ -71,14 +71,13 @@
     "portscanner": "2.2.0",
     "semver": "^7.0.0",
     "shared-preferences-builder": "^0.x",
-    "sharp": "^0.x",
     "source-map-support": "^0.x",
     "teen_process": "^2.0.0",
     "ws": "^8.0.0"
   },
   "devDependencies": {
     "@appium/eslint-config-appium": "^6.0.0",
-    "@appium/support": "^4.0.0",
+    "@appium/support": "^4.0.1",
     "@appium/test-support": "^3.0.0",
     "@appium/tsconfig": "^0.3.0",
     "@appium/types": "^0.11.1",
