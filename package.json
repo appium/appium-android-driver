@@ -25,12 +25,13 @@
     "lib": "lib"
   },
   "files": [
-    "index.js",
+    "index.ts",
     "lib",
-    "build/index.js",
-    "build/lib",
+    "build",
     "bootstrap/bin/AppiumBootstrap.jar",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "!build/test",
+    "!build/tsconfig.tsbuildinfo"
   ],
   "scripts": {
     "build": "tsc -b",
