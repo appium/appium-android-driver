@@ -1,3 +1,10 @@
+## [5.13.6](https://github.com/appium/appium-android-driver/compare/v5.13.5...v5.13.6) (2023-06-16)
+
+
+### Bug Fixes
+
+* Return buffer instance without extra conversion ([#825](https://github.com/appium/appium-android-driver/issues/825)) ([795dda5](https://github.com/appium/appium-android-driver/commit/795dda5033578d8b3b1e363c5c28e7448d309a80))
+
 ## [5.13.5](https://github.com/appium/appium-android-driver/compare/v5.13.4...v5.13.5) (2023-06-16)
 
 
