@@ -77,7 +77,7 @@
   },
   "devDependencies": {
     "@appium/eslint-config-appium": "^6.0.0",
-    "@appium/support": "^4.0.0",
+    "@appium/support": "^4.0.1",
     "@appium/test-support": "^3.0.0",
     "@appium/tsconfig": "^0.3.0",
     "@appium/types": "^0.11.1",
@@ -120,9 +120,6 @@
   },
   "peerDependencies": {
     "appium": "^2.0.0-beta.40"
-  },
-  "optionalDependencies": {
-    "sharp": "^0.x"
   },
   "engines": {
     "node": ">=14",
