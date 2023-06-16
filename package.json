@@ -25,7 +25,6 @@
     "lib": "lib"
   },
   "files": [
-    "index.ts",
     "lib",
     "build",
     "bootstrap/bin/AppiumBootstrap.jar",

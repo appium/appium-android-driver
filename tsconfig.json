@@ -6,5 +6,5 @@
     "types": ["node", "mocha", "chai", "chai-as-promised", "sinon"],
     "strict": true
   },
-  "include": ["index.ts", "lib", "test"]
+  "include": ["lib", "test"]
 }
