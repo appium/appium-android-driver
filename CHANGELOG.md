@@ -1,3 +1,10 @@
+## [5.14.0](https://github.com/appium/appium-android-driver/compare/v5.13.6...v5.14.0) (2023-06-20)
+
+
+### Features
+
+* add mobileLock to handle an argument properly ([#826](https://github.com/appium/appium-android-driver/issues/826)) ([ee90f84](https://github.com/appium/appium-android-driver/commit/ee90f845de880d58fe58940a6d51932e4be43e5d))
+
 ## [5.13.6](https://github.com/appium/appium-android-driver/compare/v5.13.5...v5.13.6) (2023-06-16)
 
 
