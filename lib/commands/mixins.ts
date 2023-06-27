@@ -23,8 +23,8 @@ import type * as types from './types';
 
 export interface ActionsMixin {
   keyevent(keycode: string | number, metastate?: number): Promise<void>;
-  pressKeyCode(keycode: string | number, metastate?: number): Promise<void>;
-  longPressKeyCode(keycode: string | number, metastate?: number): Promise<void>;
+  pressKeyCode(keycode: string | number, metastate?: number, flags?: any): Promise<void>;
+  longPressKeyCode(keycode: string | number, metastate?: number, flags?: any): Promise<void>;
   getOrientation(): Promise<Orientation>;
   setOrientation(orientation: Orientation): Promise<void>;
   fakeFlick(xSpeed: number, ySpeed: number): Promise<void>;
@@ -536,7 +536,7 @@ export interface GeneralMixin {
 
   background(seconds: number): Promise<string | true>;
 
-  getStrings(language: string): Promise<StringRecord>;
+  getStrings(language?: string | null): Promise<StringRecord>;
 
   launchApp(): Promise<void>;
 

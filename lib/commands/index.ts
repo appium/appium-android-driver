@@ -50,3 +50,5 @@ const commands = {
 };
 
 export {commands};
+
+export type * from './mixins';

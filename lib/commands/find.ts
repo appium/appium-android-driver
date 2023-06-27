@@ -99,3 +99,5 @@ const FindMixin: FindMixin & ThisType<AndroidDriver> = {
 };
 
 mixin(FindMixin);
+
+export default FindMixin;

@@ -1,23 +1,38 @@
-// @ts-check
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import {BaseDriver, DeviceSettings} from 'appium/driver';
-import desiredConstraints from './constraints';
-
-import {newMethodMap} from './method-map';
-import {helpers, ensureNetworkSpeed, SETTINGS_HELPER_PKG_ID} from './helpers';
-import _ from 'lodash';
-import {DEFAULT_ADB_PORT} from 'appium-adb';
 import {fs, tempDir, util} from '@appium/support';
+import type {
+  Constraints,
+  DefaultCreateSessionResult,
+  DriverCaps,
+  DriverData,
+  DriverOpts,
+  ExternalDriver,
+  InitialOpts,
+  RouteMatcher,
+  StringRecord,
+  W3CDriverCaps,
+} from '@appium/types';
+import ADB, {DEFAULT_ADB_PORT} from 'appium-adb';
+import type {default as AppiumChromedriver} from 'appium-chromedriver';
+import {BaseDriver, DeviceSettings} from 'appium/driver';
 import {retryInterval} from 'asyncbox';
-import {SharedPrefsBuilder} from 'shared-preferences-builder';
 import B from 'bluebird';
+import _ from 'lodash';
+import {SharedPrefsBuilder} from 'shared-preferences-builder';
+import AndroidBootstrap from './bootstrap';
+import ANDROID_DRIVER_CONSTRAINTS, {AndroidDriverConstraints} from './constraints';
+import {SETTINGS_HELPER_PKG_ID, ensureNetworkSpeed, helpers} from './helpers';
+import {newMethodMap} from './method-map';
 
 const APP_EXTENSION = '.apk';
 const DEVICE_PORT = 4724;
 
-// This is a set of methods and paths that we never want to proxy to
-// Chromedriver
-const NO_PROXY = /** @type {import('@appium/types').RouteMatcher[]} */ ([
+/**
+ * This is a set of methods and paths that we never want to proxy to
+ * Chromedriver
+ **/
+const NO_PROXY: RouteMatcher[] = [
   ['POST', new RegExp('^/session/[^/]+/context')],
   ['GET', new RegExp('^/session/[^/]+/context')],
   ['POST', new RegExp('^/session/[^/]+/appium')],
@@ -30,67 +45,64 @@ const NO_PROXY = /** @type {import('@appium/types').RouteMatcher[]} */ ([
   ['POST', new RegExp('^/session/[^/]+/execute/sync')],
   ['GET', new RegExp('^/session/[^/]+/network_connection')],
   ['POST', new RegExp('^/session/[^/]+/network_connection')],
-]);
+];
 
-/**
- * @typedef {import('@appium/types').DriverCaps<AndroidDriverConstraints>} AndroidDriverCaps
- * @typedef {import('@appium/types').W3CDriverCaps<AndroidDriverConstraints>} W3CAndroidDriverCaps
- * @typedef {typeof desiredConstraints} AndroidDriverConstraints
- */
+export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
+export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;
+export type AndroidDriverOpts = DriverOpts<AndroidDriverConstraints>;
 
-/**
- * @extends {BaseDriver<AndroidDriverConstraints>}
- * @implements {AndroidExternalDriver}
- */
-class AndroidDriver extends BaseDriver {
+export interface AndroidSettings {
+  ignoreUnimportantViews: boolean;
+}
+
+export type AndroidDriverCreateResult = [string, AndroidDriverCaps];
+type AndroidExternalDriver = ExternalDriver<AndroidDriverConstraints>;
+class AndroidDriver
+  extends BaseDriver<
+    AndroidDriverConstraints,
+    StringRecord,
+    AndroidSettings,
+    AndroidDriverCreateResult
+  >
+  implements
+    ExternalDriver<
+      AndroidDriverConstraints,
+      string,
+      StringRecord,
+      AndroidSettings,
+      AndroidDriverCreateResult
+    >
+{
   static newMethodMap = newMethodMap;
+  jwpProxyAvoid: RouteMatcher[];
 
-  /**
-   * @type {typeof NO_PROXY}
-   */
-  jwpProxyAvoid;
+  bootstrap?: AndroidBootstrap;
 
-  /**
-   * @type {import('./bootstrap').AndroidBootstrap | undefined}
-   */
-  bootstrap;
+  adb?: ADB;
 
-  /** @type {import('appium-adb').ADB|undefined} */
-  adb;
+  unlocker: typeof helpers.unlocker;
 
-  /** @type {typeof helpers.unlocker} */
-  unlocker;
+  apkStrings: StringRecord<StringRecord<string>>;
 
-  /** @type {StringRecord<StringRecord<string>>} */
-  apkStrings;
+  proxyReqRes?: (...args: any) => any;
 
-  /**
-   * @type {((...args: any) => any) | undefined}
-   */
-  proxyReqRes;
+  contexts?: string[];
 
-  /**
-   * @type {string[]|undefined}
-   */
-  contexts;
+  sessionChromedrivers: StringRecord<AppiumChromedriver>;
 
-  /** @type {StringRecord<import('appium-chromedriver').default>} */
-  sessionChromedrivers;
+  chromedriver?: AppiumChromedriver;
 
-  /** @type {import('appium-chromedriver').default|null} */
-  chromedriver;
+  proxyCommand?: AndroidExternalDriver['proxyCommand'];
+  jwpProxyActive: boolean;
+  curContext: string;
 
-  /**
-   * @type {AndroidExternalDriver['proxyCommand']|undefined}
-   */
-  proxyCommand;
+  useUnlockHelperApp?: boolean;
 
-  /**
-   *
-   * @param {AndroidDriverOpts} opts
-   * @param {boolean} shouldValidateCaps
-   */
-  constructor(opts = /** @type {AndroidDriverOpts} */ ({}), shouldValidateCaps = true) {
+  defaultIME?: string;
+
+  _wasWindowAnimationDisabled?: boolean;
+
+  constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
 
     this.locatorStrategies = [
@@ -100,37 +112,38 @@ class AndroidDriver extends BaseDriver {
       'accessibility id',
       '-android uiautomator',
     ];
-    this.desiredCapConstraints = desiredConstraints;
+    this.desiredCapConstraints = _.cloneDeep(ANDROID_DRIVER_CONSTRAINTS);
     this.sessionChromedrivers = {};
     this.jwpProxyActive = false;
     this.jwpProxyAvoid = _.clone(NO_PROXY);
     this.settings = new DeviceSettings(
-      {ignoreUnimportantViews: false},
+      {ignoreUnimportantViews: false} as AndroidSettings,
       this.onSettingsUpdate.bind(this)
     );
-    this.chromedriver = null;
     this.apkStrings = {};
     this.unlocker = helpers.unlocker;
 
     this.curContext = this.defaultContextName();
   }
 
-  /**
-   *
-   * @param {W3CAndroidDriverCaps} w3cCaps1
-   * @param {W3CAndroidDriverCaps} [w3cCaps2]
-   * @param {W3CAndroidDriverCaps} [w3cCaps3]
-   * @param {import('@appium/types').DriverData[]} [driverData]
-   * @returns {Promise<[string, AndroidDriverCaps]>}
-   */
-  async createSession(w3cCaps1, w3cCaps2, w3cCaps3, driverData) {
+  async createSession(
+    w3cCaps1: W3CAndroidDriverCaps,
+    w3cCaps2?: W3CAndroidDriverCaps,
+    w3cCaps3?: W3CAndroidDriverCaps,
+    driverData?: DriverData[]
+  ): Promise<AndroidDriverCreateResult> {
     // the whole createSession flow is surrounded in a try-catch statement
     // if creating a session fails at any point, we teardown everything we
     // set up before throwing the error.
     try {
-      let [sessionId, caps] = await super.createSession(w3cCaps1, w3cCaps2, w3cCaps3, driverData);
+      const [sessionId, caps] = (await super.createSession(
+        w3cCaps1,
+        w3cCaps2,
+        w3cCaps3,
+        driverData
+      )) as DefaultCreateSessionResult<AndroidDriverConstraints>;
 
-      let serverDetails = {
+      const serverDetails = {
         platform: 'LINUX',
         webStorageEnabled: false,
         takesScreenshot: true,
@@ -145,7 +158,7 @@ class AndroidDriver extends BaseDriver {
       this.caps = Object.assign(serverDetails, this.caps);
 
       // assigning defaults
-      let defaultOpts = {
+      const defaultOpts = {
         action: 'android.intent.action.MAIN',
         category: 'android.intent.category.LAUNCHER',
         flags: '0x10200000',
@@ -157,18 +170,10 @@ class AndroidDriver extends BaseDriver {
         bootstrapPort: DEVICE_PORT,
         androidInstallTimeout: 90000,
       };
-      _.defaults(this.opts, defaultOpts);
-      this.useUnlockHelperApp = _.isUndefined(this.caps.unlockType);
 
-      // not user visible via caps
-      if (this.opts.noReset === true) {
-        this.opts.fullReset = false;
-      }
-      if (this.opts.fullReset === true) {
-        this.opts.noReset = false;
-      }
-      this.opts.fastReset = !this.opts.fullReset && !this.opts.noReset;
-      this.opts.skipUninstall = this.opts.fastReset || this.opts.noReset;
+      this.opts = {...defaultOpts, ...this.opts};
+
+      this.useUnlockHelperApp = _.isUndefined(this.caps.unlockType);
 
       if (this.isChromeSession) {
         helpers.adjustBrowserSessionCaps(this.opts);
@@ -184,7 +189,7 @@ class AndroidDriver extends BaseDriver {
       }
 
       // get device udid for this session
-      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(this.opts);
+      const {udid, emPort} = await helpers.getDeviceInfoFromCaps(this.opts);
       this.opts.udid = udid;
       // @ts-expect-error do not put arbitrary properties on opts
       this.opts.emPort = emPort;
@@ -192,7 +197,7 @@ class AndroidDriver extends BaseDriver {
       // set up an instance of ADB
       this.adb = await helpers.createADB({
         udid: this.opts.udid,
-        // @ts-expect-error do not put arbitrary properties on opts
+        // @ts-expect-error: unknown
         emPort: this.opts.emPort,
         adbPort: this.opts.adbPort,
         suppressKillServer: this.opts.suppressKillServer,
@@ -270,11 +275,7 @@ class AndroidDriver extends BaseDriver {
     return helpers.isEmulator(this.adb, this.opts);
   }
 
-  /**
-   *
-   * @param {AndroidDriverCaps} caps
-   */
-  setAvdFromCapabilities(caps) {
+  setAvdFromCapabilities(caps: AndroidDriverCaps) {
     if (this.opts.avd) {
       this.log.info('avd name defined, ignoring device name and platform version');
     } else {
@@ -282,13 +283,15 @@ class AndroidDriver extends BaseDriver {
         this.log.errorAndThrow(
           'avd or deviceName should be specified when reboot option is enables'
         );
+        throw new Error(); // unreachable
       }
       if (!caps.platformVersion) {
         this.log.errorAndThrow(
           'avd or platformVersion should be specified when reboot option is enabled'
         );
+        throw new Error(); // unreachable
       }
-      let avdDevice = caps.deviceName.replace(/[^a-zA-Z0-9_.]/g, '-');
+      const avdDevice = caps.deviceName.replace(/[^a-zA-Z0-9_.]/g, '-');
       this.opts.avd = `${avdDevice}__${caps.platformVersion}`;
     }
   }
@@ -303,36 +306,27 @@ class AndroidDriver extends BaseDriver {
   }
 
   get isChromeSession() {
-    return helpers.isChromeBrowser(this.opts.browserName);
+    return helpers.isChromeBrowser(String(this.opts.browserName));
   }
 
-  /**
-   *
-   * @param {string} key
-   * @param {any} value
-   */
-  async onSettingsUpdate(key, value) {
+  async onSettingsUpdate(key: keyof AndroidSettings, value: any) {
     if (key === 'ignoreUnimportantViews') {
       await this.setCompressedLayoutHierarchy(value);
     }
   }
 
-  /**
-   *
-   * @param {AndroidDriverOpts} [opts]
-   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async startAndroidSession(opts) {
+  async startAndroidSession(opts: AndroidDriverOpts) {
     this.log.info(`Starting Android session`);
-    const adb = /** @type {ADB} */ (this.adb);
+
     // set up the device to run on (real or emulator, etc)
-    this.defaultIME = await helpers.initDevice(adb, this.opts);
+    this.defaultIME = (await helpers.initDevice(this.adb!, this.opts)) as string;
 
     // set actual device name, udid, platform version, screen size, model and manufacturer details.
-    this.caps.deviceName = /** @type {string} */ (adb.curDeviceId);
+    this.caps.deviceName = this.adb!.curDeviceId as string;
     // @ts-expect-error do not put arbitrary properties on caps
     this.caps.deviceUDID = this.opts.udid;
-    this.caps.platformVersion = await adb.getPlatformVersion();
+    this.caps.platformVersion = await this.adb!.getPlatformVersion();
     // @ts-expect-error do not put arbitrary properties on caps
     this.caps.deviceScreenSize = await this.adb.getScreenSize();
     // @ts-expect-error do not put arbitrary properties on caps
@@ -341,18 +335,18 @@ class AndroidDriver extends BaseDriver {
     this.caps.deviceManufacturer = await this.adb.getManufacturer();
 
     if (this.opts.disableWindowAnimation) {
-      if (await adb.isAnimationOn()) {
-        if ((await adb.getApiLevel()) >= 28) {
+      if (await this.adb!.isAnimationOn()) {
+        if ((await this.adb!.getApiLevel()) >= 28) {
           // API level 28 is Android P
           // Don't forget to reset the relaxing in delete session
           this.log.warn('Relaxing hidden api policy to manage animation scale');
-          await adb.setHiddenApiPolicy('1', !!this.opts.ignoreHiddenApiPolicyError);
+          await this.adb!.setHiddenApiPolicy('1', !!this.opts.ignoreHiddenApiPolicyError);
         }
 
         this.log.info(
           'Disabling window animation as it is requested by "disableWindowAnimation" capability'
         );
-        await adb.setAnimationState(false);
+        await this.adb!.setAnimationState(false);
         this._wasWindowAnimationDisabled = true;
       } else {
         this.log.info('Window animation is already disabled');
@@ -364,7 +358,7 @@ class AndroidDriver extends BaseDriver {
 
     // start UiAutomator
     const bootstrap = (this.bootstrap = new helpers.bootstrap(
-      adb,
+      this.adb!,
       this.opts.bootstrapPort,
       // @ts-expect-error do not put arbitrary properties on opts
       this.opts.websocket
@@ -380,7 +374,7 @@ class AndroidDriver extends BaseDriver {
         await bootstrap.onUnexpectedShutdown;
       } catch (err) {
         if (!bootstrap.ignoreUnexpectedShutdown) {
-          await this.startUnexpectedShutdown(/** @type {Error} */ (err));
+          await this.startUnexpectedShutdown(err as Error);
         }
       }
     })();
@@ -392,7 +386,7 @@ class AndroidDriver extends BaseDriver {
         'Checking for lockscreen presence. ' +
           `This could be skipped by setting the 'appium:skipUnlock' capability to true.`
       );
-      await helpers.unlock(this, adb, this.caps);
+      await helpers.unlock(this, this.adb!, this.caps);
     }
 
     // Set CompressedLayoutHierarchy on the device based on current settings object
@@ -422,8 +416,8 @@ class AndroidDriver extends BaseDriver {
 
   async initAutoWebview() {
     if (this.opts.autoWebview) {
-      let viewName = this.defaultWebviewName();
-      let timeout = this.opts.autoWebviewTimeout || 2000;
+      const viewName = this.defaultWebviewName();
+      const timeout = this.opts.autoWebviewTimeout || 2000;
 
       this.log.info(`Setting auto webview to context '${viewName}' with timeout ${timeout}ms`);
 
@@ -435,11 +429,10 @@ class AndroidDriver extends BaseDriver {
   }
 
   async initAUT() {
-    const adb = /** @type {ADB} */ (this.adb);
     // populate appPackage, appActivity, appWaitPackage, appWaitActivity,
     // and the device being used
     // in the opts and caps (so it gets back to the user on session creation)
-    let launchInfo = await helpers.getLaunchInfo(adb, this.opts);
+    const launchInfo = await helpers.getLaunchInfo(this.adb!, this.opts);
     Object.assign(this.opts, launchInfo);
     Object.assign(this.caps, launchInfo);
 
@@ -448,7 +441,7 @@ class AndroidDriver extends BaseDriver {
       helpers.validateDesiredCaps(this.opts);
       // Only SETTINGS_HELPER_PKG_ID package is used by UIA1
       await helpers.uninstallOtherPackages(
-        adb,
+        this.adb!,
         helpers.parseArray(this.opts.uninstallOtherPackages),
         [SETTINGS_HELPER_PKG_ID]
       );
@@ -457,19 +450,17 @@ class AndroidDriver extends BaseDriver {
     // Install any "otherApps" that were specified in caps
     if (this.opts.otherApps) {
       /** @type {string[]} */
-      let otherApps;
+      let otherApps: string[];
       try {
         otherApps = helpers.parseArray(this.opts.otherApps);
       } catch (e) {
-        this.log.errorAndThrow(
-          `Could not parse "otherApps" capability: ${/** @type {Error} */ (e).message}`
-        );
+        this.log.errorAndThrow(`Could not parse "otherApps" capability: ${(e as Error).message}`);
         return; // unreachable
       }
       otherApps = await B.all(
         otherApps.map((app) => this.helpers.configureApp(app, APP_EXTENSION))
       );
-      await helpers.installOtherApks(otherApps, adb, this.opts);
+      await helpers.installOtherApks(otherApps, this.adb!, this.opts);
     }
 
     // install app
@@ -481,17 +472,17 @@ class AndroidDriver extends BaseDriver {
       }
       this.log.debug('No app capability. Assuming it is already on the device');
       if (this.opts.fastReset) {
-        await helpers.resetApp(adb, this.opts);
+        await helpers.resetApp(this.adb!, this.opts);
       }
       return;
     }
     if (!this.opts.skipUninstall) {
-      await adb.uninstallApk(/** @type {string} */ (this.opts.appPackage));
+      await this.adb!.uninstallApk(this.opts.appPackage!);
     }
-    await helpers.installApk(adb, this.opts);
+    await helpers.installApk(this.adb!, this.opts);
     const apkStringsForLanguage = await helpers.pushStrings(
       this.opts.language,
-      /** @type {ADB} */ (this.adb),
+      this.adb!,
       this.opts
     );
     if (this.opts.language) {
@@ -515,29 +506,17 @@ class AndroidDriver extends BaseDriver {
 
   async checkPackagePresent() {
     this.log.debug('Checking whether package is present on the device');
-    if (
-      !(await /** @type {ADB} */ (this.adb).shell([
-        'pm',
-        'list',
-        'packages',
-        String(this.opts.appPackage),
-      ]))
-    ) {
+    if (!(await this.adb!.shell(['pm', 'list', 'packages', String(this.opts.appPackage)]))) {
       this.log.errorAndThrow(`Could not find package ${this.opts.appPackage} on the device`);
     }
   }
 
-  // Set CompressedLayoutHierarchy on the device
   /**
-   *
-   * @param {any} compress
-   * @privateRemarks FIXME: unknown type
+   * Set CompressedLayoutHierarchy on the device
+   * @privateRemarks FIXME: unknown param type
    */
-  async setCompressedLayoutHierarchy(compress) {
-    await /** @type {import('./bootstrap').AndroidBootstrap} */ (this.bootstrap).sendAction(
-      'compressedLayoutHierarchy',
-      {compressLayout: compress}
-    );
+  async setCompressedLayoutHierarchy(compress: any) {
+    await this.bootstrap!.sendAction('compressedLayoutHierarchy', {compressLayout: compress});
   }
 
   async deleteSession() {
@@ -549,10 +528,7 @@ class AndroidDriver extends BaseDriver {
       }
     } catch (ign) {}
 
-    await helpers.removeAllSessionWebSocketHandlers(
-      /** @type {import('@appium/types').AppiumServer} */ (this.server),
-      /** @type {string} */ (this.sessionId)
-    );
+    await helpers.removeAllSessionWebSocketHandlers(this.server!, this.sessionId!);
 
     await this.mobileStopScreenStreaming();
 
@@ -566,11 +542,11 @@ class AndroidDriver extends BaseDriver {
         await this.adb?.setIME(this.defaultIME);
       }
       if (!this.isChromeSession && !this.opts.dontStopAppOnReset) {
-        await this.adb?.forceStop(/** @type {string} */ (this.opts.appPackage));
+        await this.adb?.forceStop(this.opts.appPackage!);
       }
       await this.adb?.goToHome();
       if (this.opts.fullReset && !this.opts.skipUninstall && !this.appOnDevice) {
-        await this.adb?.uninstallApk(/** @type {string} */ (this.opts.appPackage));
+        await this.adb?.uninstallApk(this.opts.appPackage!);
       }
       await this.bootstrap.shutdown();
       this.bootstrap = undefined;
@@ -597,7 +573,7 @@ class AndroidDriver extends BaseDriver {
     // @ts-expect-error do not put arbitrary properties on opts
     if (this.opts.reboot) {
       // @ts-expect-error do not put arbitrary properties on opts
-      let avdName = this.opts.avd.replace('@', '');
+      const avdName = this.opts.avd.replace('@', '');
       this.log.debug(`closing emulator '${avdName}'`);
       await this.adb?.killEmulator(avdName);
     }
@@ -608,28 +584,28 @@ class AndroidDriver extends BaseDriver {
    * @param {AndroidDriverOpts} [opts]
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async setSharedPreferences(opts) {
-    let sharedPrefs = /** @type {StringRecord} */ (this.opts.sharedPreferences);
+  async setSharedPreferences(opts: AndroidDriverOpts) {
+    const sharedPrefs = this.opts.sharedPreferences!;
     this.log.info('Trying to set shared preferences');
-    let name = sharedPrefs.name;
+    const name = sharedPrefs.name;
     if (_.isUndefined(name)) {
       this.log.warn(
         `Skipping setting Shared preferences, name is undefined: ${JSON.stringify(sharedPrefs)}`
       );
       return false;
     }
-    let remotePath = `/data/data/${this.opts.appPackage}/shared_prefs`;
-    let remoteFile = `${remotePath}/${name}.xml`;
-    let localPath = `/tmp/${name}.xml`;
-    let builder = this.getPrefsBuilder();
+    const remotePath = `/data/data/${this.opts.appPackage}/shared_prefs`;
+    const remoteFile = `${remotePath}/${name}.xml`;
+    const localPath = `/tmp/${name}.xml`;
+    const builder = this.getPrefsBuilder();
     builder.build(sharedPrefs.prefs);
     this.log.info(`Creating temporary shared preferences: ${localPath}`);
     builder.toFile(localPath);
     this.log.info(`Creating shared_prefs remote folder: ${remotePath}`);
-    const adb = /** @type {ADB} */ (this.adb);
-    await adb.shell(['mkdir', '-p', remotePath]);
+
+    await this.adb!.shell(['mkdir', '-p', remotePath]);
     this.log.info(`Pushing shared_prefs to ${remoteFile}`);
-    await adb.push(localPath, remoteFile);
+    await this.adb!.push(localPath, remoteFile);
     try {
       this.log.info(`Trying to remove shared preferences temporary file`);
       if (await fs.exists(localPath)) {
@@ -653,7 +629,7 @@ class AndroidDriver extends BaseDriver {
    * @param {any} caps
    * @returns {caps is AndroidDriverCaps}
    */
-  validateDesiredCaps(caps) {
+  validateDesiredCaps(caps: any): caps is AndroidDriverCaps {
     if (!super.validateDesiredCaps(caps)) {
       return false;
     }
@@ -673,7 +649,7 @@ class AndroidDriver extends BaseDriver {
    *
    * @param {string} sessionId
    */
-  proxyActive(sessionId) {
+  proxyActive(sessionId: string) {
     super.proxyActive(sessionId);
 
     return this.jwpProxyActive;
@@ -683,7 +659,7 @@ class AndroidDriver extends BaseDriver {
    *
    * @param {string} sessionId
    */
-  getProxyAvoidList(sessionId) {
+  getProxyAvoidList(sessionId: string) {
     super.getProxyAvoidList(sessionId);
 
     return this.jwpProxyAvoid;
@@ -693,7 +669,7 @@ class AndroidDriver extends BaseDriver {
    *
    * @param {string} sessionId
    */
-  canProxy(sessionId) {
+  canProxy(sessionId: string) {
     super.canProxy(sessionId);
 
     // this will change depending on ChromeDriver status
@@ -701,16 +677,5 @@ class AndroidDriver extends BaseDriver {
   }
 }
 
-export {AndroidDriver};
 export {commands as androidCommands} from './commands';
-
-/**
- * @typedef {import('@appium/types').ExternalDriver<AndroidDriverConstraints>} AndroidExternalDriver
- * @typedef {import('@appium/types').DriverOpts<AndroidDriverConstraints>} AndroidDriverOpts
- * @typedef {import('appium-adb').ADB} ADB
- */
-
-/**
- * @template [T=any]
- * @typedef {import('@appium/types').StringRecord<T>} StringRecord
- */
+export {AndroidDriver};

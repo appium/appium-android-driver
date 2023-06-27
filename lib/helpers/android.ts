@@ -21,6 +21,7 @@ import Unlocker, {
   PIN_UNLOCK,
   PIN_UNLOCK_KEY_EVENT,
 } from './unlock';
+import {AndroidDriverConstraints} from '../constraints';
 
 const MOCK_APP_IDS_STORE = '/data/local/tmp/mock_apps.json';
 const PACKAGE_INSTALL_TIMEOUT_MS = 90000;
@@ -131,24 +132,33 @@ interface AndroidHelpers {
    */
   ensureDeviceLocale(adb: ADB, language?: string, country?: string, script?: string): Promise<void>;
 
-  getDeviceInfoFromCaps(opts?: AndroidDriverOpts): Promise<ADBDeviceInfo>;
+  getDeviceInfoFromCaps<Opts extends AndroidDriverOpts>(opts?: Opts): Promise<ADBDeviceInfo>;
 
-  createADB(opts?: AndroidDriverOpts): Promise<ADB>;
+  createADB<Opts extends AndroidDriverOpts>(opts?: Opts): Promise<ADB>;
 
-  validatePackageActivityNames(opts: AndroidDriverOpts): void;
-  getLaunchInfo(adb: ADB, opts: AndroidDriverOpts): Promise<ADBLaunchInfo | undefined>;
-  resetApp(adb: ADB, opts: SetRequired<AndroidDriverOpts, 'appPackage'>): Promise<void>;
-  installApk(adb: ADB, opts: SetRequired<AndroidDriverOpts, 'appPackage' | 'app'>): Promise<void>;
+  validatePackageActivityNames<Opts extends AndroidDriverOpts>(opts: Opts): void;
+  getLaunchInfo<Opts extends AndroidDriverOpts>(
+    adb: ADB,
+    opts: Opts
+  ): Promise<ADBLaunchInfo | undefined>;
+  resetApp<Opts extends AndroidDriverOpts>(
+    adb: ADB,
+    opts: SetRequired<Opts, 'appPackage' | 'app'>
+  ): Promise<void>;
+  installApk<Opts extends AndroidDriverOpts>(
+    adb: ADB,
+    opts: SetRequired<Opts, 'appPackage' | 'app'>
+  ): Promise<void>;
 
   /**
    * Installs an array of apks
    * @param adb Instance of Appium ADB object
    * @param opts Opts defined in driver.js
    */
-  installOtherApks(
+  installOtherApks<Opts extends AndroidDriverOpts>(
     apks: string[],
     adb: ADB,
-    opts: SetRequired<AndroidDriverOpts, 'appPackage' | 'app'>
+    opts: SetRequired<Opts, 'appPackage' | 'app'>
   ): Promise<void>;
 
   /**
@@ -204,14 +214,21 @@ interface AndroidHelpers {
     adb: ADB,
     opts: AndroidDriverOpts
   ): Promise<StringRecord>;
-  unlock(driver: AndroidDriver, adb: ADB, capabilities: AndroidDriverCaps): Promise<void>;
+  unlock<D extends AndroidDriver, Caps extends AndroidDriverCaps>(
+    driver: D,
+    adb: ADB,
+    capabilities: Caps
+  ): Promise<void>;
   verifyUnlock(adb: ADB, timeoutMs?: number | null): Promise<void>;
-  initDevice(adb: ADB, opts: AndroidDriverOpts): Promise<void>;
+  initDevice(adb: ADB, opts: AndroidDriverOpts): Promise<string | void>;
   removeNullProperties(obj: any): void;
   truncateDecimals(number: number, digits: number): number;
   isChromeBrowser(browser?: string): boolean;
   getChromePkg(browser: string): ValueOf<typeof CHROME_BROWSER_PACKAGE_ACTIVITY>;
-  removeAllSessionWebSocketHandlers(server: AppiumServer, sessionId: string): Promise<void>;
+  removeAllSessionWebSocketHandlers(
+    server?: AppiumServer,
+    sessionId?: string | null
+  ): Promise<void>;
   parseArray(cap: string | string[]): string[];
 
   /**
@@ -233,7 +250,7 @@ interface AndroidHelpers {
    * appPackage/appActivity caps have already been provided.
    * @privateRemarks In practice, this fn is only ever provided a `AndroidDriverOpts` object
    */
-  adjustBrowserSessionCaps<T extends AndroidDriverCaps>(caps: T): T;
+  adjustBrowserSessionCaps(caps: AndroidDriverCaps): AndroidDriverCaps;
 
   /**
    * Checks whether the current device under test is an emulator
@@ -847,7 +864,7 @@ const AndroidHelpers: AndroidHelpers = {
     // clean up remote string.json if present
     await adb.rimraf(remoteFile);
 
-    let app;
+    let app: string;
     try {
       app = opts.app || (await adb.pullApk(opts.appPackage!, opts.tmpDir!));
     } catch (err) {
@@ -865,7 +882,7 @@ const AndroidHelpers: AndroidHelpers = {
 
     const stringsTmpDir = path.resolve(opts.tmpDir!, opts.appPackage!);
     try {
-      logger.debug('Extracting strings from apk', app, language, stringsTmpDir);
+      logger.debug('Extracting strings from apk', app!, language, stringsTmpDir);
       const {apkStrings, localPath} = await adb.extractStringsFromApk(
         app!,
         language,

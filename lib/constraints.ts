@@ -1,17 +1,12 @@
-export const ANDROID_DRIVER_CONSTRAINTS = /** @type {const} */ ({
+import {type Constraints} from '@appium/types';
+
+export const ANDROID_DRIVER_CONSTRAINTS = {
   platformName: {
     isString: true,
     inclusionCaseInsensitive: ['Android'],
     presence: true,
   },
-  /**
-   * XXX: this overrides BaseDriver's constraint, since this driver seems to require the deviceName cap
-   */
   deviceName: {
-    isString: true,
-    presence: true,
-  },
-  app: {
     isString: true,
   },
   appActivity: {
@@ -301,6 +296,8 @@ export const ANDROID_DRIVER_CONSTRAINTS = /** @type {const} */ ({
   appWaitForLaunch: {
     isBoolean: true,
   },
-});
+} as const satisfies Constraints;
 
 export default ANDROID_DRIVER_CONSTRAINTS;
+
+export type AndroidDriverConstraints = typeof ANDROID_DRIVER_CONSTRAINTS;
