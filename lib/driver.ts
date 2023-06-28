@@ -2,7 +2,6 @@
 
 import {fs, tempDir, util} from '@appium/support';
 import type {
-  Constraints,
   DefaultCreateSessionResult,
   DriverCaps,
   DriverData,
@@ -57,21 +56,12 @@ export interface AndroidSettings {
 
 export type AndroidDriverCreateResult = [string, AndroidDriverCaps];
 type AndroidExternalDriver = ExternalDriver<AndroidDriverConstraints>;
-class AndroidDriver
-  extends BaseDriver<
-    AndroidDriverConstraints,
-    StringRecord,
-    AndroidSettings,
-    AndroidDriverCreateResult
+class AndroidDriver<
+    Settings extends AndroidSettings = AndroidSettings,
+    CreateResult = AndroidDriverCreateResult
   >
-  implements
-    ExternalDriver<
-      AndroidDriverConstraints,
-      string,
-      StringRecord,
-      AndroidSettings,
-      AndroidDriverCreateResult
-    >
+  extends BaseDriver<AndroidDriverConstraints, StringRecord, Settings, CreateResult>
+  implements ExternalDriver<AndroidDriverConstraints, string, StringRecord, Settings, CreateResult>
 {
   static newMethodMap = newMethodMap;
   jwpProxyAvoid: RouteMatcher[];
@@ -102,6 +92,8 @@ class AndroidDriver
 
   _wasWindowAnimationDisabled?: boolean;
 
+  opts: AndroidDriverOpts;
+
   constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
 
@@ -117,13 +109,14 @@ class AndroidDriver
     this.jwpProxyActive = false;
     this.jwpProxyAvoid = _.clone(NO_PROXY);
     this.settings = new DeviceSettings(
-      {ignoreUnimportantViews: false} as AndroidSettings,
+      {ignoreUnimportantViews: false} as Settings,
       this.onSettingsUpdate.bind(this)
     );
     this.apkStrings = {};
     this.unlocker = helpers.unlocker;
 
     this.curContext = this.defaultContextName();
+    this.opts = opts as AndroidDriverOpts;
   }
 
   async createSession(
@@ -131,7 +124,7 @@ class AndroidDriver
     w3cCaps2?: W3CAndroidDriverCaps,
     w3cCaps3?: W3CAndroidDriverCaps,
     driverData?: DriverData[]
-  ): Promise<AndroidDriverCreateResult> {
+  ): Promise<CreateResult> {
     // the whole createSession flow is surrounded in a try-catch statement
     // if creating a session fails at any point, we teardown everything we
     // set up before throwing the error.
@@ -260,7 +253,7 @@ class AndroidDriver
       }
 
       await this.startAndroidSession(this.opts);
-      return [sessionId, this.caps];
+      return [sessionId, this.caps] as CreateResult;
     } catch (e) {
       // ignoring delete session exception if any and throw the real error
       // that happened while creating the session.
@@ -309,7 +302,7 @@ class AndroidDriver
     return helpers.isChromeBrowser(String(this.opts.browserName));
   }
 
-  async onSettingsUpdate(key: keyof AndroidSettings, value: any) {
+  async onSettingsUpdate(key: keyof Settings, value: any) {
     if (key === 'ignoreUnimportantViews') {
       await this.setCompressedLayoutHierarchy(value);
     }
@@ -386,13 +379,15 @@ class AndroidDriver
         'Checking for lockscreen presence. ' +
           `This could be skipped by setting the 'appium:skipUnlock' capability to true.`
       );
-      await helpers.unlock(this, this.adb!, this.caps);
+      await helpers.unlock(this as any, this.adb!, this.caps);
     }
 
     // Set CompressedLayoutHierarchy on the device based on current settings object
     // this has to happen _after_ bootstrap is initialized
     if (this.opts.ignoreUnimportantViews) {
-      await this.settings.update({ignoreUnimportantViews: this.opts.ignoreUnimportantViews});
+      await this.settings.update({
+        ignoreUnimportantViews: this.opts.ignoreUnimportantViews,
+      } as Settings);
     }
 
     if (this.isChromeSession) {
