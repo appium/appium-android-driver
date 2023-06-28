@@ -19,7 +19,7 @@
   },
   "license": "Apache-2.0",
   "author": "Appium Contributors",
-  "main": "./build/index.js",
+  "main": "./build/lib/index.js",
   "bin": {},
   "directories": {
     "lib": "lib"
