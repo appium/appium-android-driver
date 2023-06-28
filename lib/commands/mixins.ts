@@ -412,8 +412,8 @@ export interface EmulatorConsoleMixin {
 }
 
 export interface ExecuteMixin {
-  execute(script: string, args?: any): Promise<void>;
-  executeMobile(mobileCommand: string, opts?: StringRecord): Promise<void>;
+  execute(script: string, args?: any): Promise<unknown>;
+  executeMobile(mobileCommand: string, opts?: StringRecord): Promise<unknown>;
 }
 
 export interface FileActionsMixin {
