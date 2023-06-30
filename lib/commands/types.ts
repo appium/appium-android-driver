@@ -350,7 +350,7 @@ export interface ListSmsOpts {
    * Maximum count of recent SMS messages
    * @defaultValue 100
    */
-  max: number;
+  max?: number;
 }
 
 export type UnlockType = 'pin' | 'pinWithKeyEvent' | 'password' | 'pattern';
