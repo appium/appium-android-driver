@@ -1,3 +1,10 @@
+## [5.14.2](https://github.com/appium/appium-android-driver/compare/v5.14.1...v5.14.2) (2023-08-14)
+
+
+### Bug Fixes
+
+* relax webview matching logic of devtools_remote ([#836](https://github.com/appium/appium-android-driver/issues/836)) ([7c52b81](https://github.com/appium/appium-android-driver/commit/7c52b8197279df2cfa0e9bfa402de9db74704175))
+
 ## [5.14.1](https://github.com/appium/appium-android-driver/compare/v5.14.0...v5.14.1) (2023-08-14)
 
 
