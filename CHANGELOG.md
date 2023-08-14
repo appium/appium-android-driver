@@ -1,3 +1,10 @@
+## [5.14.1](https://github.com/appium/appium-android-driver/compare/v5.14.0...v5.14.1) (2023-08-14)
+
+
+### Miscellaneous Chores
+
+* use newer typescript ([#837](https://github.com/appium/appium-android-driver/issues/837)) ([eb59e9a](https://github.com/appium/appium-android-driver/commit/eb59e9a9b70e1a722f0ca34bff67a3c5a8ea849b))
+
 ## [5.14.0](https://github.com/appium/appium-android-driver/compare/v5.13.6...v5.14.0) (2023-06-20)
 
 
