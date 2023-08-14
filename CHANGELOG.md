@@ -1,3 +1,10 @@
+## [5.14.3](https://github.com/appium/appium-android-driver/compare/v5.14.2...v5.14.3) (2023-08-14)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump lint-staged from 13.3.0 to 14.0.0 ([#838](https://github.com/appium/appium-android-driver/issues/838)) ([f7cc201](https://github.com/appium/appium-android-driver/commit/f7cc20133bdfd54359dab2d41ea18080c49dd260))
+
 ## [5.14.2](https://github.com/appium/appium-android-driver/compare/v5.14.1...v5.14.2) (2023-08-14)
 
 
