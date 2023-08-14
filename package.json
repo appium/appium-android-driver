@@ -110,7 +110,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^14.0.0",
     "mocha": "^10.0.0",
-    "prettier": "^2.8.8",
+    "prettier": "^3.0.1",
     "rimraf": "^5.0.0",
     "semantic-release": "^20.0.2",
     "sinon": "^15.0.0",
