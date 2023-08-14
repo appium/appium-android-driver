@@ -1,3 +1,10 @@
+## [5.14.4](https://github.com/appium/appium-android-driver/compare/v5.14.3...v5.14.4) (2023-08-14)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump prettier from 2.8.8 to 3.0.1 ([#834](https://github.com/appium/appium-android-driver/issues/834)) ([03333cd](https://github.com/appium/appium-android-driver/commit/03333cd823c03fe8d3546cdcbb2d0fb76b042f58))
+
 ## [5.14.3](https://github.com/appium/appium-android-driver/compare/v5.14.2...v5.14.3) (2023-08-14)
 
 
