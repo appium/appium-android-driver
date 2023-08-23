@@ -1,3 +1,10 @@
+## [5.14.5](https://github.com/appium/appium-android-driver/compare/v5.14.4...v5.14.5) (2023-08-23)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @appium/types from 0.11.1 to 0.13.4 ([#841](https://github.com/appium/appium-android-driver/issues/841)) ([7fcc099](https://github.com/appium/appium-android-driver/commit/7fcc099793b3b1172eef43f7a450f7444768a267))
+
 ## [5.14.4](https://github.com/appium/appium-android-driver/compare/v5.14.3...v5.14.4) (2023-08-14)
 
 
