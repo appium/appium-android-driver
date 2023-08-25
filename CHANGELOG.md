@@ -1,3 +1,10 @@
+## [5.14.6](https://github.com/appium/appium-android-driver/compare/v5.14.5...v5.14.6) (2023-08-25)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump semantic-release from 20.1.3 to 21.1.0 ([#842](https://github.com/appium/appium-android-driver/issues/842)) ([2dac011](https://github.com/appium/appium-android-driver/commit/2dac011cb4adc2d51c0a7388c6040c1d3533d277))
+
 ## [5.14.5](https://github.com/appium/appium-android-driver/compare/v5.14.4...v5.14.5) (2023-08-23)
 
 
