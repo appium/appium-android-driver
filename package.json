@@ -57,7 +57,7 @@
     "singleQuote": true
   },
   "dependencies": {
-    "appium-adb": "^9.11.2",
+    "appium-adb": "^9.14.10",
     "appium-chromedriver": "^5.2.0",
     "asyncbox": "^2.8.0",
     "axios": "^1.x",
