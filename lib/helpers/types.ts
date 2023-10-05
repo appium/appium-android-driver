@@ -69,6 +69,8 @@ export interface GetWebviewsOpts {
    * @privateRemarks This is referenced but was not previously declared
    */
   isChromeSession?: boolean;
+
+  waitForWebviewMs?: number | string;
 }
 
 export interface ProcessInfo {
