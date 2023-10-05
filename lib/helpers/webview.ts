@@ -51,7 +51,7 @@ const DEVTOOLS_PORT_ALLOCATION_GUARD = util.getLockFileGuard(
   path.resolve(os.tmpdir(), 'android_devtools_port_guard'),
   {timeout: 7, tryRecovery: true},
 );
-const WEBVIEW_WAIT_INTERVAL_SEC = 0.2;
+const WEBVIEW_WAIT_INTERVAL_MS = 200;
 
 interface WebviewHelpers {
   /**
@@ -440,7 +440,7 @@ const WebviewHelpers: WebviewHelpers = {
       }
 
       logger.debug(`No webviews found in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
-      await sleep(WEBVIEW_WAIT_INTERVAL_SEC);
+      await sleep(WEBVIEW_WAIT_INTERVAL_MS);
     } while (timer.getDuration().asMilliSeconds < waitForWebviewMs);
 
     await collectWebviewsDetails(adb, webviewsMapping, {
