@@ -278,20 +278,11 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   ignoreUnimportantViews: {
     isBoolean: true,
   },
-  disableAndroidWatchers: {
-    isBoolean: true,
-  },
   acceptSslCerts: {
-    isBoolean: true,
-  },
-  androidNaturalOrientation: {
     isBoolean: true,
   },
   disableWindowAnimation: {
     isBoolean: true,
-  },
-  bootstrapPort: {
-    isNumber: true,
   },
   appWaitForLaunch: {
     isBoolean: true,

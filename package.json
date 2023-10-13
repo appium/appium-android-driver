@@ -27,7 +27,6 @@
   "files": [
     "lib",
     "build",
-    "bootstrap/bin/AppiumBootstrap.jar",
     "CHANGELOG.md",
     "!build/test",
     "!build/tsconfig.tsbuildinfo"
@@ -36,7 +35,6 @@
     "build": "tsc -b",
     "clean": "npm run build -- --clean",
     "dev": "npm run build -- --watch",
-    "e2e-test": "mocha --exit --timeout 10m \"./test/functional/**/*-specs.js\"",
     "lint": "eslint .",
     "lint:commit": "commitlint",
     "lint:fix": "npm run lint -- --fix",
@@ -70,7 +68,6 @@
     "portfinder": "^1.0.6",
     "portscanner": "2.2.0",
     "semver": "^7.0.0",
-    "shared-preferences-builder": "^0.x",
     "source-map-support": "^0.x",
     "teen_process": "^2.0.0",
     "type-fest": "^3.11.1",

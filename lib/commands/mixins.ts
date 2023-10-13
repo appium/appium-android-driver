@@ -197,10 +197,6 @@ export interface ActionsMixin {
    */
   sensorSet(opts: types.SensorSetOpts): Promise<void>;
 
-  getScreenshotDataWithAdbShell(adb: ADB, opts: AndroidDriverOpts): Promise<Buffer>;
-
-  getScreenshotDataWithAdbExecOut(adb: ADB): Promise<Buffer>;
-
   getScreenshot(): Promise<string>;
 }
 
@@ -734,8 +730,6 @@ export interface NetworkMixin {
    * Toggles GPS state
    */
   toggleLocationServices(): Promise<void>;
-
-  wrapBootstrapDisconnect(fn: () => Promise<void>): Promise<void>;
 }
 
 export interface PerformanceMixin {
