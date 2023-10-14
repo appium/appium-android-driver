@@ -1,3 +1,14 @@
+## [7.0.0](https://github.com/appium/appium-android-driver/compare/v6.0.1...v7.0.0) (2023-10-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed the obsolete bootstrap-related stuff from the driver
+
+### Code Refactoring
+
+* Transform the package to a library ([#863](https://github.com/appium/appium-android-driver/issues/863)) ([042c2fe](https://github.com/appium/appium-android-driver/commit/042c2fe1fa87bc0609310f5d5deaa166fef6814b))
+
 ## [6.0.1](https://github.com/appium/appium-android-driver/compare/v6.0.0...v6.0.1) (2023-08-30)
 
 
