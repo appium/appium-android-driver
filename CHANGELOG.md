@@ -1,3 +1,10 @@
+## [7.0.2](https://github.com/appium/appium-android-driver/compare/v7.0.1...v7.0.2) (2023-10-14)
+
+
+### Miscellaneous Chores
+
+* Update LRU-Cache ([#864](https://github.com/appium/appium-android-driver/issues/864)) ([d59aeb7](https://github.com/appium/appium-android-driver/commit/d59aeb760c52231630d029abeb8f54bd15e265d2))
+
 ## [7.0.1](https://github.com/appium/appium-android-driver/compare/v7.0.0...v7.0.1) (2023-10-14)
 
 
