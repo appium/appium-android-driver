@@ -1,3 +1,11 @@
+## [7.0.1](https://github.com/appium/appium-android-driver/compare/v7.0.0...v7.0.1) (2023-10-14)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 15.2.0 to 16.0.0 ([#849](https://github.com/appium/appium-android-driver/issues/849)) ([09dc903](https://github.com/appium/appium-android-driver/commit/09dc903edc3e7ae4292ec186bfb4fa48bf38bc5a))
+* **deps:** bump type-fest from 3.13.1 to 4.4.0 ([#861](https://github.com/appium/appium-android-driver/issues/861)) ([c174414](https://github.com/appium/appium-android-driver/commit/c174414ad1ecb7920828835a6d02a778c97f0e5a))
+
 ## [7.0.0](https://github.com/appium/appium-android-driver/compare/v6.0.1...v7.0.0) (2023-10-14)
 
 
