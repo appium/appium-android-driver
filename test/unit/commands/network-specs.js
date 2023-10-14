@@ -18,9 +18,6 @@ describe('Network', function () {
     driver.adb = adb;
     sandbox.stub(adb);
     sandbox.stub(driver, 'isEmulator');
-    sandbox.stub(driver, 'wrapBootstrapDisconnect').callsFake(async function (fn) {
-      await fn();
-    });
     sandbox.stub(B, 'delay');
   });
   afterEach(function () {
@@ -174,19 +171,6 @@ describe('Network', function () {
       Number.isNaN(latitude).should.be.false;
       Number.isNaN(longitude).should.be.false;
       Number.isNaN(altitude).should.be.false;
-    });
-  });
-  describe('wrapBootstrapDisconnect', function () {
-    it('should restart adb and start bootstrap', async function () {
-      driver.wrapBootstrapDisconnect.restore();
-      let fn = sandbox.stub();
-      driver.bootstrap = sandbox.stub();
-      driver.bootstrap.start = sandbox.stub();
-      driver.opts = {appPackage: 'pkg', disableAndroidWatchers: 'daw', acceptSslCerts: 'acert'};
-      await driver.wrapBootstrapDisconnect(fn);
-      sinon.assert.callOrder(fn, adb.restart, driver.bootstrap.start);
-      driver.bootstrap.calledWithExactly('pkg', 'daw', 'acert');
-      driver.bootstrap.ignoreUnexpectedShutdown.should.be.false;
     });
   });
 });

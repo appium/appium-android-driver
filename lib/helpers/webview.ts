@@ -390,7 +390,7 @@ const WebviewHelpers: WebviewHelpers = {
       return [CHROMIUM_WIN];
     }
 
-    const result = [];
+    const result: string[] = [];
     for (const {webview, pages, proc, webviewName} of webviewsMapping) {
       if (ensureWebviewsHavePages && pages?.length === 0) {
         logger.info(

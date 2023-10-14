@@ -3,5 +3,4 @@
  * @module
  */
 
-declare module 'shared-preferences-builder';
 declare module 'io.appium.settings';
