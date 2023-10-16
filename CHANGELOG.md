@@ -1,3 +1,11 @@
+## [7.0.3](https://github.com/appium/appium-android-driver/compare/v7.0.2...v7.0.3) (2023-10-16)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump lint-staged from 14.0.1 to 15.0.1 ([#866](https://github.com/appium/appium-android-driver/issues/866)) ([e6b5dc7](https://github.com/appium/appium-android-driver/commit/e6b5dc783d77a4e1d7e7349777f5b82d53df49e0))
+* **deps-dev:** bump semantic-release from 21.1.2 to 22.0.5 ([#854](https://github.com/appium/appium-android-driver/issues/854)) ([3f82959](https://github.com/appium/appium-android-driver/commit/3f8295958fc5117e9f6f2d91c6b578ca61774c45))
+
 ## [7.0.2](https://github.com/appium/appium-android-driver/compare/v7.0.1...v7.0.2) (2023-10-14)
 
 
