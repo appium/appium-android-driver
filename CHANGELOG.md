@@ -1,3 +1,10 @@
+## [7.0.4](https://github.com/appium/appium-android-driver/compare/v7.0.3...v7.0.4) (2023-10-16)
+
+
+### Miscellaneous Chores
+
+* Only use portscanner for port-related operations ([#865](https://github.com/appium/appium-android-driver/issues/865)) ([73eb574](https://github.com/appium/appium-android-driver/commit/73eb574056430e6f49f6b03a824c3f468dce7142))
+
 ## [7.0.3](https://github.com/appium/appium-android-driver/compare/v7.0.2...v7.0.3) (2023-10-16)
 
 
