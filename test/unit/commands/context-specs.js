@@ -10,7 +10,6 @@ import {
 } from '../../../lib/helpers/webview';
 import {AndroidDriver} from '../../../lib/driver';
 import Chromedriver from 'appium-chromedriver';
-import PortFinder from 'portfinder';
 import {errors} from 'appium/driver';
 
 let driver;
@@ -22,10 +21,6 @@ chai.use(chaiAsPromised);
 
 describe('Context', function () {
   beforeEach(function () {
-    sandbox.stub(PortFinder, 'getPort').callsFake(function (cb) {
-      // eslint-disable-line promise/prefer-await-to-callbacks
-      return cb(null, 4444); // eslint-disable-line promise/prefer-await-to-callbacks
-    });
     driver = new AndroidDriver();
     driver.adb = sandbox.stub();
     driver.adb.curDeviceId = 'device_id';
@@ -173,7 +168,6 @@ describe('Context', function () {
       driver.chromedriver.start
         .getCall(0)
         .args[0].chromeOptions.androidDeviceSerial.should.be.equal('device_id');
-      driver.chromedriver.proxyPort.should.be.equal('4444');
       driver.chromedriver.proxyReq.bind.calledWithExactly(driver.chromedriver);
       driver.proxyReqRes.should.be.equal('proxy');
       driver.jwpProxyActive.should.be.true;
