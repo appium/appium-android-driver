@@ -918,6 +918,10 @@ export interface TouchMixin {
   doPerformMultiAction(elementId: string, states: types.TouchState[]): Promise<void>;
 }
 
+export interface DeviceidleMixin {
+  mobileDeviceidle(opts: types.DeviceidleOpts): Promise<void>;
+}
+
 declare module '../driver' {
   interface AndroidDriver
     extends ActionsMixin,
@@ -942,6 +946,7 @@ declare module '../driver' {
       ShellMixin,
       StreamScreenMixin,
       SystemBarsMixin,
+      DeviceidleMixin,
       TouchMixin {}
 }
 
