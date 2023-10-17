@@ -1,3 +1,10 @@
+## [7.1.2](https://github.com/appium/appium-android-driver/compare/v7.1.1...v7.1.2) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* Make adb non-optional ([48d3105](https://github.com/appium/appium-android-driver/commit/48d310508177093ed5b881865a2a8173ad856a9a))
+
 ## [7.1.1](https://github.com/appium/appium-android-driver/compare/v7.1.0...v7.1.1) (2023-10-17)
 
 
