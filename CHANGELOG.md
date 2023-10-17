@@ -1,3 +1,10 @@
+## [7.1.3](https://github.com/appium/appium-android-driver/compare/v7.1.2...v7.1.3) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* Remove adb typing workarounds ([#870](https://github.com/appium/appium-android-driver/issues/870)) ([d1ce8d6](https://github.com/appium/appium-android-driver/commit/d1ce8d6fbbfb6567111bb8bb0436bc539997fa6b))
+
 ## [7.1.2](https://github.com/appium/appium-android-driver/compare/v7.1.1...v7.1.2) (2023-10-17)
 
 
