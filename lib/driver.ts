@@ -29,7 +29,7 @@ class AndroidDriver
   static newMethodMap = newMethodMap;
   jwpProxyAvoid: RouteMatcher[];
 
-  adb?: ADB;
+  adb: ADB;
 
   unlocker: typeof helpers.unlocker;
 
