@@ -1,3 +1,10 @@
+## [7.1.1](https://github.com/appium/appium-android-driver/compare/v7.1.0...v7.1.1) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump appium-adb from 9.14.12 to 10.0.0 ([#868](https://github.com/appium/appium-android-driver/issues/868)) ([60486a4](https://github.com/appium/appium-android-driver/commit/60486a43826983b01695aa0f759ae55f90752c00))
+
 ## [7.1.0](https://github.com/appium/appium-android-driver/compare/v7.0.4...v7.1.0) (2023-10-17)
 
 
