@@ -465,7 +465,7 @@ const AndroidHelpers: AndroidHelpers = {
     // @ts-expect-error do not put arbitrary properties on opts
     const {udid, emPort} = opts ?? {};
     const adb = await AndroidHelpers.createBaseADB(opts);
-    adb.setDeviceId(udid);
+    adb.setDeviceId(udid ?? '');
     if (emPort) {
       adb.setEmulatorPort(emPort);
     }
@@ -882,7 +882,7 @@ const AndroidHelpers: AndroidHelpers = {
       logger.debug('Extracting strings from apk', app!, language, stringsTmpDir);
       const {apkStrings, localPath} = await adb.extractStringsFromApk(
         app!,
-        language,
+        language ?? null,
         stringsTmpDir
       );
       await adb.push(localPath, remoteDir);
