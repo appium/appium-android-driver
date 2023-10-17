@@ -1,3 +1,10 @@
+## [7.1.0](https://github.com/appium/appium-android-driver/compare/v7.0.4...v7.1.0) (2023-10-17)
+
+
+### Features
+
+* Add mobile wrappers for 'dumpsys deviceidle' API ([#867](https://github.com/appium/appium-android-driver/issues/867)) ([7e217b2](https://github.com/appium/appium-android-driver/commit/7e217b25b3ca3d013cf46a9d83de80f513767fb0))
+
 ## [7.0.4](https://github.com/appium/appium-android-driver/compare/v7.0.3...v7.0.4) (2023-10-16)
 
 
