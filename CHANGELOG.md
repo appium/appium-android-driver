@@ -1,3 +1,10 @@
+## [7.1.4](https://github.com/appium/appium-android-driver/compare/v7.1.3...v7.1.4) (2023-10-18)
+
+
+### Miscellaneous Chores
+
+* Remove unused capabilities ([#871](https://github.com/appium/appium-android-driver/issues/871)) ([770e6fc](https://github.com/appium/appium-android-driver/commit/770e6fc8fadbd80308b5c12d1da12f2a28df040b))
+
 ## [7.1.3](https://github.com/appium/appium-android-driver/compare/v7.1.2...v7.1.3) (2023-10-17)
 
 
