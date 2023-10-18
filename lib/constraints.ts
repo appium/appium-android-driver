@@ -27,9 +27,6 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   deviceReadyTimeout: {
     isNumber: true,
   },
-  androidCoverage: {
-    isString: true,
-  },
   androidDeviceReadyTimeout: {
     isNumber: true,
   },
@@ -270,15 +267,7 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   allowDelayAdb: {
     isBoolean: true,
   },
-
-  /*-----------------------------------+
-   | UI-AUTOMATOR-SPECIFIC CONSTRAINTS |
-   +-----------------------------------+*/
-
   ignoreUnimportantViews: {
-    isBoolean: true,
-  },
-  acceptSslCerts: {
     isBoolean: true,
   },
   disableWindowAnimation: {
