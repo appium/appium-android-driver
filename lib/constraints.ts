@@ -27,9 +27,6 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   deviceReadyTimeout: {
     isNumber: true,
   },
-  androidCoverage: {
-    isString: true,
-  },
   androidDeviceReadyTimeout: {
     isNumber: true,
   },
@@ -87,11 +84,6 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   enableWebviewDetailsCollection: {
     isBoolean: true,
   },
-  // this one is deprecated
-  chromeDriverPort: {
-    isNumber: true,
-  },
-  // duplicate of above with better spelling
   chromedriverPort: {
     isNumber: true,
   },
@@ -143,9 +135,6 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   unicodeKeyboard: {
     isBoolean: true,
   },
-  resetKeyboard: {
-    isBoolean: true,
-  },
   noSign: {
     isBoolean: true,
   },
@@ -158,12 +147,6 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   nativeWebScreenshot: {
     isBoolean: true,
   },
-  androidScreenshotPath: {
-    isString: true,
-  },
-  androidInstallPath: {
-    isString: true,
-  },
   clearSystemFiles: {
     isBoolean: true,
   },
@@ -172,9 +155,6 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   },
   autoGrantPermissions: {
     isBoolean: true,
-  },
-  sharedPreferences: {
-    isObject: true,
   },
   networkSpeed: {
     isString: true,
@@ -270,15 +250,7 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   allowDelayAdb: {
     isBoolean: true,
   },
-
-  /*-----------------------------------+
-   | UI-AUTOMATOR-SPECIFIC CONSTRAINTS |
-   +-----------------------------------+*/
-
   ignoreUnimportantViews: {
-    isBoolean: true,
-  },
-  acceptSslCerts: {
     isBoolean: true,
   },
   disableWindowAnimation: {
