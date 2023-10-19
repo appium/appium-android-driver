@@ -1,3 +1,10 @@
+## [7.1.6](https://github.com/appium/appium-android-driver/compare/v7.1.5...v7.1.6) (2023-10-19)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump eslint-config-prettier from 8.10.0 to 9.0.0 ([#874](https://github.com/appium/appium-android-driver/issues/874)) ([53afc93](https://github.com/appium/appium-android-driver/commit/53afc93af25f62e77c67b1e19fc3d1b0450de8d3))
+
 ## [7.1.5](https://github.com/appium/appium-android-driver/compare/v7.1.4...v7.1.5) (2023-10-19)
 
 
