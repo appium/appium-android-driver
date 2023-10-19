@@ -1,3 +1,11 @@
+## [7.1.5](https://github.com/appium/appium-android-driver/compare/v7.1.4...v7.1.5) (2023-10-19)
+
+
+### Miscellaneous Chores
+
+* Always use latest types ([83971c0](https://github.com/appium/appium-android-driver/commit/83971c0601c2b992a2fee24ff59cc90fb2edc814))
+* **deps:** bump appium-adb from 10.0.0 to 11.0.1 ([#873](https://github.com/appium/appium-android-driver/issues/873)) ([c4d6c83](https://github.com/appium/appium-android-driver/commit/c4d6c832f99b7ccdb26482886a3316810969ff91))
+
 ## [7.1.4](https://github.com/appium/appium-android-driver/compare/v7.1.3...v7.1.4) (2023-10-18)
 
 
