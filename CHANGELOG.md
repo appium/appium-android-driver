@@ -1,3 +1,10 @@
+## [7.1.7](https://github.com/appium/appium-android-driver/compare/v7.1.6...v7.1.7) (2023-10-23)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @commitlint/config-conventional ([#876](https://github.com/appium/appium-android-driver/issues/876)) ([24df12a](https://github.com/appium/appium-android-driver/commit/24df12a4229cae21744cff2c414be1bd6bee3a54))
+
 ## [7.1.6](https://github.com/appium/appium-android-driver/compare/v7.1.5...v7.1.6) (2023-10-19)
 
 
