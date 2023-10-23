@@ -3,5 +3,5 @@
  * @module
  */
 
-declare module 'shared-preferences-builder';
+// @ts-ignore It is expected this module is untyped
 declare module 'io.appium.settings';

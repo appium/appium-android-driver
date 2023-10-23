@@ -1095,3 +1095,10 @@ export interface LockOpts {
    */
   seconds?: number;
 }
+
+export interface DeviceidleOpts {
+  /** The action name to execute */
+  action: 'whitelistAdd'|'whitelistRemove';
+  /** Either a single package or multiple packages to add or remove from the idle whitelist */
+  packages?: string|string[];
+}

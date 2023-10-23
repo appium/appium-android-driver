@@ -1,3 +1,94 @@
+## [7.1.6](https://github.com/appium/appium-android-driver/compare/v7.1.5...v7.1.6) (2023-10-19)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump eslint-config-prettier from 8.10.0 to 9.0.0 ([#874](https://github.com/appium/appium-android-driver/issues/874)) ([53afc93](https://github.com/appium/appium-android-driver/commit/53afc93af25f62e77c67b1e19fc3d1b0450de8d3))
+
+## [7.1.5](https://github.com/appium/appium-android-driver/compare/v7.1.4...v7.1.5) (2023-10-19)
+
+
+### Miscellaneous Chores
+
+* Always use latest types ([83971c0](https://github.com/appium/appium-android-driver/commit/83971c0601c2b992a2fee24ff59cc90fb2edc814))
+* **deps:** bump appium-adb from 10.0.0 to 11.0.1 ([#873](https://github.com/appium/appium-android-driver/issues/873)) ([c4d6c83](https://github.com/appium/appium-android-driver/commit/c4d6c832f99b7ccdb26482886a3316810969ff91))
+
+## [7.1.4](https://github.com/appium/appium-android-driver/compare/v7.1.3...v7.1.4) (2023-10-18)
+
+
+### Miscellaneous Chores
+
+* Remove unused capabilities ([#871](https://github.com/appium/appium-android-driver/issues/871)) ([770e6fc](https://github.com/appium/appium-android-driver/commit/770e6fc8fadbd80308b5c12d1da12f2a28df040b))
+
+## [7.1.3](https://github.com/appium/appium-android-driver/compare/v7.1.2...v7.1.3) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* Remove adb typing workarounds ([#870](https://github.com/appium/appium-android-driver/issues/870)) ([d1ce8d6](https://github.com/appium/appium-android-driver/commit/d1ce8d6fbbfb6567111bb8bb0436bc539997fa6b))
+
+## [7.1.2](https://github.com/appium/appium-android-driver/compare/v7.1.1...v7.1.2) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* Make adb non-optional ([48d3105](https://github.com/appium/appium-android-driver/commit/48d310508177093ed5b881865a2a8173ad856a9a))
+
+## [7.1.1](https://github.com/appium/appium-android-driver/compare/v7.1.0...v7.1.1) (2023-10-17)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump appium-adb from 9.14.12 to 10.0.0 ([#868](https://github.com/appium/appium-android-driver/issues/868)) ([60486a4](https://github.com/appium/appium-android-driver/commit/60486a43826983b01695aa0f759ae55f90752c00))
+
+## [7.1.0](https://github.com/appium/appium-android-driver/compare/v7.0.4...v7.1.0) (2023-10-17)
+
+
+### Features
+
+* Add mobile wrappers for 'dumpsys deviceidle' API ([#867](https://github.com/appium/appium-android-driver/issues/867)) ([7e217b2](https://github.com/appium/appium-android-driver/commit/7e217b25b3ca3d013cf46a9d83de80f513767fb0))
+
+## [7.0.4](https://github.com/appium/appium-android-driver/compare/v7.0.3...v7.0.4) (2023-10-16)
+
+
+### Miscellaneous Chores
+
+* Only use portscanner for port-related operations ([#865](https://github.com/appium/appium-android-driver/issues/865)) ([73eb574](https://github.com/appium/appium-android-driver/commit/73eb574056430e6f49f6b03a824c3f468dce7142))
+
+## [7.0.3](https://github.com/appium/appium-android-driver/compare/v7.0.2...v7.0.3) (2023-10-16)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump lint-staged from 14.0.1 to 15.0.1 ([#866](https://github.com/appium/appium-android-driver/issues/866)) ([e6b5dc7](https://github.com/appium/appium-android-driver/commit/e6b5dc783d77a4e1d7e7349777f5b82d53df49e0))
+* **deps-dev:** bump semantic-release from 21.1.2 to 22.0.5 ([#854](https://github.com/appium/appium-android-driver/issues/854)) ([3f82959](https://github.com/appium/appium-android-driver/commit/3f8295958fc5117e9f6f2d91c6b578ca61774c45))
+
+## [7.0.2](https://github.com/appium/appium-android-driver/compare/v7.0.1...v7.0.2) (2023-10-14)
+
+
+### Miscellaneous Chores
+
+* Update LRU-Cache ([#864](https://github.com/appium/appium-android-driver/issues/864)) ([d59aeb7](https://github.com/appium/appium-android-driver/commit/d59aeb760c52231630d029abeb8f54bd15e265d2))
+
+## [7.0.1](https://github.com/appium/appium-android-driver/compare/v7.0.0...v7.0.1) (2023-10-14)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 15.2.0 to 16.0.0 ([#849](https://github.com/appium/appium-android-driver/issues/849)) ([09dc903](https://github.com/appium/appium-android-driver/commit/09dc903edc3e7ae4292ec186bfb4fa48bf38bc5a))
+* **deps:** bump type-fest from 3.13.1 to 4.4.0 ([#861](https://github.com/appium/appium-android-driver/issues/861)) ([c174414](https://github.com/appium/appium-android-driver/commit/c174414ad1ecb7920828835a6d02a778c97f0e5a))
+
+## [7.0.0](https://github.com/appium/appium-android-driver/compare/v6.0.1...v7.0.0) (2023-10-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed the obsolete bootstrap-related stuff from the driver
+
+### Code Refactoring
+
+* Transform the package to a library ([#863](https://github.com/appium/appium-android-driver/issues/863)) ([042c2fe](https://github.com/appium/appium-android-driver/commit/042c2fe1fa87bc0609310f5d5deaa166fef6814b))
+
 ## [6.0.1](https://github.com/appium/appium-android-driver/compare/v6.0.0...v6.0.1) (2023-08-30)
 
 

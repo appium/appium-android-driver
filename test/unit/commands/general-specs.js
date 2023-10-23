@@ -5,7 +5,6 @@ import {AndroidDriver} from '../../../lib/driver';
 import helpers from '../../../lib/helpers/android';
 import {withMocks} from '@appium/test-support';
 import {fs} from '@appium/support';
-import Bootstrap from '../../../lib/bootstrap';
 import B from 'bluebird';
 import ADB from 'appium-adb';
 
@@ -19,63 +18,12 @@ let expect = chai.expect;
 describe('General', function () {
   beforeEach(function () {
     driver = new AndroidDriver();
-    driver.bootstrap = new Bootstrap();
     driver.adb = new ADB();
     driver.caps = {};
     driver.opts = {};
   });
   afterEach(function () {
     sandbox.restore();
-  });
-  describe('keys', function () {
-    it('should send keys via setText bootstrap command', async function () {
-      sandbox.stub(driver.bootstrap, 'sendAction');
-      driver.opts.unicodeKeyboard = true;
-      await driver.keys('keys');
-      driver.bootstrap.sendAction.calledWithExactly('setText', {
-        text: 'keys',
-        replace: false,
-        unicodeKeyboard: true,
-      }).should.be.true;
-    });
-    it('should join keys if keys is array', async function () {
-      sandbox.stub(driver.bootstrap, 'sendAction');
-      driver.opts.unicodeKeyboard = false;
-      await driver.keys(['k', 'e', 'y', 's']);
-      driver.bootstrap.sendAction.calledWithExactly('setText', {text: 'keys', replace: false})
-        .should.be.true;
-    });
-  });
-  describe('getDeviceTime', function () {
-    it('should return device time', async function () {
-      sandbox.stub(driver.adb, 'shell');
-      driver.adb.shell.returns(' 2018-06-09T16:21:54+0900 ');
-      await driver.getDeviceTime().should.become('2018-06-09T16:21:54+09:00');
-      driver.adb.shell.calledWithExactly(['date', '+%Y-%m-%dT%T%z']).should.be.true;
-    });
-    it('should return device time with custom format', async function () {
-      sandbox.stub(driver.adb, 'shell');
-      driver.adb.shell.returns(' 2018-06-09T16:21:54+0900 ');
-      await driver.getDeviceTime('YYYY-MM-DD').should.become('2018-06-09');
-      driver.adb.shell.calledWithExactly(['date', '+%Y-%m-%dT%T%z']).should.be.true;
-    });
-    it('should throw error if shell command failed', async function () {
-      sandbox.stub(driver.adb, 'shell').throws();
-      await driver.getDeviceTime().should.be.rejected;
-    });
-  });
-  describe('getPageSource', function () {
-    it('should return page source', async function () {
-      sandbox.stub(driver.bootstrap, 'sendAction').withArgs('source').returns('sources');
-      (await driver.getPageSource()).should.be.equal('sources');
-    });
-  });
-  describe('back', function () {
-    it('should press back', async function () {
-      sandbox.stub(driver.bootstrap, 'sendAction');
-      await driver.back();
-      driver.bootstrap.sendAction.calledWithExactly('pressBack').should.be.true;
-    });
   });
   describe('isKeyboardShown', function () {
     it('should return true if the keyboard is shown', async function () {
@@ -138,25 +86,6 @@ describe('General', function () {
       driver.adb.shell.calledWithExactly(['am', 'start', '-a', 'android.settings.set1']).should.be
         .true;
       driver.adb.waitForNotActivity.calledWithExactly('pkg', 'act', 5000).should.be.true;
-    });
-  });
-  describe('getWindowSize', function () {
-    it('should get window size', async function () {
-      sandbox.stub(driver.bootstrap, 'sendAction').withArgs('getDeviceSize').returns('size');
-      (await driver.getWindowSize()).should.be.equal('size');
-    });
-  });
-  describe('getWindowRect', function () {
-    it('should get window size', async function () {
-      sandbox
-        .stub(driver.bootstrap, 'sendAction')
-        .withArgs('getDeviceSize')
-        .returns({width: 300, height: 400});
-      const rect = await driver.getWindowRect();
-      rect.width.should.be.equal(300);
-      rect.height.should.be.equal(400);
-      rect.x.should.be.equal(0);
-      rect.y.should.be.equal(0);
     });
   });
   describe('getCurrentActivity', function () {
@@ -302,7 +231,6 @@ describe('General', function () {
     'getStrings',
     withMocks({helpers}, (mocks) => {
       it('should return app strings', async function () {
-        driver.bootstrap.sendAction = () => '';
         mocks.helpers.expects('pushStrings').returns({test: 'en_value'});
         let strings = await driver.getStrings('en');
         strings.test.should.equal('en_value');
@@ -324,15 +252,6 @@ describe('General', function () {
       });
     })
   );
-  describe('launchApp', function () {
-    it('should init and start app', async function () {
-      sandbox.stub(driver, 'initAUT');
-      sandbox.stub(driver, 'startAUT');
-      await driver.launchApp();
-      driver.initAUT.calledOnce.should.be.true;
-      driver.startAUT.calledOnce.should.be.true;
-    });
-  });
   describe('startActivity', function () {
     let params;
     beforeEach(function () {

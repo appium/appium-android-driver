@@ -9,7 +9,6 @@ import {errors, isErrorType} from 'appium/driver';
 import type {AndroidDriver} from '../driver';
 import type {Element} from '@appium/types';
 import type {FindElementOpts} from './types';
-import type AndroidBootstrap from '../bootstrap';
 
 async function findElOrEls(
   this: AndroidDriver,
@@ -92,7 +91,7 @@ async function findElOrEls(
 
 const FindMixin: FindMixin & ThisType<AndroidDriver> = {
   async doFindElementOrEls(params) {
-    return await (this.bootstrap as AndroidBootstrap).sendAction('find', params);
+    throw new errors.NotImplementedError('Not implemented');
   },
 
   findElOrEls,

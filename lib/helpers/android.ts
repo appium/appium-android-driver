@@ -9,7 +9,6 @@ import {EOL} from 'node:os';
 import path from 'node:path';
 import semver, {type SemVer} from 'semver';
 import type {SetRequired, ValueOf} from 'type-fest';
-import Bootstrap from '../bootstrap';
 import type {UnlockType} from '../commands/types';
 import type {AndroidDriver, AndroidDriverCaps, AndroidDriverOpts} from '../driver';
 import logger from '../logger';
@@ -21,7 +20,6 @@ import Unlocker, {
   PIN_UNLOCK,
   PIN_UNLOCK_KEY_EVENT,
 } from './unlock';
-import {AndroidDriverConstraints} from '../constraints';
 
 const MOCK_APP_IDS_STORE = '/data/local/tmp/mock_apps.json';
 const PACKAGE_INSTALL_TIMEOUT_MS = 90000;
@@ -260,7 +258,6 @@ interface AndroidHelpers {
    * @returns `true` if the device is an Android emulator
    */
   isEmulator(adb?: ADB, opts?: AndroidDriverOpts): boolean;
-  bootstrap: typeof Bootstrap;
   unlocker: typeof Unlocker;
 }
 
@@ -468,7 +465,7 @@ const AndroidHelpers: AndroidHelpers = {
     // @ts-expect-error do not put arbitrary properties on opts
     const {udid, emPort} = opts ?? {};
     const adb = await AndroidHelpers.createBaseADB(opts);
-    adb.setDeviceId(udid);
+    adb.setDeviceId(udid ?? '');
     if (emPort) {
       adb.setEmulatorPort(emPort);
     }
@@ -885,7 +882,7 @@ const AndroidHelpers: AndroidHelpers = {
       logger.debug('Extracting strings from apk', app!, language, stringsTmpDir);
       const {apkStrings, localPath} = await adb.extractStringsFromApk(
         app!,
-        language,
+        language ?? null,
         stringsTmpDir
       );
       await adb.push(localPath, remoteDir);
@@ -1134,7 +1131,6 @@ const AndroidHelpers: AndroidHelpers = {
     const possibleNames = [opts?.udid, adb?.curDeviceId];
     return !!opts?.avd || possibleNames.some((x) => EMULATOR_PATTERN.test(String(x)));
   },
-  bootstrap: Bootstrap,
   unlocker: Unlocker,
 };
 

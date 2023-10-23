@@ -8,7 +8,7 @@ import {StringRecord} from '@appium/types';
 import axios from 'axios';
 import B from 'bluebird';
 import _ from 'lodash';
-import LRU from 'lru-cache';
+import {LRUCache} from 'lru-cache';
 import os from 'node:os';
 import path from 'node:path';
 import {findAPortNotInUse} from 'portscanner';
@@ -42,7 +42,7 @@ const KNOWN_CHROME_PACKAGE_NAMES = [
   'com.chrome.canary',
 ];
 const DEVTOOLS_PORTS_RANGE = [10900, 11000];
-const WEBVIEWS_DETAILS_CACHE = new LRU<string, WebViewDetails>({
+const WEBVIEWS_DETAILS_CACHE = new LRUCache<string, WebViewDetails>({
   max: 100,
   updateAgeOnGet: true,
 });
@@ -392,7 +392,7 @@ const WebviewHelpers: WebviewHelpers = {
       return [CHROMIUM_WIN];
     }
 
-    const result = [];
+    const result: string[] = [];
     for (const {webview, pages, proc, webviewName} of webviewsMapping) {
       if (ensureWebviewsHavePages && pages?.length === 0) {
         logger.info(

@@ -197,10 +197,6 @@ export interface ActionsMixin {
    */
   sensorSet(opts: types.SensorSetOpts): Promise<void>;
 
-  getScreenshotDataWithAdbShell(adb: ADB, opts: AndroidDriverOpts): Promise<Buffer>;
-
-  getScreenshotDataWithAdbExecOut(adb: ADB): Promise<Buffer>;
-
   getScreenshot(): Promise<string>;
 }
 
@@ -734,8 +730,6 @@ export interface NetworkMixin {
    * Toggles GPS state
    */
   toggleLocationServices(): Promise<void>;
-
-  wrapBootstrapDisconnect(fn: () => Promise<void>): Promise<void>;
 }
 
 export interface PerformanceMixin {
@@ -924,6 +918,10 @@ export interface TouchMixin {
   doPerformMultiAction(elementId: string, states: types.TouchState[]): Promise<void>;
 }
 
+export interface DeviceidleMixin {
+  mobileDeviceidle(opts: types.DeviceidleOpts): Promise<void>;
+}
+
 declare module '../driver' {
   interface AndroidDriver
     extends ActionsMixin,
@@ -948,6 +946,7 @@ declare module '../driver' {
       ShellMixin,
       StreamScreenMixin,
       SystemBarsMixin,
+      DeviceidleMixin,
       TouchMixin {}
 }
 
