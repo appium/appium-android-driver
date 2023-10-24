@@ -1,3 +1,10 @@
+## [7.1.9](https://github.com/appium/appium-android-driver/compare/v7.1.8...v7.1.9) (2023-10-24)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @commitlint/cli from 17.8.1 to 18.0.0 ([#877](https://github.com/appium/appium-android-driver/issues/877)) ([1cf493b](https://github.com/appium/appium-android-driver/commit/1cf493b3afd124ead6d1628fc0cb080a57e885a8))
+
 ## [7.1.8](https://github.com/appium/appium-android-driver/compare/v7.1.7...v7.1.8) (2023-10-24)
 
 
