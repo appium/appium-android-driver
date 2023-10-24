@@ -1,3 +1,10 @@
+## [7.1.8](https://github.com/appium/appium-android-driver/compare/v7.1.7...v7.1.8) (2023-10-24)
+
+
+### Miscellaneous Chores
+
+* apply auto commit hook lint only ([#878](https://github.com/appium/appium-android-driver/issues/878)) ([183e427](https://github.com/appium/appium-android-driver/commit/183e42773802598463d6729d3fa79819c3d264c5))
+
 ## [7.1.7](https://github.com/appium/appium-android-driver/compare/v7.1.6...v7.1.7) (2023-10-23)
 
 
