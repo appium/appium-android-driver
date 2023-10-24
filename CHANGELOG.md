@@ -1,3 +1,10 @@
+## [7.1.11](https://github.com/appium/appium-android-driver/compare/v7.1.10...v7.1.11) (2023-10-24)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump [@typescript-eslint](https://github.com/typescript-eslint) packages to 6.9.0 ([#881](https://github.com/appium/appium-android-driver/issues/881)) ([08e9821](https://github.com/appium/appium-android-driver/commit/08e9821fa8e86ccae81fe57bcfe869637f0edb4f))
+
 ## [7.1.10](https://github.com/appium/appium-android-driver/compare/v7.1.9...v7.1.10) (2023-10-24)
 
 
