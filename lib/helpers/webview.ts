@@ -48,7 +48,7 @@ const WEBVIEWS_DETAILS_CACHE = new LRUCache<string, WebViewDetails>({
 const CDP_REQ_TIMEOUT = 2000; // ms
 const DEVTOOLS_PORT_ALLOCATION_GUARD = util.getLockFileGuard(
   path.resolve(os.tmpdir(), 'android_devtools_port_guard'),
-  {timeout: 7, tryRecovery: true}
+  {timeout: 7, tryRecovery: true},
 );
 
 interface WebviewHelpers {
@@ -114,7 +114,7 @@ interface WebviewHelpers {
   createChromedriverCaps: (
     opts: any,
     deviceId: string,
-    webViewDetails?: WebViewDetails | null
+    webViewDetails?: WebViewDetails | null,
   ) => object;
 }
 
@@ -162,7 +162,7 @@ async function getPotentialWebviewProcs(adb: ADB): Promise<string[]> {
   } else {
     logger.debug(
       `Parsed ${names.length} active devtools ${util.pluralize('socket', names.length, false)}: ` +
-        JSON.stringify(names)
+        JSON.stringify(names),
     );
   }
   // sometimes the webview process shows up multiple times per app
@@ -181,7 +181,7 @@ async function getPotentialWebviewProcs(adb: ADB): Promise<string[]> {
  */
 async function webviewsFromProcs(
   adb: any,
-  deviceSocket: string | null = null
+  deviceSocket: string | null = null,
 ): Promise<WebviewProc[]> {
   const socketNames = await getPotentialWebviewProcs(adb);
   const webviews: {proc: string; webview: string}[] = [];
@@ -231,7 +231,7 @@ async function webviewsFromProcs(
 async function allocateDevtoolsPort(
   adb: any,
   socketName: string,
-  webviewDevtoolsPort: number | null = null
+  webviewDevtoolsPort: number | null = null,
 ): Promise<number> {
   // socket names come with '@', but this should not be a part of the abstract
   // remote port, so remove it
@@ -242,12 +242,12 @@ async function allocateDevtoolsPort(
     startPort = webviewDevtoolsPort;
   }
   logger.debug(
-    `Forwarding remote port ${remotePort} to a local ` + `port in range ${startPort}..${endPort}`
+    `Forwarding remote port ${remotePort} to a local ` + `port in range ${startPort}..${endPort}`,
   );
   if (!webviewDevtoolsPort) {
     logger.debug(
       `You could use the 'webviewDevtoolsPort' capability to customize ` +
-        `the starting port number`
+        `the starting port number`,
     );
   }
   return (await DEVTOOLS_PORT_ALLOCATION_GUARD(async () => {
@@ -258,7 +258,7 @@ async function allocateDevtoolsPort(
       throw new Error(
         `Cannot find any free port to forward the Devtools socket ` +
           `in range ${startPort}..${endPort}. You could set the starting port number ` +
-          `manually by providing the 'webviewDevtoolsPort' capability`
+          `manually by providing the 'webviewDevtoolsPort' capability`,
       );
     }
     await adb.adbExec(['forward', `tcp:${localPort}`, `localabstract:${remotePort}`]);
@@ -283,7 +283,7 @@ async function allocateDevtoolsPort(
 async function collectWebviewsDetails(
   adb: ADB,
   webviewsMapping: WebviewProps[],
-  opts: DetailCollectionOptions = {}
+  opts: DetailCollectionOptions = {},
 ): Promise<void> {
   if (_.isEmpty(webviewsMapping)) {
     return;
@@ -298,7 +298,7 @@ async function collectWebviewsDetails(
   if (!ensureWebviewsHavePages) {
     logger.info(
       `Not checking whether webviews have active pages; use the ` +
-        `'ensureWebviewsHavePages' cap to turn this check on`
+        `'ensureWebviewsHavePages' cap to turn this check on`,
     );
   }
 
@@ -306,7 +306,7 @@ async function collectWebviewsDetails(
     logger.info(
       `Not collecting web view details. Details collection might help ` +
         `to make Chromedriver initialization more precise. Use the 'enableWebviewDetailsCollection' ` +
-        `cap to turn it on`
+        `cap to turn it on`,
     );
   }
 
@@ -340,7 +340,7 @@ async function collectWebviewsDetails(
             }
           }
         }
-      })()
+      })(),
     );
   }
   await B.all(detailCollectors);
@@ -384,7 +384,7 @@ const WebviewHelpers: WebviewHelpers = {
 
   parseWebviewNames(
     webviewsMapping: WebviewsMapping[],
-    {ensureWebviewsHavePages = true, isChromeSession = false}: GetWebviewsOpts = {}
+    {ensureWebviewsHavePages = true, isChromeSession = false}: GetWebviewsOpts = {},
   ): string[] {
     if (isChromeSession) {
       return [CHROMIUM_WIN];
@@ -395,7 +395,7 @@ const WebviewHelpers: WebviewHelpers = {
       if (ensureWebviewsHavePages && pages?.length === 0) {
         logger.info(
           `Skipping the webview '${webview}' at '${proc}' ` +
-            `since it has reported having zero pages`
+            `since it has reported having zero pages`,
         );
         continue;
       }
@@ -404,7 +404,7 @@ const WebviewHelpers: WebviewHelpers = {
       }
     }
     logger.debug(
-      `Found ${util.pluralize('webview', result.length, true)}: ${JSON.stringify(result)}`
+      `Found ${util.pluralize('webview', result.length, true)}: ${JSON.stringify(result)}`,
     );
     return result;
   },
@@ -416,12 +416,12 @@ const WebviewHelpers: WebviewHelpers = {
       ensureWebviewsHavePages = true,
       webviewDevtoolsPort = null,
       enableWebviewDetailsCollection = true,
-    }: GetWebviewsOpts = {}
+    }: GetWebviewsOpts = {},
   ): Promise<WebviewsMapping[]> {
     logger.debug('Getting a list of available webviews');
     const webviewsMapping = (await webviewsFromProcs(
       adb,
-      androidDeviceSocket
+      androidDeviceSocket,
     )) as WebviewsMapping[];
 
     await collectWebviewsDetails(adb, webviewsMapping, {
@@ -473,7 +473,7 @@ const WebviewHelpers: WebviewHelpers = {
   createChromedriverCaps(
     opts: any,
     deviceId: string,
-    webViewDetails?: WebViewDetails | null
+    webViewDetails?: WebViewDetails | null,
   ): object {
     const caps: AndroidDriverCaps & {chromeOptions: StringRecord} = {chromeOptions: {}} as any;
 
@@ -523,7 +523,7 @@ const WebviewHelpers: WebviewHelpers = {
     if (_.isPlainObject(opts.loggingPrefs) || _.isPlainObject(opts.chromeLoggingPrefs)) {
       if (opts.loggingPrefs) {
         logger.warn(
-          `The 'loggingPrefs' cap is deprecated; use the 'chromeLoggingPrefs' cap instead`
+          `The 'loggingPrefs' cap is deprecated; use the 'chromeLoggingPrefs' cap instead`,
         );
       }
       // @ts-expect-error Why are we using this if it's deprecated?
@@ -532,7 +532,7 @@ const WebviewHelpers: WebviewHelpers = {
     if (opts.enablePerformanceLogging) {
       logger.warn(
         `The 'enablePerformanceLogging' cap is deprecated; simply use ` +
-          `the 'chromeLoggingPrefs' cap instead, with a 'performance' key set to 'ALL'`
+          `the 'chromeLoggingPrefs' cap instead, with a 'performance' key set to 'ALL'`,
       );
       const newPref = {performance: 'ALL'};
       // don't overwrite other logging prefs that have been sent in if they exist
@@ -553,7 +553,7 @@ const WebviewHelpers: WebviewHelpers = {
     }
 
     logger.debug(
-      'Precalculated Chromedriver capabilities: ' + JSON.stringify(caps.chromeOptions, null, 2)
+      'Precalculated Chromedriver capabilities: ' + JSON.stringify(caps.chromeOptions, null, 2),
     );
 
     const protectedCapNames: string[] = [];
@@ -567,7 +567,7 @@ const WebviewHelpers: WebviewHelpers = {
     if (!_.isEmpty(protectedCapNames)) {
       logger.info(
         'The following Chromedriver capabilities cannot be overridden ' +
-          'by the provided chromeOptions:'
+          'by the provided chromeOptions:',
       );
       for (const optName of protectedCapNames) {
         logger.info(`  ${optName} (${JSON.stringify(opts.chromeOptions[optName])})`);
