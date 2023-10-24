@@ -1,6 +1,6 @@
 {
   "name": "appium-android-driver",
-  "version": "7.1.6",
+  "version": "7.1.9",
   "description": "Android UiAutomator and Chrome support for Appium",
   "keywords": [
     "appium",
@@ -79,8 +79,8 @@
     "@appium/test-support": "^3.0.20",
     "@appium/tsconfig": "^0.x",
     "@appium/types": "^0.x",
-    "@commitlint/cli": "^17.6.3",
-    "@commitlint/config-conventional": "^17.6.3",
+    "@commitlint/cli": "^18.0.0",
+    "@commitlint/config-conventional": "^18.0.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
     "@types/bluebird": "^3.5.38",

@@ -1,3 +1,24 @@
+## [7.1.9](https://github.com/appium/appium-android-driver/compare/v7.1.8...v7.1.9) (2023-10-24)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @commitlint/cli from 17.8.1 to 18.0.0 ([#877](https://github.com/appium/appium-android-driver/issues/877)) ([1cf493b](https://github.com/appium/appium-android-driver/commit/1cf493b3afd124ead6d1628fc0cb080a57e885a8))
+
+## [7.1.8](https://github.com/appium/appium-android-driver/compare/v7.1.7...v7.1.8) (2023-10-24)
+
+
+### Miscellaneous Chores
+
+* apply auto commit hook lint only ([#878](https://github.com/appium/appium-android-driver/issues/878)) ([183e427](https://github.com/appium/appium-android-driver/commit/183e42773802598463d6729d3fa79819c3d264c5))
+
+## [7.1.7](https://github.com/appium/appium-android-driver/compare/v7.1.6...v7.1.7) (2023-10-23)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @commitlint/config-conventional ([#876](https://github.com/appium/appium-android-driver/issues/876)) ([24df12a](https://github.com/appium/appium-android-driver/commit/24df12a4229cae21744cff2c414be1bd6bee3a54))
+
 ## [7.1.6](https://github.com/appium/appium-android-driver/compare/v7.1.5...v7.1.6) (2023-10-19)
 
 
