@@ -1027,6 +1027,10 @@ const AndroidHelpers: AndroidHelpers = {
     }
 
     if (unicodeKeyboard) {
+      logger.warn(
+        `The 'unicodeKeyboard' capability has been deprecated and will be removed. ` +
+        `Set the 'hideKeyboard' capability to 'true' in order to make the on-screen keyboard invisible.`
+      );
       return await AndroidHelpers.initUnicodeKeyboard(adb);
     }
   },
