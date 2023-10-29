@@ -60,7 +60,7 @@
     "asyncbox": "^2.8.0",
     "axios": "^1.x",
     "bluebird": "^3.4.7",
-    "io.appium.settings": "^5.0.0",
+    "io.appium.settings": "^5.2.0",
     "lodash": "^4.17.4",
     "lru-cache": "^10.0.1",
     "moment": "^2.24.0",
