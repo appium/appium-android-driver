@@ -1,3 +1,10 @@
+## [7.2.0](https://github.com/appium/appium-android-driver/compare/v7.1.11...v7.2.0) (2023-10-30)
+
+
+### Features
+
+* Add 'hideKeyboard' capability ([#882](https://github.com/appium/appium-android-driver/issues/882)) ([f816f13](https://github.com/appium/appium-android-driver/commit/f816f13de300348b92f5c53bda3ae4451c68462f))
+
 ## [7.1.11](https://github.com/appium/appium-android-driver/compare/v7.1.10...v7.1.11) (2023-10-24)
 
 
