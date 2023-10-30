@@ -1,3 +1,10 @@
+## [7.2.1](https://github.com/appium/appium-android-driver/compare/v7.2.0...v7.2.1) (2023-10-30)
+
+
+### Miscellaneous Chores
+
+* Reset IME if hideKeyboard is set to false ([f5ff59f](https://github.com/appium/appium-android-driver/commit/f5ff59ff104fbfdc0090dcc8f5703cddd65c25f0))
+
 ## [7.2.0](https://github.com/appium/appium-android-driver/compare/v7.1.11...v7.2.0) (2023-10-30)
 
 
