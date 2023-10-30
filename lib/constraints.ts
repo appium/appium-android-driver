@@ -132,7 +132,11 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   dontStopAppOnReset: {
     isBoolean: true,
   },
+  /** @deprecated Use hideKeyboard instead */
   unicodeKeyboard: {
+    isBoolean: true,
+  },
+  hideKeyboard: {
     isBoolean: true,
   },
   noSign: {

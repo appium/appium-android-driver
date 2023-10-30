@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {fs, tempDir, util} from '@appium/support';
 import type {AppiumServer, StringRecord} from '@appium/types';
 import {ADB} from 'appium-adb';
@@ -67,6 +68,7 @@ const APP_STATE = {
   RUNNING_IN_BACKGROUND: 3,
   RUNNING_IN_FOREGROUND: 4,
 } as const;
+const EMPTY_IME = `${SETTINGS_HELPER_PKG_ID}/.EmptyIME`;
 
 function ensureNetworkSpeed(adb: ADB, networkSpeed: string) {
   if (networkSpeed.toUpperCase() in adb.NETWORK_SPEED) {
@@ -175,9 +177,10 @@ interface AndroidHelpers {
    */
   getThirdPartyPackages(adb: ADB, filterPackages?: string[]): Promise<string[]>;
   /**
-   * @privateRemarks FIXME: return value is unknown to me
+   * @deprecated Use hideKeyboard instead
    */
   initUnicodeKeyboard(adb: ADB): Promise<any>;
+  hideKeyboard(adb: ADB): Promise<void>;
   setMockLocationApp(adb: ADB, app: string): Promise<void>;
   resetMockLocation(adb: ADB): Promise<void>;
   installHelperApp(adb: ADB, apkPath: string, packageId: string): Promise<void>;
@@ -690,6 +693,12 @@ const AndroidHelpers: AndroidHelpers = {
     return defaultIME;
   },
 
+  async hideKeyboard(adb) {
+    logger.debug(`Hiding the on-screen keyboard by setting IME to '${EMPTY_IME}'`);
+    await adb.enableIME(EMPTY_IME);
+    await adb.setIME(EMPTY_IME);
+  },
+
   async setMockLocationApp(adb, app) {
     try {
       if ((await adb.getApiLevel()) < 23) {
@@ -958,6 +967,7 @@ const AndroidHelpers: AndroidHelpers = {
       language,
       localeScript,
       unicodeKeyboard,
+      hideKeyboard,
       disableWindowAnimation,
       skipUnlock,
       mockLocationApp,
@@ -984,6 +994,7 @@ const AndroidHelpers: AndroidHelpers = {
           locale ||
           localeScript ||
           unicodeKeyboard ||
+          hideKeyboard ||
           disableWindowAnimation ||
           !skipUnlock
       );
@@ -1011,7 +1022,15 @@ const AndroidHelpers: AndroidHelpers = {
       });
     }
 
+    if (hideKeyboard) {
+      await AndroidHelpers.hideKeyboard(adb);
+    }
+
     if (unicodeKeyboard) {
+      logger.warn(
+        `The 'unicodeKeyboard' capability has been deprecated and will be removed. ` +
+        `Set the 'hideKeyboard' capability to 'true' in order to make the on-screen keyboard invisible.`
+      );
       return await AndroidHelpers.initUnicodeKeyboard(adb);
     }
   },

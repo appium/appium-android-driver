@@ -253,7 +253,6 @@ export interface DoSetElementValueOpts {
   elementId: string;
   text: string;
   replace: boolean;
-  unicodeKeyboard?: boolean;
 }
 
 export interface ExecOptions {
@@ -331,7 +330,6 @@ export interface SendKeysOpts {
   text: string;
   // XXX: unclear if this is required
   replace?: boolean;
-  unicodeKeyboard?: boolean;
 }
 
 export interface DeviceTimeOpts {
