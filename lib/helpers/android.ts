@@ -1024,6 +1024,8 @@ const AndroidHelpers: AndroidHelpers = {
 
     if (hideKeyboard) {
       await AndroidHelpers.hideKeyboard(adb);
+    } else if (hideKeyboard === false) {
+      await adb.shell(['ime', 'reset']);
     }
 
     if (unicodeKeyboard) {
