@@ -57,7 +57,7 @@
   "dependencies": {
     "appium-adb": "^11.0.1",
     "appium-chromedriver": "^5.5.1",
-    "asyncbox": "^2.8.0",
+    "asyncbox": "^3.0.0",
     "axios": "^1.x",
     "bluebird": "^3.4.7",
     "io.appium.settings": "^5.2.0",
