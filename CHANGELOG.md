@@ -1,3 +1,10 @@
+## [7.2.2](https://github.com/appium/appium-android-driver/compare/v7.2.1...v7.2.2) (2023-11-01)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump asyncbox from 2.9.4 to 3.0.0 ([#883](https://github.com/appium/appium-android-driver/issues/883)) ([bbc7201](https://github.com/appium/appium-android-driver/commit/bbc7201e99546f2dafa8cd538fe7512c3916d04c))
+
 ## [7.2.1](https://github.com/appium/appium-android-driver/compare/v7.2.0...v7.2.1) (2023-10-30)
 
 
