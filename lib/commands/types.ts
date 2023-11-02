@@ -1102,7 +1102,8 @@ export interface DeviceidleOpts {
 }
 
 export interface SetUiModeOpts {
-  /** The UI mode to set the value for.
+  /**
+   * The UI mode to set the value for.
    * Supported values are: 'night' and 'car'
    */
   mode: string;
@@ -1116,7 +1117,8 @@ export interface SetUiModeOpts {
 }
 
 export interface GetUiModeOpts {
-  /** The UI mode to set the value for.
+  /**
+   * The UI mode to set the value for.
    * Supported values are: 'night' and 'car'
    */
   mode: string;
