@@ -590,6 +590,11 @@ export interface IMEMixin {
   deactivateIMEEngine: () => Promise<void>;
 }
 
+export interface AppearanceMixin {
+  mobileSetUiMode: (opts: types.GetUiModeOpts) => Promise<void>;
+  mobileGetUiMode: (opts: types.SetUiModeOpts) => Promise<string>;
+}
+
 export interface ActivityMixin {
   /**
    * Starts the given activity intent.
@@ -935,6 +940,7 @@ declare module '../driver' {
       FindMixin,
       GeneralMixin,
       IMEMixin,
+      AppearanceMixin,
       ActivityMixin,
       KeyboardMixin,
       LogMixin,
