@@ -1,3 +1,10 @@
+## [7.3.0](https://github.com/appium/appium-android-driver/compare/v7.2.2...v7.3.0) (2023-11-02)
+
+
+### Features
+
+* Add support of UiModeManager service commands ([#884](https://github.com/appium/appium-android-driver/issues/884)) ([f8ed899](https://github.com/appium/appium-android-driver/commit/f8ed899932ff9866cafb9b725350c2a2bd296991))
+
 ## [7.2.2](https://github.com/appium/appium-android-driver/compare/v7.2.1...v7.2.2) (2023-11-01)
 
 
