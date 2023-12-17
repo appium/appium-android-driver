@@ -421,16 +421,13 @@ const WebviewHelpers: WebviewHelpers = {
       waitForWebviewMs = 0,
     }: GetWebviewsOpts = {},
   ): Promise<WebviewsMapping[]> {
-    logger.debug('Getting a list of available webviews');
-
     if (!_.isNumber(waitForWebviewMs)) {
-      waitForWebviewMs = parseInt(waitForWebviewMs, 10);
-      if (isNaN(waitForWebviewMs)) {
-        waitForWebviewMs = 0;
-      }
+      waitForWebviewMs = parseInt(waitForWebviewMs, 10) || 0;
     }
 
-    let webviewsMapping;
+    logger.debug(`Getting a list of available webviews in ${waitForWebviewMs} ms`);
+
+    let webviewsMapping: WebviewsMapping[];
     const timer = new timing.Timer().start();
     do {
       webviewsMapping = (await webviewsFromProcs(adb, androidDeviceSocket)) as WebviewsMapping[];
