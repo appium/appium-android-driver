@@ -3,7 +3,7 @@
  * @module
  */
 
-import {util} from '@appium/support';
+import {util, timing} from '@appium/support';
 import {StringRecord} from '@appium/types';
 import axios from 'axios';
 import B from 'bluebird';
@@ -23,6 +23,7 @@ import type {
   WebviewProps,
 } from './types';
 import type {ADB} from 'appium-adb';
+import {sleep} from 'asyncbox';
 
 const NATIVE_WIN = 'NATIVE_APP';
 const WEBVIEW_WIN = 'WEBVIEW';
@@ -50,6 +51,7 @@ const DEVTOOLS_PORT_ALLOCATION_GUARD = util.getLockFileGuard(
   path.resolve(os.tmpdir(), 'android_devtools_port_guard'),
   {timeout: 7, tryRecovery: true},
 );
+const WEBVIEW_WAIT_INTERVAL_MS = 200;
 
 interface WebviewHelpers {
   /**
@@ -416,13 +418,27 @@ const WebviewHelpers: WebviewHelpers = {
       ensureWebviewsHavePages = true,
       webviewDevtoolsPort = null,
       enableWebviewDetailsCollection = true,
+      waitForWebviewMs = 0,
     }: GetWebviewsOpts = {},
   ): Promise<WebviewsMapping[]> {
-    logger.debug('Getting a list of available webviews');
-    const webviewsMapping = (await webviewsFromProcs(
-      adb,
-      androidDeviceSocket,
-    )) as WebviewsMapping[];
+    logger.debug(`Getting a list of available webviews`);
+
+    if (!_.isNumber(waitForWebviewMs)) {
+      waitForWebviewMs = parseInt(waitForWebviewMs, 10) || 0;
+    }
+
+    let webviewsMapping: WebviewsMapping[];
+    const timer = new timing.Timer().start();
+    do {
+      webviewsMapping = (await webviewsFromProcs(adb, androidDeviceSocket)) as WebviewsMapping[];
+
+      if (webviewsMapping.length > 0) {
+        break;
+      }
+
+      logger.debug(`No webviews found in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
+      await sleep(WEBVIEW_WAIT_INTERVAL_MS);
+    } while (timer.getDuration().asMilliSeconds < waitForWebviewMs);
 
     await collectWebviewsDetails(adb, webviewsMapping, {
       ensureWebviewsHavePages,
