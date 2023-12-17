@@ -1,3 +1,10 @@
+## [7.4.0](https://github.com/appium/appium-android-driver/compare/v7.3.1...v7.4.0) (2023-12-17)
+
+
+### Features
+
+* add waitForWebviewMs for mobile:getContexts ([#860](https://github.com/appium/appium-android-driver/issues/860)) ([d0352fa](https://github.com/appium/appium-android-driver/commit/d0352faa2a892dee81182981586e1260c7d376d4))
+
 ## [7.3.1](https://github.com/appium/appium-android-driver/compare/v7.3.0...v7.3.1) (2023-11-06)
 
 
