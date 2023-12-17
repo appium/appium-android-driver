@@ -253,7 +253,6 @@ export interface DoSetElementValueOpts {
   elementId: string;
   text: string;
   replace: boolean;
-  unicodeKeyboard?: boolean;
 }
 
 export interface ExecOptions {
@@ -331,7 +330,6 @@ export interface SendKeysOpts {
   text: string;
   // XXX: unclear if this is required
   replace?: boolean;
-  unicodeKeyboard?: boolean;
 }
 
 export interface DeviceTimeOpts {
@@ -1101,4 +1099,27 @@ export interface DeviceidleOpts {
   action: 'whitelistAdd'|'whitelistRemove';
   /** Either a single package or multiple packages to add or remove from the idle whitelist */
   packages?: string|string[];
+}
+
+export interface SetUiModeOpts {
+  /**
+   * The UI mode to set the value for.
+   * Supported values are: 'night' and 'car'
+   */
+  mode: string;
+  /**
+   * The actual mode value to set.
+   * Supported value for different UI modes are:
+   * - night: yes|no|auto|custom_schedule|custom_bedtime
+   * - car: yes|no
+   */
+  value: string;
+}
+
+export interface GetUiModeOpts {
+  /**
+   * The UI mode to set the value for.
+   * Supported values are: 'night' and 'car'
+   */
+  mode: string;
 }

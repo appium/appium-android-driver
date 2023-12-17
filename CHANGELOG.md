@@ -1,3 +1,52 @@
+## [7.3.1](https://github.com/appium/appium-android-driver/compare/v7.3.0...v7.3.1) (2023-11-06)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @types/sinon from 10.0.20 to 17.0.0 ([#885](https://github.com/appium/appium-android-driver/issues/885)) ([82a1caf](https://github.com/appium/appium-android-driver/commit/82a1caf52cbf8cf3fc303bc5a5e70745217be66b))
+
+## [7.3.0](https://github.com/appium/appium-android-driver/compare/v7.2.2...v7.3.0) (2023-11-02)
+
+
+### Features
+
+* Add support of UiModeManager service commands ([#884](https://github.com/appium/appium-android-driver/issues/884)) ([f8ed899](https://github.com/appium/appium-android-driver/commit/f8ed899932ff9866cafb9b725350c2a2bd296991))
+
+## [7.2.2](https://github.com/appium/appium-android-driver/compare/v7.2.1...v7.2.2) (2023-11-01)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump asyncbox from 2.9.4 to 3.0.0 ([#883](https://github.com/appium/appium-android-driver/issues/883)) ([bbc7201](https://github.com/appium/appium-android-driver/commit/bbc7201e99546f2dafa8cd538fe7512c3916d04c))
+
+## [7.2.1](https://github.com/appium/appium-android-driver/compare/v7.2.0...v7.2.1) (2023-10-30)
+
+
+### Miscellaneous Chores
+
+* Reset IME if hideKeyboard is set to false ([f5ff59f](https://github.com/appium/appium-android-driver/commit/f5ff59ff104fbfdc0090dcc8f5703cddd65c25f0))
+
+## [7.2.0](https://github.com/appium/appium-android-driver/compare/v7.1.11...v7.2.0) (2023-10-30)
+
+
+### Features
+
+* Add 'hideKeyboard' capability ([#882](https://github.com/appium/appium-android-driver/issues/882)) ([f816f13](https://github.com/appium/appium-android-driver/commit/f816f13de300348b92f5c53bda3ae4451c68462f))
+
+## [7.1.11](https://github.com/appium/appium-android-driver/compare/v7.1.10...v7.1.11) (2023-10-24)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump [@typescript-eslint](https://github.com/typescript-eslint) packages to 6.9.0 ([#881](https://github.com/appium/appium-android-driver/issues/881)) ([08e9821](https://github.com/appium/appium-android-driver/commit/08e9821fa8e86ccae81fe57bcfe869637f0edb4f))
+
+## [7.1.10](https://github.com/appium/appium-android-driver/compare/v7.1.9...v7.1.10) (2023-10-24)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 16.1.3 to 17.0.0 ([#879](https://github.com/appium/appium-android-driver/issues/879)) ([9c77766](https://github.com/appium/appium-android-driver/commit/9c77766cebffc4af49e8ff01f17baeccf26b16fa))
+
 ## [7.1.9](https://github.com/appium/appium-android-driver/compare/v7.1.8...v7.1.9) (2023-10-24)
 
 

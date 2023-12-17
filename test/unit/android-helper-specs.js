@@ -631,18 +631,6 @@ describe('Android Helpers', function () {
     })
   );
   describe(
-    'initUnicodeKeyboard',
-    withMocks({adb}, (mocks) => {
-      it('should install and enable unicodeIME', async function () {
-        mocks.adb.expects('defaultIME').once().returns('defaultIME');
-        mocks.adb.expects('enableIME').once().returns('');
-        mocks.adb.expects('setIME').once().returns('');
-        await helpers.initUnicodeKeyboard(adb);
-        mocks.adb.verify();
-      });
-    })
-  );
-  describe(
     'pushSettingsApp',
     withMocks({adb}, (mocks) => {
       it('should skip granting permissions if the app is already running on over API level 23+ devices', async function () {
@@ -915,7 +903,22 @@ describe('Android Helpers', function () {
         mocks.helpers.verify();
         mocks.adb.verify();
       });
-      it('should return defaultIME if unicodeKeyboard is setted to true', async function () {
+      it('should set empty IME if hideKeyboard is set to true', async function () {
+        const opts = {hideKeyboard: true};
+        mocks.adb.expects('waitForDevice').never();
+        mocks.adb.expects('startLogcat').once();
+        mocks.helpers.expects('pushSettingsApp').once();
+        mocks.helpers.expects('ensureDeviceLocale').never();
+        mocks.helpers.expects('setMockLocationApp').once();
+        mocks.helpers
+          .expects('hideKeyboard')
+          .withExactArgs(adb)
+          .once();
+        await helpers.initDevice(adb, opts);
+        mocks.helpers.verify();
+        mocks.adb.verify();
+      });
+      it('should return defaultIME if unicodeKeyboard is set to true', async function () {
         const opts = {unicodeKeyboard: true};
         mocks.adb.expects('waitForDevice').never();
         mocks.adb.expects('startLogcat').once();
@@ -931,7 +934,7 @@ describe('Android Helpers', function () {
         mocks.helpers.verify();
         mocks.adb.verify();
       });
-      it('should return undefined if unicodeKeyboard is setted to false', async function () {
+      it('should return undefined if unicodeKeyboard is set to false', async function () {
         const opts = {unicodeKeyboard: false};
         mocks.adb.expects('waitForDevice').never();
         mocks.adb.expects('startLogcat').once();
