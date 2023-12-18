@@ -1,3 +1,10 @@
+## [7.4.1](https://github.com/appium/appium-android-driver/compare/v7.4.0...v7.4.1) (2023-12-18)
+
+
+### Bug Fixes
+
+* Respect adb remote host setting while collecting CDP info ([#890](https://github.com/appium/appium-android-driver/issues/890)) ([23e76dd](https://github.com/appium/appium-android-driver/commit/23e76ddd63d07bbf8b65c53181c7784140966d82))
+
 ## [7.4.0](https://github.com/appium/appium-android-driver/compare/v7.3.1...v7.4.0) (2023-12-17)
 
 
