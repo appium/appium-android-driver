@@ -226,15 +226,15 @@ async function webviewsFromProcs(
  * @param socketName - The remote Unix socket name
  * @param webviewDevtoolsPort - The local port number or null to apply
  * autodetection
- * @returns The local port number if the remote socket has been forwarded
- * successfully or `null` otherwise
+ * @returns The host name and the port number to connect to if the
+ * remote socket has been forwarded successfully
  * @throws {Error} If there was an error while allocating the local port
  */
-async function allocateDevtoolsPort(
+async function allocateDevtoolsChannel(
   adb: any,
   socketName: string,
   webviewDevtoolsPort: number | null = null,
-): Promise<number> {
+): Promise<[string, number]> {
   // socket names come with '@', but this should not be a part of the abstract
   // remote port, so remove it
   const remotePort = socketName.replace(/^@/, '');
@@ -252,7 +252,7 @@ async function allocateDevtoolsPort(
         `the starting port number`,
     );
   }
-  return (await DEVTOOLS_PORT_ALLOCATION_GUARD(async () => {
+  const port = (await DEVTOOLS_PORT_ALLOCATION_GUARD(async () => {
     let localPort: number;
     try {
       localPort = await findAPortNotInUse(startPort, endPort);
@@ -266,6 +266,7 @@ async function allocateDevtoolsPort(
     await adb.adbExec(['forward', `tcp:${localPort}`, `localabstract:${remotePort}`]);
     return localPort;
   })) as number;
+  return [adb.adbHost ?? '127.0.0.1', port];
 }
 
 /**
@@ -322,21 +323,22 @@ async function collectWebviewsDetails(
   for (const item of webviewsMapping) {
     detailCollectors.push(
       (async () => {
-        let localPort: number | undefined;
+        let port: number|undefined;
+        let host: string|undefined;
         try {
-          localPort = await allocateDevtoolsPort(adb, item.proc, webviewDevtoolsPort);
+          [host, port] = await allocateDevtoolsChannel(adb, item.proc, webviewDevtoolsPort);
           if (enableWebviewDetailsCollection) {
-            item.info = await cdpInfo(localPort);
+            item.info = await cdpInfo(host, port);
           }
           if (ensureWebviewsHavePages) {
-            item.pages = await cdpList(localPort);
+            item.pages = await cdpList(host, port);
           }
         } catch (e) {
           logger.debug(e);
         } finally {
-          if (localPort) {
+          if (port) {
             try {
-              await adb.removePortForward(localPort);
+              await adb.removePortForward(port);
             } catch (e) {
               logger.debug(e);
             }
@@ -350,20 +352,20 @@ async function collectWebviewsDetails(
 }
 
 // https://chromedevtools.github.io/devtools-protocol/
-async function cdpList(localPort: number): Promise<object[]> {
+async function cdpList(host: string, port: number): Promise<object[]> {
   return (
     await axios({
-      url: `http://127.0.0.1:${localPort}/json/list`,
+      url: `http://${host}:${port}/json/list`,
       timeout: CDP_REQ_TIMEOUT,
     })
   ).data;
 }
 
 // https://chromedevtools.github.io/devtools-protocol/
-async function cdpInfo(localPort: number): Promise<object[]> {
+async function cdpInfo(host: string, port: number): Promise<object[]> {
   return (
     await axios({
-      url: `http://127.0.0.1:${localPort}/json/version`,
+      url: `http://${host}:${port}/json/version`,
       timeout: CDP_REQ_TIMEOUT,
     })
   ).data;
