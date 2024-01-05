@@ -1,3 +1,10 @@
+## [7.5.1](https://github.com/appium/appium-android-driver/compare/v7.5.0...v7.5.1) (2024-01-05)
+
+
+### Bug Fixes
+
+* Use built-in logger for doctor checks ([#893](https://github.com/appium/appium-android-driver/issues/893)) ([5fb33ad](https://github.com/appium/appium-android-driver/commit/5fb33adc600339fb7fa7e951c7069a8518128cd3))
+
 ## [7.5.0](https://github.com/appium/appium-android-driver/compare/v7.4.1...v7.5.0) (2024-01-05)
 
 
