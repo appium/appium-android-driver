@@ -55,6 +55,8 @@
     "singleQuote": true
   },
   "dependencies": {
+    "@appium/support": "^4.2.0",
+    "@colors/colors": "^1.6.0",
     "appium-adb": "^11.0.1",
     "appium-chromedriver": "^5.5.1",
     "asyncbox": "^3.0.0",
@@ -75,7 +77,6 @@
   "devDependencies": {
     "@appium/eslint-config-appium": "^8.0.4",
     "@appium/eslint-config-appium-ts": "^0.x",
-    "@appium/support": "^4.1.2",
     "@appium/test-support": "^3.0.20",
     "@appium/tsconfig": "^0.x",
     "@appium/types": "^0.x",
