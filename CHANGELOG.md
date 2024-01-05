@@ -1,3 +1,10 @@
+## [7.5.0](https://github.com/appium/appium-android-driver/compare/v7.4.1...v7.5.0) (2024-01-05)
+
+
+### Features
+
+* Add common android doctor checks ([#892](https://github.com/appium/appium-android-driver/issues/892)) ([4d1d648](https://github.com/appium/appium-android-driver/commit/4d1d6480f610bfe7680c325caef36fbd0edc8b20))
+
 ## [7.4.1](https://github.com/appium/appium-android-driver/compare/v7.4.0...v7.4.1) (2023-12-18)
 
 
