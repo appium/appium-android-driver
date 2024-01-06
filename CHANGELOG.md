@@ -1,3 +1,10 @@
+## [7.6.0](https://github.com/appium/appium-android-driver/compare/v7.5.1...v7.6.0) (2024-01-06)
+
+
+### Features
+
+* update io.appium.settings to use newer location deps ([#894](https://github.com/appium/appium-android-driver/issues/894)) ([7712428](https://github.com/appium/appium-android-driver/commit/771242866db9cf8f1fd00e2e669325e09a328ee2))
+
 ## [7.5.1](https://github.com/appium/appium-android-driver/compare/v7.5.0...v7.5.1) (2024-01-05)
 
 
