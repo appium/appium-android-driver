@@ -809,48 +809,43 @@ const AndroidHelpers: AndroidHelpers = {
 
     // Reinstall would stop the settings helper process anyway, so
     // there is no need to continue if the application is still running
-    if (await adb.processExists(SETTINGS_HELPER_PKG_ID)) {
+    if (await adb.hasRunningSettingsAppForegroundService()) {
       logger.debug(
         `${SETTINGS_HELPER_PKG_ID} is already running. ` +
           `There is no need to reset its permissions.`
       );
-    } else {
-      const apiLevel = await adb.getApiLevel();
-      if (apiLevel >= 29) {
-        // https://github.com/appium/io.appium.settings#internal-audio--video-recording
-        try {
-          await adb.shell(['appops', 'set', SETTINGS_HELPER_PKG_ID, 'PROJECT_MEDIA', 'allow']);
-        } catch (err) {
-          logger.debug((err as Error).message);
-        }
-        try {
-          await adb.shell([
-            'cmd',
-            'notification',
-            'allow_listener',
-            SETTING_NOTIFICATIONS_LISTENER_SERVICE,
-          ]);
-        } catch (err) {
-          logger.debug((err as Error).message);
-        }
-      }
-      if (apiLevel <= 23) {
-        // Android 6- devices should have granted permissions
-        // https://github.com/appium/appium/pull/11640#issuecomment-438260477
-        const perms = ['SET_ANIMATION_SCALE', 'CHANGE_CONFIGURATION', 'ACCESS_FINE_LOCATION'];
-        logger.info(`Granting permissions ${perms} to '${SETTINGS_HELPER_PKG_ID}'`);
-        await adb.grantPermissions(
-          SETTINGS_HELPER_PKG_ID,
-          perms.map((x) => `android.permission.${x}`)
-        );
-      }
+      return;
     }
 
-    // Some commands by adb such as 'adb shell cmd notification'
-    // could launch the app process but it was not started via activity.
-    // It could cause wrong io.appium.settings process launches,
-    // thus it is safe to start the app process forcefully every session start
-    // to ensure the settings app process starts.
+    const apiLevel = await adb.getApiLevel();
+    if (apiLevel >= 29) {
+      // https://github.com/appium/io.appium.settings#internal-audio--video-recording
+      try {
+        await adb.shell(['appops', 'set', SETTINGS_HELPER_PKG_ID, 'PROJECT_MEDIA', 'allow']);
+      } catch (err) {
+        logger.debug((err as Error).message);
+      }
+      try {
+        await adb.shell([
+          'cmd',
+          'notification',
+          'allow_listener',
+          SETTING_NOTIFICATIONS_LISTENER_SERVICE,
+        ]);
+      } catch (err) {
+        logger.debug((err as Error).message);
+      }
+    }
+    if (apiLevel <= 23) {
+      // Android 6- devices should have granted permissions
+      // https://github.com/appium/appium/pull/11640#issuecomment-438260477
+      const perms = ['SET_ANIMATION_SCALE', 'CHANGE_CONFIGURATION', 'ACCESS_FINE_LOCATION'];
+      logger.info(`Granting permissions ${perms} to '${SETTINGS_HELPER_PKG_ID}'`);
+      await adb.grantPermissions(
+        SETTINGS_HELPER_PKG_ID,
+        perms.map((x) => `android.permission.${x}`)
+      );
+    }
 
     // launch io.appium.settings app due to settings failing to be set
     // if the app is not launched prior to start the session on android 7+
@@ -858,7 +853,6 @@ const AndroidHelpers: AndroidHelpers = {
     try {
       await adb.requireRunningSettingsApp({
         timeout: AndroidHelpers.isEmulator(adb, opts) ? 30000 : 5000,
-        forceStartSettingsApp: true,
       });
     } catch (err) {
       logger.debug(err);
