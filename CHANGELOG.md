@@ -1,3 +1,10 @@
+## [7.6.1](https://github.com/appium/appium-android-driver/compare/v7.6.0...v7.6.1) (2024-01-09)
+
+
+### Bug Fixes
+
+* io.appium.settings process check with isSettingsAppServiceRunningInForeground ([#895](https://github.com/appium/appium-android-driver/issues/895)) ([b9082c5](https://github.com/appium/appium-android-driver/commit/b9082c561eb1422bce6c2ba6748096b5f162f929))
+
 ## [7.6.0](https://github.com/appium/appium-android-driver/compare/v7.5.1...v7.6.0) (2024-01-06)
 
 
