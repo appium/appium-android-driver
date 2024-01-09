@@ -118,7 +118,7 @@ describe('Android Helpers', function () {
       it('should fail if avd name is not specified', async function () {
         await helpers.prepareEmulator(adb, {}).should.eventually.be.rejected;
       });
-    })
+    }),
   );
   describe(
     'prepareAvdArgs',
@@ -143,7 +143,7 @@ describe('Android Helpers', function () {
         let args = prepareAvdArgs(adb, {isHeadless: true, avdArgs});
         args.should.eql(['-no-window']);
       });
-    })
+    }),
   );
   describe('ensureNetworkSpeed', function () {
     it('should return value if network speed is valid', function () {
@@ -206,7 +206,7 @@ describe('Android Helpers', function () {
           .should.be.rejectedWith(Error, `Failed to set language: fr and country: FR`);
         mocks.adb.verify();
       });
-    })
+    }),
   );
 
   describe('getDeviceInfoFromCaps', function () {
@@ -493,9 +493,9 @@ describe('Android Helpers', function () {
           };
           (await helpers.getLaunchInfo(adb, inOpts)).should.deep.equal(outOpts);
           mocks.adb.verify();
-        }
+        },
       );
-    })
+    }),
   );
   describe(
     'resetApp',
@@ -535,7 +535,7 @@ describe('Android Helpers', function () {
         await helpers.resetApp(adb, {app: localApkPath, appPackage: pkg, fastReset: true});
         mocks.adb.verify();
       });
-    })
+    }),
   );
 
   describe(
@@ -590,7 +590,7 @@ describe('Android Helpers', function () {
         mocks.adb.verify();
         mocks.helpers.verify();
       });
-    })
+    }),
   );
   describe(
     'installOtherApks',
@@ -628,14 +628,14 @@ describe('Android Helpers', function () {
         await helpers.installOtherApks([fakeApk, otherFakeApk], adb, opts);
         mocks.adb.verify();
       });
-    })
+    }),
   );
   describe(
     'pushSettingsApp',
     withMocks({adb}, (mocks) => {
       it('should skip granting permissions if the app is already running on over API level 23+ devices', async function () {
         mocks.adb.expects('installOrUpgrade').once().returns(true);
-        mocks.adb.expects('processExists').withExactArgs('io.appium.settings').once().returns(true);
+        mocks.adb.expects('isSettingsAppServiceRunningInForeground').once().returns(true);
         mocks.adb.expects('getApiLevel').never();
         mocks.adb.expects('grantPermissions').never();
         await helpers.pushSettingsApp(adb);
@@ -643,7 +643,7 @@ describe('Android Helpers', function () {
       });
       it('should not skip granting permissions if the app is already running on under API level 22 devices', async function () {
         mocks.adb.expects('installOrUpgrade').once().returns(true);
-        mocks.adb.expects('processExists').once().returns(true);
+        mocks.adb.expects('isSettingsAppServiceRunningInForeground').once().returns(true);
         mocks.adb.expects('getApiLevel').never();
         mocks.adb.expects('grantPermissions').never();
         await helpers.pushSettingsApp(adb);
@@ -651,7 +651,7 @@ describe('Android Helpers', function () {
       });
       it('should launch settings app if it isnt running on over API level 24 devices', async function () {
         mocks.adb.expects('installOrUpgrade').once().returns(true);
-        mocks.adb.expects('processExists').once().returns(false);
+        mocks.adb.expects('isSettingsAppServiceRunningInForeground').once().returns(false);
         mocks.adb.expects('getApiLevel').once().returns(24);
         mocks.adb.expects('requireRunningSettingsApp').once();
         await helpers.pushSettingsApp(adb);
@@ -659,7 +659,7 @@ describe('Android Helpers', function () {
       });
       it('should launch settings app if it isnt running on under API level 23 devices', async function () {
         mocks.adb.expects('installOrUpgrade').once().returns(true);
-        mocks.adb.expects('processExists').once().returns(false);
+        mocks.adb.expects('isSettingsAppServiceRunningInForeground').once().returns(false);
         mocks.adb.expects('getApiLevel').once().returns(23);
         mocks.adb
           .expects('grantPermissions')
@@ -674,7 +674,7 @@ describe('Android Helpers', function () {
         await helpers.pushSettingsApp(adb);
         mocks.adb.verify();
       });
-    })
+    }),
   );
   describe(
     'setMockLocationApp',
@@ -701,7 +701,7 @@ describe('Android Helpers', function () {
         await helpers.setMockLocationApp(adb, 'io.appium.settings');
         mocks.adb.verify();
       });
-    })
+    }),
   );
   describe(
     'pushStrings',
@@ -751,7 +751,7 @@ describe('Android Helpers', function () {
         mocks.adb.verify();
         mocks.fs.verify();
       });
-    })
+    }),
   );
   describe(
     'unlock',
@@ -848,7 +848,7 @@ describe('Android Helpers', function () {
           .should.be.rejectedWith('Fingerprint');
         mocks.helpers.verify();
       });
-    })
+    }),
   );
   describe(
     'initDevice',
@@ -910,10 +910,7 @@ describe('Android Helpers', function () {
         mocks.helpers.expects('pushSettingsApp').once();
         mocks.helpers.expects('ensureDeviceLocale').never();
         mocks.helpers.expects('setMockLocationApp').once();
-        mocks.helpers
-          .expects('hideKeyboard')
-          .withExactArgs(adb)
-          .once();
+        mocks.helpers.expects('hideKeyboard').withExactArgs(adb).once();
         await helpers.initDevice(adb, opts);
         mocks.helpers.verify();
         mocks.adb.verify();
@@ -969,7 +966,7 @@ describe('Android Helpers', function () {
         mocks.helpers.verify();
         mocks.adb.verify();
       });
-    })
+    }),
   );
   describe('removeNullProperties', function () {
     it('should ignore null properties', function () {
