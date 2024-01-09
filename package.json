@@ -57,7 +57,7 @@
   "dependencies": {
     "@appium/support": "^4.2.0",
     "@colors/colors": "^1.6.0",
-    "appium-adb": "^11.0.1",
+    "appium-adb": "^11.1.0",
     "appium-chromedriver": "^5.5.1",
     "asyncbox": "^3.0.0",
     "axios": "^1.x",
