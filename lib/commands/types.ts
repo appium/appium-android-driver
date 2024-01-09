@@ -1101,6 +1101,13 @@ export interface DeviceidleOpts {
   packages?: string|string[];
 }
 
+export interface SendTrimMemoryOpts {
+  /** The package name to send trimMemory event to */
+  pkg: string;
+  /** The atual trim level */
+  level: 'COMPLETE' | 'MODERATE' | 'BACKGROUND' | 'UI_HIDDEN' | 'RUNNING_CRITICAL' | 'RUNNING_LOW' | 'RUNNING_MODERATE';
+}
+
 export interface SetUiModeOpts {
   /**
    * The UI mode to set the value for.

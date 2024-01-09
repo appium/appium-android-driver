@@ -927,6 +927,10 @@ export interface DeviceidleMixin {
   mobileDeviceidle(opts: types.DeviceidleOpts): Promise<void>;
 }
 
+export interface MemoryMixin {
+  mobileSendTrimMemory(opts: types.SendTrimMemoryOpts): Promise<void>;
+}
+
 declare module '../driver' {
   interface AndroidDriver
     extends ActionsMixin,
@@ -953,6 +957,7 @@ declare module '../driver' {
       StreamScreenMixin,
       SystemBarsMixin,
       DeviceidleMixin,
+      MemoryMixin,
       TouchMixin {}
 }
 
