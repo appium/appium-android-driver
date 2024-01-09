@@ -76,7 +76,7 @@ function ensureNetworkSpeed(adb: ADB, networkSpeed: string) {
   }
   logger.warn(
     `Wrong network speed param '${networkSpeed}', using default: ${adb.NETWORK_SPEED.FULL}. ` +
-      `Supported values: ${_.values(adb.NETWORK_SPEED)}`,
+      `Supported values: ${_.values(adb.NETWORK_SPEED)}`
   );
   return adb.NETWORK_SPEED.FULL;
 }
@@ -139,15 +139,15 @@ interface AndroidHelpers {
   validatePackageActivityNames<Opts extends AndroidDriverOpts>(opts: Opts): void;
   getLaunchInfo<Opts extends AndroidDriverOpts>(
     adb: ADB,
-    opts: Opts,
+    opts: Opts
   ): Promise<ADBLaunchInfo | undefined>;
   resetApp<Opts extends AndroidDriverOpts>(
     adb: ADB,
-    opts: SetRequired<Opts, 'appPackage' | 'app'>,
+    opts: SetRequired<Opts, 'appPackage' | 'app'>
   ): Promise<void>;
   installApk<Opts extends AndroidDriverOpts>(
     adb: ADB,
-    opts: SetRequired<Opts, 'appPackage' | 'app'>,
+    opts: SetRequired<Opts, 'appPackage' | 'app'>
   ): Promise<void>;
 
   /**
@@ -158,7 +158,7 @@ interface AndroidHelpers {
   installOtherApks<Opts extends AndroidDriverOpts>(
     apks: string[],
     adb: ADB,
-    opts: SetRequired<Opts, 'appPackage' | 'app'>,
+    opts: SetRequired<Opts, 'appPackage' | 'app'>
   ): Promise<void>;
 
   /**
@@ -213,12 +213,12 @@ interface AndroidHelpers {
   pushStrings(
     language: string | undefined,
     adb: ADB,
-    opts: AndroidDriverOpts,
+    opts: AndroidDriverOpts
   ): Promise<StringRecord>;
   unlock<D extends AndroidDriver, Caps extends AndroidDriverCaps>(
     driver: D,
     adb: ADB,
-    capabilities: Caps,
+    capabilities: Caps
   ): Promise<void>;
   verifyUnlock(adb: ADB, timeoutMs?: number | null): Promise<void>;
   initDevice(adb: ADB, opts: AndroidDriverOpts): Promise<string | void>;
@@ -228,7 +228,7 @@ interface AndroidHelpers {
   getChromePkg(browser: string): ValueOf<typeof CHROME_BROWSER_PACKAGE_ACTIVITY>;
   removeAllSessionWebSocketHandlers(
     server?: AppiumServer,
-    sessionId?: string | null,
+    sessionId?: string | null
   ): Promise<void>;
   parseArray(cap: string | string[]): string[];
 
@@ -447,7 +447,7 @@ const AndroidHelpers: AndroidHelpers = {
           logger.errorAndThrow(
             `Unable to find an active device or emulator ` +
               `with OS ${opts.platformVersion}. The following are available: ` +
-              availDevices.join(', '),
+              availDevices.join(', ')
           );
           throw new Error(); // unreachable; for TS
         }
@@ -489,12 +489,12 @@ const AndroidHelpers: AndroidHelpers = {
       }
 
       logger.warn(
-        `Capability '${key}' is expected to only include latin letters, digits, underscore, dot, comma and asterisk characters.`,
+        `Capability '${key}' is expected to only include latin letters, digits, underscore, dot, comma and asterisk characters.`
       );
       logger.warn(
         `Current value '${name}' has non-matching character at index ${match.index}: '${String(
-          name,
-        ).substring(0, match.index + 1)}'`,
+          name
+        ).substring(0, match.index + 1)}'`
       );
     }
   },
@@ -557,7 +557,7 @@ const AndroidHelpers: AndroidHelpers = {
         const output = await adb.clear(appPackage);
         if (_.isString(output) && output.toLowerCase().includes('failed')) {
           throw new Error(
-            `Cannot clear the application data of '${appPackage}'. Original error: ${output}`,
+            `Cannot clear the application data of '${appPackage}'. Original error: ${output}`
           );
         }
         // executing `shell pm clear` resets previously assigned application permissions as well
@@ -566,12 +566,12 @@ const AndroidHelpers: AndroidHelpers = {
             await adb.grantAllPermissions(appPackage);
           } catch (error) {
             logger.error(
-              `Unable to grant permissions requested. Original error: ${(error as Error).message}`,
+              `Unable to grant permissions requested. Original error: ${(error as Error).message}`
             );
           }
         }
         logger.debug(
-          `Performed fast reset on the installed '${appPackage}' application (stop and clear)`,
+          `Performed fast reset on the installed '${appPackage}' application (stop and clear)`
         );
         return;
       }
@@ -580,7 +580,7 @@ const AndroidHelpers: AndroidHelpers = {
     if (!app) {
       throw new Error(
         `Either provide 'app' option to install '${appPackage}' or ` +
-          `consider setting 'noReset' to 'true' if '${appPackage}' is supposed to be preinstalled.`,
+          `consider setting 'noReset' to 'true' if '${appPackage}' is supposed to be preinstalled.`
       );
     }
 
@@ -648,7 +648,7 @@ const AndroidHelpers: AndroidHelpers = {
           timeout: androidInstallTimeout,
           allowTestPackages,
         });
-      }),
+      })
     );
   },
 
@@ -673,7 +673,7 @@ const AndroidHelpers: AndroidHelpers = {
       return _.difference(appPackagesArray, filterPackages);
     } catch (err) {
       logger.warn(
-        `Unable to get packages with 'adb shell pm list packages -3': ${(err as Error).message}`,
+        `Unable to get packages with 'adb shell pm list packages -3': ${(err as Error).message}`
       );
       return [];
     }
@@ -769,8 +769,8 @@ const AndroidHelpers: AndroidHelpers = {
             try {
               await adb.shell(['appops', 'set', pkgId, 'android:mock_location', 'deny']);
             } catch (ign) {}
-          })(),
-        ),
+          })()
+        )
       );
     } catch (err) {
       logger.warn(`Unable to reset mock location: ${(err as Error).message}`);
@@ -785,7 +785,7 @@ const AndroidHelpers: AndroidHelpers = {
       HELPER_APP_INSTALL_RETRY_DELAY_MS,
       async function retryInstallHelperApp() {
         await adb.installOrUpgrade(apkPath, packageId, {grantPermissions: true});
-      },
+      }
     );
   },
 
@@ -803,7 +803,7 @@ const AndroidHelpers: AndroidHelpers = {
         `Ignored error while installing '${settingsApkPath}': ` +
           `'${(err as Error).message}'. Features that rely on this helper ` +
           'require the apk such as toggle WiFi and getting location ' +
-          'will raise an error if you try to use them.',
+          'will raise an error if you try to use them.'
       );
     }
 
@@ -812,7 +812,7 @@ const AndroidHelpers: AndroidHelpers = {
     if (await adb.isSettingsAppServiceRunningInForeground()) {
       logger.debug(
         `${SETTINGS_HELPER_PKG_ID} is already running. ` +
-          `There is no need to reset its permissions.`,
+          `There is no need to reset its permissions.`
       );
       return;
     }
@@ -843,7 +843,7 @@ const AndroidHelpers: AndroidHelpers = {
       logger.info(`Granting permissions ${perms} to '${SETTINGS_HELPER_PKG_ID}'`);
       await adb.grantPermissions(
         SETTINGS_HELPER_PKG_ID,
-        perms.map((x) => `android.permission.${x}`),
+        perms.map((x) => `android.permission.${x}`)
       );
     }
 
@@ -877,7 +877,7 @@ const AndroidHelpers: AndroidHelpers = {
       logger.info(
         `Failed to pull an apk from '${opts.appPackage}' to '${opts.tmpDir}'. Original error: ${
           (err as Error).message
-        }`,
+        }`
       );
     }
 
@@ -892,13 +892,13 @@ const AndroidHelpers: AndroidHelpers = {
       const {apkStrings, localPath} = await adb.extractStringsFromApk(
         app!,
         language ?? null,
-        stringsTmpDir,
+        stringsTmpDir
       );
       await adb.push(localPath, remoteDir);
       return apkStrings;
     } catch (err) {
       logger.warn(
-        `Could not get strings, continuing anyway. Original error: ${(err as Error).message}`,
+        `Could not get strings, continuing anyway. Original error: ${(err as Error).message}`
       );
       await adb.shell(['echo', `'{}' > ${remoteFile}`]);
     } finally {
@@ -917,7 +917,7 @@ const AndroidHelpers: AndroidHelpers = {
     if (!capabilities.unlockType && !capabilities.unlockKey) {
       logger.info(
         `Neither 'unlockType' nor 'unlockKey' capability is provided. ` +
-          `Assuming the device is locked with a simple lock screen.`,
+          `Assuming the device is locked with a simple lock screen.`
       );
       await adb.dismissKeyguard();
       return;
@@ -996,7 +996,7 @@ const AndroidHelpers: AndroidHelpers = {
           unicodeKeyboard ||
           hideKeyboard ||
           disableWindowAnimation ||
-          !skipUnlock,
+          !skipUnlock
       );
       await AndroidHelpers.pushSettingsApp(adb, shouldThrowError, opts);
     }
@@ -1031,7 +1031,7 @@ const AndroidHelpers: AndroidHelpers = {
     if (unicodeKeyboard) {
       logger.warn(
         `The 'unicodeKeyboard' capability has been deprecated and will be removed. ` +
-          `Set the 'hideKeyboard' capability to 'true' in order to make the on-screen keyboard invisible.`,
+        `Set the 'hideKeyboard' capability to 'true' in order to make the on-screen keyboard invisible.`
       );
       return await AndroidHelpers.initUnicodeKeyboard(adb);
     }
@@ -1096,12 +1096,12 @@ const AndroidHelpers: AndroidHelpers = {
       if (caps.app) {
         // warn if the capabilities have both `app` and `browser, although this is common with selenium grid
         logger.warn(
-          `The desired capabilities should generally not include both an 'app' and a 'browserName'`,
+          `The desired capabilities should generally not include both an 'app' and a 'browserName'`
         );
       }
       if (caps.appPackage) {
         logger.errorAndThrow(
-          `The desired should not include both of an 'appPackage' and a 'browserName'`,
+          `The desired should not include both of an 'appPackage' and a 'browserName'`
         );
       }
     }
@@ -1111,7 +1111,7 @@ const AndroidHelpers: AndroidHelpers = {
         AndroidHelpers.parseArray(caps.uninstallOtherPackages);
       } catch (e) {
         logger.errorAndThrow(
-          `Could not parse "uninstallOtherPackages" capability: ${(e as Error).message}`,
+          `Could not parse "uninstallOtherPackages" capability: ${(e as Error).message}`
         );
       }
     }
@@ -1123,12 +1123,12 @@ const AndroidHelpers: AndroidHelpers = {
     const {browserName} = caps;
     logger.info(`The current session is considered browser-based`);
     logger.info(
-      `Supported browser names: ${JSON.stringify(_.keys(CHROME_BROWSER_PACKAGE_ACTIVITY))}`,
+      `Supported browser names: ${JSON.stringify(_.keys(CHROME_BROWSER_PACKAGE_ACTIVITY))}`
     );
     if (caps.appPackage || caps.appActivity) {
       logger.info(
         `Not overriding appPackage/appActivity capability values for '${browserName}' ` +
-          'because some of them have been already provided',
+          'because some of them have been already provided'
       );
       return caps;
     }
@@ -1138,12 +1138,12 @@ const AndroidHelpers: AndroidHelpers = {
     caps.appActivity = activity;
     logger.info(
       `appPackage/appActivity capabilities have been automatically set to ${pkg}/${activity} ` +
-        `for '${browserName}'`,
+        `for '${browserName}'`
     );
     logger.info(
       `Consider changing the browserName to the one from the list of supported browser names ` +
         `or provide custom appPackage/appActivity capability values if the automatically assigned ones do ` +
-        `not make sense`,
+        `not make sense`
     );
     return caps;
   },
