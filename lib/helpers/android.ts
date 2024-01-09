@@ -809,7 +809,7 @@ const AndroidHelpers: AndroidHelpers = {
 
     // Reinstall would stop the settings helper process anyway, so
     // there is no need to continue if the application is still running
-    if (await adb.processExists(SETTINGS_HELPER_PKG_ID)) {
+    if (await adb.isSettingsAppServiceRunningInForeground()) {
       logger.debug(
         `${SETTINGS_HELPER_PKG_ID} is already running. ` +
           `There is no need to reset its permissions.`
