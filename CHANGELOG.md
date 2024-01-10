@@ -1,3 +1,10 @@
+## [7.7.0](https://github.com/appium/appium-android-driver/compare/v7.6.1...v7.7.0) (2024-01-10)
+
+
+### Features
+
+* Add a helper method to simulate low-memory event ([#896](https://github.com/appium/appium-android-driver/issues/896)) ([3a930e3](https://github.com/appium/appium-android-driver/commit/3a930e3b77f87fb6b09ff2d14414b56c417395d2))
+
 ## [7.6.1](https://github.com/appium/appium-android-driver/compare/v7.6.0...v7.6.1) (2024-01-09)
 
 
