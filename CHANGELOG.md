@@ -1,3 +1,10 @@
+## [7.8.0](https://github.com/appium/appium-android-driver/compare/v7.7.0...v7.8.0) (2024-01-11)
+
+
+### Features
+
+* Use APIs imported from the io.appium.settings package ([#897](https://github.com/appium/appium-android-driver/issues/897)) ([31c32f9](https://github.com/appium/appium-android-driver/commit/31c32f9ad53cfb8222fbe2c2d985e307305a2245))
+
 ## [7.7.0](https://github.com/appium/appium-android-driver/compare/v7.6.1...v7.7.0) (2024-01-10)
 
 
