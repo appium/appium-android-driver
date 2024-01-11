@@ -4,9 +4,11 @@ import sinon from 'sinon';
 import ADB from 'appium-adb';
 import {AndroidDriver} from '../../../lib/driver';
 import B from 'bluebird';
+import { SettingsApp } from 'io.appium.settings';
 
 let driver;
 let adb;
+let settingsApp;
 let sandbox = sinon.createSandbox();
 chai.should();
 chai.use(chaiAsPromised);
@@ -17,6 +19,9 @@ describe('Network', function () {
     adb = new ADB();
     driver.adb = adb;
     sandbox.stub(adb);
+    settingsApp = new SettingsApp({adb});
+    driver._settingsApp = settingsApp;
+    sandbox.stub(settingsApp);
     sandbox.stub(driver, 'isEmulator');
     sandbox.stub(B, 'delay');
   });
@@ -59,6 +64,7 @@ describe('Network', function () {
   describe('setNetworkConnection', function () {
     beforeEach(function () {
       sandbox.stub(driver, 'setWifiState');
+      sandbox.stub(driver, 'setDataState');
       driver.isEmulator.returns(false);
     });
     it('should turn off wifi and data', async function () {
@@ -67,7 +73,7 @@ describe('Network', function () {
       adb.setAirplaneMode.called.should.be.false;
       adb.broadcastAirplaneMode.called.should.be.false;
       driver.setWifiState.calledWithExactly(false).should.be.true;
-      adb.setDataState.calledWithExactly(false, false).should.be.true;
+      driver.setDataState.calledWithExactly(false).should.be.true;
     });
     it('should turn on and broadcast airplane mode', async function () {
       sandbox.stub(driver, 'getNetworkConnection').returns(0);
@@ -76,7 +82,7 @@ describe('Network', function () {
       adb.setAirplaneMode.calledWithExactly(true).should.be.true;
       adb.broadcastAirplaneMode.calledWithExactly(true).should.be.true;
       driver.setWifiState.called.should.be.false;
-      adb.setDataState.called.should.be.false;
+      driver.setDataState.called.should.be.false;
     });
     it('should turn on wifi', async function () {
       sandbox.stub(driver, 'getNetworkConnection').returns(0);
@@ -84,7 +90,7 @@ describe('Network', function () {
       adb.setAirplaneMode.called.should.be.false;
       adb.broadcastAirplaneMode.called.should.be.false;
       driver.setWifiState.calledWithExactly(true).should.be.true;
-      adb.setDataState.called.should.be.false;
+      driver.setDataState.called.should.be.false;
     });
     it('should turn on data', async function () {
       sandbox.stub(driver, 'getNetworkConnection').returns(0);
@@ -92,7 +98,7 @@ describe('Network', function () {
       adb.setAirplaneMode.called.should.be.false;
       adb.broadcastAirplaneMode.called.should.be.false;
       driver.setWifiState.called.should.be.false;
-      adb.setDataState.calledWithExactly(true, false).should.be.true;
+      driver.setDataState.calledWithExactly(true).should.be.true;
     });
     it('should turn on data and wifi', async function () {
       sandbox.stub(driver, 'getNetworkConnection').returns(0);
@@ -100,32 +106,25 @@ describe('Network', function () {
       adb.setAirplaneMode.called.should.be.false;
       adb.broadcastAirplaneMode.called.should.be.false;
       driver.setWifiState.calledWithExactly(true).should.be.true;
-      adb.setDataState.calledWithExactly(true, false).should.be.true;
-    });
-  });
-  describe('setWifiState', function () {
-    it('should set wifi state', async function () {
-      driver.isEmulator.returns('is_emu');
-      await driver.setWifiState('wifi_state');
-      adb.setWifiState.calledWithExactly('wifi_state', 'is_emu').should.be.true;
+      driver.setDataState.calledWithExactly(true).should.be.true;
     });
   });
   describe('toggleData', function () {
     it('should toggle data', async function () {
       adb.isDataOn.returns(false);
       driver.isEmulator.returns('is_emu');
-      adb.setWifiAndData.returns('');
+      settingsApp.setDataState.returns('');
       await driver.toggleData();
-      adb.setWifiAndData.calledWithExactly({data: true}, 'is_emu').should.be.true;
+      settingsApp.setDataState.calledWithExactly(true, 'is_emu').should.be.true;
     });
   });
   describe('toggleWiFi', function () {
     it('should toggle wifi', async function () {
       adb.isWifiOn.returns(false);
       driver.isEmulator.returns('is_emu');
-      adb.setWifiAndData.returns('');
+      settingsApp.setWifiState.returns('');
       await driver.toggleWiFi();
-      adb.setWifiAndData.calledWithExactly({wifi: true}, 'is_emu').should.be.true;
+      settingsApp.setWifiState.calledWithExactly(true, 'is_emu').should.be.true;
     });
   });
   describe('toggleFlightMode', function () {
@@ -148,8 +147,8 @@ describe('Network', function () {
   });
   describe('setGeoLocation', function () {
     it('should return location in use after setting', async function () {
-      adb.setGeoLocation.withArgs('location', 'is_emu').returns('res');
-      adb.getGeoLocation.returns({
+      settingsApp.setGeoLocation.withArgs('location', 'is_emu').returns('res');
+      settingsApp.getGeoLocation.returns({
         latitude: '1.1',
         longitude: '2.2',
         altitude: '3.3',
@@ -163,7 +162,7 @@ describe('Network', function () {
   });
   describe('getGeoLocation', function () {
     it('should get location', async function () {
-      adb.getGeoLocation.returns({
+      settingsApp.getGeoLocation.returns({
         latitude: '1.1',
         longitude: '2.2',
       });

@@ -4,7 +4,13 @@ import type {AppiumServer, StringRecord} from '@appium/types';
 import {ADB} from 'appium-adb';
 import {retryInterval, waitForCondition} from 'asyncbox';
 import B from 'bluebird';
-import {path as settingsApkPath} from 'io.appium.settings';
+import {
+  path as SETTINGS_APK_PATH,
+  SettingsApp,
+  SETTINGS_HELPER_ID,
+  UNICODE_IME,
+  EMPTY_IME,
+} from 'io.appium.settings';
 import _ from 'lodash';
 import {EOL} from 'node:os';
 import path from 'node:path';
@@ -57,8 +63,6 @@ const CHROME_BROWSER_PACKAGE_ACTIVITY = {
     activity: 'com.google.android.apps.chrome.Main',
   },
 } as const;
-const SETTINGS_HELPER_PKG_ID = 'io.appium.settings';
-const SETTING_NOTIFICATIONS_LISTENER_SERVICE = `${SETTINGS_HELPER_PKG_ID}/.NLService`;
 const EMULATOR_PATTERN = /\bemulator\b/i;
 // These constants are in sync with
 // https://developer.apple.com/documentation/xctest/xcuiapplicationstate/xcuiapplicationstaterunningbackground?language=objc
@@ -68,7 +72,6 @@ const APP_STATE = {
   RUNNING_IN_BACKGROUND: 3,
   RUNNING_IN_FOREGROUND: 4,
 } as const;
-const EMPTY_IME = `${SETTINGS_HELPER_PKG_ID}/.EmptyIME`;
 
 function ensureNetworkSpeed(adb: ADB, networkSpeed: string) {
   if (networkSpeed.toUpperCase() in adb.NETWORK_SPEED) {
@@ -344,13 +347,8 @@ const AndroidHelpers: AndroidHelpers = {
   },
 
   async ensureDeviceLocale(adb, language, country, script) {
-    if (!_.isString(language) && !_.isString(country)) {
-      logger.warn(`setDeviceLanguageCountry requires language or country.`);
-      logger.warn(`Got language: '${language}' and country: '${country}'`);
-      return;
-    }
-
-    await adb.setDeviceLanguageCountry(language, country, script);
+    const settingsApp = new SettingsApp({adb});
+    await settingsApp.setDeviceLocale(language!, country!, script);
 
     if (!(await adb.ensureCurrentLocale(language, country, script))) {
       const message = script
@@ -686,10 +684,9 @@ const AndroidHelpers: AndroidHelpers = {
     const defaultIME = await adb.defaultIME();
 
     logger.debug(`Unsetting previous IME ${defaultIME}`);
-    const appiumIME = `${SETTINGS_HELPER_PKG_ID}/.UnicodeIME`;
-    logger.debug(`Setting IME to '${appiumIME}'`);
-    await adb.enableIME(appiumIME);
-    await adb.setIME(appiumIME);
+    logger.debug(`Setting IME to '${UNICODE_IME}'`);
+    await adb.enableIME(UNICODE_IME);
+    await adb.setIME(UNICODE_IME);
     return defaultIME;
   },
 
@@ -755,7 +752,7 @@ const AndroidHelpers: AndroidHelpers = {
         await adb.shell([
           'appops',
           'set',
-          resultPkgs[0] ?? SETTINGS_HELPER_PKG_ID,
+          resultPkgs[0] ?? SETTINGS_HELPER_ID,
           'android:mock_location',
           'deny',
         ]);
@@ -793,65 +790,61 @@ const AndroidHelpers: AndroidHelpers = {
     logger.debug('Pushing settings apk to device...');
 
     try {
-      await AndroidHelpers.installHelperApp(adb, settingsApkPath, SETTINGS_HELPER_PKG_ID);
+      await AndroidHelpers.installHelperApp(adb, SETTINGS_APK_PATH, SETTINGS_HELPER_ID);
     } catch (err) {
       if (throwError) {
         throw err;
       }
 
       logger.warn(
-        `Ignored error while installing '${settingsApkPath}': ` +
+        `Ignored error while installing '${SETTINGS_APK_PATH}': ` +
           `'${(err as Error).message}'. Features that rely on this helper ` +
           'require the apk such as toggle WiFi and getting location ' +
           'will raise an error if you try to use them.'
       );
     }
 
+    const settingsApp = new SettingsApp({adb});
     // Reinstall would stop the settings helper process anyway, so
     // there is no need to continue if the application is still running
-    if (await adb.isSettingsAppServiceRunningInForeground()) {
+    if (await settingsApp.isRunningInForeground()) {
       logger.debug(
-        `${SETTINGS_HELPER_PKG_ID} is already running. ` +
+        `${SETTINGS_HELPER_ID} is already running. ` +
           `There is no need to reset its permissions.`
       );
       return;
     }
 
-    const apiLevel = await adb.getApiLevel();
-    if (apiLevel >= 29) {
-      // https://github.com/appium/io.appium.settings#internal-audio--video-recording
-      try {
-        await adb.shell(['appops', 'set', SETTINGS_HELPER_PKG_ID, 'PROJECT_MEDIA', 'allow']);
-      } catch (err) {
-        logger.debug((err as Error).message);
+    const fixSettingsAppPermissionsForLegacyApis = async () => {
+      if (await adb.getApiLevel() > 23) {
+        return;
       }
-      try {
-        await adb.shell([
-          'cmd',
-          'notification',
-          'allow_listener',
-          SETTING_NOTIFICATIONS_LISTENER_SERVICE,
-        ]);
-      } catch (err) {
-        logger.debug((err as Error).message);
-      }
-    }
-    if (apiLevel <= 23) {
+
       // Android 6- devices should have granted permissions
       // https://github.com/appium/appium/pull/11640#issuecomment-438260477
       const perms = ['SET_ANIMATION_SCALE', 'CHANGE_CONFIGURATION', 'ACCESS_FINE_LOCATION'];
-      logger.info(`Granting permissions ${perms} to '${SETTINGS_HELPER_PKG_ID}'`);
+      logger.info(`Granting permissions ${perms} to '${SETTINGS_HELPER_ID}'`);
       await adb.grantPermissions(
-        SETTINGS_HELPER_PKG_ID,
+        SETTINGS_HELPER_ID,
         perms.map((x) => `android.permission.${x}`)
       );
+    };
+
+    try {
+      await B.all([
+        settingsApp.adjustNotificationsPermissions(),
+        settingsApp.adjustMediaProjectionServicePermissions(),
+        fixSettingsAppPermissionsForLegacyApis(),
+      ]);
+    } catch (e) {
+      logger.debug(e.stack);
     }
 
     // launch io.appium.settings app due to settings failing to be set
     // if the app is not launched prior to start the session on android 7+
     // see https://github.com/appium/appium/issues/8957
     try {
-      await adb.requireRunningSettingsApp({
+      await settingsApp.requireRunning({
         timeout: AndroidHelpers.isEmulator(adb, opts) ? 30000 : 5000,
       });
     } catch (err) {
@@ -1003,7 +996,7 @@ const AndroidHelpers: AndroidHelpers = {
 
     if (!AndroidHelpers.isEmulator(adb, opts)) {
       if (mockLocationApp || _.isUndefined(mockLocationApp)) {
-        await AndroidHelpers.setMockLocationApp(adb, mockLocationApp || SETTINGS_HELPER_PKG_ID);
+        await AndroidHelpers.setMockLocationApp(adb, mockLocationApp || SETTINGS_HELPER_ID);
       } else {
         await AndroidHelpers.resetMockLocation(adb);
       }
@@ -1156,5 +1149,5 @@ const AndroidHelpers: AndroidHelpers = {
 };
 
 export const helpers = AndroidHelpers;
-export {APP_STATE, SETTINGS_HELPER_PKG_ID, ensureNetworkSpeed, prepareAvdArgs};
+export {APP_STATE, SETTINGS_HELPER_ID, ensureNetworkSpeed, prepareAvdArgs};
 export default AndroidHelpers;

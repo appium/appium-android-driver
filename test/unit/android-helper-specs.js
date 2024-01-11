@@ -155,59 +155,6 @@ describe('Android Helpers', function () {
       ensureNetworkSpeed(adb, 'invalid').should.be.equal('full');
     });
   });
-  describe(
-    'ensureDeviceLocale',
-    withMocks({adb}, (mocks) => {
-      it('should call setDeviceLanguageCountry', async function () {
-        mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US', undefined).once();
-        mocks.adb
-          .expects('ensureCurrentLocale')
-          .withExactArgs('en', 'US', undefined)
-          .once()
-          .returns(true);
-        await helpers.ensureDeviceLocale(adb, 'en', 'US', undefined);
-        mocks.adb.verify();
-      });
-      it('should call setDeviceLanguageCountry without script', async function () {
-        mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('en', 'US', undefined).once();
-        mocks.adb
-          .expects('ensureCurrentLocale')
-          .withExactArgs('en', 'US', undefined)
-          .once()
-          .returns(true);
-        await helpers.ensureDeviceLocale(adb, 'en', 'US', undefined);
-        mocks.adb.verify();
-      });
-      it('should call setDeviceLanguageCountry with script', async function () {
-        mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('zh', 'CN', 'Hans').once();
-        mocks.adb
-          .expects('ensureCurrentLocale')
-          .withExactArgs('zh', 'CN', 'Hans')
-          .once()
-          .returns(true);
-        await helpers.ensureDeviceLocale(adb, 'zh', 'CN', 'Hans');
-        mocks.adb.verify();
-      });
-      it('should never call setDeviceLanguageCountry', async function () {
-        mocks.adb.expects('setDeviceLanguageCountry').never();
-        mocks.adb.expects('getApiLevel').never();
-        await helpers.ensureDeviceLocale(adb);
-        mocks.adb.verify();
-      });
-      it('should call setDeviceLanguageCountry with throw', async function () {
-        mocks.adb.expects('setDeviceLanguageCountry').withExactArgs('fr', 'FR', undefined).once();
-        mocks.adb
-          .expects('ensureCurrentLocale')
-          .withExactArgs('fr', 'FR', undefined)
-          .once()
-          .returns(false);
-        await helpers
-          .ensureDeviceLocale(adb, 'fr', 'FR')
-          .should.be.rejectedWith(Error, `Failed to set language: fr and country: FR`);
-        mocks.adb.verify();
-      });
-    })
-  );
 
   describe('getDeviceInfoFromCaps', function () {
     // list of device/emu udids to their os versions
@@ -626,52 +573,6 @@ describe('Android Helpers', function () {
       it('should call adb.installOrUpgrade twice if otherApps has two item', async function () {
         mocks.adb.expects('installOrUpgrade').twice();
         await helpers.installOtherApks([fakeApk, otherFakeApk], adb, opts);
-        mocks.adb.verify();
-      });
-    })
-  );
-  describe(
-    'pushSettingsApp',
-    withMocks({adb}, (mocks) => {
-      it('should skip granting permissions if the app is already running on over API level 23+ devices', async function () {
-        mocks.adb.expects('installOrUpgrade').once().returns(true);
-        mocks.adb.expects('isSettingsAppServiceRunningInForeground').once().returns(true);
-        mocks.adb.expects('getApiLevel').never();
-        mocks.adb.expects('grantPermissions').never();
-        await helpers.pushSettingsApp(adb);
-        mocks.adb.verify();
-      });
-      it('should not skip granting permissions if the app is already running on under API level 22 devices', async function () {
-        mocks.adb.expects('installOrUpgrade').once().returns(true);
-        mocks.adb.expects('isSettingsAppServiceRunningInForeground').once().returns(true);
-        mocks.adb.expects('getApiLevel').never();
-        mocks.adb.expects('grantPermissions').never();
-        await helpers.pushSettingsApp(adb);
-        mocks.adb.verify();
-      });
-      it('should launch settings app if it isnt running on over API level 24 devices', async function () {
-        mocks.adb.expects('installOrUpgrade').once().returns(true);
-        mocks.adb.expects('isSettingsAppServiceRunningInForeground').once().returns(false);
-        mocks.adb.expects('getApiLevel').once().returns(24);
-        mocks.adb.expects('requireRunningSettingsApp').once();
-        await helpers.pushSettingsApp(adb);
-        mocks.adb.verify();
-      });
-      it('should launch settings app if it isnt running on under API level 23 devices', async function () {
-        mocks.adb.expects('installOrUpgrade').once().returns(true);
-        mocks.adb.expects('isSettingsAppServiceRunningInForeground').once().returns(false);
-        mocks.adb.expects('getApiLevel').once().returns(23);
-        mocks.adb
-          .expects('grantPermissions')
-          .once()
-          .withExactArgs('io.appium.settings', [
-            'android.permission.SET_ANIMATION_SCALE',
-            'android.permission.CHANGE_CONFIGURATION',
-            'android.permission.ACCESS_FINE_LOCATION',
-          ])
-          .returns(true);
-        mocks.adb.expects('requireRunningSettingsApp').once();
-        await helpers.pushSettingsApp(adb);
         mocks.adb.verify();
       });
     })
