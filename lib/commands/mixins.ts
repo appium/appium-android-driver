@@ -711,6 +711,7 @@ export interface NetworkMixin {
    * decoupling to override behaviour in other drivers like UiAutomator2.
    */
   setWifiState(state: boolean): Promise<void>;
+  setDataState(state: boolean): Promise<void>;
   toggleData(): Promise<void>;
   toggleWiFi(): Promise<void>;
   toggleFlightMode(): Promise<void>;

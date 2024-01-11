@@ -16,6 +16,7 @@ import {BaseDriver} from 'appium/driver';
 import ANDROID_DRIVER_CONSTRAINTS, {AndroidDriverConstraints} from './constraints';
 import {helpers} from './helpers';
 import {newMethodMap} from './method-map';
+import { SettingsApp } from 'io.appium.settings';
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
 export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;
@@ -30,6 +31,8 @@ class AndroidDriver
   jwpProxyAvoid: RouteMatcher[];
 
   adb: ADB;
+
+  _settingsApp: SettingsApp;
 
   unlocker: typeof helpers.unlocker;
 
@@ -73,6 +76,13 @@ class AndroidDriver
 
     this.curContext = this.defaultContextName();
     this.opts = opts as AndroidDriverOpts;
+  }
+
+  get settingsApp() {
+    if (!this._settingsApp) {
+      this._settingsApp = new SettingsApp({adb: this.adb});
+    }
+    return this._settingsApp;
   }
 
   isEmulator() {
