@@ -1,3 +1,10 @@
+## [7.8.1](https://github.com/appium/appium-android-driver/compare/v7.8.0...v7.8.1) (2024-01-13)
+
+
+### Miscellaneous Chores
+
+* Bump appium-adb ([#898](https://github.com/appium/appium-android-driver/issues/898)) ([8cb6373](https://github.com/appium/appium-android-driver/commit/8cb6373fb3ed5e36ec470d79a7ba08fb2e333f1e))
+
 ## [7.8.0](https://github.com/appium/appium-android-driver/compare/v7.7.0...v7.8.0) (2024-01-11)
 
 
