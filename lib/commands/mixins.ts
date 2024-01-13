@@ -20,24 +20,6 @@ import type Chromedriver from 'appium-chromedriver';
 import {AndroidDriverOpts, AndroidDriver} from '../driver';
 import type * as types from './types';
 
-interface SmsListResultItem {
-  id: string;
-  address: string;
-  person: string|null;
-  date: string;
-  read: string;
-  status: string;
-  type: string;
-  subject: string|null;
-  body: string;
-  serviceCenter: string|null;
-}
-
-interface SmsListResult {
-  items: SmsListResultItem[];
-  total: number;
-}
-
 export interface ActionsMixin {
   keyevent(keycode: string | number, metastate?: number): Promise<void>;
   pressKeyCode(keycode: string | number, metastate?: number, flags?: any): Promise<void>;
@@ -589,7 +571,7 @@ export interface GeneralMixin {
    * Retrieves the list of recent SMS messages with their properties.
    * @returns See the documentation on `io.appium.settings -> getSmsList` for more details
    */
-  mobileListSms(opts: types.ListSmsOpts): Promise<SmsListResult>;
+  mobileListSms(opts: types.ListSmsOpts): Promise<types.SmsListResult>;
 
   /**
    * Unlocks the device if it is locked. Noop if the device's screen is not locked.
