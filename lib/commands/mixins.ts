@@ -14,12 +14,29 @@ import type {
   ADB,
   InstallOptions,
   LogcatListener,
-  SmsListResult,
   UninstallOptions,
 } from 'appium-adb';
 import type Chromedriver from 'appium-chromedriver';
 import {AndroidDriverOpts, AndroidDriver} from '../driver';
 import type * as types from './types';
+
+interface SmsListResultItem {
+  id: string;
+  address: string;
+  person: string|null;
+  date: string;
+  read: string;
+  status: string;
+  type: string;
+  subject: string|null;
+  body: string;
+  serviceCenter: string|null;
+}
+
+interface SmsListResult {
+  items: SmsListResultItem[];
+  total: number;
+}
 
 export interface ActionsMixin {
   keyevent(keycode: string | number, metastate?: number): Promise<void>;
@@ -564,13 +581,13 @@ export interface GeneralMixin {
   /**
    * Retrieves the list of recent system notifications.
    *
-   * @returns See the documentation on `adb.getNotifications` for more details
+   * @returns See the documentation on `io.appium.settings -> getNotifications` for more details
    */
   mobileGetNotifications(): Promise<StringRecord>;
 
   /**
    * Retrieves the list of recent SMS messages with their properties.
-   * @returns See the documentation on `adb.getSmsList` for more details
+   * @returns See the documentation on `io.appium.settings -> getSmsList` for more details
    */
   mobileListSms(opts: types.ListSmsOpts): Promise<SmsListResult>;
 
