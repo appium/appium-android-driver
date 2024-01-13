@@ -1130,3 +1130,21 @@ export interface GetUiModeOpts {
    */
   mode: string;
 }
+
+export interface SmsListResultItem {
+  id: string;
+  address: string;
+  person: string|null;
+  date: string;
+  read: string;
+  status: string;
+  type: string;
+  subject: string|null;
+  body: string;
+  serviceCenter: string|null;
+}
+
+export interface SmsListResult {
+  items: SmsListResultItem[];
+  total: number;
+}
