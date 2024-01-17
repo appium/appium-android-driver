@@ -1250,3 +1250,11 @@ export interface WebviewProc {
    */
   webview: string;
 }
+
+export interface FastUnlockOptions {
+  credential: string;
+  /**
+   * @privateRemarks FIXME: narrow this type to whatever `appium-adb` expects
+   */
+  credentialType: string;
+}
