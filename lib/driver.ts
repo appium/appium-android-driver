@@ -68,7 +68,6 @@ import {
   installOtherApks,
   installApk,
   resetApp,
-  startAUT,
   background,
   getCurrentActivity,
   getCurrentPackage,
@@ -330,7 +329,6 @@ class AndroidDriver
   installOtherApks = installOtherApks;
   installApk = installApk;
   resetApp = resetApp;
-  startAUT = startAUT;
   background = background;
   getCurrentActivity = getCurrentActivity;
   getCurrentPackage = getCurrentPackage;
