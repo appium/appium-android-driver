@@ -88,6 +88,6 @@ export async function findElOrEls(
   return element as Element;
 }
 
-export async function doFindElementOrEls(this: AndroidDriver, params: FindElementOpts) {
+export async function doFindElementOrEls(this: AndroidDriver, params: FindElementOpts): Promise<Element | Element[]> {
     throw new errors.NotImplementedError('Not implemented');
 }

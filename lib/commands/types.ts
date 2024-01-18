@@ -1,5 +1,6 @@
-import {HTTPMethod, StringRecord} from '@appium/types';
-import {InstallOptions, UninstallOptions} from 'appium-adb';
+import type {HTTPMethod, StringRecord} from '@appium/types';
+import type {InstallOptions, UninstallOptions} from 'appium-adb';
+import type {AndroidDriverCaps} from '../driver';
 
 export interface SwipeOpts {
   startX: number;
@@ -1258,3 +1259,13 @@ export interface FastUnlockOptions {
    */
   credentialType: string;
 }
+
+export interface ADBDeviceInfo {
+  udid: string;
+  emPort: number | false;
+}
+
+export type ADBLaunchInfo = Pick<
+  AndroidDriverCaps,
+  'appPackage' | 'appWaitActivity' | 'appActivity' | 'appWaitPackage'
+>;

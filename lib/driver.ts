@@ -16,9 +16,152 @@ import {BaseDriver} from 'appium/driver';
 import ANDROID_DRIVER_CONSTRAINTS, {AndroidDriverConstraints} from './constraints';
 import {newMethodMap} from './method-map';
 import { SettingsApp } from 'io.appium.settings';
-import { parseArray } from './utils';
-import { removeAllSessionWebSocketHandlers } from './helpers/websocket';
+import { parseArray, removeAllSessionWebSocketHandlers } from './utils';
 import { CHROME_BROWSER_PACKAGE_ACTIVITY } from './commands/context/helpers';
+import {
+  getContexts,
+  setContext,
+  getCurrentContext,
+  defaultContextName,
+  assignContexts,
+  switchContext,
+  defaultWebviewName,
+  isWebContext,
+  isChromedriverContext,
+  startChromedriverProxy,
+  stopChromedriverProxies,
+  suspendChromedriverProxy,
+  startChromeSession,
+  mobileGetContexts,
+} from './commands/context/exports';
+import {
+  getDeviceInfoFromCaps,
+  createADB,
+  getLaunchInfo,
+  initDevice,
+} from './commands/device/common';
+import {
+  fingerprint,
+  mobileFingerprint,
+  sendSMS,
+  mobileSendSms,
+  gsmCall,
+  mobileGsmCall,
+  gsmSignal,
+  mobileGsmSignal,
+  gsmVoice,
+  mobileGsmVoice,
+  powerAC,
+  mobilePowerAc,
+  powerCapacity,
+  mobilePowerCapacity,
+  networkSpeed,
+  mobileNetworkSpeed,
+  sensorSet,
+} from './commands/device/emulator-actions';
+import {
+  mobileExecEmuConsoleCommand,
+} from './commands/device/emulator-console';
+import {
+  getThirdPartyPackages,
+  uninstallOtherPackages,
+  installOtherApks,
+  installApk,
+  resetApp,
+  startAUT,
+  background,
+  getCurrentActivity,
+  getCurrentPackage,
+  mobileClearApp,
+  mobileInstallApp,
+  installApp,
+  mobileActivateApp,
+  mobileIsAppInstalled,
+  mobileQueryAppState,
+  mobileRemoveApp,
+  mobileTerminateApp,
+  terminateApp,
+  removeApp,
+  activateApp,
+  queryAppState,
+  isAppInstalled,
+} from './commands/app-management';
+import {
+  mobileGetUiMode,
+  mobileSetUiMode,
+} from './commands/appearance';
+import {
+  mobileDeviceidle,
+} from './commands/deviceidle';
+import {
+  getAttribute,
+  getName,
+  elementDisplayed,
+  elementEnabled,
+  elementSelected,
+  setElementValue,
+  doSetElementValue,
+  replaceValue,
+  setValueImmediate,
+  click,
+  getLocationInView,
+  getText,
+  getLocation,
+  getSize,
+} from './commands/element';
+import {
+  execute,
+  executeMobile,
+} from './commands/execute';
+import {
+  pullFile,
+  mobilePullFile,
+  pullFolder,
+  mobilePullFolder,
+  pushFile,
+  mobilePushFile,
+  mobileDeleteFile,
+} from './commands/file-actions';
+import {
+  findElOrEls,
+  doFindElementOrEls,
+} from './commands/find';
+import {
+  setGeoLocation,
+  getGeoLocation,
+  mobileRefreshGpsCache,
+  toggleLocationServices,
+  isLocationServicesEnabled,
+} from './commands/geolocation';
+import {
+  isIMEActivated,
+  availableIMEEngines,
+  getActiveIMEEngine,
+  activateIMEEngine,
+  deactivateIMEEngine,
+} from './commands/ime';
+import {
+  startActivity,
+  mobileBroadcast,
+  mobileStartService,
+  mobileStopService,
+} from './commands/intent';
+import {
+  hideKeyboard,
+  isKeyboardShown,
+  keys,
+  doSendKeys,
+  pressKeyCode,
+  mobilePerformEditorAction,
+} from './commands/keyboard';
+import {
+  lock,
+  unlock,
+  mobileLock,
+  mobileUnlock,
+  isLocked,
+} from './commands/lock';
+
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
 export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;
@@ -141,6 +284,145 @@ class AndroidDriver
 
     await super.deleteSession(sessionId);
   }
+
+  getContexts = getContexts;
+  getCurrentContext = getCurrentContext;
+  defaultContextName = defaultContextName;
+  assignContexts = assignContexts;
+  switchContext = switchContext;
+  defaultWebviewName = defaultWebviewName;
+  isChromedriverContext = isChromedriverContext;
+  startChromedriverProxy = startChromedriverProxy;
+  stopChromedriverProxies = stopChromedriverProxies;
+  suspendChromedriverProxy = suspendChromedriverProxy;
+  startChromeSession = startChromeSession;
+  isWebContext = isWebContext;
+  mobileGetContexts = mobileGetContexts;
+  setContext = setContext as any as (this: AndroidDriver, name?: string) => Promise<void>;
+
+  getDeviceInfoFromCaps = getDeviceInfoFromCaps;
+  createADB = createADB;
+  getLaunchInfo = getLaunchInfo;
+  initDevice = initDevice;
+
+  fingerprint = fingerprint;
+  mobileFingerprint = mobileFingerprint;
+  sendSMS = sendSMS;
+  mobileSendSms = mobileSendSms;
+  gsmCall = gsmCall;
+  mobileGsmCall = mobileGsmCall;
+  gsmSignal = gsmSignal;
+  mobileGsmSignal = mobileGsmSignal;
+  gsmVoice = gsmVoice;
+  mobileGsmVoice = mobileGsmVoice;
+  powerAC = powerAC;
+  mobilePowerAc = mobilePowerAc;
+  powerCapacity = powerCapacity;
+  mobilePowerCapacity = mobilePowerCapacity;
+  networkSpeed = networkSpeed;
+  mobileNetworkSpeed = mobileNetworkSpeed;
+  sensorSet = sensorSet;
+
+  mobileExecEmuConsoleCommand = mobileExecEmuConsoleCommand;
+
+  getThirdPartyPackages = getThirdPartyPackages;
+  uninstallOtherPackages = uninstallOtherPackages;
+  installOtherApks = installOtherApks;
+  installApk = installApk;
+  resetApp = resetApp;
+  startAUT = startAUT;
+  background = background;
+  getCurrentActivity = getCurrentActivity;
+  getCurrentPackage = getCurrentPackage;
+  mobileClearApp = mobileClearApp;
+  mobileInstallApp = mobileInstallApp;
+  installApp = installApp;
+  mobileActivateApp = mobileActivateApp;
+  mobileIsAppInstalled = mobileIsAppInstalled;
+  mobileQueryAppState = mobileQueryAppState;
+  mobileRemoveApp = mobileRemoveApp;
+  mobileTerminateApp = mobileTerminateApp;
+  terminateApp = terminateApp;
+  removeApp = removeApp;
+  activateApp = activateApp;
+  queryAppState = queryAppState;
+  isAppInstalled = isAppInstalled;
+
+  mobileGetUiMode = mobileGetUiMode;
+  mobileSetUiMode = mobileSetUiMode;
+
+  mobileDeviceidle = mobileDeviceidle;
+
+  getAttribute = getAttribute;
+  getName = getName;
+  elementDisplayed = elementDisplayed;
+  elementEnabled = elementEnabled;
+  elementSelected = elementSelected;
+  setElementValue = setElementValue;
+  doSetElementValue = doSetElementValue;
+  replaceValue = replaceValue;
+  setValueImmediate = setValueImmediate;
+  click = click;
+  getLocationInView = getLocationInView;
+  getText = getText;
+  getLocation = getLocation;
+  getSize = getSize;
+
+  execute = execute;
+  executeMobile = executeMobile;
+
+  pullFile = pullFile;
+  mobilePullFile = mobilePullFile;
+  pullFolder = pullFolder;
+  mobilePullFolder = mobilePullFolder;
+  pushFile = pushFile;
+  mobilePushFile = mobilePushFile;
+  mobileDeleteFile = mobileDeleteFile;
+
+  findElOrEls = findElOrEls;
+  doFindElementOrEls = doFindElementOrEls;
+
+  setGeoLocation = setGeoLocation;
+  getGeoLocation = getGeoLocation;
+  mobileRefreshGpsCache = mobileRefreshGpsCache;
+  toggleLocationServices = toggleLocationServices;
+  isLocationServicesEnabled = isLocationServicesEnabled;
+
+  isIMEActivated = isIMEActivated;
+  availableIMEEngines = availableIMEEngines;
+  getActiveIMEEngine = getActiveIMEEngine;
+  activateIMEEngine = activateIMEEngine;
+  deactivateIMEEngine = deactivateIMEEngine;
+
+  startActivity = startActivity as unknown as (
+    appPackage: string,
+    appActivity: string,
+    appWaitPackage?: string,
+    appWaitActivity?: string,
+    intentAction?: string,
+    intentCategory?: string,
+    intentFlags?: string,
+    optionalIntentArguments?: string,
+    dontStopAppOnReset?: boolean,
+  ) => Promise<void>;
+  mobileBroadcast = mobileBroadcast;
+  mobileStartService = mobileStartService;
+  mobileStopService = mobileStopService;
+
+  hideKeyboard = hideKeyboard;
+  isKeyboardShown = isKeyboardShown;
+  keys = keys;
+  doSendKeys = doSendKeys;
+  pressKeyCode = pressKeyCode;
+  mobilePerformEditorAction = mobilePerformEditorAction;
+
+  lock = lock;
+  unlock = unlock;
+  mobileLock = mobileLock;
+  mobileUnlock = mobileUnlock;
+  isLocked = isLocked;
+
+
 }
 
 export {AndroidDriver};
