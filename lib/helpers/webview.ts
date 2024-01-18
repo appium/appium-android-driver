@@ -396,12 +396,18 @@ const WebviewHelpers: WebviewHelpers = {
 
     const result: string[] = [];
     for (const {webview, pages, proc, webviewName} of webviewsMapping) {
-      if (ensureWebviewsHavePages && pages?.length === 0) {
-        logger.info(
-          `Skipping the webview '${webview}' at '${proc}' ` +
-            `since it has reported having zero pages`,
-        );
-        continue;
+      if (ensureWebviewsHavePages) {
+        if (_.isUndefined(pages)) {
+          logger.info(`Skipping the webview '${webview}' at '${proc}' since it is unreachable`);
+          continue;
+        }
+        if (pages.length === 0) {
+          logger.info(
+            `Skipping the webview '${webview}' at '${proc}' ` +
+              `since it has reported having zero pages`,
+          );
+          continue;
+        }
       }
       if (webviewName) {
         result.push(webviewName);
