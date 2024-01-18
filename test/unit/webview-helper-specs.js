@@ -152,6 +152,26 @@ describe('Webview Helpers', function () {
             webViews.length.should.equal(0);
           });
         });
+
+        describe('and webviews have no pages', function () {
+          beforeEach(async function () {
+            const webviewsMapping = await helpers.getWebViewsMapping(adb, {
+              androidDeviceSocket: 'webview_devtools_remote_123',
+            });
+            webviewsMapping.length.should.equal(1);
+            webviewsMapping[0].pages = [];
+            webViews = helpers.parseWebviewNames(webviewsMapping);
+          });
+
+          it('then the unix sockets are queried', function () {
+            adb.shell.calledOnce.should.be.true;
+            adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+          });
+
+          it('then no webviews are returned', function () {
+            webViews.length.should.equal(0);
+          });
+        });
       });
 
       describe('and crosswalk webviews exist', function () {
