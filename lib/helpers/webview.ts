@@ -323,8 +323,8 @@ async function collectWebviewsDetails(
   for (const item of webviewsMapping) {
     detailCollectors.push(
       (async () => {
-        let port: number|undefined;
-        let host: string|undefined;
+        let port: number | undefined;
+        let host: string | undefined;
         try {
           [host, port] = await allocateDevtoolsChannel(adb, item.proc, webviewDevtoolsPort);
           if (enableWebviewDetailsCollection) {
