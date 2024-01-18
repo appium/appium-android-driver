@@ -191,7 +191,7 @@ export interface WebviewsMapping {
   /**
    * Webview pages list as it is retrieved by `/json/list` CDP endpoint
    */
-  pages: StringRecord[];
+  pages?: StringRecord[];
   /**
    * An actual webview name for switching context.
    *
