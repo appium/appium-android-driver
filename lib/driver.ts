@@ -11,6 +11,7 @@ import type {
 } from '@appium/types';
 import _ from 'lodash';
 import ADB from 'appium-adb';
+import type { LogcatListener } from 'appium-adb';
 import type {default as AppiumChromedriver} from 'appium-chromedriver';
 import {BaseDriver} from 'appium/driver';
 import ANDROID_DRIVER_CONSTRAINTS, {AndroidDriverConstraints} from './constraints';
@@ -151,6 +152,7 @@ import {
   keys,
   doSendKeys,
   pressKeyCode,
+  longPressKeyCode,
   mobilePerformEditorAction,
 } from './commands/keyboard';
 import {
@@ -160,7 +162,87 @@ import {
   mobileUnlock,
   isLocked,
 } from './commands/lock';
-
+import {
+  supportedLogTypes,
+  mobileStartLogsBroadcast,
+  mobileStopLogsBroadcast,
+  getLogTypes,
+  getLog,
+} from './commands/log';
+import {
+  mobileIsMediaProjectionRecordingRunning,
+  mobileStartMediaProjectionRecording,
+  mobileStopMediaProjectionRecording,
+} from './commands/media-projection';
+import {
+  mobileSendTrimMemory,
+} from './commands/memory';
+import {
+  getWindowRect,
+  getWindowSize,
+  getDisplayDensity,
+  mobileGetNotifications,
+  mobileListSms,
+  openNotifications,
+  setUrl,
+} from './commands/misc';
+import {
+  getNetworkConnection,
+  isWifiOn,
+  mobileGetConnectivity,
+  mobileSetConnectivity,
+  setNetworkConnection,
+  setWifiState,
+  setDataState,
+  toggleData,
+  toggleFlightMode,
+  toggleWiFi,
+} from './commands/network';
+import {
+  getPerformanceData,
+  getPerformanceDataTypes,
+  mobileGetPerformanceData,
+} from './commands/performance';
+import {
+  mobileChangePermissions,
+  mobileGetPermissions,
+} from './commands/permissions';
+import {
+  startRecordingScreen,
+  stopRecordingScreen,
+} from './commands/recordscreen';
+import {
+  getStrings,
+  ensureDeviceLocale,
+} from './commands/resources';
+import {
+  mobileShell,
+} from './commands/shell';
+import {
+  mobileStartScreenStreaming,
+  mobileStopScreenStreaming,
+} from './commands/streamscreen';
+import {
+  getSystemBars,
+  mobilePerformStatusBarCommand,
+} from './commands/system-bars';
+import {
+  getDeviceTime,
+  mobileGetDeviceTime,
+} from './commands/time';
+import {
+  tap,
+  touchLongClick,
+  touchDown,
+  touchUp,
+  touchMove,
+  doSwipe,
+  doTouchDrag,
+  doTouchAction,
+  performMultiAction,
+  performTouch,
+  doPerformMultiAction,
+} from './commands/touch';
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
 export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;
@@ -205,6 +287,8 @@ class AndroidDriver
   _screenStreamingProps?: StringRecord;
 
   _screenRecordingProperties?: StringRecord;
+
+  _logcatWebsocketListener?: LogcatListener;
 
   opts: AndroidDriverOpts;
 
@@ -412,6 +496,7 @@ class AndroidDriver
   keys = keys;
   doSendKeys = doSendKeys;
   pressKeyCode = pressKeyCode;
+  longPressKeyCode = longPressKeyCode;
   mobilePerformEditorAction = mobilePerformEditorAction;
 
   lock = lock;
@@ -420,7 +505,72 @@ class AndroidDriver
   mobileUnlock = mobileUnlock;
   isLocked = isLocked;
 
+  supportedLogTypes = supportedLogTypes;
+  mobileStartLogsBroadcast = mobileStartLogsBroadcast;
+  mobileStopLogsBroadcast = mobileStopLogsBroadcast;
+  getLogTypes = getLogTypes;
+  getLog = getLog;
 
+  mobileIsMediaProjectionRecordingRunning = mobileIsMediaProjectionRecordingRunning;
+  mobileStartMediaProjectionRecording = mobileStartMediaProjectionRecording;
+  mobileStopMediaProjectionRecording = mobileStopMediaProjectionRecording;
+
+  mobileSendTrimMemory = mobileSendTrimMemory;
+
+  getWindowRect = getWindowRect;
+  getWindowSize = getWindowSize;
+  getDisplayDensity = getDisplayDensity;
+  mobileGetNotifications = mobileGetNotifications;
+  mobileListSms = mobileListSms;
+  openNotifications = openNotifications;
+  setUrl = setUrl;
+
+  getNetworkConnection = getNetworkConnection;
+  isWifiOn = isWifiOn;
+  mobileGetConnectivity = mobileGetConnectivity;
+  mobileSetConnectivity = mobileSetConnectivity;
+  setNetworkConnection = setNetworkConnection;
+  setWifiState = setWifiState;
+  setDataState = setDataState;
+  toggleData = toggleData;
+  toggleFlightMode = toggleFlightMode;
+  toggleWiFi = toggleWiFi;
+
+  getPerformanceData = getPerformanceData;
+  getPerformanceDataTypes = getPerformanceDataTypes;
+  mobileGetPerformanceData = mobileGetPerformanceData;
+
+  mobileChangePermissions = mobileChangePermissions;
+  mobileGetPermissions = mobileGetPermissions;
+
+  startRecordingScreen = startRecordingScreen;
+  stopRecordingScreen = stopRecordingScreen;
+
+  getStrings = getStrings;
+  ensureDeviceLocale = ensureDeviceLocale;
+
+  mobileShell = mobileShell;
+
+  mobileStartScreenStreaming = mobileStartScreenStreaming;
+  mobileStopScreenStreaming = mobileStopScreenStreaming;
+
+  getSystemBars = getSystemBars;
+  mobilePerformStatusBarCommand = mobilePerformStatusBarCommand;
+
+  getDeviceTime = getDeviceTime;
+  mobileGetDeviceTime = mobileGetDeviceTime;
+
+  tap = tap;
+  touchLongClick = touchLongClick;
+  touchDown = touchDown;
+  touchUp = touchUp;
+  touchMove = touchMove;
+  doSwipe = doSwipe;
+  doTouchDrag = doTouchDrag;
+  doTouchAction = doTouchAction;
+  performMultiAction = performMultiAction;
+  performTouch = performTouch;
+  doPerformMultiAction = doPerformMultiAction;
 }
 
 export {AndroidDriver};
