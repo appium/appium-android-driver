@@ -11,14 +11,14 @@ import type {
 } from '@appium/types';
 import _ from 'lodash';
 import ADB from 'appium-adb';
-import type { LogcatListener } from 'appium-adb';
+import type {LogcatListener} from 'appium-adb';
 import type {default as AppiumChromedriver} from 'appium-chromedriver';
 import {BaseDriver} from 'appium/driver';
 import ANDROID_DRIVER_CONSTRAINTS, {AndroidDriverConstraints} from './constraints';
 import {newMethodMap} from './method-map';
-import { SettingsApp } from 'io.appium.settings';
-import { parseArray, removeAllSessionWebSocketHandlers } from './utils';
-import { CHROME_BROWSER_PACKAGE_ACTIVITY } from './commands/context/helpers';
+import {SettingsApp} from 'io.appium.settings';
+import {parseArray, removeAllSessionWebSocketHandlers} from './utils';
+import {CHROME_BROWSER_PACKAGE_ACTIVITY} from './commands/context/helpers';
 import {
   getContexts,
   setContext,
@@ -60,9 +60,7 @@ import {
   mobileNetworkSpeed,
   sensorSet,
 } from './commands/device/emulator-actions';
-import {
-  mobileExecEmuConsoleCommand,
-} from './commands/device/emulator-console';
+import {mobileExecEmuConsoleCommand} from './commands/device/emulator-console';
 import {
   getThirdPartyPackages,
   uninstallOtherPackages,
@@ -86,13 +84,8 @@ import {
   queryAppState,
   isAppInstalled,
 } from './commands/app-management';
-import {
-  mobileGetUiMode,
-  mobileSetUiMode,
-} from './commands/appearance';
-import {
-  mobileDeviceidle,
-} from './commands/deviceidle';
+import {mobileGetUiMode, mobileSetUiMode} from './commands/appearance';
+import {mobileDeviceidle} from './commands/deviceidle';
 import {
   getAttribute,
   getName,
@@ -109,10 +102,7 @@ import {
   getLocation,
   getSize,
 } from './commands/element';
-import {
-  execute,
-  executeMobile,
-} from './commands/execute';
+import {execute, executeMobile} from './commands/execute';
 import {
   pullFile,
   mobilePullFile,
@@ -122,10 +112,7 @@ import {
   mobilePushFile,
   mobileDeleteFile,
 } from './commands/file-actions';
-import {
-  findElOrEls,
-  doFindElementOrEls,
-} from './commands/find';
+import {findElOrEls, doFindElementOrEls} from './commands/find';
 import {
   setGeoLocation,
   getGeoLocation,
@@ -155,13 +142,7 @@ import {
   longPressKeyCode,
   mobilePerformEditorAction,
 } from './commands/keyboard';
-import {
-  lock,
-  unlock,
-  mobileLock,
-  mobileUnlock,
-  isLocked,
-} from './commands/lock';
+import {lock, unlock, mobileLock, mobileUnlock, isLocked} from './commands/lock';
 import {
   supportedLogTypes,
   mobileStartLogsBroadcast,
@@ -174,9 +155,7 @@ import {
   mobileStartMediaProjectionRecording,
   mobileStopMediaProjectionRecording,
 } from './commands/media-projection';
-import {
-  mobileSendTrimMemory,
-} from './commands/memory';
+import {mobileSendTrimMemory} from './commands/memory';
 import {
   getWindowRect,
   getWindowSize,
@@ -203,33 +182,13 @@ import {
   getPerformanceDataTypes,
   mobileGetPerformanceData,
 } from './commands/performance';
-import {
-  mobileChangePermissions,
-  mobileGetPermissions,
-} from './commands/permissions';
-import {
-  startRecordingScreen,
-  stopRecordingScreen,
-} from './commands/recordscreen';
-import {
-  getStrings,
-  ensureDeviceLocale,
-} from './commands/resources';
-import {
-  mobileShell,
-} from './commands/shell';
-import {
-  mobileStartScreenStreaming,
-  mobileStopScreenStreaming,
-} from './commands/streamscreen';
-import {
-  getSystemBars,
-  mobilePerformStatusBarCommand,
-} from './commands/system-bars';
-import {
-  getDeviceTime,
-  mobileGetDeviceTime,
-} from './commands/time';
+import {mobileChangePermissions, mobileGetPermissions} from './commands/permissions';
+import {startRecordingScreen, stopRecordingScreen} from './commands/recordscreen';
+import {getStrings, ensureDeviceLocale} from './commands/resources';
+import {mobileShell} from './commands/shell';
+import {mobileStartScreenStreaming, mobileStopScreenStreaming} from './commands/streamscreen';
+import {getSystemBars, mobilePerformStatusBarCommand} from './commands/system-bars';
+import {getDeviceTime, mobileGetDeviceTime} from './commands/time';
 import {
   tap,
   touchLongClick,
@@ -325,7 +284,10 @@ class AndroidDriver
   }
 
   get isChromeSession(): boolean {
-    return _.includes(Object.keys(CHROME_BROWSER_PACKAGE_ACTIVITY), (this.opts.browserName || '').toLowerCase());
+    return _.includes(
+      Object.keys(CHROME_BROWSER_PACKAGE_ACTIVITY),
+      (this.opts.browserName || '').toLowerCase(),
+    );
   }
 
   override validateDesiredCaps(caps: any): caps is AndroidDriverCaps {
@@ -337,12 +299,12 @@ class AndroidDriver
       if (caps.app) {
         // warn if the capabilities have both `app` and `browser, although this is common with selenium grid
         this.log.warn(
-          `The desired capabilities should generally not include both an 'app' and a 'browserName'`
+          `The desired capabilities should generally not include both an 'app' and a 'browserName'`,
         );
       }
       if (caps.appPackage) {
         throw this.log.errorAndThrow(
-          `The desired should not include both of an 'appPackage' and a 'browserName'`
+          `The desired should not include both of an 'appPackage' and a 'browserName'`,
         );
       }
     }
@@ -352,7 +314,7 @@ class AndroidDriver
         parseArray(caps.uninstallOtherPackages);
       } catch (e) {
         throw this.log.errorAndThrow(
-          `Could not parse "uninstallOtherPackages" capability: ${(e as Error).message}`
+          `Could not parse "uninstallOtherPackages" capability: ${(e as Error).message}`,
         );
       }
     }

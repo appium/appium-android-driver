@@ -14,21 +14,21 @@ export async function findElOrEls(
   strategy: string,
   selector: string,
   mult: true,
-  context?: string
+  context?: string,
 ): Promise<Element[]>;
 export async function findElOrEls(
   this: AndroidDriver,
   strategy: string,
   selector: string,
   mult: false,
-  context?: string
+  context?: string,
 ): Promise<Element>;
 export async function findElOrEls(
   this: AndroidDriver,
   strategy: string,
   selector: string,
   mult: boolean,
-  context = ''
+  context = '',
 ) {
   if (!selector) {
     throw new Error('Must provide a selector when finding elements');
@@ -88,6 +88,9 @@ export async function findElOrEls(
   return element as Element;
 }
 
-export async function doFindElementOrEls(this: AndroidDriver, params: FindElementOpts): Promise<Element | Element[]> {
-    throw new errors.NotImplementedError('Not implemented');
+export async function doFindElementOrEls(
+  this: AndroidDriver,
+  params: FindElementOpts,
+): Promise<Element | Element[]> {
+  throw new errors.NotImplementedError('Not implemented');
 }

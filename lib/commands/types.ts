@@ -1082,7 +1082,7 @@ export type SwipeAction = [
   NonReleaseTouchAction,
   NonReleaseTouchAction,
   NonReleaseTouchAction,
-  ReleaseTouchAction
+  ReleaseTouchAction,
 ];
 
 export type TouchDragAction = [NonReleaseTouchAction, NonReleaseTouchAction, ReleaseTouchAction];
@@ -1097,16 +1097,23 @@ export interface LockOpts {
 
 export interface DeviceidleOpts {
   /** The action name to execute */
-  action: 'whitelistAdd'|'whitelistRemove';
+  action: 'whitelistAdd' | 'whitelistRemove';
   /** Either a single package or multiple packages to add or remove from the idle whitelist */
-  packages?: string|string[];
+  packages?: string | string[];
 }
 
 export interface SendTrimMemoryOpts {
   /** The package name to send the `trimMemory` event to */
   pkg: string;
   /** The actual memory trim level to be sent */
-  level: 'COMPLETE' | 'MODERATE' | 'BACKGROUND' | 'UI_HIDDEN' | 'RUNNING_CRITICAL' | 'RUNNING_LOW' | 'RUNNING_MODERATE';
+  level:
+    | 'COMPLETE'
+    | 'MODERATE'
+    | 'BACKGROUND'
+    | 'UI_HIDDEN'
+    | 'RUNNING_CRITICAL'
+    | 'RUNNING_LOW'
+    | 'RUNNING_MODERATE';
 }
 
 export interface SetUiModeOpts {
@@ -1135,14 +1142,14 @@ export interface GetUiModeOpts {
 export interface SmsListResultItem {
   id: string;
   address: string;
-  person: string|null;
+  person: string | null;
   date: string;
   read: string;
   status: string;
   type: string;
-  subject: string|null;
+  subject: string | null;
   body: string;
-  serviceCenter: string|null;
+  serviceCenter: string | null;
 }
 
 export interface SmsListResult {
