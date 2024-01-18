@@ -42,7 +42,9 @@ describe('Webview Helpers', function () {
           const webviewsMapping = await helpers.getWebViewsMapping(adb, {
             androidDeviceSocket: 'webview_devtools_remote_123',
           });
-          webViews = helpers.parseWebviewNames(webviewsMapping);
+          webViews = helpers.parseWebviewNames(webviewsMapping, {
+            ensureWebviewsHavePages: false,
+          });
         });
 
         it('then the unix sockets are queried', function () {
@@ -73,7 +75,9 @@ describe('Webview Helpers', function () {
           const webviewsMapping = await helpers.getWebViewsMapping(adb, {
             androidDeviceSocket: 'chrome_devtools_remote',
           });
-          webViews = helpers.parseWebviewNames(webviewsMapping);
+          webViews = helpers.parseWebviewNames(webviewsMapping, {
+            ensureWebviewsHavePages: false,
+          });
         });
 
         it('then the unix sockets are queried', function () {
@@ -132,7 +136,9 @@ describe('Webview Helpers', function () {
         describe('and the device socket is not specified', function () {
           beforeEach(async function () {
             const webviewsMapping = await helpers.getWebViewsMapping(adb);
-            webViews = helpers.parseWebviewNames(webviewsMapping);
+            webViews = helpers.parseWebviewNames(webviewsMapping, {
+              ensureWebviewsHavePages: false,
+            });
           });
 
           it('then the unix sockets are queried', function () {
@@ -151,7 +157,9 @@ describe('Webview Helpers', function () {
             const webviewsMapping = await helpers.getWebViewsMapping(adb, {
               androidDeviceSocket: 'com.application.myapp_devtools_remote',
             });
-            webViews = helpers.parseWebviewNames(webviewsMapping);
+            webViews = helpers.parseWebviewNames(webviewsMapping, {
+              ensureWebviewsHavePages: false,
+            });
           });
 
           it('then the unix sockets are queried', function () {
