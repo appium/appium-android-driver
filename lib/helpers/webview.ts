@@ -11,6 +11,7 @@ import _ from 'lodash';
 import {LRUCache} from 'lru-cache';
 import os from 'node:os';
 import path from 'node:path';
+import http from 'node:http';
 import {findAPortNotInUse} from 'portscanner';
 import type {WebviewsMapping} from '../commands/types';
 import type {AndroidDriverCaps} from '../driver';
@@ -323,8 +324,8 @@ async function collectWebviewsDetails(
   for (const item of webviewsMapping) {
     detailCollectors.push(
       (async () => {
-        let port: number|undefined;
-        let host: string|undefined;
+        let port: number | undefined;
+        let host: string | undefined;
         try {
           [host, port] = await allocateDevtoolsChannel(adb, item.proc, webviewDevtoolsPort);
           if (enableWebviewDetailsCollection) {
@@ -357,6 +358,11 @@ async function cdpList(host: string, port: number): Promise<object[]> {
     await axios({
       url: `http://${host}:${port}/json/list`,
       timeout: CDP_REQ_TIMEOUT,
+      // We need to set this from Node.js v19 onwards.
+      // Otherwise, in situation with multiple webviews,
+      // the preceding webview pages will be incorrectly retrieved as the current ones.
+      // https://nodejs.org/en/blog/announcements/v19-release-announce#https11-keepalive-by-default
+      httpAgent: new http.Agent({keepAlive: false}),
     })
   ).data;
 }
@@ -367,6 +373,11 @@ async function cdpInfo(host: string, port: number): Promise<object[]> {
     await axios({
       url: `http://${host}:${port}/json/version`,
       timeout: CDP_REQ_TIMEOUT,
+      // We need to set this from Node.js v19 onwards.
+      // Otherwise, in situation with multiple webviews,
+      // the preceding webview pages will be incorrectly retrieved as the current ones.
+      // https://nodejs.org/en/blog/announcements/v19-release-announce#https11-keepalive-by-default
+      httpAgent: new http.Agent({keepAlive: false}),
     })
   ).data;
 }
