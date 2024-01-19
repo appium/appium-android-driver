@@ -1,18 +1,20 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
+import * as webviewHelpers from '../../../lib/commands/context/helpers';
 import {
-  default as webviewHelpers,
   NATIVE_WIN,
   WEBVIEW_BASE,
   WEBVIEW_WIN,
   CHROMIUM_WIN,
-} from '../../../lib/helpers/webview';
+} from '../../../lib/commands/context/helpers';
 import {AndroidDriver} from '../../../lib/driver';
 import Chromedriver from 'appium-chromedriver';
 import {errors} from 'appium/driver';
 
+/** @type {AndroidDriver} */
 let driver;
+/** @type {Chromedriver} */
 let stubbedChromedriver;
 let sandbox = sinon.createSandbox();
 let expect = chai.expect;
@@ -49,7 +51,7 @@ describe('Context', function () {
     });
     it('should return NATIVE_APP if no context is set', async function () {
       driver.curContext = null;
-      await driver.getCurrentContext().should.become(NATIVE_WIN);
+      await driver.getCurrentContext().should.become(webviewHelpers.NATIVE_WIN);
     });
   });
   describe('getContexts', function () {
@@ -138,24 +140,24 @@ describe('Context', function () {
     });
   });
   describe('defaultContextName', function () {
-    it('should return NATIVE_WIN', async function () {
-      await driver.defaultContextName().should.be.equal(NATIVE_WIN);
+    it('should return NATIVE_WIN', function () {
+      driver.defaultContextName().should.be.equal(NATIVE_WIN);
     });
   });
   describe('defaultWebviewName', function () {
-    it('should return WEBVIEW with package if "autoWebviewName" option is not set', async function () {
+    it('should return WEBVIEW with package if "autoWebviewName" option is not set', function () {
       driver.opts = {appPackage: 'pkg'};
-      await driver.defaultWebviewName().should.be.equal(WEBVIEW_BASE + 'pkg');
+      driver.defaultWebviewName().should.be.equal(WEBVIEW_BASE + 'pkg');
     });
-    it('should return WEBVIEW with value from "autoWebviewName" option', async function () {
+    it('should return WEBVIEW with value from "autoWebviewName" option', function () {
       driver.opts = {appPackage: 'pkg', autoWebviewName: 'foo'};
-      await driver.defaultWebviewName().should.be.equal(WEBVIEW_BASE + 'foo');
+      driver.defaultWebviewName().should.be.equal(WEBVIEW_BASE + 'foo');
     });
   });
   describe('isWebContext', function () {
-    it('should return true if current context is not native', async function () {
+    it('should return true if current context is not native', function () {
       driver.curContext = 'current_context';
-      await driver.isWebContext().should.be.true;
+      driver.isWebContext().should.be.true;
     });
   });
   describe('startChromedriverProxy', function () {
@@ -216,7 +218,7 @@ describe('Context', function () {
   });
   describe('suspendChromedriverProxy', function () {
     it('should suspend chrome driver proxy', async function () {
-      await driver.suspendChromedriverProxy();
+      driver.suspendChromedriverProxy();
       (driver.chromedriver == null).should.be.true;
       (driver.proxyReqRes == null).should.be.true;
       driver.jwpProxyActive.should.be.false;
@@ -255,9 +257,9 @@ describe('Context', function () {
     });
   });
   describe('isChromedriverContext', function () {
-    it('should return true if context is webview or chromium', async function () {
-      await driver.isChromedriverContext(WEBVIEW_WIN + '_1').should.be.true;
-      await driver.isChromedriverContext(CHROMIUM_WIN).should.be.true;
+    it('should return true if context is webview or chromium', function () {
+      driver.isChromedriverContext(WEBVIEW_WIN + '_1').should.be.true;
+      driver.isChromedriverContext(CHROMIUM_WIN).should.be.true;
     });
   });
   describe('setupNewChromedriver', function () {

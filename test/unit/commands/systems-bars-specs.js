@@ -8,9 +8,16 @@ chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 describe('System Bars', function () {
+  /** @type {AndroidDriver} */
+  let driver;
+
+  before(function () {
+    driver = new AndroidDriver();
+  });
+
   describe('parseWindowProperties', function () {
     it('should return visible true if the surface is visible', function () {
-      parseWindowProperties(
+      parseWindowProperties.bind(driver)(
         'yolo',
         `
       mDisplayId=0 rootTaskId=1 mSession=Session{6fdbba 684:u0a10144} mClient=android.os.BinderProxy@dbd59e0
@@ -58,7 +65,7 @@ describe('System Bars', function () {
       });
     });
     it('should return visible false if the surface is not visible', function () {
-      parseWindowProperties(
+      parseWindowProperties.bind(driver)(
         'foo',
         `
       mDisplayId=0 rootTaskId=1 mSession=Session{6fdbba 684:u0a10144} mClient=android.os.BinderProxy@dbd59e0
@@ -107,7 +114,7 @@ describe('System Bars', function () {
     });
     it('should throw an error if no info is found', function () {
       expect(() => {
-        parseWindowProperties('bar', []);
+        parseWindowProperties.bind(driver)('bar', []);
       }).to.throw(Error);
     });
   });
@@ -1138,11 +1145,11 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
   describe('parseWindows', function () {
     it('should throw an error if no windows were found', function () {
       expect(() => {
-        parseWindows('');
+        parseWindows.bind(driver)('');
       }).to.throw(Error);
     });
     it('should return defaults if only non matching windows were found', function () {
-      parseWindows(`
+      parseWindows.bind(driver)(`
       WINDOW MANAGER WINDOWS (dumpsys window windows)
         Window #0 Window{d1b7133 u0 pip-dismiss-overlay}:
           mDisplayId=0 rootTaskId=1 mSession=Session{6fdbba 684:u0a10144} mClient=android.os.BinderProxy@a5e1e9f
@@ -1180,13 +1187,13 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
       });
     });
     it('should return status and navigation bar for Android 11 and below', function () {
-      parseWindows(validWindowOutputA11).should.be.eql(validSystemBarsA11);
+      parseWindows.bind(driver)(validWindowOutputA11).should.be.eql(validSystemBarsA11);
     });
     it('should return status and navigation bar for Android 12', function () {
-      parseWindows(validWindowOutputA12).should.be.eql(validSystemBarsA12);
+      parseWindows.bind(driver)(validWindowOutputA12).should.be.eql(validSystemBarsA12);
     });
     it('should return status and navigation bar for Android 13 and above', function () {
-      parseWindows(validWindowOutputA13).should.be.eql(validSystemBarsA13);
+      parseWindows.bind(driver)(validWindowOutputA13).should.be.eql(validSystemBarsA13);
     });
   });
 
