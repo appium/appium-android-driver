@@ -2,8 +2,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
-import helpers from '../../../lib/helpers/android';
-import {withMocks} from '@appium/test-support';
 import {fs} from '@appium/support';
 import B from 'bluebird';
 import ADB from 'appium-adb';
@@ -11,11 +9,11 @@ import ADB from 'appium-adb';
 chai.should();
 chai.use(chaiAsPromised);
 
+/** @type {AndroidDriver} */
 let driver;
 let sandbox = sinon.createSandbox();
-let expect = chai.expect;
 
-describe('General', function () {
+describe('App Management', function () {
   beforeEach(function () {
     driver = new AndroidDriver();
     driver.adb = new ADB();
@@ -23,70 +21,7 @@ describe('General', function () {
     driver.opts = {};
   });
   afterEach(function () {
-    sandbox.restore();
-  });
-  describe('isKeyboardShown', function () {
-    it('should return true if the keyboard is shown', async function () {
-      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
-        return {isKeyboardShown: true, canCloseKeyboard: true};
-      };
-      (await driver.isKeyboardShown()).should.equal(true);
-    });
-    it('should return false if the keyboard is not shown', async function () {
-      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
-        return {isKeyboardShown: false, canCloseKeyboard: true};
-      };
-      (await driver.isKeyboardShown()).should.equal(false);
-    });
-  });
-  describe('hideKeyboard', function () {
-    it('should hide keyboard with ESC command', async function () {
-      sandbox.stub(driver.adb, 'keyevent');
-      let callIdx = 0;
-      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
-        callIdx++;
-        return {
-          isKeyboardShown: callIdx <= 1,
-          canCloseKeyboard: callIdx <= 1,
-        };
-      };
-      await driver.hideKeyboard().should.eventually.be.fulfilled;
-      driver.adb.keyevent.calledWithExactly(111).should.be.true;
-    });
-    it('should throw if cannot close keyboard', async function () {
-      this.timeout(10000);
-      sandbox.stub(driver.adb, 'keyevent');
-      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
-        return {
-          isKeyboardShown: true,
-          canCloseKeyboard: false,
-        };
-      };
-      await driver.hideKeyboard().should.eventually.be.rejected;
-      driver.adb.keyevent.notCalled.should.be.true;
-    });
-    it('should not throw if no keyboard is present', async function () {
-      driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
-        return {
-          isKeyboardShown: false,
-          canCloseKeyboard: false,
-        };
-      };
-      await driver.hideKeyboard().should.eventually.be.fulfilled;
-    });
-  });
-  describe('openSettingsActivity', function () {
-    it('should open settings activity', async function () {
-      sandbox
-        .stub(driver.adb, 'getFocusedPackageAndActivity')
-        .returns({appPackage: 'pkg', appActivity: 'act'});
-      sandbox.stub(driver.adb, 'shell');
-      sandbox.stub(driver.adb, 'waitForNotActivity');
-      await driver.openSettingsActivity('set1');
-      driver.adb.shell.calledWithExactly(['am', 'start', '-a', 'android.settings.set1']).should.be
-        .true;
-      driver.adb.waitForNotActivity.calledWithExactly('pkg', 'act', 5000).should.be.true;
-    });
+    sandbox.verifyAndRestore();
   });
   describe('getCurrentActivity', function () {
     it('should get current activity', async function () {
@@ -227,31 +162,6 @@ describe('General', function () {
       driver.adb.startApp.notCalled.should.be.true;
     });
   });
-  describe(
-    'getStrings',
-    withMocks({helpers}, (mocks) => {
-      it('should return app strings', async function () {
-        mocks.helpers.expects('pushStrings').returns({test: 'en_value'});
-        let strings = await driver.getStrings('en');
-        strings.test.should.equal('en_value');
-        mocks.helpers.verify();
-      });
-      it('should return cached app strings for the specified language', async function () {
-        driver.adb.getDeviceLanguage = () => 'en';
-        driver.apkStrings.en = {test: 'en_value'};
-        driver.apkStrings.fr = {test: 'fr_value'};
-        let strings = await driver.getStrings('fr');
-        strings.test.should.equal('fr_value');
-      });
-      it('should return cached app strings for the device language', async function () {
-        driver.adb.getDeviceLanguage = () => 'en';
-        driver.apkStrings.en = {test: 'en_value'};
-        driver.apkStrings.fr = {test: 'fr_value'};
-        let strings = await driver.getStrings();
-        strings.test.should.equal('en_value');
-      });
-    })
-  );
   describe('startActivity', function () {
     let params;
     beforeEach(function () {
@@ -287,109 +197,125 @@ describe('General', function () {
       driver.adb.startApp.calledWithExactly(params).should.be.true;
     });
   });
-  describe('reset', function () {
-    it('should reset app via reinstall if fullReset is true', async function () {
-      driver.opts.fullReset = true;
-      driver.opts.appPackage = 'pkg';
-      sandbox.stub(driver, 'startAUT').returns('aut');
-      sandbox.stub(helpers, 'resetApp').returns(undefined);
-      await driver.reset().should.eventually.be.equal('aut');
-      helpers.resetApp.calledWith(driver.adb).should.be.true;
-      driver.startAUT.calledOnce.should.be.true;
+
+  describe('resetApp', function() {
+    const localApkPath = 'local';
+    const pkg = 'pkg';
+
+    afterEach(function () {
+      sandbox.verifyAndRestore();
     });
-    it('should do fast reset if fullReset is false', async function () {
-      driver.opts.fullReset = false;
-      driver.opts.appPackage = 'pkg';
-      sandbox.stub(helpers, 'resetApp').returns(undefined);
-      sandbox.stub(driver, 'startAUT').returns('aut');
-      await driver.reset().should.eventually.be.equal('aut');
-      helpers.resetApp.calledWith(driver.adb).should.be.true;
-      driver.startAUT.calledOnce.should.be.true;
-      expect(driver.curContext).to.eql('NATIVE_APP');
+
+    it('should complain if opts arent passed correctly', async function () {
+      await driver.resetApp({}).should.be.rejectedWith(/appPackage/);
     });
-  });
-  describe('startAUT', function () {
-    it('should start AUT', async function () {
-      driver.opts = {
-        appPackage: 'pkg',
-        appActivity: 'act',
-        intentAction: 'actn',
-        intentCategory: 'cat',
-        intentFlags: 'flgs',
-        appWaitPackage: 'wpkg',
-        appWaitActivity: 'wact',
-        appWaitForLaunch: true,
-        appWaitDuration: 'wdur',
-        optionalIntentArguments: 'opt',
-        userProfile: 1,
-      };
-      let params = {
-        pkg: 'pkg',
-        activity: 'act',
-        action: 'actn',
-        category: 'cat',
-        flags: 'flgs',
-        waitPkg: 'wpkg',
-        waitActivity: 'wact',
-        waitForLaunch: true,
-        waitDuration: 'wdur',
-        optionalIntentArguments: 'opt',
-        stopApp: false,
-        user: 1,
-      };
-      driver.opts.dontStopAppOnReset = true;
-      params.stopApp = false;
-      sandbox.stub(driver.adb, 'startApp');
-      await driver.startAUT();
-      driver.adb.startApp.calledWithExactly(params).should.be.true;
+    it('should be able to do full reset', async function () {
+      sandbox.stub(driver.adb, 'install').once().withArgs(localApkPath);
+      sandbox.stub(driver.adb, 'forceStop').withExactArgs(pkg).once();
+      sandbox.stub(driver.adb, 'isAppInstalled').once().withExactArgs(pkg).returns(true);
+      sandbox.stub(driver.adb, 'uninstallApk').once().withExactArgs(pkg);
+      await driver.resetApp({app: localApkPath, appPackage: pkg});
+    });
+    it('should be able to do fast reset', async function () {
+      sandbox.stub(driver.adb, 'isAppInstalled').once().withExactArgs(pkg).returns(true);
+      sandbox.stub(driver.adb, 'forceStop').withExactArgs(pkg).once();
+      sandbox.stub(driver.adb, 'clear').withExactArgs(pkg).once().returns('Success');
+      sandbox.stub(driver.adb, 'grantAllPermissions').once().withExactArgs(pkg);
+      await driver.resetApp({
+        app: localApkPath,
+        appPackage: pkg,
+        fastReset: true,
+        autoGrantPermissions: true,
+      });
+    });
+    it('should perform reinstall if app is not installed and fast reset is requested', async function () {
+      sandbox.stub(driver.adb, 'isAppInstalled').once().withExactArgs(pkg).returns(false);
+      sandbox.stub(driver.adb, 'forceStop').withExactArgs(pkg).never();
+      sandbox.stub(driver.adb, 'clear').withExactArgs(pkg).never();
+      sandbox.stub(driver.adb, 'uninstallApk').never();
+      sandbox.stub(driver.adb, 'install').once().withArgs(localApkPath);
+      await driver.resetApp({app: localApkPath, appPackage: pkg, fastReset: true});
     });
   });
-  describe('setUrl', function () {
-    it('should set url', async function () {
-      driver.opts = {appPackage: 'pkg'};
-      sandbox.stub(driver.adb, 'startUri');
-      await driver.setUrl('url');
-      driver.adb.startUri.calledWithExactly('url', 'pkg').should.be.true;
+
+  describe('installApk', function () {
+    //use mock appium capabilities for this test
+    const opts = {
+      app: 'local',
+      appPackage: 'pkg',
+      androidInstallTimeout: 90000,
+    };
+
+    afterEach(function () {
+      sandbox.verifyAndRestore();
+    });
+
+    it('should complain if appPackage is not passed', async function () {
+      await driver.installApk({}).should.be.rejectedWith(/appPackage/);
+    });
+    it('should install/upgrade and reset app if fast reset is set to true', async function () {
+      sandbox.stub(driver.adb, 'installOrUpgrade')
+        .once()
+        .withArgs(opts.app, opts.appPackage)
+        .returns({wasUninstalled: false, appState: 'sameVersionInstalled'});
+      sandbox.stub(driver, 'resetApp').once();
+      await driver.installApk(Object.assign({}, opts, {fastReset: true}));
+    });
+    it('should reinstall app if full reset is set to true', async function () {
+      sandbox.stub(driver.adb, 'installOrUpgrade').never();
+      sandbox.stub(driver, 'resetApp').once();
+      await driver.installApk(Object.assign({}, opts, {fastReset: true, fullReset: true}));
+    });
+    it('should not run reset if the corresponding option is not set', async function () {
+      sandbox.stub(driver.adb, 'installOrUpgrade')
+        .once()
+        .withArgs(opts.app, opts.appPackage)
+        .returns({wasUninstalled: true, appState: 'sameVersionInstalled'});
+      sandbox.stub(driver, 'resetApp').never();
+      await driver.installApk(opts);
+    });
+    it('should install/upgrade and skip fast resetting the app if this was the fresh install', async function () {
+      sandbox.stub(driver.adb, 'installOrUpgrade')
+        .once()
+        .withArgs(opts.app, opts.appPackage)
+        .returns({wasUninstalled: false, appState: 'notInstalled'});
+      sandbox.stub(driver, 'resetApp').never();
+      await driver.installApk(Object.assign({}, opts, {fastReset: true}));
     });
   });
-  describe('closeApp', function () {
-    it('should close app', async function () {
-      driver.opts = {appPackage: 'pkg'};
-      sandbox.stub(driver.adb, 'forceStop');
-      await driver.closeApp();
-      driver.adb.forceStop.calledWithExactly('pkg').should.be.true;
+  describe('installOtherApks', function () {
+    const opts = {
+      app: 'local',
+      appPackage: 'pkg',
+      androidInstallTimeout: 90000,
+    };
+
+    afterEach(function () {
+      sandbox.verifyAndRestore();
     });
-  });
-  describe('getDisplayDensity', function () {
-    it('should return the display density of a device', async function () {
-      driver.adb.shell = () => '123';
-      (await driver.getDisplayDensity()).should.equal(123);
+
+    const fakeApk = '/path/to/fake/app.apk';
+    const otherFakeApk = '/path/to/other/fake/app.apk';
+
+    const expectedADBInstallOpts = {
+      allowTestPackages: undefined,
+      grantPermissions: undefined,
+      timeout: opts.androidInstallTimeout,
+    };
+
+    it('should not call adb.installOrUpgrade if otherApps is empty', async function () {
+      sandbox.stub(driver.adb, 'installOrUpgrade').never();
+      await driver.installOtherApks([], opts);
     });
-    it('should return the display density of an emulator', async function () {
-      driver.adb.shell = (cmd) => {
-        let joinedCmd = cmd.join(' ');
-        if (joinedCmd.indexOf('ro.sf') !== -1) {
-          // device property look up
-          return '';
-        } else if (joinedCmd.indexOf('qemu.sf') !== -1) {
-          // emulator property look up
-          return '456';
-        }
-        return '';
-      };
-      (await driver.getDisplayDensity()).should.equal(456);
+    it('should call adb.installOrUpgrade once if otherApps has one item', async function () {
+      sandbox.stub(driver.adb, 'installOrUpgrade')
+        .once()
+        .withArgs(fakeApk, undefined, expectedADBInstallOpts);
+      await driver.installOtherApks([fakeApk], opts);
     });
-    it("should throw an error if the display density property can't be found", async function () {
-      driver.adb.shell = () => '';
-      await driver
-        .getDisplayDensity()
-        .should.be.rejectedWith(/Failed to get display density property/);
-    });
-    it('should throw and error if the display density is not a number', async function () {
-      driver.adb.shell = () => 'abc';
-      await driver
-        .getDisplayDensity()
-        .should.be.rejectedWith(/Failed to get display density property/);
+    it('should call adb.installOrUpgrade twice if otherApps has two item', async function () {
+      sandbox.stub(driver.adb, 'installOrUpgrade').twice();
+      await driver.installOtherApks([fakeApk, otherFakeApk], opts);
     });
   });
 });

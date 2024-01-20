@@ -321,4 +321,36 @@ describe('Context', function () {
       chromedriver.start.getCall(0).args[0].pageLoadStrategy.should.be.equal('strategy');
     });
   });
+
+  describe('getChromePkg', function () {
+    it('should return pakage for chromium', function () {
+      webviewHelpers
+        .getChromePkg('chromium')
+        .should.deep.equal({pkg: 'org.chromium.chrome.shell', activity: '.ChromeShellActivity'});
+    });
+    it('should return pakage for chromebeta', function () {
+      webviewHelpers.getChromePkg('chromebeta').should.deep.equal({
+        pkg: 'com.chrome.beta',
+        activity: 'com.google.android.apps.chrome.Main',
+      });
+    });
+    it('should return pakage for browser', function () {
+      webviewHelpers.getChromePkg('browser').should.deep.equal({
+        pkg: 'com.android.browser',
+        activity: 'com.android.browser.BrowserActivity',
+      });
+    });
+    it('should return pakage for chromium-browser', function () {
+      webviewHelpers.getChromePkg('chromium-browser').should.deep.equal({
+        pkg: 'org.chromium.chrome',
+        activity: 'com.google.android.apps.chrome.Main',
+      });
+    });
+    it('should return pakage for chromium-webview', function () {
+      webviewHelpers.getChromePkg('chromium-webview').should.deep.equal({
+        pkg: 'org.chromium.webview_shell',
+        activity: 'org.chromium.webview_shell.WebViewBrowserActivity',
+      });
+    });
+  });
 });

@@ -3,6 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import {AndroidDriver} from '../../../lib/driver';
 import {withMocks} from '@appium/test-support';
 import ADB from 'appium-adb';
+import { truncateDecimals } from '../../../lib/commands/touch';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -11,6 +12,15 @@ describe('Touch', function () {
   let adb = new ADB();
   let driver = new AndroidDriver();
   driver.adb = adb;
+
+  describe('truncateDecimals', function () {
+    it('should use floor when number is positive', function () {
+      truncateDecimals(12.345, 2).should.equal(12.34);
+    });
+    it('should use ceil when number is negative', function () {
+      truncateDecimals(-12.345, 2).should.equal(-12.34);
+    });
+  });
 
   describe('#parseTouch', function () {
     describe('given a touch sequence with absolute coordinates', function () {

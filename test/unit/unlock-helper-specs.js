@@ -2,7 +2,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {withMocks} from '@appium/test-support';
 import sinon from 'sinon';
-import helpers from '../../lib/helpers/unlock';
 import {AndroidDriver} from '../../lib/driver';
 import * as asyncbox from 'asyncbox';
 import ADB from 'appium-adb';
