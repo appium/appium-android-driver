@@ -2,15 +2,16 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import ADB from 'appium-adb';
-import {withMocks} from '@appium/test-support';
 import _ from 'lodash';
 import { AndroidDriver } from '../../../lib/driver';
 import { prepareAvdArgs, prepareEmulator } from '../../../lib/commands/device/utils';
+import * as deviceUtils from '../../../lib/commands/device/utils';
+import * as geolocationHelpers from '../../../lib/commands/geolocation';
 
-const should = chai.should();
 chai.use(chaiAsPromised);
 
 describe('Device Helpers', function () {
+  /** @type {AndroidDriver} */
   let driver;
   let sandbox = sinon.createSandbox();
 
@@ -199,80 +200,90 @@ describe('Device Helpers', function () {
     });
 
     it('should throw error when udid not in list', async function () {
-      let caps = {
+      const driver = new AndroidDriver();
+      driver.opts = {
         udid: 'foomulator',
       };
 
-      await helpers.getDeviceInfoFromCaps(caps).should.be.rejectedWith('foomulator');
+      await driver.getDeviceInfoFromCaps().should.be.rejectedWith('foomulator');
     });
     it('should get deviceId and emPort when udid is present', async function () {
-      let caps = {
+      const driver = new AndroidDriver();
+      driver.opts = {
         udid: 'emulator-1234',
       };
 
-      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('emulator-1234');
       emPort.should.equal(1234);
     });
     it('should get first deviceId and emPort if avd, platformVersion, and udid are not given', async function () {
-      let {udid, emPort} = await helpers.getDeviceInfoFromCaps();
+      const driver = new AndroidDriver();
+      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('emulator-1234');
       emPort.should.equal(1234);
     });
     it('should get deviceId and emPort when avd is present', async function () {
-      let caps = {
+      const driver = new AndroidDriver();
+      driver.opts = {
         avd: 'AVD_NAME',
       };
-      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('emulator-1234');
       emPort.should.equal(1234);
     });
     it('should fail if the given platformVersion is not found', async function () {
-      let caps = {
+      const driver = new AndroidDriver();
+      driver.opts = {
         platformVersion: '1234567890',
       };
-      await helpers
-        .getDeviceInfoFromCaps(caps)
+      await driver
+        .getDeviceInfoFromCaps()
         .should.be.rejectedWith('Unable to find an active device or emulator with OS 1234567890');
     });
     it('should get deviceId and emPort if platformVersion is found and unique', async function () {
-      let caps = {
+      const driver = new AndroidDriver();
+      driver.opts = {
         platformVersion: '6.0',
       };
-      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('roamulet-9000');
       emPort.should.equal(1234);
     });
     it('should get deviceId and emPort if platformVersion is shorter than os version', async function () {
-      let caps = {
+      const driver = new AndroidDriver();
+      driver.opts = {
         platformVersion: 9,
       };
-      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('roamulet-2019');
       emPort.should.equal(1234);
     });
     it('should get the first deviceId and emPort if platformVersion is found multiple times', async function () {
-      let caps = {
+      const driver = new AndroidDriver();
+      driver.opts = {
         platformVersion: '5.0.1',
       };
-      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('rotalume-1338');
       emPort.should.equal(1234);
     });
     it('should get the deviceId and emPort of most recent version if we have partial match', async function () {
-      let caps = {
+      const driver = new AndroidDriver();
+      driver.opts = {
         platformVersion: '5.0',
       };
-      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('rotalume-1338');
       emPort.should.equal(1234);
     });
     it('should get deviceId and emPort by udid if udid and platformVersion are given', async function () {
-      let caps = {
+      const driver = new AndroidDriver();
+      driver.opts = {
         udid: '0123456789',
         platformVersion: '2.3',
       };
-      let {udid, emPort} = await helpers.getDeviceInfoFromCaps(caps);
+      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('0123456789');
       emPort.should.equal(1234);
     });
@@ -297,7 +308,7 @@ describe('Device Helpers', function () {
       ADB.createADB.restore();
     });
     it('should create adb and set device id and emulator port', async function () {
-      await helpers.createADB({
+      await driver.createADB({
         udid: '111222',
         emPort: '111',
         adbPort: '222',
@@ -335,229 +346,76 @@ describe('Device Helpers', function () {
     });
     it('should not set emulator port if emPort is undefined', async function () {
       emulatorPort = 5555;
-      await helpers.createADB();
+      await driver.createADB();
       emulatorPort.should.equal(5555);
     });
   });
-  describe(
-    'getLaunchInfoFromManifest',
-    withMocks({adb}, (mocks) => {
-      it('should return when no app present', async function () {
-        mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-        await helpers.getLaunchInfo(adb, {});
-        mocks.adb.verify();
-      });
-      it('should return when appPackage & appActivity are already present', async function () {
-        mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-        await helpers.getLaunchInfo(adb, {
-          app: 'foo',
-          appPackage: 'bar',
-          appActivity: 'act',
-        });
-        mocks.adb.verify();
-      });
-      it('should return when all parameters are already present', async function () {
-        mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-        await helpers.getLaunchInfo(adb, {
-          app: 'foo',
-          appPackage: 'bar',
-          appWaitPackage: '*',
-          appActivity: 'app.activity',
-          appWaitActivity: 'app.nameA,app.nameB',
-        });
-        mocks.adb.verify();
-      });
-      it('should print warn when all parameters are already present but the format is odd', async function () {
-        // It only prints warn message
-        mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-        await helpers.getLaunchInfo(adb, {
-          app: 'foo',
-          appPackage: 'bar ',
-          appWaitPackage: '*',
-          appActivity: 'a_act',
-          appWaitActivity: '. ',
-        });
-        mocks.adb.verify();
-      });
-      it('should print warn when appPackage & appActivity are already present but the format is odd', async function () {
-        // It only prints warn message
-        mocks.adb.expects('packageAndLaunchActivityFromManifest').never();
-        await helpers.getLaunchInfo(adb, {app: 'foo', appPackage: 'bar', appActivity: 'a_act '});
-        mocks.adb.verify();
-      });
-      it('should return package and launch activity from manifest', async function () {
-        mocks.adb
-          .expects('packageAndLaunchActivityFromManifest')
-          .withExactArgs('foo')
-          .returns({apkPackage: 'pkg', apkActivity: 'ack'});
-        const result = {
-          appPackage: 'pkg',
-          appWaitPackage: 'pkg',
-          appActivity: 'ack',
-          appWaitActivity: 'ack',
-        };
-        (await helpers.getLaunchInfo(adb, {app: 'foo'})).should.deep.equal(result);
-        mocks.adb.verify();
-      });
-      it(
-        'should not override appPackage, appWaitPackage, appActivity, appWaitActivity ' +
-          'from manifest if they are allready defined in opts',
-        async function () {
-          let optsFromManifest = {apkPackage: 'mpkg', apkActivity: 'mack'};
-          mocks.adb
-            .expects('packageAndLaunchActivityFromManifest')
-            .withExactArgs('foo')
-            .twice()
-            .returns(optsFromManifest);
-
-          let inOpts = {
-            app: 'foo',
-            appActivity: 'ack',
-            appWaitPackage: 'wpkg',
-            appWaitActivity: 'wack',
-          };
-          let outOpts = {
-            appPackage: 'mpkg',
-            appActivity: 'ack',
-            appWaitPackage: 'wpkg',
-            appWaitActivity: 'wack',
-          };
-          (await helpers.getLaunchInfo(adb, inOpts)).should.deep.equal(outOpts);
-
-          inOpts = {app: 'foo', appPackage: 'pkg', appWaitPackage: 'wpkg', appWaitActivity: 'wack'};
-          outOpts = {
-            appPackage: 'pkg',
-            appActivity: 'mack',
-            appWaitPackage: 'wpkg',
-            appWaitActivity: 'wack',
-          };
-          (await helpers.getLaunchInfo(adb, inOpts)).should.deep.equal(outOpts);
-          mocks.adb.verify();
-        }
-      );
-    })
-  );
-
-  describe(
-    'initDevice',
-    withMocks({helpers, adb}, (mocks) => {
-      it('should init a real device', async function () {
-        const opts = {language: 'en', locale: 'us', localeScript: 'Script'};
-        mocks.adb.expects('waitForDevice').never();
-        mocks.adb.expects('startLogcat').once();
-        mocks.helpers.expects('pushSettingsApp').once();
-        mocks.helpers
-          .expects('ensureDeviceLocale')
-          .withExactArgs(adb, opts.language, opts.locale, opts.localeScript)
-          .once();
-        mocks.helpers.expects('setMockLocationApp').withExactArgs(adb, 'io.appium.settings').once();
-        await helpers.initDevice(adb, opts);
-        mocks.helpers.verify();
-        mocks.adb.verify();
-      });
-      it('should init device without locale and language', async function () {
-        const opts = {};
-        mocks.adb.expects('waitForDevice').never();
-        mocks.adb.expects('startLogcat').once();
-        mocks.helpers.expects('pushSettingsApp').once();
-        mocks.helpers.expects('ensureDeviceLocale').never();
-        mocks.helpers.expects('setMockLocationApp').withExactArgs(adb, 'io.appium.settings').once();
-        await helpers.initDevice(adb, opts);
-        mocks.helpers.verify();
-        mocks.adb.verify();
-      });
-      it('should init device with either locale or language', async function () {
-        const opts = {language: 'en'};
-        mocks.adb.expects('waitForDevice').never();
-        mocks.adb.expects('startLogcat').once();
-        mocks.helpers.expects('pushSettingsApp').once();
-        mocks.helpers
-          .expects('ensureDeviceLocale')
-          .withExactArgs(adb, opts.language, opts.locale, opts.localeScript)
-          .once();
-        mocks.helpers.expects('setMockLocationApp').withExactArgs(adb, 'io.appium.settings').once();
-        await helpers.initDevice(adb, opts);
-        mocks.helpers.verify();
-        mocks.adb.verify();
-      });
-      it('should not install mock location on emulator', async function () {
-        const opts = {avd: 'avd'};
-        mocks.adb.expects('waitForDevice').once();
-        mocks.adb.expects('startLogcat').once();
-        mocks.helpers.expects('pushSettingsApp').once();
-        mocks.helpers.expects('ensureDeviceLocale').never();
-        mocks.helpers.expects('setMockLocationApp').never();
-        await helpers.initDevice(adb, opts);
-        mocks.helpers.verify();
-        mocks.adb.verify();
-      });
-      it('should set empty IME if hideKeyboard is set to true', async function () {
-        const opts = {hideKeyboard: true};
-        mocks.adb.expects('waitForDevice').never();
-        mocks.adb.expects('startLogcat').once();
-        mocks.helpers.expects('pushSettingsApp').once();
-        mocks.helpers.expects('ensureDeviceLocale').never();
-        mocks.helpers.expects('setMockLocationApp').once();
-        mocks.helpers
-          .expects('hideKeyboard')
-          .withExactArgs(adb)
-          .once();
-        await helpers.initDevice(adb, opts);
-        mocks.helpers.verify();
-        mocks.adb.verify();
-      });
-      it('should return defaultIME if unicodeKeyboard is set to true', async function () {
-        const opts = {unicodeKeyboard: true};
-        mocks.adb.expects('waitForDevice').never();
-        mocks.adb.expects('startLogcat').once();
-        mocks.helpers.expects('pushSettingsApp').once();
-        mocks.helpers.expects('ensureDeviceLocale').never();
-        mocks.helpers.expects('setMockLocationApp').once();
-        mocks.helpers
-          .expects('initUnicodeKeyboard')
-          .withExactArgs(adb)
-          .once()
-          .returns('defaultIME');
-        await helpers.initDevice(adb, opts).should.become('defaultIME');
-        mocks.helpers.verify();
-        mocks.adb.verify();
-      });
-      it('should return undefined if unicodeKeyboard is set to false', async function () {
-        const opts = {unicodeKeyboard: false};
-        mocks.adb.expects('waitForDevice').never();
-        mocks.adb.expects('startLogcat').once();
-        mocks.helpers.expects('pushSettingsApp').once();
-        mocks.helpers.expects('ensureDeviceLocale').never();
-        mocks.helpers.expects('setMockLocationApp').once();
-        mocks.helpers.expects('initUnicodeKeyboard').never();
-        should.not.exist(await helpers.initDevice(adb, opts));
-        mocks.helpers.verify();
-        mocks.adb.verify();
-      });
-      it('should not push unlock app if unlockType is defined', async function () {
-        const opts = {unlockType: 'unlock_type'};
-        mocks.adb.expects('waitForDevice').never();
-        mocks.adb.expects('startLogcat').once();
-        mocks.helpers.expects('pushSettingsApp').once();
-        mocks.helpers.expects('ensureDeviceLocale').never();
-        mocks.helpers.expects('setMockLocationApp').once();
-        mocks.helpers.expects('initUnicodeKeyboard').never();
-        await helpers.initDevice(adb, opts);
-        mocks.helpers.verify();
-        mocks.adb.verify();
-      });
-      it('should init device without starting logcat', async function () {
-        const opts = {skipLogcatCapture: true};
-        mocks.adb.expects('waitForDevice').never();
-        mocks.adb.expects('startLogcat').never();
-        mocks.helpers.expects('pushSettingsApp').once();
-        mocks.helpers.expects('ensureDeviceLocale').never();
-        mocks.helpers.expects('setMockLocationApp').withExactArgs(adb, 'io.appium.settings').once();
-        await helpers.initDevice(adb, opts);
-        mocks.helpers.verify();
-        mocks.adb.verify();
-      });
-    })
-  );
+  describe('initDevice', function () {
+    it('should init a real device', async function () {
+      const driver = new AndroidDriver();
+      driver.opts = {language: 'en', locale: 'us', localeScript: 'Script'};
+      sandbox.stub(driver.adb, 'waitForDevice').never();
+      sandbox.stub(driver.adb, 'startLogcat').once();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
+      sandbox.stub(driver, 'ensureDeviceLocale')
+        .withExactArgs(driver.opts.language, driver.opts.locale, driver.opts.localeScript)
+        .once();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withExactArgs('io.appium.settings').once();
+      await driver.initDevice();
+    });
+    it('should init device without locale and language', async function () {
+      const driver = new AndroidDriver();
+      driver.opts = {};
+      sandbox.stub(driver.adb, 'waitForDevice').never();
+      sandbox.stub(driver.adb, 'startLogcat').once();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
+      sandbox.stub(driver, 'ensureDeviceLocale').never();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withExactArgs('io.appium.settings').once();
+      await driver.initDevice();
+    });
+    it('should init device with either locale or language', async function () {
+      const driver = new AndroidDriver();
+      driver.opts = {language: 'en'};
+      sandbox.stub(driver.adb, 'waitForDevice').never();
+      sandbox.stub(driver.adb, 'startLogcat').once();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
+      sandbox.stub(driver, 'ensureDeviceLocale')
+        .withExactArgs(driver.opts.language, driver.opts.locale, driver.opts.localeScript)
+        .once();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withExactArgs('io.appium.settings').once();
+      await driver.initDevice();
+    });
+    it('should not install mock location on emulator', async function () {
+      const driver = new AndroidDriver();
+      driver.opts = {avd: 'avd'};
+      sandbox.stub(driver.adb, 'waitForDevice').once();
+      sandbox.stub(driver.adb, 'startLogcat').once();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
+      sandbox.stub(driver, 'ensureDeviceLocale').never();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').never();
+      await driver.initDevice();
+    });
+    it('should set empty IME if hideKeyboard is set to true', async function () {
+      const driver = new AndroidDriver();
+      driver.opts = {hideKeyboard: true};
+      sandbox.stub(driver.adb, 'waitForDevice').never();
+      sandbox.stub(driver.adb, 'startLogcat').once();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
+      sandbox.stub(driver, 'ensureDeviceLocale').never();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').once();
+      sandbox.stub(driver, 'hideKeyboard').once();
+      await driver.initDevice();
+    });
+    it('should init device without starting logcat', async function () {
+      const driver = new AndroidDriver();
+      driver.opts = {skipLogcatCapture: true};
+      sandbox.stub(driver.adb, 'waitForDevice').never();
+      sandbox.stub(driver.adb, 'startLogcat').never();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
+      sandbox.stub(driver, 'ensureDeviceLocale').never();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withExactArgs('io.appium.settings').once();
+      await driver.initDevice();
+    });
+  });
 
 });
