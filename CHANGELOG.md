@@ -1,3 +1,10 @@
+## [7.8.2](https://github.com/appium/appium-android-driver/compare/v7.8.1...v7.8.2) (2024-01-22)
+
+
+### Bug Fixes
+
+* set keepAlive false to parse webview pages correctly Node.js >=19 ([#902](https://github.com/appium/appium-android-driver/issues/902)) ([daee212](https://github.com/appium/appium-android-driver/commit/daee212bbe3dac8d2ee714defbc51516285db345))
+
 ## [7.8.1](https://github.com/appium/appium-android-driver/compare/v7.8.0...v7.8.1) (2024-01-13)
 
 
