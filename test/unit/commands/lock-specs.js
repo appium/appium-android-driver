@@ -39,10 +39,10 @@ describe('Lock', function () {
 
   describe('unlockWithOptions', function () {
     it('should return if screen is already unlocked', async function () {
-      sandbox.stub(driver.adb, 'isScreenLocked').withExactArgs().once().returns(false);
-      sandbox.stub(driver.adb, 'getApiLevel').never();
-      sandbox.stub(driver.adb, 'startApp').never();
-      sandbox.stub(driver.adb, 'isLockManagementSupported').never();
+      sandbox.stub(driver.adb, 'isScreenLocked').withArgs().onFirstCall().returns(false);
+      sandbox.stub(driver.adb, 'getApiLevel').throws();
+      sandbox.stub(driver.adb, 'startApp').throws();
+      sandbox.stub(driver.adb, 'isLockManagementSupported').throws();
       await unlockWithOptions.bind(driver)({});
     });
     it('should start unlock app', async function () {
@@ -96,7 +96,7 @@ describe('Lock', function () {
     it('should throw an error is api is lower than 23 and trying to use fingerprintUnlock', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).returns(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).returns(false);
-      sandbox.stub(driver.adb, 'getApiLevel').once().returns(21);
+      sandbox.stub(driver.adb, 'getApiLevel').onFirstCall().returns(21);
       await unlockWithOptions.bind(driver)({unlockType: 'fingerprint', unlockKey: '1111'})
         .should.be.rejectedWith('Fingerprint');
     });
@@ -168,8 +168,8 @@ describe('Lock', function () {
     it('should be able to unlock device via fingerprint if API level >= 23', async function () {
       let caps = {unlockKey: '123'};
       sandbox.stub(driver.adb, 'getApiLevel').returns(23);
-      sandbox.stub(driver.adb, 'fingerprint').withExactArgs(caps.unlockKey).once();
-      sandbox.stub(asyncboxHelpers, 'sleep').withExactArgs(UNLOCK_WAIT_TIME).once();
+      sandbox.stub(driver.adb, 'fingerprint').withArgs(caps.unlockKey).onFirstCall();
+      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME).onFirstCall();
       await fingerprintUnlock.bind(driver)(caps).should.be.fulfilled;
     });
     it('should throw error if API level < 23', async function () {
@@ -198,20 +198,21 @@ describe('Lock', function () {
       sandbox.verifyAndRestore();
     });
     it('should be able to unlock device using pin (API level >= 21)', async function () {
-      sandbox.stub(driver.adb, 'dismissKeyguard').once();
+      sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(unlockHelpers, 'stringKeyToArr').returns(keys);
       sandbox.stub(driver.adb, 'getApiLevel').returns(21);
       sandbox.stub(driver, 'findElOrEls')
-        .withExactArgs('id', 'com.android.systemui:id/digit_text', true)
+        .withArgs('id', 'com.android.systemui:id/digit_text', true)
         .returns(els);
       sandbox.stub(driver.adb, 'isScreenLocked').returns(true);
-      sandbox.stub(driver.adb, 'keyevent').withExactArgs(66).once();
+      sandbox.stub(driver.adb, 'keyevent').withArgs(66).onFirstCall();
+      const getAttributeStub = sandbox.stub(driver, 'getAttribute');
       for (let e of els) {
-        sandbox.stub(driver, 'getAttribute')
-          .withExactArgs('text', e.ELEMENT)
+        getAttributeStub
+          .withArgs('text', e.ELEMENT)
           .returns(e.ELEMENT.toString());
       }
-      sandbox.stub(asyncboxHelpers, 'sleep').withExactArgs(UNLOCK_WAIT_TIME).twice();
+      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME);
       sandbox.stub(driver, 'click');
 
       await pinUnlock.bind(driver)(caps);
@@ -223,11 +224,12 @@ describe('Lock', function () {
       driver.click.getCall(4).args[0].should.equal(9);
     });
     it('should be able to unlock device using pin (API level < 21)', async function () {
-      sandbox.stub(driver.adb, 'dismissKeyguard').once();
+      sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(unlockHelpers, 'stringKeyToArr').returns(keys);
       sandbox.stub(driver.adb, 'getApiLevel').returns(20);
+      const findElOrElsStub = sandbox.stub(driver, 'findElOrEls');
       for (let pin of keys) {
-        sandbox.stub(driver, 'findElOrEls')
+        findElOrElsStub
           .withArgs('id', `com.android.keyguard:id/key${pin}`, false)
           .returns({ELEMENT: parseInt(pin, 10)});
       }
@@ -269,13 +271,12 @@ describe('Lock', function () {
       sandbox.stub(unlockHelpers, 'encodePassword')
         .withArgs(caps.unlockKey)
         .returns(caps.unlockKey);
-      sandbox.stub(driver.adb, 'shell').withArgs(['input', 'text', caps.unlockKey]).onFirstCall();
-      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(INPUT_KEYS_WAIT_TIME).onFirstCall();
       sandbox.stub(driver.adb, 'shell')
+        .withArgs(['input', 'text', caps.unlockKey])
         .withArgs(['input', 'keyevent', String(KEYCODE_NUMPAD_ENTER)]);
+      sandbox.stub(asyncboxHelpers, 'sleep');
       sandbox.stub(driver.adb, 'isScreenLocked').returns(true);
       sandbox.stub(driver.adb, 'keyevent').withArgs(66).onFirstCall();
-      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME);
       await passwordUnlock.bind(driver)(caps);
     });
   });
@@ -356,7 +357,7 @@ describe('Lock', function () {
     const keys = ['1', '3', '5', '7', '9'];
     const caps = {unlockKey: '13579'};
     beforeEach(function () {
-      sandbox.stub(driver.adb, 'dismissKeyguard').once();
+      sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(unlockHelpers, 'stringKeyToArr').returns(keys);
       sandbox.stub(driver, 'getLocation').withArgs(el.ELEMENT).returns(pos);
       sandbox.stub(driver, 'getSize').withArgs(el.ELEMENT).returns(size);
