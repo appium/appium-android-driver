@@ -214,7 +214,7 @@ describe('Device Helpers', function () {
       driver.opts = {
         udid: 'foomulator',
       };
-
+      driver.adb = await ADB.createADB();
       await driver.getDeviceInfoFromCaps().should.be.rejectedWith('foomulator');
     });
     it('should get deviceId and emPort when udid is present', async function () {
@@ -222,13 +222,14 @@ describe('Device Helpers', function () {
       driver.opts = {
         udid: 'emulator-1234',
       };
-
+      driver.adb = await ADB.createADB();
       let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('emulator-1234');
       emPort.should.equal(1234);
     });
     it('should get first deviceId and emPort if avd, platformVersion, and udid are not given', async function () {
       const driver = new AndroidDriver();
+      driver.adb = await ADB.createADB();
       let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('emulator-1234');
       emPort.should.equal(1234);
@@ -238,6 +239,7 @@ describe('Device Helpers', function () {
       driver.opts = {
         avd: 'AVD_NAME',
       };
+      driver.adb = await ADB.createADB();
       let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('emulator-1234');
       emPort.should.equal(1234);
@@ -247,6 +249,7 @@ describe('Device Helpers', function () {
       driver.opts = {
         platformVersion: '1234567890',
       };
+      driver.adb = await ADB.createADB();
       await driver
         .getDeviceInfoFromCaps()
         .should.be.rejectedWith('Unable to find an active device or emulator with OS 1234567890');
@@ -256,6 +259,7 @@ describe('Device Helpers', function () {
       driver.opts = {
         platformVersion: '6.0',
       };
+      driver.adb = await ADB.createADB();
       let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('roamulet-9000');
       emPort.should.equal(1234);
@@ -265,6 +269,7 @@ describe('Device Helpers', function () {
       driver.opts = {
         platformVersion: 9,
       };
+      driver.adb = await ADB.createADB();
       let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('roamulet-2019');
       emPort.should.equal(1234);
@@ -274,6 +279,7 @@ describe('Device Helpers', function () {
       driver.opts = {
         platformVersion: '5.0.1',
       };
+      driver.adb = await ADB.createADB();
       let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('rotalume-1338');
       emPort.should.equal(1234);
@@ -283,6 +289,7 @@ describe('Device Helpers', function () {
       driver.opts = {
         platformVersion: '5.0',
       };
+      driver.adb = await ADB.createADB();
       let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('rotalume-1338');
       emPort.should.equal(1234);
@@ -293,6 +300,7 @@ describe('Device Helpers', function () {
         udid: '0123456789',
         platformVersion: '2.3',
       };
+      driver.adb = await ADB.createADB();
       let {udid, emPort} = await driver.getDeviceInfoFromCaps();
       udid.should.equal('0123456789');
       emPort.should.equal(1234);
