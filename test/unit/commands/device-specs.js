@@ -26,19 +26,29 @@ describe('Device Helpers', function () {
 
   describe('isEmulator', function () {
     it('should be true if driver opts contain avd', function () {
-      driver.isEmulator(null, {avd: 'yolo'}).should.be.true;
+      const driver = new AndroidDriver();
+      driver.opts = {avd: 'yolo'};
+      driver.isEmulator().should.be.true;
     });
     it('should be true if driver opts contain emulator udid', function () {
-      driver.isEmulator({}, {udid: 'Emulator-5554'}).should.be.true;
+      const driver = new AndroidDriver();
+      driver.opts = {udid: 'Emulator-5554'};
+      driver.isEmulator().should.be.true;
     });
     it('should be false if driver opts do not contain emulator udid', function () {
-      driver.isEmulator({}, {udid: 'ABCD1234'}).should.be.false;
+      const driver = new AndroidDriver();
+      driver.opts = {udid: 'ABCD1234'};
+      driver.isEmulator().should.be.false;
     });
     it('should be true if device id in adb contains emulator', function () {
-      driver.isEmulator({curDeviceId: 'emulator-5554'}, {}).should.be.true;
+      const driver = new AndroidDriver();
+      driver.adb = {curDeviceId: 'emulator-5554'};
+      driver.isEmulator().should.be.true;
     });
     it('should be false if device id in adb does not contain emulator', function () {
-      driver.isEmulator({curDeviceId: 'ABCD1234'}, {}).should.be.false;
+      const driver = new AndroidDriver();
+      driver.adb = {curDeviceId: 'ABCD1234'};
+      driver.isEmulator().should.be.false;
     });
   });
   describe('prepareEmulator', function () {
@@ -52,14 +62,14 @@ describe('Device Helpers', function () {
 
     it('should not launch avd if one is already running', async function () {
       sandbox.stub(driver.adb, 'getRunningAVDWithRetry').withArgs('foobar').returns('foo');
-      sandbox.stub(driver.adb, 'launchAVD').never();
-      sandbox.stub(driver.adb, 'killEmulator').never();
+      sandbox.stub(driver.adb, 'launchAVD').throws();
+      sandbox.stub(driver.adb, 'killEmulator').throws();
       await prepareEmulator.bind(driver)();
     });
     it('should launch avd if one is not running', async function () {
       sandbox.stub(driver.adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
       sandbox.stub(driver.adb, 'launchAVD')
-        .withExactArgs('foo@bar', {
+        .withArgs('foo@bar', {
           args: [],
           env: undefined,
           language: 'en',
@@ -82,7 +92,7 @@ describe('Device Helpers', function () {
       driver.opts = opts;
       sandbox.stub(driver.adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
       sandbox.stub(driver.adb, 'launchAVD')
-        .withExactArgs('foobar', {
+        .withArgs('foobar', {
           args: ['--arg1', 'value 1', '--arg2', 'value 2'],
           env: {
             k1: 'v1',
@@ -104,7 +114,7 @@ describe('Device Helpers', function () {
       driver.opts = opts;
       sandbox.stub(driver.adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
       sandbox.stub(driver.adb, 'launchAVD')
-        .withExactArgs('foobar', {
+        .withArgs('foobar', {
           args: ['--arg1', 'value 1', '--arg2', 'value 2'],
           env: undefined,
           language: undefined,
@@ -119,8 +129,8 @@ describe('Device Helpers', function () {
       const opts = {avd: 'foo@bar', avdArgs: '-wipe-data'};
       driver.opts = opts;
       sandbox.stub(driver.adb, 'getRunningAVDWithRetry').withArgs('foobar').returns('foo');
-      sandbox.stub(driver.adb, 'killEmulator').withExactArgs('foobar').once();
-      sandbox.stub(driver.adb, 'launchAVD').once();
+      sandbox.stub(driver.adb, 'killEmulator').withArgs('foobar').onFirstCall();
+      sandbox.stub(driver.adb, 'launchAVD').onFirstCall();
       await prepareEmulator.bind(driver)();
     });
     it('should fail if avd name is not specified', async function () {
@@ -130,22 +140,22 @@ describe('Device Helpers', function () {
   });
   describe('prepareAvdArgs', function () {
     it('should set the correct avdArgs', function () {
-      let avdArgs = '-wipe-data';
-      prepareAvdArgs.bind(driver)({avdArgs}).should.eql([avdArgs]);
+      driver.opts = {avdArgs: '-wipe-data'};
+      prepareAvdArgs.bind(driver)().should.eql(['-wipe-data']);
     });
     it('should add headless arg', function () {
-      let avdArgs = '-wipe-data';
-      let args = prepareAvdArgs.bind(driver)({isHeadless: true, avdArgs});
+      driver.opts = {avdArgs: '-wipe-data', isHeadless: true};
+      let args = prepareAvdArgs.bind(driver)();
       args.should.eql(['-wipe-data', '-no-window']);
     });
     it('should add network speed arg', function () {
-      let avdArgs = '-wipe-data';
-      let args = prepareAvdArgs.bind(driver)({networkSpeed: 'edge', avdArgs});
+      driver.opts = {avdArgs: '-wipe-data', networkSpeed: 'edge'};
+      let args = prepareAvdArgs.bind(driver)();
       args.should.eql(['-wipe-data', '-netspeed', 'edge']);
     });
     it('should not include empty avdArgs', function () {
-      let avdArgs = '';
-      let args = prepareAvdArgs.bind(driver)({isHeadless: true, avdArgs});
+      driver.opts = {avdArgs: '', isHeadless: true};
+      let args = prepareAvdArgs.bind(driver)();
       args.should.eql(['-no-window']);
     });
   });
@@ -353,67 +363,73 @@ describe('Device Helpers', function () {
   describe('initDevice', function () {
     it('should init a real device', async function () {
       const driver = new AndroidDriver();
+      driver.adb = await ADB.createADB();
       driver.opts = {language: 'en', locale: 'us', localeScript: 'Script'};
-      sandbox.stub(driver.adb, 'waitForDevice').never();
-      sandbox.stub(driver.adb, 'startLogcat').once();
-      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
+      sandbox.stub(driver.adb, 'waitForDevice').throws();
+      sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
       sandbox.stub(driver, 'ensureDeviceLocale')
-        .withExactArgs(driver.opts.language, driver.opts.locale, driver.opts.localeScript)
-        .once();
-      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withExactArgs('io.appium.settings').once();
+        .withArgs(driver.opts.language, driver.opts.locale, driver.opts.localeScript)
+        .onFirstCall();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withArgs('io.appium.settings').onFirstCall();
       await driver.initDevice();
     });
     it('should init device without locale and language', async function () {
       const driver = new AndroidDriver();
+      driver.adb = await ADB.createADB();
       driver.opts = {};
-      sandbox.stub(driver.adb, 'waitForDevice').never();
-      sandbox.stub(driver.adb, 'startLogcat').once();
-      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
-      sandbox.stub(driver, 'ensureDeviceLocale').never();
-      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withExactArgs('io.appium.settings').once();
+      sandbox.stub(driver.adb, 'waitForDevice').throws();
+      sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
+      sandbox.stub(driver, 'ensureDeviceLocale').throws();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withArgs('io.appium.settings').onFirstCall();
       await driver.initDevice();
     });
     it('should init device with either locale or language', async function () {
       const driver = new AndroidDriver();
+      driver.adb = await ADB.createADB();
       driver.opts = {language: 'en'};
-      sandbox.stub(driver.adb, 'waitForDevice').never();
-      sandbox.stub(driver.adb, 'startLogcat').once();
-      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
+      sandbox.stub(driver.adb, 'waitForDevice').throws();
+      sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').throws();
       sandbox.stub(driver, 'ensureDeviceLocale')
-        .withExactArgs(driver.opts.language, driver.opts.locale, driver.opts.localeScript)
-        .once();
-      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withExactArgs('io.appium.settings').once();
+        .withArgs(driver.opts.language, driver.opts.locale, driver.opts.localeScript)
+        .onFirstCall();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withArgs('io.appium.settings').onFirstCall();
       await driver.initDevice();
     });
     it('should not install mock location on emulator', async function () {
       const driver = new AndroidDriver();
+      driver.adb = await ADB.createADB();
       driver.opts = {avd: 'avd'};
-      sandbox.stub(driver.adb, 'waitForDevice').once();
-      sandbox.stub(driver.adb, 'startLogcat').once();
-      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
-      sandbox.stub(driver, 'ensureDeviceLocale').never();
-      sandbox.stub(geolocationHelpers, 'setMockLocationApp').never();
+      sandbox.stub(driver.adb, 'waitForDevice').onFirstCall();
+      sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
+      sandbox.stub(driver, 'ensureDeviceLocale').throws();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').throws();
       await driver.initDevice();
     });
     it('should set empty IME if hideKeyboard is set to true', async function () {
       const driver = new AndroidDriver();
+      driver.adb = await ADB.createADB();
       driver.opts = {hideKeyboard: true};
-      sandbox.stub(driver.adb, 'waitForDevice').never();
-      sandbox.stub(driver.adb, 'startLogcat').once();
-      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
-      sandbox.stub(driver, 'ensureDeviceLocale').never();
-      sandbox.stub(geolocationHelpers, 'setMockLocationApp').once();
-      sandbox.stub(driver, 'hideKeyboard').once();
+      sandbox.stub(driver.adb, 'waitForDevice').throws();
+      sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
+      sandbox.stub(driver, 'ensureDeviceLocale').throws();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').onFirstCall();
+      sandbox.stub(driver, 'hideKeyboard').onFirstCall();
       await driver.initDevice();
     });
     it('should init device without starting logcat', async function () {
       const driver = new AndroidDriver();
+      driver.adb = await ADB.createADB();
       driver.opts = {skipLogcatCapture: true};
-      sandbox.stub(driver.adb, 'waitForDevice').never();
-      sandbox.stub(driver.adb, 'startLogcat').never();
-      sandbox.stub(deviceUtils, 'pushSettingsApp').once();
-      sandbox.stub(driver, 'ensureDeviceLocale').never();
-      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withExactArgs('io.appium.settings').once();
+      sandbox.stub(driver.adb, 'waitForDevice').throws();
+      sandbox.stub(driver.adb, 'startLogcat').throws();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
+      sandbox.stub(driver, 'ensureDeviceLocale').throws();
+      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withArgs('io.appium.settings').onFirstCall();
       await driver.initDevice();
     });
   });
