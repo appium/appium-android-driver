@@ -11,7 +11,7 @@ let sandbox = sinon.createSandbox();
 
 describe('Webview Helpers', function () {
   let adb = new ADB();
-  let driver = AndroidDriver();
+  let driver = new AndroidDriver();
 
   before(function () {
     driver.adb = adb;
