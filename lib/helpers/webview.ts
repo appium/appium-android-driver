@@ -401,7 +401,7 @@ const WebviewHelpers: WebviewHelpers = {
           logger.info(`Skipping the webview '${webview}' at '${proc}' since it is unreachable`);
           continue;
         }
-        if (pages.length === 0) {
+        if (!pages?.length) {
           logger.info(
             `Skipping the webview '${webview}' at '${proc}' ` +
               `since it has reported having zero pages`,
