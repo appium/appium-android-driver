@@ -30,6 +30,7 @@ import {
   isWebContext,
   isChromedriverContext,
   startChromedriverProxy,
+  onChromedriverStop,
   stopChromedriverProxies,
   suspendChromedriverProxy,
   startChromeSession,
@@ -341,6 +342,7 @@ class AndroidDriver
   stopChromedriverProxies = stopChromedriverProxies;
   suspendChromedriverProxy = suspendChromedriverProxy;
   startChromeSession = startChromeSession;
+  onChromedriverStop = onChromedriverStop;
   isWebContext = isWebContext;
   mobileGetContexts = mobileGetContexts;
   setContext = setContext as any as (this: AndroidDriver, name?: string) => Promise<void>;

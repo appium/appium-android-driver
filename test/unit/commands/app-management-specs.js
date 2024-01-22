@@ -210,17 +210,17 @@ describe('App Management', function () {
       await driver.resetApp({}).should.be.rejectedWith(/appPackage/);
     });
     it('should be able to do full reset', async function () {
-      sandbox.stub(driver.adb, 'install').once().withArgs(localApkPath);
-      sandbox.stub(driver.adb, 'forceStop').withExactArgs(pkg).once();
-      sandbox.stub(driver.adb, 'isAppInstalled').once().withExactArgs(pkg).returns(true);
-      sandbox.stub(driver.adb, 'uninstallApk').once().withExactArgs(pkg);
+      sandbox.stub(driver.adb, 'install').withArgs(localApkPath).onFirstCall();
+      sandbox.stub(driver.adb, 'forceStop').withArgs(pkg).onFirstCall();
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs(pkg).onFirstCall().returns(true);
+      sandbox.stub(driver.adb, 'uninstallApk').withArgs(pkg).onFirstCall();
       await driver.resetApp({app: localApkPath, appPackage: pkg});
     });
     it('should be able to do fast reset', async function () {
-      sandbox.stub(driver.adb, 'isAppInstalled').once().withExactArgs(pkg).returns(true);
-      sandbox.stub(driver.adb, 'forceStop').withExactArgs(pkg).once();
-      sandbox.stub(driver.adb, 'clear').withExactArgs(pkg).once().returns('Success');
-      sandbox.stub(driver.adb, 'grantAllPermissions').once().withExactArgs(pkg);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs(pkg).onFirstCall().returns(true);
+      sandbox.stub(driver.adb, 'forceStop').withArgs(pkg).onFirstCall();
+      sandbox.stub(driver.adb, 'clear').withArgs(pkg).onFirstCall().returns('Success');
+      sandbox.stub(driver.adb, 'grantAllPermissions').withArgs(pkg).onFirstCall();
       await driver.resetApp({
         app: localApkPath,
         appPackage: pkg,
@@ -229,11 +229,11 @@ describe('App Management', function () {
       });
     });
     it('should perform reinstall if app is not installed and fast reset is requested', async function () {
-      sandbox.stub(driver.adb, 'isAppInstalled').once().withExactArgs(pkg).returns(false);
-      sandbox.stub(driver.adb, 'forceStop').withExactArgs(pkg).never();
-      sandbox.stub(driver.adb, 'clear').withExactArgs(pkg).never();
-      sandbox.stub(driver.adb, 'uninstallApk').never();
-      sandbox.stub(driver.adb, 'install').once().withArgs(localApkPath);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs(pkg).onFirstCall().returns(false);
+      sandbox.stub(driver.adb, 'forceStop').throws();
+      sandbox.stub(driver.adb, 'clear').throws();
+      sandbox.stub(driver.adb, 'uninstallApk').throws();
+      sandbox.stub(driver.adb, 'install').withArgs(localApkPath).onFirstCall();
       await driver.resetApp({app: localApkPath, appPackage: pkg, fastReset: true});
     });
   });
@@ -255,31 +255,31 @@ describe('App Management', function () {
     });
     it('should install/upgrade and reset app if fast reset is set to true', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade')
-        .once()
         .withArgs(opts.app, opts.appPackage)
+        .onFirstCall()
         .returns({wasUninstalled: false, appState: 'sameVersionInstalled'});
-      sandbox.stub(driver, 'resetApp').once();
+      sandbox.stub(driver, 'resetApp').onFirstCall();
       await driver.installApk(Object.assign({}, opts, {fastReset: true}));
     });
     it('should reinstall app if full reset is set to true', async function () {
-      sandbox.stub(driver.adb, 'installOrUpgrade').never();
-      sandbox.stub(driver, 'resetApp').once();
+      sandbox.stub(driver.adb, 'installOrUpgrade').throws();
+      sandbox.stub(driver, 'resetApp').onFirstCall();
       await driver.installApk(Object.assign({}, opts, {fastReset: true, fullReset: true}));
     });
     it('should not run reset if the corresponding option is not set', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade')
-        .once()
         .withArgs(opts.app, opts.appPackage)
+        .onFirstCall()
         .returns({wasUninstalled: true, appState: 'sameVersionInstalled'});
-      sandbox.stub(driver, 'resetApp').never();
+      sandbox.stub(driver, 'resetApp').throws();
       await driver.installApk(opts);
     });
     it('should install/upgrade and skip fast resetting the app if this was the fresh install', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade')
-        .once()
         .withArgs(opts.app, opts.appPackage)
+        .onFirstCall()
         .returns({wasUninstalled: false, appState: 'notInstalled'});
-      sandbox.stub(driver, 'resetApp').never();
+      sandbox.stub(driver, 'resetApp').throws();
       await driver.installApk(Object.assign({}, opts, {fastReset: true}));
     });
   });
@@ -304,18 +304,19 @@ describe('App Management', function () {
     };
 
     it('should not call adb.installOrUpgrade if otherApps is empty', async function () {
-      sandbox.stub(driver.adb, 'installOrUpgrade').never();
+      sandbox.stub(driver.adb, 'installOrUpgrade').throws();
       await driver.installOtherApks([], opts);
     });
     it('should call adb.installOrUpgrade once if otherApps has one item', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade')
-        .once()
-        .withArgs(fakeApk, undefined, expectedADBInstallOpts);
+        .withArgs(fakeApk, undefined, expectedADBInstallOpts)
+        .onFirstCall();
       await driver.installOtherApks([fakeApk], opts);
     });
     it('should call adb.installOrUpgrade twice if otherApps has two item', async function () {
-      sandbox.stub(driver.adb, 'installOrUpgrade').twice();
+      sandbox.stub(driver.adb, 'installOrUpgrade');
       await driver.installOtherApks([fakeApk, otherFakeApk], opts);
+      driver.adb.installOrUpgrade.calledTwice.should.be.true;
     });
   });
 });

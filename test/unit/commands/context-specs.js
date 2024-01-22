@@ -7,6 +7,7 @@ import {
   WEBVIEW_BASE,
   WEBVIEW_WIN,
   CHROMIUM_WIN,
+  setupNewChromedriver,
 } from '../../../lib/commands/context/helpers';
 import {AndroidDriver} from '../../../lib/driver';
 import Chromedriver from 'appium-chromedriver';
@@ -78,6 +79,7 @@ describe('Context', function () {
     });
     it('should switch to default context if name is null', async function () {
       sandbox.stub(driver, 'defaultContextName').returns('DEFAULT');
+      sandbox.stub(webviewHelpers, 'parseWebviewNames').returns(['DEFAULT', 'VW', 'ANOTHER']);
       await driver.setContext(null);
       driver.switchContext.calledWithExactly('DEFAULT', [
         {webviewName: 'DEFAULT'},
@@ -88,6 +90,7 @@ describe('Context', function () {
     });
     it('should switch to default web view if name is WEBVIEW', async function () {
       sandbox.stub(driver, 'defaultWebviewName').returns('WV');
+      sandbox.stub(webviewHelpers, 'parseWebviewNames').returns(['DEFAULT', 'WV', 'ANOTHER']);
       await driver.setContext(WEBVIEW_WIN);
       driver.switchContext.calledWithExactly('WV', [
         {webviewName: 'DEFAULT'},
@@ -264,13 +267,13 @@ describe('Context', function () {
   });
   describe('setupNewChromedriver', function () {
     it('should be able to set app package from chrome options', async function () {
-      let chromedriver = await driver.setupNewChromedriver({
+      let chromedriver = await setupNewChromedriver.bind(driver)({
         chromeOptions: {androidPackage: 'apkg'},
       });
       chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage.should.be.equal('apkg');
     });
     it('should use prefixed chromeOptions', async function () {
-      let chromedriver = await driver.setupNewChromedriver({
+      let chromedriver = await setupNewChromedriver.bind(driver)({
         'goog:chromeOptions': {
           androidPackage: 'apkg',
         },
@@ -278,7 +281,7 @@ describe('Context', function () {
       chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage.should.be.equal('apkg');
     });
     it('should merge chromeOptions', async function () {
-      let chromedriver = await driver.setupNewChromedriver({
+      let chromedriver = await setupNewChromedriver.bind(driver)({
         chromeOptions: {
           androidPackage: 'apkg',
         },
@@ -296,19 +299,19 @@ describe('Context', function () {
         .args[0].chromeOptions.androidWaitPackage.should.be.equal('bpkg');
     });
     it('should be able to set androidActivity chrome option', async function () {
-      let chromedriver = await driver.setupNewChromedriver({chromeAndroidActivity: 'act'});
+      let chromedriver = await setupNewChromedriver.bind(driver)({chromeAndroidActivity: 'act'});
       chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity.should.be.equal('act');
     });
     it('should be able to set androidProcess chrome option', async function () {
-      let chromedriver = await driver.setupNewChromedriver({chromeAndroidProcess: 'proc'});
+      let chromedriver = await setupNewChromedriver.bind(driver)({chromeAndroidProcess: 'proc'});
       chromedriver.start.getCall(0).args[0].chromeOptions.androidProcess.should.be.equal('proc');
     });
     it('should be able to set loggingPrefs capability', async function () {
-      let chromedriver = await driver.setupNewChromedriver({enablePerformanceLogging: true});
+      let chromedriver = await setupNewChromedriver.bind(driver)({enablePerformanceLogging: true});
       chromedriver.start.getCall(0).args[0].loggingPrefs.should.deep.equal({performance: 'ALL'});
     });
     it('should set androidActivity to appActivity if browser name is chromium-webview', async function () {
-      let chromedriver = await driver.setupNewChromedriver({
+      let chromedriver = await setupNewChromedriver.bind(driver)({
         browserName: 'chromium-webview',
         appActivity: 'app_act',
       });
@@ -317,7 +320,7 @@ describe('Context', function () {
         .args[0].chromeOptions.androidActivity.should.be.equal('app_act');
     });
     it('should be able to set loggingPrefs capability', async function () {
-      let chromedriver = await driver.setupNewChromedriver({pageLoadStrategy: 'strategy'});
+      let chromedriver = await setupNewChromedriver.bind(driver)({pageLoadStrategy: 'strategy'});
       chromedriver.start.getCall(0).args[0].pageLoadStrategy.should.be.equal('strategy');
     });
   });
