@@ -42,7 +42,9 @@ describe('Webview Helpers', function () {
           const webviewsMapping = await helpers.getWebViewsMapping(adb, {
             androidDeviceSocket: 'webview_devtools_remote_123',
           });
-          webViews = helpers.parseWebviewNames(webviewsMapping);
+          webViews = helpers.parseWebviewNames(webviewsMapping, {
+            ensureWebviewsHavePages: false,
+          });
         });
 
         it('then the unix sockets are queried', function () {
@@ -73,7 +75,9 @@ describe('Webview Helpers', function () {
           const webviewsMapping = await helpers.getWebViewsMapping(adb, {
             androidDeviceSocket: 'chrome_devtools_remote',
           });
-          webViews = helpers.parseWebviewNames(webviewsMapping);
+          webViews = helpers.parseWebviewNames(webviewsMapping, {
+            ensureWebviewsHavePages: false,
+          });
         });
 
         it('then the unix sockets are queried', function () {
@@ -114,6 +118,62 @@ describe('Webview Helpers', function () {
         });
       });
 
+      describe('and page existence is ensured', function () {
+        let webViews;
+
+        beforeEach(async function () {
+          sandbox.stub(adb, 'shell').callsFake(function () {
+            return (
+              'Num       RefCount Protocol Flags    Type St Inode Path\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @webview_devtools_remote_123\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n'
+            );
+          });
+        });
+
+        describe('and webviews are unreachable', function () {
+          beforeEach(async function () {
+            const webviewsMapping = await helpers.getWebViewsMapping(adb, {
+              androidDeviceSocket: 'webview_devtools_remote_123',
+            });
+            webviewsMapping.length.should.equal(1);
+            webviewsMapping[0].should.not.have.key('pages');
+            webViews = helpers.parseWebviewNames(webviewsMapping);
+          });
+
+          it('then the unix sockets are queried', function () {
+            adb.shell.calledOnce.should.be.true;
+            adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+          });
+
+          it('then no webviews are returned', function () {
+            webViews.length.should.equal(0);
+          });
+        });
+
+        describe('and webviews have no pages', function () {
+          beforeEach(async function () {
+            const webviewsMapping = await helpers.getWebViewsMapping(adb, {
+              androidDeviceSocket: 'webview_devtools_remote_123',
+            });
+            webviewsMapping.length.should.equal(1);
+            webviewsMapping[0].pages = [];
+            webViews = helpers.parseWebviewNames(webviewsMapping);
+          });
+
+          it('then the unix sockets are queried', function () {
+            adb.shell.calledOnce.should.be.true;
+            adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+          });
+
+          it('then no webviews are returned', function () {
+            webViews.length.should.equal(0);
+          });
+        });
+      });
+
       describe('and crosswalk webviews exist', function () {
         let webViews;
 
@@ -132,7 +192,9 @@ describe('Webview Helpers', function () {
         describe('and the device socket is not specified', function () {
           beforeEach(async function () {
             const webviewsMapping = await helpers.getWebViewsMapping(adb);
-            webViews = helpers.parseWebviewNames(webviewsMapping);
+            webViews = helpers.parseWebviewNames(webviewsMapping, {
+              ensureWebviewsHavePages: false,
+            });
           });
 
           it('then the unix sockets are queried', function () {
@@ -151,7 +213,9 @@ describe('Webview Helpers', function () {
             const webviewsMapping = await helpers.getWebViewsMapping(adb, {
               androidDeviceSocket: 'com.application.myapp_devtools_remote',
             });
-            webViews = helpers.parseWebviewNames(webviewsMapping);
+            webViews = helpers.parseWebviewNames(webviewsMapping, {
+              ensureWebviewsHavePages: false,
+            });
           });
 
           it('then the unix sockets are queried', function () {
