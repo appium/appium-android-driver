@@ -7,6 +7,8 @@ import { AndroidDriver } from '../../../lib/driver';
 import { prepareAvdArgs, prepareEmulator } from '../../../lib/commands/device/utils';
 import * as deviceUtils from '../../../lib/commands/device/utils';
 import * as geolocationHelpers from '../../../lib/commands/geolocation';
+import * as keyboardHelpers from '../../../lib/commands/keyboard';
+
 
 chai.use(chaiAsPromised);
 
@@ -399,7 +401,7 @@ describe('Device Helpers', function () {
       driver.opts = {language: 'en'};
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
-      sandbox.stub(deviceUtils, 'pushSettingsApp').throws();
+      sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
       sandbox.stub(driver, 'ensureDeviceLocale')
         .withArgs(driver.opts.language, driver.opts.locale, driver.opts.localeScript)
         .onFirstCall();
@@ -426,7 +428,7 @@ describe('Device Helpers', function () {
       sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
       sandbox.stub(driver, 'ensureDeviceLocale').throws();
       sandbox.stub(geolocationHelpers, 'setMockLocationApp').onFirstCall();
-      sandbox.stub(driver, 'hideKeyboard').onFirstCall();
+      sandbox.stub(keyboardHelpers, 'hideKeyboardCompletely').onFirstCall();
       await driver.initDevice();
     });
     it('should init device without starting logcat', async function () {
