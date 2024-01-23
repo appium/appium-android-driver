@@ -187,10 +187,14 @@ export interface WebviewsMapping {
   webview: string;
   /**
    * Webview information as it is retrieved by `/json/version` CDP endpoint
+   *
+   * This value becomes `undefined` when the retrieval failed.
    */
   info?: StringRecord;
   /**
    * Webview pages list as it is retrieved by `/json/list` CDP endpoint
+   *
+   * This value becomes `undefined` when the retrieval failed.
    */
   pages?: StringRecord[];
   /**

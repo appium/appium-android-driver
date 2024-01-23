@@ -72,9 +72,11 @@ describe('Context', function () {
   });
   describe('setContext', function () {
     beforeEach(function () {
-      sandbox
-        .stub(webviewHelpers, 'getWebViewsMapping')
-        .returns([{webviewName: 'DEFAULT'}, {webviewName: 'WV'}, {webviewName: 'ANOTHER'}]);
+      sandbox.stub(webviewHelpers, 'getWebViewsMapping').returns([
+        {webviewName: 'DEFAULT', pages: ['PAGE']},
+        {webviewName: 'WV', pages: ['PAGE']},
+        {webviewName: 'ANOTHER', pages: ['PAGE']},
+      ]);
       sandbox.stub(driver, 'switchContext');
     });
     it('should switch to default context if name is null', async function () {
@@ -82,9 +84,9 @@ describe('Context', function () {
       sandbox.stub(webviewHelpers, 'parseWebviewNames').returns(['DEFAULT', 'VW', 'ANOTHER']);
       await driver.setContext(null);
       driver.switchContext.calledWithExactly('DEFAULT', [
-        {webviewName: 'DEFAULT'},
-        {webviewName: 'WV'},
-        {webviewName: 'ANOTHER'},
+        {webviewName: 'DEFAULT', pages: ['PAGE']},
+        {webviewName: 'WV', pages: ['PAGE']},
+        {webviewName: 'ANOTHER', pages: ['PAGE']},
       ]).should.be.true;
       driver.curContext.should.be.equal('DEFAULT');
     });
@@ -93,9 +95,9 @@ describe('Context', function () {
       sandbox.stub(webviewHelpers, 'parseWebviewNames').returns(['DEFAULT', 'WV', 'ANOTHER']);
       await driver.setContext(WEBVIEW_WIN);
       driver.switchContext.calledWithExactly('WV', [
-        {webviewName: 'DEFAULT'},
-        {webviewName: 'WV'},
-        {webviewName: 'ANOTHER'},
+        {webviewName: 'DEFAULT', pages: ['PAGE']},
+        {webviewName: 'WV', pages: ['PAGE']},
+        {webviewName: 'ANOTHER', pages: ['PAGE']},
       ]).should.be.true;
       driver.curContext.should.be.equal('WV');
     });
