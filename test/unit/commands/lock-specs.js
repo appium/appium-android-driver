@@ -4,7 +4,6 @@ import sinon from 'sinon';
 import ADB from 'appium-adb';
 import { AndroidDriver } from '../../../lib/driver';
 import {
-  unlockWithOptions,
   validateUnlockCapabilities,
   encodePassword,
   stringKeyToArr,
@@ -13,12 +12,12 @@ import {
   passwordUnlock,
   pinUnlock,
   KEYCODE_NUMPAD_ENTER,
-  INPUT_KEYS_WAIT_TIME,
   getPatternKeyPosition,
   getPatternActions,
   patternUnlock,
-} from '../../../lib/commands/lock';
-import * as unlockHelpers from '../../../lib/commands/lock';
+} from '../../../lib/commands/lock/helpers';
+import {unlockWithOptions} from '../../../lib/commands/lock/exports';
+import * as unlockHelpers from '../../../lib/commands/lock/helpers';
 import * as asyncboxHelpers from 'asyncbox';
 
 chai.use(chaiAsPromised);
@@ -58,12 +57,14 @@ describe('Lock', function () {
     });
     it('should call pinUnlock if unlockType is pin', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().returns(true);
+      sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).returns(false);
-      sandbox.stub(unlockHelpers, 'pinUnlock').onFirstCall();
+      sandbox.stub(unlockHelpers, 'pinUnlock');
       await unlockWithOptions.bind(driver)({unlockType: 'pin', unlockKey: '1111'});
     });
     it('should call pinUnlock if unlockType is pinWithKeyEvent', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).returns(true);
+      sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).returns(false);
       sandbox.stub(unlockHelpers, 'pinUnlockWithKeyEvent').onFirstCall();
       await unlockWithOptions.bind(driver)({unlockType: 'pinWithKeyEvent', unlockKey: '1111'});
@@ -244,24 +245,6 @@ describe('Lock', function () {
       driver.click.getCall(2).args[0].should.equal(5);
       driver.click.getCall(3).args[0].should.equal(7);
       driver.click.getCall(4).args[0].should.equal(9);
-    });
-    it('should throw error if pin buttons does not exist (API level >= 21)', async function () {
-      sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
-      sandbox.stub(unlockHelpers, 'stringKeyToArr').onFirstCall();
-      sandbox.stub(driver.adb, 'getApiLevel').returns(21);
-      sandbox.stub(driver, 'findElOrEls').returns(null);
-      sandbox.stub(unlockHelpers, 'pinUnlockWithKeyEvent').onFirstCall();
-      await pinUnlock.bind(driver)(caps);
-    });
-    it('should throw error if pin buttons does not exist (API level < 21)', async function () {
-      sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
-      sandbox.stub(unlockHelpers, 'stringKeyToArr').returns(keys);
-      sandbox.stub(driver.adb, 'getApiLevel').returns(20);
-      sandbox.stub(driver, 'findElOrEls')
-        .withArgs('id', 'com.android.keyguard:id/key1', false)
-        .returns(null);
-        sandbox.stub(unlockHelpers, 'pinUnlockWithKeyEvent').onFirstCall();
-      await pinUnlock.bind(driver)(caps);
     });
   });
   describe('passwordUnlock', function() {

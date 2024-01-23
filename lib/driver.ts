@@ -143,7 +143,7 @@ import {
   longPressKeyCode,
   mobilePerformEditorAction,
 } from './commands/keyboard';
-import {lock, unlock, mobileLock, mobileUnlock, isLocked} from './commands/lock';
+import {lock, unlock, mobileLock, mobileUnlock, isLocked} from './commands/lock/exports';
 import {
   supportedLogTypes,
   mobileStartLogsBroadcast,

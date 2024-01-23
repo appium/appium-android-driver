@@ -48,8 +48,12 @@ describe('Webview Helpers', function () {
           });
           const webviewsMapping = await webviewHelpers.getWebViewsMapping.bind(driver)({
             androidDeviceSocket: 'webview_devtools_remote_123',
+            ensureWebviewsHavePages: false,
+            enableWebviewDetailsCollection: false,
           });
-          webViews = webviewHelpers.parseWebviewNames.bind(driver)(webviewsMapping);
+          webViews = webviewHelpers.parseWebviewNames.bind(driver)(webviewsMapping, {
+            ensureWebviewsHavePages: false,
+          });
         });
 
         it('then the unix sockets are queried', function () {
@@ -79,8 +83,12 @@ describe('Webview Helpers', function () {
 
           const webviewsMapping = await webviewHelpers.getWebViewsMapping.bind(driver)({
             androidDeviceSocket: 'chrome_devtools_remote',
+            ensureWebviewsHavePages: false,
+            enableWebviewDetailsCollection: false,
           });
-          webViews = webviewHelpers.parseWebviewNames.bind(driver)(webviewsMapping);
+          webViews = webviewHelpers.parseWebviewNames.bind(driver)(webviewsMapping, {
+            ensureWebviewsHavePages: false,
+          });
         });
 
         it('then the unix sockets are queried', function () {
@@ -108,7 +116,10 @@ describe('Webview Helpers', function () {
           });
 
           const webviewsMapping = await webviewHelpers.getWebViewsMapping.bind(driver)();
-          webViews = webviewHelpers.parseWebviewNames.bind(driver)(webviewsMapping);
+          webViews = webviewHelpers.parseWebviewNames.bind(driver)(webviewsMapping, {
+            ensureWebviewsHavePages: false,
+            enableWebviewDetailsCollection: false,
+          });
         });
 
         it('then the unix sockets are queried', function () {
@@ -138,8 +149,13 @@ describe('Webview Helpers', function () {
 
         describe('and the device socket is not specified', function () {
           beforeEach(async function () {
-            const webviewsMapping = await webviewHelpers.getWebViewsMapping.bind(driver)();
-            webViews = webviewHelpers.parseWebviewNames.bind(driver)(webviewsMapping);
+            const webviewsMapping = await webviewHelpers.getWebViewsMapping.bind(driver)({
+              ensureWebviewsHavePages: false,
+              enableWebviewDetailsCollection: false,
+            });
+            webViews = webviewHelpers.parseWebviewNames.bind(driver)(webviewsMapping, {
+              ensureWebviewsHavePages: false,
+            });
           });
 
           it('then the unix sockets are queried', function () {
@@ -157,8 +173,12 @@ describe('Webview Helpers', function () {
           beforeEach(async function () {
             const webviewsMapping = await webviewHelpers.getWebViewsMapping.bind(driver)({
               androidDeviceSocket: 'com.application.myapp_devtools_remote',
+              ensureWebviewsHavePages: false,
+              enableWebviewDetailsCollection: false,
             });
-            webViews = webviewHelpers.parseWebviewNames.bind(driver)(webviewsMapping);
+            webViews = webviewHelpers.parseWebviewNames.bind(driver)(webviewsMapping, {
+              ensureWebviewsHavePages: false,
+            });
           });
 
           it('then the unix sockets are queried', function () {
