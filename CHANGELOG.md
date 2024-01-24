@@ -1,3 +1,10 @@
+## [8.1.0](https://github.com/appium/appium-android-driver/compare/v8.0.1...v8.1.0) (2024-01-24)
+
+
+### Features
+
+* Add utils exports ([#903](https://github.com/appium/appium-android-driver/issues/903)) ([e1eb1d4](https://github.com/appium/appium-android-driver/commit/e1eb1d4f200cb3309ace089319fc29ed86dd3868))
+
 ## [8.0.1](https://github.com/appium/appium-android-driver/compare/v8.0.0...v8.0.1) (2024-01-24)
 
 
