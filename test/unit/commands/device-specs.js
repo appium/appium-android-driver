@@ -373,7 +373,7 @@ describe('Device Helpers', function () {
   describe('initDevice', function () {
     it('should init a real device', async function () {
       const driver = new AndroidDriver();
-      driver.adb = await ADB.createADB();
+      driver.adb = new ADB();
       driver.opts = {language: 'en', locale: 'us', localeScript: 'Script'};
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
@@ -386,7 +386,7 @@ describe('Device Helpers', function () {
     });
     it('should init device without locale and language', async function () {
       const driver = new AndroidDriver();
-      driver.adb = await ADB.createADB();
+      driver.adb = new ADB();
       driver.opts = {};
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
@@ -397,7 +397,7 @@ describe('Device Helpers', function () {
     });
     it('should init device with either locale or language', async function () {
       const driver = new AndroidDriver();
-      driver.adb = await ADB.createADB();
+      driver.adb = new ADB();
       driver.opts = {language: 'en'};
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
@@ -410,7 +410,7 @@ describe('Device Helpers', function () {
     });
     it('should not install mock location on emulator', async function () {
       const driver = new AndroidDriver();
-      driver.adb = await ADB.createADB();
+      driver.adb = new ADB();
       driver.opts = {avd: 'avd'};
       sandbox.stub(driver.adb, 'waitForDevice').onFirstCall();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
@@ -421,7 +421,7 @@ describe('Device Helpers', function () {
     });
     it('should set empty IME if hideKeyboard is set to true', async function () {
       const driver = new AndroidDriver();
-      driver.adb = await ADB.createADB();
+      driver.adb = new ADB();
       driver.opts = {hideKeyboard: true};
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
@@ -433,7 +433,7 @@ describe('Device Helpers', function () {
     });
     it('should init device without starting logcat', async function () {
       const driver = new AndroidDriver();
-      driver.adb = await ADB.createADB();
+      driver.adb = new ADB();
       driver.opts = {skipLogcatCapture: true};
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').throws();
