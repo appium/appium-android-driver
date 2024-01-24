@@ -198,7 +198,7 @@ describe('App Management', function () {
     });
   });
 
-  describe('resetApp', function() {
+  describe('resetAUT', function() {
     const localApkPath = 'local';
     const pkg = 'pkg';
 
@@ -207,21 +207,21 @@ describe('App Management', function () {
     });
 
     it('should complain if opts arent passed correctly', async function () {
-      await driver.resetApp({}).should.be.rejectedWith(/appPackage/);
+      await driver.resetAUT({}).should.be.rejectedWith(/appPackage/);
     });
     it('should be able to do full reset', async function () {
       sandbox.stub(driver.adb, 'install').withArgs(localApkPath).onFirstCall();
       sandbox.stub(driver.adb, 'forceStop').withArgs(pkg).onFirstCall();
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs(pkg).onFirstCall().returns(true);
       sandbox.stub(driver.adb, 'uninstallApk').withArgs(pkg).onFirstCall();
-      await driver.resetApp({app: localApkPath, appPackage: pkg});
+      await driver.resetAUT({app: localApkPath, appPackage: pkg});
     });
     it('should be able to do fast reset', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs(pkg).onFirstCall().returns(true);
       sandbox.stub(driver.adb, 'forceStop').withArgs(pkg).onFirstCall();
       sandbox.stub(driver.adb, 'clear').withArgs(pkg).onFirstCall().returns('Success');
       sandbox.stub(driver.adb, 'grantAllPermissions').withArgs(pkg).onFirstCall();
-      await driver.resetApp({
+      await driver.resetAUT({
         app: localApkPath,
         appPackage: pkg,
         fastReset: true,
@@ -234,11 +234,11 @@ describe('App Management', function () {
       sandbox.stub(driver.adb, 'clear').throws();
       sandbox.stub(driver.adb, 'uninstallApk').throws();
       sandbox.stub(driver.adb, 'install').withArgs(localApkPath).onFirstCall();
-      await driver.resetApp({app: localApkPath, appPackage: pkg, fastReset: true});
+      await driver.resetAUT({app: localApkPath, appPackage: pkg, fastReset: true});
     });
   });
 
-  describe('installApk', function () {
+  describe('installAUT', function () {
     //use mock appium capabilities for this test
     const opts = {
       app: 'local',
@@ -251,36 +251,36 @@ describe('App Management', function () {
     });
 
     it('should complain if appPackage is not passed', async function () {
-      await driver.installApk({}).should.be.rejectedWith(/appPackage/);
+      await driver.installAUT({}).should.be.rejectedWith(/appPackage/);
     });
     it('should install/upgrade and reset app if fast reset is set to true', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade')
         .withArgs(opts.app, opts.appPackage)
         .onFirstCall()
         .returns({wasUninstalled: false, appState: 'sameVersionInstalled'});
-      sandbox.stub(driver, 'resetApp').onFirstCall();
-      await driver.installApk(Object.assign({}, opts, {fastReset: true}));
+      sandbox.stub(driver, 'resetAUT').onFirstCall();
+      await driver.installAUT(Object.assign({}, opts, {fastReset: true}));
     });
     it('should reinstall app if full reset is set to true', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade').throws();
-      sandbox.stub(driver, 'resetApp').onFirstCall();
-      await driver.installApk(Object.assign({}, opts, {fastReset: true, fullReset: true}));
+      sandbox.stub(driver, 'resetAUT').onFirstCall();
+      await driver.installAUT(Object.assign({}, opts, {fastReset: true, fullReset: true}));
     });
     it('should not run reset if the corresponding option is not set', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade')
         .withArgs(opts.app, opts.appPackage)
         .onFirstCall()
         .returns({wasUninstalled: true, appState: 'sameVersionInstalled'});
-      sandbox.stub(driver, 'resetApp').throws();
-      await driver.installApk(opts);
+      sandbox.stub(driver, 'resetAUT').throws();
+      await driver.installAUT(opts);
     });
     it('should install/upgrade and skip fast resetting the app if this was the fresh install', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade')
         .withArgs(opts.app, opts.appPackage)
         .onFirstCall()
         .returns({wasUninstalled: false, appState: 'notInstalled'});
-      sandbox.stub(driver, 'resetApp').throws();
-      await driver.installApk(Object.assign({}, opts, {fastReset: true}));
+      sandbox.stub(driver, 'resetAUT').throws();
+      await driver.installAUT(Object.assign({}, opts, {fastReset: true}));
     });
   });
   describe('installOtherApks', function () {
