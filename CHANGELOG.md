@@ -1,3 +1,28 @@
+## [8.0.0](https://github.com/appium/appium-android-driver/compare/v7.8.3...v8.0.0) (2024-01-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed androidHelpers export. Corresponding methods are now integrated into the driver
+* Removed webviewHelpers export. Corresponding methods are now integrated into the driver
+* Removed redundant exports related to io.appium.settings.
+* Removed deprecated APIs related to launchApp/closeApp/reset
+* Removed the unused unlocker property from the driver.
+
+The mixin typesystem has been aligned. There are no explicit mixin definitions, which basically duplicate each method signature. Instead all types are now provided next to method definitions.
+
+Improved grouping of different commands. Made it more explicit which of them are designed for export and which are just internal helpers
+
+Improved helper methods design, so they don't need to retrieve driver-specific properties (like log or adb) via command line args, but use this context and explicit binding instead.
+
+Marked legacy JWP touch-related methods as deprecated. They must be eventually replaced with proper W3C implementations.
+
+Removed unused declarations for non-implemented methods.
+
+### Code Refactoring
+
+* Isolate base Android functionality ([#901](https://github.com/appium/appium-android-driver/issues/901)) ([70e6233](https://github.com/appium/appium-android-driver/commit/70e623352f3c547535598951e294100d49e81826))
+
 ## [7.8.3](https://github.com/appium/appium-android-driver/compare/v7.8.2...v7.8.3) (2024-01-22)
 
 
