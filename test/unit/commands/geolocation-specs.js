@@ -2,7 +2,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import ADB from 'appium-adb';
-import B from 'bluebird';
 import { AndroidDriver } from '../../../lib/driver';
 import { setMockLocationApp } from '../../../lib/commands/geolocation';
 

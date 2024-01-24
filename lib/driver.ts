@@ -66,8 +66,8 @@ import {
   getThirdPartyPackages,
   uninstallOtherPackages,
   installOtherApks,
-  installApk,
-  resetApp,
+  installAUT,
+  resetAUT,
   background,
   getCurrentActivity,
   getCurrentPackage,
@@ -375,8 +375,8 @@ class AndroidDriver
   getThirdPartyPackages = getThirdPartyPackages;
   uninstallOtherPackages = uninstallOtherPackages;
   installOtherApks = installOtherApks;
-  installApk = installApk;
-  resetApp = resetApp;
+  installAUT = installAUT;
+  resetAUT = resetAUT;
   background = background;
   getCurrentActivity = getCurrentActivity;
   getCurrentPackage = getCurrentPackage;
