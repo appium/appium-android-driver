@@ -9,6 +9,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('IME', function () {
+  /** @type {AndroidDriver} */
   let driver;
   let sandbox = sinon.createSandbox();
   beforeEach(function () {

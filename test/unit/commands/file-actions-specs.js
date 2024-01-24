@@ -5,6 +5,7 @@ import {AndroidDriver} from '../../../lib/driver';
 import * as support from '@appium/support';
 import ADB from 'appium-adb';
 
+/** @type {AndroidDriver} */
 let driver;
 let sandbox = sinon.createSandbox();
 chai.should();

@@ -10,6 +10,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('commands - logging', function () {
+  /** @type {AndroidDriver} */
   let driver;
   before(function () {
     driver = new AndroidDriver();

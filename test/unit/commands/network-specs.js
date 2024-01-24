@@ -6,8 +6,11 @@ import {AndroidDriver} from '../../../lib/driver';
 import B from 'bluebird';
 import { SettingsApp } from 'io.appium.settings';
 
+/** @type {AndroidDriver} */
 let driver;
+/** @type {ADB} */
 let adb;
+/** @type {SettingsApp} */
 let settingsApp;
 let sandbox = sinon.createSandbox();
 chai.should();

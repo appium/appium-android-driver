@@ -1,35 +1,34 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
- * @privateRemarks This file needed to be converted to TS because the overload of `findElOrEls` is seemingly impossible to express in JS since the value of `this` cannot be bound via a type assertion.
  * @module
  */
 
 import _ from 'lodash';
-import {mixin, type FindMixin} from './mixins';
 import {errors, isErrorType} from 'appium/driver';
 import type {AndroidDriver} from '../driver';
 import type {Element} from '@appium/types';
 import type {FindElementOpts} from './types';
 
-async function findElOrEls(
+export async function findElOrEls(
   this: AndroidDriver,
   strategy: string,
   selector: string,
   mult: true,
-  context?: string
+  context?: string,
 ): Promise<Element[]>;
-async function findElOrEls(
+export async function findElOrEls(
   this: AndroidDriver,
   strategy: string,
   selector: string,
   mult: false,
-  context?: string
+  context?: string,
 ): Promise<Element>;
-async function findElOrEls(
+export async function findElOrEls(
   this: AndroidDriver,
   strategy: string,
   selector: string,
   mult: boolean,
-  context = ''
+  context = '',
 ) {
   if (!selector) {
     throw new Error('Must provide a selector when finding elements');
@@ -89,14 +88,9 @@ async function findElOrEls(
   return element as Element;
 }
 
-const FindMixin: FindMixin & ThisType<AndroidDriver> = {
-  async doFindElementOrEls(params) {
-    throw new errors.NotImplementedError('Not implemented');
-  },
-
-  findElOrEls,
-};
-
-mixin(FindMixin);
-
-export default FindMixin;
+export async function doFindElementOrEls(
+  this: AndroidDriver,
+  params: FindElementOpts,
+): Promise<Element | Element[]> {
+  throw new errors.NotImplementedError('Not implemented');
+}
