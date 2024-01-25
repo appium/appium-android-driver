@@ -1,3 +1,10 @@
+## [8.1.1](https://github.com/appium/appium-android-driver/compare/v8.1.0...v8.1.1) (2024-01-25)
+
+
+### Bug Fixes
+
+* Export setValue API ([89c9e79](https://github.com/appium/appium-android-driver/commit/89c9e79d5ff7e3754257d3d96bc433943bea1631))
+
 ## [8.1.0](https://github.com/appium/appium-android-driver/compare/v8.0.1...v8.1.0) (2024-01-24)
 
 
