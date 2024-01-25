@@ -1,3 +1,10 @@
+## [8.1.3](https://github.com/appium/appium-android-driver/compare/v8.1.2...v8.1.3) (2024-01-25)
+
+
+### Bug Fixes
+
+* prepareEmulator API ([#906](https://github.com/appium/appium-android-driver/issues/906)) ([cc4ff67](https://github.com/appium/appium-android-driver/commit/cc4ff6705517acf1eaf82d6457be1a77f6e764ad))
+
 ## [8.1.2](https://github.com/appium/appium-android-driver/compare/v8.1.1...v8.1.2) (2024-01-25)
 
 
