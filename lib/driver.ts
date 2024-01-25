@@ -274,7 +274,7 @@ class AndroidDriver
   }
 
   get settingsApp(): SettingsApp {
-    if (!this._settingsApp) {
+    if (!this._settingsApp || this._settingsApp.adb !== this.adb) {
       this._settingsApp = new SettingsApp({adb: this.adb});
     }
     return this._settingsApp;
