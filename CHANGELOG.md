@@ -1,3 +1,10 @@
+## [8.1.2](https://github.com/appium/appium-android-driver/compare/v8.1.1...v8.1.2) (2024-01-25)
+
+
+### Bug Fixes
+
+* Adb object instantiation ([9dfca27](https://github.com/appium/appium-android-driver/commit/9dfca27a813a4d5a19ceb100bafd67cc25e214eb))
+
 ## [8.1.1](https://github.com/appium/appium-android-driver/compare/v8.1.0...v8.1.1) (2024-01-25)
 
 
