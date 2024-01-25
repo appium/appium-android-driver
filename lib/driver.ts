@@ -97,6 +97,7 @@ import {
   doSetElementValue,
   replaceValue,
   setValueImmediate,
+  setValue,
   click,
   getLocationInView,
   getText,
@@ -408,6 +409,7 @@ class AndroidDriver
   doSetElementValue = doSetElementValue;
   replaceValue = replaceValue;
   setValueImmediate = setValueImmediate;
+  setValue = setValue;
   click = click;
   getLocationInView = getLocationInView;
   getText = getText;
