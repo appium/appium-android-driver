@@ -223,8 +223,6 @@ class AndroidDriver
 
   _settingsApp: SettingsApp;
 
-  apkStrings: StringRecord;
-
   proxyReqRes?: (...args: any) => any;
 
   contexts?: string[];
@@ -266,7 +264,6 @@ class AndroidDriver
     this.desiredCapConstraints = _.cloneDeep(ANDROID_DRIVER_CONSTRAINTS);
     this.sessionChromedrivers = {};
     this.jwpProxyActive = false;
-    this.apkStrings = {};
 
     this.curContext = this.defaultContextName();
     this.opts = opts as AndroidDriverOpts;
