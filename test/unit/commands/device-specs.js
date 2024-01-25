@@ -15,10 +15,12 @@ chai.use(chaiAsPromised);
 describe('Device Helpers', function () {
   /** @type {AndroidDriver} */
   let driver;
+  /** @type {ADB} */
+  let adb;
   let sandbox = sinon.createSandbox();
 
   beforeEach(function () {
-    const adb = new ADB();
+    adb = new ADB();
     driver = new AndroidDriver();
     driver.adb = adb;
   });
@@ -55,22 +57,21 @@ describe('Device Helpers', function () {
   });
   describe('prepareEmulator', function () {
     beforeEach(function () {
-      const opts = {avd: 'foo@bar', avdArgs: '', language: 'en', locale: 'us'};
-      driver.opts = opts;
+      driver.opts = {avd: 'foo@bar', avdArgs: '', language: 'en', locale: 'us'};
     });
     this.afterEach(function () {
       sandbox.verify();
     });
 
     it('should not launch avd if one is already running', async function () {
-      sandbox.stub(driver.adb, 'getRunningAVDWithRetry').withArgs('foobar').returns('foo');
-      sandbox.stub(driver.adb, 'launchAVD').throws();
-      sandbox.stub(driver.adb, 'killEmulator').throws();
-      await prepareEmulator.bind(driver)();
+      sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').returns('foo');
+      sandbox.stub(adb, 'launchAVD').throws();
+      sandbox.stub(adb, 'killEmulator').throws();
+      await prepareEmulator.bind(driver)(adb);
     });
     it('should launch avd if one is not running', async function () {
-      sandbox.stub(driver.adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
-      sandbox.stub(driver.adb, 'launchAVD')
+      sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
+      sandbox.stub(adb, 'launchAVD')
         .withArgs('foo@bar', {
           args: [],
           env: undefined,
@@ -80,20 +81,19 @@ describe('Device Helpers', function () {
           readyTimeout: undefined,
         })
         .returns('');
-      await prepareEmulator.bind(driver)();
+      await prepareEmulator.bind(driver)(adb);
     });
     it('should parse avd string command line args', async function () {
-      const opts = {
+      driver.opts = {
         avd: 'foobar',
         avdArgs: '--arg1 "value 1" --arg2 "value 2"',
         avdEnv: {
           k1: 'v1',
           k2: 'v2',
         },
-      };
-      driver.opts = opts;
-      sandbox.stub(driver.adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
-      sandbox.stub(driver.adb, 'launchAVD')
+      };;
+      sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
+      sandbox.stub(adb, 'launchAVD')
         .withArgs('foobar', {
           args: ['--arg1', 'value 1', '--arg2', 'value 2'],
           env: {
@@ -106,16 +106,15 @@ describe('Device Helpers', function () {
           readyTimeout: undefined,
         })
         .returns('');
-      await prepareEmulator.bind(driver)();
+      await prepareEmulator.bind(driver)(adb);
     });
     it('should parse avd array command line args', async function () {
-      const opts = {
+      driver.opts = {
         avd: 'foobar',
         avdArgs: ['--arg1', 'value 1', '--arg2', 'value 2'],
-      };
-      driver.opts = opts;
-      sandbox.stub(driver.adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
-      sandbox.stub(driver.adb, 'launchAVD')
+      };;
+      sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
+      sandbox.stub(adb, 'launchAVD')
         .withArgs('foobar', {
           args: ['--arg1', 'value 1', '--arg2', 'value 2'],
           env: undefined,
@@ -125,19 +124,18 @@ describe('Device Helpers', function () {
           readyTimeout: undefined,
         })
         .returns('');
-      await prepareEmulator.bind(driver)();
+      await prepareEmulator.bind(driver)(adb);
     });
     it('should kill emulator if avdArgs contains -wipe-data', async function () {
-      const opts = {avd: 'foo@bar', avdArgs: '-wipe-data'};
-      driver.opts = opts;
-      sandbox.stub(driver.adb, 'getRunningAVDWithRetry').withArgs('foobar').returns('foo');
-      sandbox.stub(driver.adb, 'killEmulator').withArgs('foobar').onFirstCall();
-      sandbox.stub(driver.adb, 'launchAVD').onFirstCall();
-      await prepareEmulator.bind(driver)();
+      driver.opts = {avd: 'foo@bar', avdArgs: '-wipe-data'};;
+      sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').returns('foo');
+      sandbox.stub(adb, 'killEmulator').withArgs('foobar').onFirstCall();
+      sandbox.stub(adb, 'launchAVD').onFirstCall();
+      await prepareEmulator.bind(driver)(adb);
     });
     it('should fail if avd name is not specified', async function () {
       driver.opts = {};
-      await prepareEmulator.bind(driver)().should.eventually.be.rejected;
+      await prepareEmulator.bind(driver)(adb).should.eventually.be.rejected;
     });
   });
   describe('prepareAvdArgs', function () {
