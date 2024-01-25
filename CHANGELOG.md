@@ -1,3 +1,10 @@
+## [8.1.4](https://github.com/appium/appium-android-driver/compare/v8.1.3...v8.1.4) (2024-01-25)
+
+
+### Bug Fixes
+
+* Improve settings app getter ([c281d98](https://github.com/appium/appium-android-driver/commit/c281d98bbcda9606ec1d861ee2d6c07167c7e5b1))
+
 ## [8.1.3](https://github.com/appium/appium-android-driver/compare/v8.1.2...v8.1.3) (2024-01-25)
 
 
