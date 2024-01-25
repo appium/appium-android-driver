@@ -1,3 +1,10 @@
+## [8.1.5](https://github.com/appium/appium-android-driver/compare/v8.1.4...v8.1.5) (2024-01-25)
+
+
+### Miscellaneous Chores
+
+* Update getStrings implementation to avoid FS usage ([#907](https://github.com/appium/appium-android-driver/issues/907)) ([f6b6188](https://github.com/appium/appium-android-driver/commit/f6b6188eafc30e5b23129577eee686c7d948a207))
+
 ## [8.1.4](https://github.com/appium/appium-android-driver/compare/v8.1.3...v8.1.4) (2024-01-25)
 
 
