@@ -36,18 +36,11 @@
     "clean": "npm run build -- --clean",
     "dev": "npm run build -- --watch",
     "lint": "eslint .",
-    "lint:commit": "commitlint",
     "lint:fix": "npm run lint -- --fix",
-    "lint:staged": "lint-staged",
-    "prepare": "husky install; npm run rebuild",
+    "prepare": "npm run rebuild",
     "rebuild": "npm run clean; npm run build",
+    "format": "prettier -w ./lib",
     "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\""
-  },
-  "lint-staged": {
-    "*.(js|ts)": [
-      "eslint --fix",
-      "prettier --write"
-    ]
   },
   "prettier": {
     "bracketSpacing": false,
@@ -80,8 +73,6 @@
     "@appium/test-support": "^3.0.20",
     "@appium/tsconfig": "^0.x",
     "@appium/types": "^0.x",
-    "@commitlint/cli": "^18.0.0",
-    "@commitlint/config-conventional": "^18.0.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
     "@types/bluebird": "^3.5.38",
@@ -110,8 +101,6 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-mocha": "^10.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.0.1",
     "mocha": "^10.0.0",
     "prettier": "^3.0.1",
     "rimraf": "^5.0.0",
