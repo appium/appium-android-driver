@@ -1,3 +1,10 @@
+## [8.1.7](https://github.com/appium/appium-android-driver/compare/v8.1.6...v8.1.7) (2024-01-26)
+
+
+### Miscellaneous Chores
+
+* Remove on-commit hooks ([#909](https://github.com/appium/appium-android-driver/issues/909)) ([fd96db6](https://github.com/appium/appium-android-driver/commit/fd96db6f0798f986340b7e28bfa9d7f49ff1fe22))
+
 ## [8.1.6](https://github.com/appium/appium-android-driver/compare/v8.1.5...v8.1.6) (2024-01-26)
 
 
