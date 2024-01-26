@@ -1,3 +1,10 @@
+## [8.1.6](https://github.com/appium/appium-android-driver/compare/v8.1.5...v8.1.6) (2024-01-26)
+
+
+### Bug Fixes
+
+* calls this.opts for createBaseADB ([#908](https://github.com/appium/appium-android-driver/issues/908)) ([8ed666a](https://github.com/appium/appium-android-driver/commit/8ed666a4407a063dc5e9fda66d633d7680202e97))
+
 ## [8.1.5](https://github.com/appium/appium-android-driver/compare/v8.1.4...v8.1.5) (2024-01-25)
 
 
