@@ -3,12 +3,11 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import ADB from 'appium-adb';
 import _ from 'lodash';
-import { AndroidDriver } from '../../../lib/driver';
-import { prepareAvdArgs, prepareEmulator } from '../../../lib/commands/device/utils';
+import {AndroidDriver} from '../../../lib/driver';
+import {prepareAvdArgs, prepareEmulator} from '../../../lib/commands/device/utils';
 import * as deviceUtils from '../../../lib/commands/device/utils';
 import * as geolocationHelpers from '../../../lib/commands/geolocation';
 import * as keyboardHelpers from '../../../lib/commands/keyboard';
-
 
 chai.use(chaiAsPromised);
 
@@ -71,7 +70,8 @@ describe('Device Helpers', function () {
     });
     it('should launch avd if one is not running', async function () {
       sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
-      sandbox.stub(adb, 'launchAVD')
+      sandbox
+        .stub(adb, 'launchAVD')
         .withArgs('foo@bar', {
           args: [],
           env: undefined,
@@ -91,9 +91,10 @@ describe('Device Helpers', function () {
           k1: 'v1',
           k2: 'v2',
         },
-      };;
+      };
       sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
-      sandbox.stub(adb, 'launchAVD')
+      sandbox
+        .stub(adb, 'launchAVD')
         .withArgs('foobar', {
           args: ['--arg1', 'value 1', '--arg2', 'value 2'],
           env: {
@@ -112,9 +113,10 @@ describe('Device Helpers', function () {
       driver.opts = {
         avd: 'foobar',
         avdArgs: ['--arg1', 'value 1', '--arg2', 'value 2'],
-      };;
+      };
       sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
-      sandbox.stub(adb, 'launchAVD')
+      sandbox
+        .stub(adb, 'launchAVD')
         .withArgs('foobar', {
           args: ['--arg1', 'value 1', '--arg2', 'value 2'],
           env: undefined,
@@ -127,7 +129,7 @@ describe('Device Helpers', function () {
       await prepareEmulator.bind(driver)(adb);
     });
     it('should kill emulator if avdArgs contains -wipe-data', async function () {
-      driver.opts = {avd: 'foo@bar', avdArgs: '-wipe-data'};;
+      driver.opts = {avd: 'foo@bar', avdArgs: '-wipe-data'};
       sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').returns('foo');
       sandbox.stub(adb, 'killEmulator').withArgs('foobar').onFirstCall();
       sandbox.stub(adb, 'launchAVD').onFirstCall();
@@ -326,7 +328,7 @@ describe('Device Helpers', function () {
       ADB.createADB.restore();
     });
     it('should create adb and set device id and emulator port', async function () {
-      await driver.createADB({
+      driver.opts = {
         udid: '111222',
         emPort: '111',
         adbPort: '222',
@@ -342,7 +344,8 @@ describe('Device Helpers', function () {
         remoteAppsCacheLimit: 5,
         buildToolsVersion: '1.2.3',
         allowOfflineDevices: true,
-      });
+      };
+      await driver.createADB();
       ADB.createADB.calledWithExactly({
         adbPort: '222',
         suppressKillServer: true,
@@ -376,10 +379,14 @@ describe('Device Helpers', function () {
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
-      sandbox.stub(driver, 'ensureDeviceLocale')
+      sandbox
+        .stub(driver, 'ensureDeviceLocale')
         .withArgs(driver.opts.language, driver.opts.locale, driver.opts.localeScript)
         .onFirstCall();
-      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withArgs('io.appium.settings').onFirstCall();
+      sandbox
+        .stub(geolocationHelpers, 'setMockLocationApp')
+        .withArgs('io.appium.settings')
+        .onFirstCall();
       await driver.initDevice();
     });
     it('should init device without locale and language', async function () {
@@ -390,7 +397,10 @@ describe('Device Helpers', function () {
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
       sandbox.stub(driver, 'ensureDeviceLocale').throws();
-      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withArgs('io.appium.settings').onFirstCall();
+      sandbox
+        .stub(geolocationHelpers, 'setMockLocationApp')
+        .withArgs('io.appium.settings')
+        .onFirstCall();
       await driver.initDevice();
     });
     it('should init device with either locale or language', async function () {
@@ -400,10 +410,14 @@ describe('Device Helpers', function () {
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
-      sandbox.stub(driver, 'ensureDeviceLocale')
+      sandbox
+        .stub(driver, 'ensureDeviceLocale')
         .withArgs(driver.opts.language, driver.opts.locale, driver.opts.localeScript)
         .onFirstCall();
-      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withArgs('io.appium.settings').onFirstCall();
+      sandbox
+        .stub(geolocationHelpers, 'setMockLocationApp')
+        .withArgs('io.appium.settings')
+        .onFirstCall();
       await driver.initDevice();
     });
     it('should not install mock location on emulator', async function () {
@@ -437,9 +451,11 @@ describe('Device Helpers', function () {
       sandbox.stub(driver.adb, 'startLogcat').throws();
       sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
       sandbox.stub(driver, 'ensureDeviceLocale').throws();
-      sandbox.stub(geolocationHelpers, 'setMockLocationApp').withArgs('io.appium.settings').onFirstCall();
+      sandbox
+        .stub(geolocationHelpers, 'setMockLocationApp')
+        .withArgs('io.appium.settings')
+        .onFirstCall();
       await driver.initDevice();
     });
   });
-
 });
