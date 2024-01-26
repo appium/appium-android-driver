@@ -2,12 +2,12 @@ import {install} from 'source-map-support';
 install();
 
 import {AndroidDriver} from './driver';
-import { getChromePkg } from './commands/context/helpers';
-import { parseArray, requireArgs } from './utils';
+import {getChromePkg} from './commands/context/helpers';
+import {parseArray, requireArgs} from './utils';
 export const utils = {
-    getChromePkg,
-    parseArray,
-    requireArgs,
+  getChromePkg,
+  parseArray,
+  requireArgs,
 } as const;
 export type * from './commands/types';
 export {ANDROID_DRIVER_CONSTRAINTS as commonCapConstraints} from './constraints';
