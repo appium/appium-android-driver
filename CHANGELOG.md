@@ -1,3 +1,10 @@
+## [8.1.8](https://github.com/appium/appium-android-driver/compare/v8.1.7...v8.1.8) (2024-01-29)
+
+
+### Bug Fixes
+
+* Add missing mobileStartActivity import ([#911](https://github.com/appium/appium-android-driver/issues/911)) ([f66c02b](https://github.com/appium/appium-android-driver/commit/f66c02b90f345a28362832a51aae4140f084a815))
+
 ## [8.1.7](https://github.com/appium/appium-android-driver/compare/v8.1.6...v8.1.7) (2024-01-26)
 
 
