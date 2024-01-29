@@ -131,6 +131,7 @@ import {
 } from './commands/ime';
 import {
   startActivity,
+  mobileStartActivity,
   mobileBroadcast,
   mobileStartService,
   mobileStopService,
@@ -450,6 +451,7 @@ class AndroidDriver
     optionalIntentArguments?: string,
     dontStopAppOnReset?: boolean,
   ) => Promise<void>;
+  mobileStartActivity = mobileStartActivity;
   mobileBroadcast = mobileBroadcast;
   mobileStartService = mobileStartService;
   mobileStopService = mobileStopService;
