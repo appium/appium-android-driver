@@ -1,6 +1,6 @@
 {
   "name": "appium-android-driver",
-  "version": "8.1.8",
+  "version": "8.2.0",
   "description": "Android UiAutomator and Chrome support for Appium",
   "keywords": [
     "appium",

@@ -1,3 +1,10 @@
+## [8.2.0](https://github.com/appium/appium-android-driver/compare/v8.1.8...v8.2.0) (2024-02-01)
+
+
+### Features
+
+* Perform device init steps in parallel ([#912](https://github.com/appium/appium-android-driver/issues/912)) ([3bdebbc](https://github.com/appium/appium-android-driver/commit/3bdebbcbce14c0fd8b3db2c3845120608155be91))
+
 ## [8.1.8](https://github.com/appium/appium-android-driver/compare/v8.1.7...v8.1.8) (2024-01-29)
 
 
