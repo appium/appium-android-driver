@@ -1,3 +1,10 @@
+## [8.3.0](https://github.com/appium/appium-android-driver/compare/v8.2.0...v8.3.0) (2024-02-07)
+
+
+### Features
+
+* Switch pattern unlock to use W3C actions ([#914](https://github.com/appium/appium-android-driver/issues/914)) ([5ce2c24](https://github.com/appium/appium-android-driver/commit/5ce2c244c8cd15f6c1a26cd6253517a481f6b8a4))
+
 ## [8.2.0](https://github.com/appium/appium-android-driver/compare/v8.1.8...v8.2.0) (2024-02-01)
 
 
