@@ -123,6 +123,9 @@ import {
   isLocationServicesEnabled,
 } from './commands/geolocation';
 import {
+  performActions,
+} from './commands/gestures';
+import {
   isIMEActivated,
   availableIMEEngines,
   getActiveIMEEngine,
@@ -433,6 +436,8 @@ class AndroidDriver
   mobileRefreshGpsCache = mobileRefreshGpsCache;
   toggleLocationServices = toggleLocationServices;
   isLocationServicesEnabled = isLocationServicesEnabled;
+
+  performActions = performActions;
 
   isIMEActivated = isIMEActivated;
   availableIMEEngines = availableIMEEngines;
