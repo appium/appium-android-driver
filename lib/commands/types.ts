@@ -174,6 +174,7 @@ export interface RemoveAppOpts extends UninstallOptions {
 
 export interface InstallAppOpts extends InstallOptions {
   appPath: string;
+  checkVersion: boolean;
 }
 
 export interface WebviewsMapping {
