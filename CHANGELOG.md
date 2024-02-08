@@ -1,3 +1,10 @@
+## [8.4.0](https://github.com/appium/appium-android-driver/compare/v8.3.0...v8.4.0) (2024-02-08)
+
+
+### Features
+
+* add checkVersion option for mobile:installApp ([#915](https://github.com/appium/appium-android-driver/issues/915)) ([cec1de7](https://github.com/appium/appium-android-driver/commit/cec1de730fb78fad84d7688cafc38ceaee38d826))
+
 ## [8.3.0](https://github.com/appium/appium-android-driver/compare/v8.2.0...v8.3.0) (2024-02-07)
 
 
