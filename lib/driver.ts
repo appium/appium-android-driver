@@ -195,19 +195,6 @@ import {mobileShell} from './commands/shell';
 import {mobileStartScreenStreaming, mobileStopScreenStreaming} from './commands/streamscreen';
 import {getSystemBars, mobilePerformStatusBarCommand} from './commands/system-bars';
 import {getDeviceTime, mobileGetDeviceTime} from './commands/time';
-import {
-  tap,
-  touchLongClick,
-  touchDown,
-  touchUp,
-  touchMove,
-  doSwipe,
-  doTouchDrag,
-  doTouchAction,
-  performMultiAction,
-  performTouch,
-  doPerformMultiAction,
-} from './commands/touch';
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
 export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;
@@ -529,18 +516,6 @@ class AndroidDriver
 
   getDeviceTime = getDeviceTime;
   mobileGetDeviceTime = mobileGetDeviceTime;
-
-  tap = tap;
-  touchLongClick = touchLongClick;
-  touchDown = touchDown;
-  touchUp = touchUp;
-  touchMove = touchMove;
-  doSwipe = doSwipe;
-  doTouchDrag = doTouchDrag;
-  doTouchAction = doTouchAction;
-  performMultiAction = performMultiAction;
-  performTouch = performTouch;
-  doPerformMultiAction = doPerformMultiAction;
 }
 
 export {AndroidDriver};
