@@ -1,3 +1,36 @@
+## [9.0.0](https://github.com/appium/appium-android-driver/compare/v8.4.0...v9.0.0) (2024-02-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed the following obsolete types:
+- TouchActionKind
+- TouchActionOpts
+- TouchOpts
+- TouchState
+- TouchSwipeOpts
+- TouchAction
+- NonReleaseTouchAction
+- ReleaseTouchAction
+- SwipeAction
+- TouchDragAction
+* Removed the following obsolete methods:
+- tap
+- touchLongClick
+- touchDown
+- touchUp
+- touchMove
+- doSwipe
+- doTouchDrag
+- doTouchAction
+- performMultiAction
+- performTouch
+- doPerformMultiAction
+
+### Features
+
+* Remove the obsolete code related to MJSONWP touch support ([#917](https://github.com/appium/appium-android-driver/issues/917)) ([61aae2c](https://github.com/appium/appium-android-driver/commit/61aae2c655854507455c63feb711084c03b0d523))
+
 ## [8.4.0](https://github.com/appium/appium-android-driver/compare/v8.3.0...v8.4.0) (2024-02-08)
 
 
