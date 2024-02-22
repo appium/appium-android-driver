@@ -1,3 +1,10 @@
+## [9.0.1](https://github.com/appium/appium-android-driver/compare/v9.0.0...v9.0.1) (2024-02-22)
+
+
+### Miscellaneous Chores
+
+* Add timeout option to adb.pull() in stopRecordingScreen function ([#921](https://github.com/appium/appium-android-driver/issues/921)) ([e8539dc](https://github.com/appium/appium-android-driver/commit/e8539dceda6c7c5d64bdcdf983ec4a28269e6f9c))
+
 ## [9.0.0](https://github.com/appium/appium-android-driver/compare/v8.4.0...v9.0.0) (2024-02-10)
 
 
