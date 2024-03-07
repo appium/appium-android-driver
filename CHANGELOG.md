@@ -1,3 +1,10 @@
+## [9.0.2](https://github.com/appium/appium-android-driver/compare/v9.0.1...v9.0.2) (2024-03-07)
+
+
+### Miscellaneous Chores
+
+* bump typescript ([f9581ff](https://github.com/appium/appium-android-driver/commit/f9581ff1b9aa71b4b41be23b1659286210d663d6))
+
 ## [9.0.1](https://github.com/appium/appium-android-driver/compare/v9.0.0...v9.0.1) (2024-02-22)
 
 
