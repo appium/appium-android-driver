@@ -188,6 +188,11 @@ import {
   getPerformanceDataTypes,
   mobileGetPerformanceData,
 } from './commands/performance';
+import {
+  reset,
+  closeApp,
+  launchApp,
+} from './commands/legacy';
 import {mobileChangePermissions, mobileGetPermissions} from './commands/permissions';
 import {startRecordingScreen, stopRecordingScreen} from './commands/recordscreen';
 import {getStrings, ensureDeviceLocale} from './commands/resources';
@@ -516,6 +521,10 @@ class AndroidDriver
 
   getDeviceTime = getDeviceTime;
   mobileGetDeviceTime = mobileGetDeviceTime;
+
+  reset = reset;
+  closeApp = closeApp;
+  launchApp = launchApp;
 }
 
 export {AndroidDriver};
