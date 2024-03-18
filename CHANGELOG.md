@@ -1,3 +1,10 @@
+## [9.0.3](https://github.com/appium/appium-android-driver/compare/v9.0.2...v9.0.3) (2024-03-18)
+
+
+### Miscellaneous Chores
+
+* Add stubs for legacy APIs ([#926](https://github.com/appium/appium-android-driver/issues/926)) ([834ed08](https://github.com/appium/appium-android-driver/commit/834ed085113dd507aa60af525402599059064b71))
+
 ## [9.0.2](https://github.com/appium/appium-android-driver/compare/v9.0.1...v9.0.2) (2024-03-07)
 
 
