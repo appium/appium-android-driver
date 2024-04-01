@@ -59,7 +59,7 @@
     "lodash": "^4.17.4",
     "lru-cache": "^10.0.1",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.26",
+    "moment-timezone": "^0.x",
     "portscanner": "^2.2.0",
     "semver": "^7.0.0",
     "source-map-support": "^0.x",
