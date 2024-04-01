@@ -1,3 +1,16 @@
+## [9.0.4](https://github.com/appium/appium-android-driver/compare/v9.0.3...v9.0.4) (2024-04-01)
+
+
+### Bug Fixes
+
+* update appium-adb ([45abf47](https://github.com/appium/appium-android-driver/commit/45abf4779a304c1042e74d30756a242fbf388164))
+
+
+### Miscellaneous Chores
+
+* bump adb ([7ef85ae](https://github.com/appium/appium-android-driver/commit/7ef85aea7d7c1c8c59db8131f216e45507734653))
+* tune moment-timezone import ([7ddde8f](https://github.com/appium/appium-android-driver/commit/7ddde8faeaf3c9f7e2877b15aaa8cdfd4b083b44))
+
 ## [9.0.3](https://github.com/appium/appium-android-driver/compare/v9.0.2...v9.0.3) (2024-03-18)
 
 
