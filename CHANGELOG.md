@@ -1,3 +1,10 @@
+## [9.1.0](https://github.com/appium/appium-android-driver/compare/v9.0.5...v9.1.0) (2024-04-09)
+
+
+### Features
+
+* Add a possibility to set device timezone ([#930](https://github.com/appium/appium-android-driver/issues/930)) ([4c88cf0](https://github.com/appium/appium-android-driver/commit/4c88cf077a35f749e05c14c8835f614bdf244c50))
+
 ## [9.0.5](https://github.com/appium/appium-android-driver/compare/v9.0.4...v9.0.5) (2024-04-08)
 
 
