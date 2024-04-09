@@ -1,3 +1,10 @@
+## [9.1.1](https://github.com/appium/appium-android-driver/compare/v9.1.0...v9.1.1) (2024-04-09)
+
+
+### Miscellaneous Chores
+
+* Remove extra imports ([6dc0e1a](https://github.com/appium/appium-android-driver/commit/6dc0e1a3314fcdb6d90c308e66b919f18971f140))
+
 ## [9.1.0](https://github.com/appium/appium-android-driver/compare/v9.0.5...v9.1.0) (2024-04-09)
 
 
