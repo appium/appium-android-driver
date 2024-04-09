@@ -87,8 +87,8 @@
     "@types/source-map-support": "^0.5.6",
     "@types/teen_process": "^2.0.0",
     "@types/ws": "^8.5.4",
-    "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "@typescript-eslint/parser": "^6.9.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
     "@xmldom/xmldom": "^0.x",
     "android-apidemos": "^4.1.0",
     "appium": "^2.0.0-rc.5",
@@ -111,7 +111,7 @@
     "xpath": "^0.x"
   },
   "peerDependencies": {
-    "appium": "^2.0.0-beta.40"
+    "appium": "^2.0.0"
   },
   "engines": {
     "node": ">=14",

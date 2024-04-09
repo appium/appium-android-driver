@@ -263,6 +263,9 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   appWaitForLaunch: {
     isBoolean: true,
   },
+  timeZone: {
+    isString: true,
+  },
 } as const satisfies Constraints;
 
 export default ANDROID_DRIVER_CONSTRAINTS;
