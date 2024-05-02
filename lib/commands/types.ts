@@ -1054,6 +1054,11 @@ export interface SendTrimMemoryOpts {
     | 'RUNNING_MODERATE';
 }
 
+export interface ImageInjectionOpts {
+  /** Base64-encoded payload of a .png image to be injected */
+  payload: string;
+}
+
 export interface SetUiModeOpts {
   /**
    * The UI mode to set the value for.
