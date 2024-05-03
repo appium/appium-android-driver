@@ -162,6 +162,7 @@ import {
   mobileStopMediaProjectionRecording,
 } from './commands/media-projection';
 import {mobileSendTrimMemory} from './commands/memory';
+import {mobileInjectEmulatorCameraImage} from './commands/image-injection';
 import {
   getWindowRect,
   getWindowSize,
@@ -478,6 +479,8 @@ class AndroidDriver
   mobileStopMediaProjectionRecording = mobileStopMediaProjectionRecording;
 
   mobileSendTrimMemory = mobileSendTrimMemory;
+
+  mobileInjectEmulatorCameraImage = mobileInjectEmulatorCameraImage;
 
   getWindowRect = getWindowRect;
   getWindowSize = getWindowSize;
