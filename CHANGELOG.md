@@ -1,3 +1,10 @@
+## [9.2.0](https://github.com/appium/appium-android-driver/compare/v9.1.1...v9.2.0) (2024-05-03)
+
+
+### Features
+
+* Add emulator image injection feature ([#931](https://github.com/appium/appium-android-driver/issues/931)) ([1ec2964](https://github.com/appium/appium-android-driver/commit/1ec29645b29472f4f05e29455e55ff1fdec61347))
+
 ## [9.1.1](https://github.com/appium/appium-android-driver/compare/v9.1.0...v9.1.1) (2024-04-09)
 
 
