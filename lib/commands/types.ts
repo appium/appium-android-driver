@@ -124,6 +124,12 @@ export interface IsAppInstalledOpts {
    * Application package identifier
    */
   appId: string;
+
+  /**
+   * The user ID for which the package is installed.
+   * The `current` user id is used by default.
+   */
+  user?: string | number;
 }
 
 export interface ClearAppOpts {
