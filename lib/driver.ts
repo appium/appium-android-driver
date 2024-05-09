@@ -87,6 +87,7 @@ import {
 } from './commands/app-management';
 import {mobileGetUiMode, mobileSetUiMode} from './commands/appearance';
 import {mobileDeviceidle} from './commands/deviceidle';
+import { mobileBluetooth } from './commands/bluetooth';
 import {
   getAttribute,
   getName,
@@ -393,6 +394,8 @@ class AndroidDriver
   mobileSetUiMode = mobileSetUiMode;
 
   mobileDeviceidle = mobileDeviceidle;
+
+  mobileBluetooth = mobileBluetooth;
 
   getAttribute = getAttribute;
   getName = getName;

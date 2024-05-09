@@ -1225,3 +1225,7 @@ export type ADBLaunchInfo = Pick<
   AndroidDriverCaps,
   'appPackage' | 'appWaitActivity' | 'appActivity' | 'appWaitPackage'
 >;
+
+export interface BluetoothOptions {
+  action: 'enable' | 'disable' | 'unpairAll';
+}
