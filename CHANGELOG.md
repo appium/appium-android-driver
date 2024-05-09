@@ -1,3 +1,10 @@
+## [9.3.0](https://github.com/appium/appium-android-driver/compare/v9.2.0...v9.3.0) (2024-05-09)
+
+
+### Features
+
+* support user for mobile isAppInstalled ([#932](https://github.com/appium/appium-android-driver/issues/932)) ([d1bbeea](https://github.com/appium/appium-android-driver/commit/d1bbeeae459956fceef216c5e1d3588a1ef931ab))
+
 ## [9.2.0](https://github.com/appium/appium-android-driver/compare/v9.1.1...v9.2.0) (2024-05-03)
 
 
