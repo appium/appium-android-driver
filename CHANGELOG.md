@@ -1,3 +1,10 @@
+## [9.5.0](https://github.com/appium/appium-android-driver/compare/v9.4.0...v9.5.0) (2024-05-10)
+
+
+### Features
+
+* Add NFC mobile extension ([#935](https://github.com/appium/appium-android-driver/issues/935)) ([5cc6e0a](https://github.com/appium/appium-android-driver/commit/5cc6e0a4f006cdc2983942ef9d8cc10e2364a576))
+
 ## [9.4.0](https://github.com/appium/appium-android-driver/compare/v9.3.0...v9.4.0) (2024-05-10)
 
 
