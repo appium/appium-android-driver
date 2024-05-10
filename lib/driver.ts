@@ -163,6 +163,7 @@ import {
   mobileStopMediaProjectionRecording,
 } from './commands/media-projection';
 import {mobileSendTrimMemory} from './commands/memory';
+import {mobileNfc} from './commands/nfc';
 import {mobileInjectEmulatorCameraImage} from './commands/image-injection';
 import {
   getWindowRect,
@@ -518,6 +519,8 @@ class AndroidDriver
   ensureDeviceLocale = ensureDeviceLocale;
 
   mobileShell = mobileShell;
+
+  mobileNfc = mobileNfc;
 
   mobileStartScreenStreaming = mobileStartScreenStreaming;
   mobileStopScreenStreaming = mobileStopScreenStreaming;
