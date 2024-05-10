@@ -1,3 +1,10 @@
+## [9.4.0](https://github.com/appium/appium-android-driver/compare/v9.3.0...v9.4.0) (2024-05-10)
+
+
+### Features
+
+* Add extensions for changing bluetooth state ([#934](https://github.com/appium/appium-android-driver/issues/934)) ([d255e03](https://github.com/appium/appium-android-driver/commit/d255e03d8c85b0ed2bc37215e7b2bf2ed3a4e82a))
+
 ## [9.3.0](https://github.com/appium/appium-android-driver/compare/v9.2.0...v9.3.0) (2024-05-09)
 
 
