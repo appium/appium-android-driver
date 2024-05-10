@@ -1229,3 +1229,7 @@ export type ADBLaunchInfo = Pick<
 export interface BluetoothOptions {
   action: 'enable' | 'disable' | 'unpairAll';
 }
+
+export interface NfcOptions {
+  action: 'enable' | 'disable';
+}
