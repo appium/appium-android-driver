@@ -1,3 +1,10 @@
+## [9.6.0](https://github.com/appium/appium-android-driver/compare/v9.5.0...v9.6.0) (2024-05-11)
+
+
+### Features
+
+* Move mobile commands mapping into a separate method ([#936](https://github.com/appium/appium-android-driver/issues/936)) ([39875d6](https://github.com/appium/appium-android-driver/commit/39875d672276ba70a1fb7ff212eac42cbff87df1))
+
 ## [9.5.0](https://github.com/appium/appium-android-driver/compare/v9.4.0...v9.5.0) (2024-05-10)
 
 
