@@ -105,7 +105,11 @@ import {
   getLocation,
   getSize,
 } from './commands/element';
-import {execute, executeMobile} from './commands/execute';
+import {
+  execute,
+  executeMobile,
+  mobileCommandsMapping,
+} from './commands/execute';
 import {
   pullFile,
   mobilePullFile,
@@ -416,6 +420,7 @@ class AndroidDriver
 
   execute = execute;
   executeMobile = executeMobile;
+  mobileCommandsMapping = mobileCommandsMapping;
 
   pullFile = pullFile;
   mobilePullFile = mobilePullFile;
