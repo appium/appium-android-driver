@@ -1,3 +1,15 @@
+## [9.6.2](https://github.com/appium/appium-android-driver/compare/v9.6.1...v9.6.2) (2024-05-16)
+
+
+### Bug Fixes
+
+* typo ([a2260ca](https://github.com/appium/appium-android-driver/commit/a2260ca96bd112176b4093b804481736d7f22741))
+
+
+### Miscellaneous Chores
+
+* Improve the error message shown if an unsupported device locale is provided ([#937](https://github.com/appium/appium-android-driver/issues/937)) ([757a14a](https://github.com/appium/appium-android-driver/commit/757a14a653e22591eb0ba4f32329a95acd401a19))
+
 ## [9.6.1](https://github.com/appium/appium-android-driver/compare/v9.6.0...v9.6.1) (2024-05-16)
 
 
