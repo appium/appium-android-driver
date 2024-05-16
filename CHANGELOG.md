@@ -1,3 +1,10 @@
+## [9.6.1](https://github.com/appium/appium-android-driver/compare/v9.6.0...v9.6.1) (2024-05-16)
+
+
+### Miscellaneous Chores
+
+* Update dev dependencies ([3357384](https://github.com/appium/appium-android-driver/commit/33573847a5abaf3a7e9fdeab929910f16b0c39c9))
+
 ## [9.6.0](https://github.com/appium/appium-android-driver/compare/v9.5.0...v9.6.0) (2024-05-11)
 
 
