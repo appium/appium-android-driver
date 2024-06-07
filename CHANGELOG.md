@@ -1,3 +1,10 @@
+## [9.6.3](https://github.com/appium/appium-android-driver/compare/v9.6.2...v9.6.3) (2024-06-07)
+
+
+### Bug Fixes
+
+* Add proper timestamps to server logs ([#938](https://github.com/appium/appium-android-driver/issues/938)) ([428a6b8](https://github.com/appium/appium-android-driver/commit/428a6b8cac0655b1fc5b40d65e50191b0cd3583b))
+
 ## [9.6.2](https://github.com/appium/appium-android-driver/compare/v9.6.1...v9.6.2) (2024-05-16)
 
 
