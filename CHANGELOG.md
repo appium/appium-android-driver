@@ -1,3 +1,10 @@
+## [9.6.4](https://github.com/appium/appium-android-driver/compare/v9.6.3...v9.6.4) (2024-06-10)
+
+
+### Miscellaneous Chores
+
+* use latest io.appium.settings ([20743d1](https://github.com/appium/appium-android-driver/commit/20743d19d940dfaeed6778af82c9bc8e40691986))
+
 ## [9.6.3](https://github.com/appium/appium-android-driver/compare/v9.6.2...v9.6.3) (2024-06-07)
 
 
