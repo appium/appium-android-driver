@@ -1,3 +1,10 @@
+## [9.6.5](https://github.com/appium/appium-android-driver/compare/v9.6.4...v9.6.5) (2024-06-12)
+
+
+### Bug Fixes
+
+* Add a workaround for wrong adb exit code on service stop ([#939](https://github.com/appium/appium-android-driver/issues/939)) ([0dfcd5d](https://github.com/appium/appium-android-driver/commit/0dfcd5d032511e9043458f05c3502e5404c9935e))
+
 ## [9.6.4](https://github.com/appium/appium-android-driver/compare/v9.6.3...v9.6.4) (2024-06-10)
 
 
