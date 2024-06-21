@@ -2,18 +2,20 @@ import sinon from 'sinon';
 import {DEVTOOLS_SOCKET_PATTERN} from '../../../lib/commands/context/helpers';
 import * as webviewHelpers from '../../../lib/commands/context/helpers';
 import ADB from 'appium-adb';
-import chai from 'chai';
 import { AndroidDriver } from '../../../lib/driver';
-
-chai.should();
 
 let sandbox = sinon.createSandbox();
 
 describe('Webview Helpers', function () {
   let adb = new ADB();
   let driver = new AndroidDriver();
+  let chai;
 
-  before(function () {
+  before(async function () {
+    chai = await import('chai');
+    chai.should();
+
+    driver = new AndroidDriver();
     driver.adb = adb;
   });
 

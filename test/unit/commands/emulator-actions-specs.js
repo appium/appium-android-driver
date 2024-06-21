@@ -1,15 +1,21 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
 
 /** @type {AndroidDriver} */
 let driver;
 let sandbox = sinon.createSandbox();
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('Emulator Actions', function () {
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
   beforeEach(function () {
     driver = new AndroidDriver();
   });

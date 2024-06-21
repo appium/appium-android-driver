@@ -1,17 +1,22 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
 import ADB from 'appium-adb';
-
-chai.should();
-chai.use(chaiAsPromised);
 
 /** @type {AndroidDriver} */
 let driver;
 let sandbox = sinon.createSandbox();
 
 describe('Keyboard', function () {
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
   beforeEach(function () {
     driver = new AndroidDriver();
     driver.adb = new ADB();

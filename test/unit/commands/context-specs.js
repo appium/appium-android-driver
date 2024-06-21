@@ -1,5 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import * as webviewHelpers from '../../../lib/commands/context/helpers';
 import {
@@ -18,11 +16,20 @@ let driver;
 /** @type {Chromedriver} */
 let stubbedChromedriver;
 let sandbox = sinon.createSandbox();
-let expect = chai.expect;
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('Context', function () {
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    expect = chai.expect;
+    chai.use(chaiAsPromised.default);
+  });
+
   beforeEach(function () {
     driver = new AndroidDriver();
     driver.adb = sandbox.stub();

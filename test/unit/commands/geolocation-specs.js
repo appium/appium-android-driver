@@ -1,15 +1,20 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import ADB from 'appium-adb';
 import { AndroidDriver } from '../../../lib/driver';
 import { setMockLocationApp } from '../../../lib/commands/geolocation';
 
-chai.use(chaiAsPromised);
-
 describe('Geolocation', function () {
   let driver;
   let sandbox = sinon.createSandbox();
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
 
   beforeEach(function () {
     const adb = new ADB();

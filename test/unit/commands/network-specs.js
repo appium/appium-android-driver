@@ -1,5 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import ADB from 'appium-adb';
 import {AndroidDriver} from '../../../lib/driver';
@@ -13,10 +11,18 @@ let adb;
 /** @type {SettingsApp} */
 let settingsApp;
 let sandbox = sinon.createSandbox();
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('Network', function () {
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
   beforeEach(function () {
     driver = new AndroidDriver();
     adb = new ADB();

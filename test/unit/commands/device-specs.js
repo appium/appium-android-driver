@@ -1,5 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import ADB from 'appium-adb';
 import _ from 'lodash';
@@ -9,14 +7,21 @@ import * as deviceUtils from '../../../lib/commands/device/utils';
 import * as geolocationHelpers from '../../../lib/commands/geolocation';
 import * as keyboardHelpers from '../../../lib/commands/keyboard';
 
-chai.use(chaiAsPromised);
-
 describe('Device Helpers', function () {
   /** @type {AndroidDriver} */
   let driver;
   /** @type {ADB} */
   let adb;
   let sandbox = sinon.createSandbox();
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
 
   beforeEach(function () {
     adb = new ADB();
