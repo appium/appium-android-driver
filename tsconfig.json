@@ -4,7 +4,7 @@
   "compilerOptions": {
     "outDir": "build",
     "esModuleInterop": true,
-    "types": ["node", "mocha", "chai", "chai-as-promised", "sinon"],
+    "types": ["node", "mocha"],
     "strict": false,
     "checkJs": true
   },
