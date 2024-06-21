@@ -1,3 +1,10 @@
+## [9.6.6](https://github.com/appium/appium-android-driver/compare/v9.6.5...v9.6.6) (2024-06-21)
+
+
+### Miscellaneous Chores
+
+* Bump chai and chai-as-promised ([#941](https://github.com/appium/appium-android-driver/issues/941)) ([b38e2a7](https://github.com/appium/appium-android-driver/commit/b38e2a7c269e386e58585d9307aab46cda3ff040))
+
 ## [9.6.5](https://github.com/appium/appium-android-driver/compare/v9.6.4...v9.6.5) (2024-06-12)
 
 
