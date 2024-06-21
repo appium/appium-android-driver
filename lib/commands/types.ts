@@ -1233,3 +1233,34 @@ export interface BluetoothOptions {
 export interface NfcOptions {
   action: 'enable' | 'disable';
 }
+
+export interface InjectedImageSize {
+  /** X scale value in range (0..) */
+  scaleX?: number;
+  /** Y scale value in range (0..) */
+  scaleY?: number;
+}
+
+export interface InjectedImagePosition {
+  /** Normalized X coordinate, where 0 means the image is centered on the viewport */
+  x?: number;
+  /** Normalized Y coordinate, where 0 means the image is centered on the viewport */
+  y?: number;
+  /** Normalized Z coordinate, where 0 means the image is centered on the viewport */
+  z?: number;
+}
+
+export interface InjectedImageRotation {
+  /** X rotation value in degrees */
+  x?: number;
+  /** Y rotation value in degrees */
+  y?: number;
+  /** Z rotation value in degrees */
+  z?: number;
+}
+
+export interface InjectedImageProperties {
+  size?: InjectedImageSize;
+  position?: InjectedImagePosition;
+  rotation?: InjectedImageRotation;
+}
