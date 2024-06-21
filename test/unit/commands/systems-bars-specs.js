@@ -1,17 +1,19 @@
 import {AndroidDriver} from '../../../lib/driver';
 import {parseWindowProperties, parseWindows} from '../../../lib/commands/system-bars';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
-chai.should();
-chai.use(chaiAsPromised);
-const expect = chai.expect;
 
 describe('System Bars', function () {
   /** @type {AndroidDriver} */
   let driver;
+  let chai;
+  let expect;
 
-  before(function () {
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    expect = chai.expect;
+    chai.use(chaiAsPromised.default);
     driver = new AndroidDriver();
   });
 

@@ -1,17 +1,22 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
 import ADB from 'appium-adb';
 import {errors} from 'appium/driver';
 
-chai.should();
-chai.use(chaiAsPromised);
-
 describe('IME', function () {
   /** @type {AndroidDriver} */
   let driver;
   let sandbox = sinon.createSandbox();
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
   beforeEach(function () {
     driver = new AndroidDriver();
     driver.adb = new ADB();

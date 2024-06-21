@@ -1,5 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
 import {
@@ -17,9 +15,6 @@ import _ from 'lodash';
 import ADB from 'appium-adb';
 import * as asyncbox from 'asyncbox';
 
-chai.should();
-chai.use(chaiAsPromised);
-
 const PACKAGE_NAME = 'io.appium.android.apis';
 const RETRY_PAUSE = 1000;
 const RETRY_COUNT = 2;
@@ -29,6 +24,16 @@ let adb;
 let driver;
 
 describe('performance data', function () {
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
   beforeEach(function () {
     adb = new ADB();
     driver = new AndroidDriver();

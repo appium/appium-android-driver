@@ -1,18 +1,22 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {AndroidDriver} from '../../../lib/driver';
 import {withMocks} from '@appium/test-support';
 import {fs, tempDir} from '@appium/support';
 import ADB from 'appium-adb';
-
-chai.should();
-chai.use(chaiAsPromised);
 
 let driver = new AndroidDriver();
 let adb = new ADB();
 driver.adb = adb;
 describe('recording the screen', function () {
   this.timeout(60000);
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
 
   describe(
     'basic',

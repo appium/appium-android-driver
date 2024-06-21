@@ -1,18 +1,21 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import sinon from 'sinon';
 import ADB from 'appium-adb';
 import os from 'os';
 import {AndroidDriver} from '../../../lib/driver';
 
-chai.should();
-chai.use(chaiAsPromised);
-
 describe('commands - logging', function () {
   /** @type {AndroidDriver} */
   let driver;
-  before(function () {
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     driver = new AndroidDriver();
     driver.adb = new ADB();
   });
