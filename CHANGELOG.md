@@ -1,3 +1,10 @@
+## [9.7.0](https://github.com/appium/appium-android-driver/compare/v9.6.6...v9.7.0) (2024-06-22)
+
+
+### Features
+
+* Add a capability to adjust injected image properties ([#942](https://github.com/appium/appium-android-driver/issues/942)) ([cd1a07a](https://github.com/appium/appium-android-driver/commit/cd1a07a100decf9e522f412369f56c7abd3a338c))
+
 ## [9.6.6](https://github.com/appium/appium-android-driver/compare/v9.6.5...v9.6.6) (2024-06-21)
 
 
