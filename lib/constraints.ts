@@ -266,6 +266,9 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   timeZone: {
     isString: true,
   },
+  injectedImageProperties: {
+    isObject: true,
+  }
 } as const satisfies Constraints;
 
 export default ANDROID_DRIVER_CONSTRAINTS;
