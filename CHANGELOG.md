@@ -1,3 +1,9 @@
+## [9.7.2](https://github.com/appium/appium-android-driver/compare/v9.7.1...v9.7.2) (2024-06-24)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump semantic-release from 23.1.1 to 24.0.0 and conventional-changelog-conventionalcommits to 8.0.0 ([#945](https://github.com/appium/appium-android-driver/issues/945)) ([8328e0f](https://github.com/appium/appium-android-driver/commit/8328e0f4a5b5810f7872492273aca988f4b8cb3e))
+
 ## [9.7.1](https://github.com/appium/appium-android-driver/compare/v9.7.0...v9.7.1) (2024-06-24)
 
 
