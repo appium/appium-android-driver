@@ -1,3 +1,11 @@
+## [9.7.1](https://github.com/appium/appium-android-driver/compare/v9.7.0...v9.7.1) (2024-06-24)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 17.0.2 to 18.0.0 ([#944](https://github.com/appium/appium-android-driver/issues/944)) ([915e615](https://github.com/appium/appium-android-driver/commit/915e6152d02157e7becac6d9ad4a575ad62b9eca))
+* **deps:** bump @appium/support from 4.5.0 to 5.0.3 ([#943](https://github.com/appium/appium-android-driver/issues/943)) ([19e1df4](https://github.com/appium/appium-android-driver/commit/19e1df49600e9df9b68ef26f359040f4baae8a67))
+
 ## [9.7.0](https://github.com/appium/appium-android-driver/compare/v9.6.6...v9.7.0) (2024-06-22)
 
 
