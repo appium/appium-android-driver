@@ -48,7 +48,7 @@
     "singleQuote": true
   },
   "dependencies": {
-    "@appium/support": "^4.2.0",
+    "@appium/support": "^5.0.3",
     "@colors/colors": "^1.6.0",
     "appium-adb": "^12.3.0",
     "appium-chromedriver": "^5.5.1",
