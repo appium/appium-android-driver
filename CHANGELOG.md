@@ -1,3 +1,9 @@
+## [9.7.3](https://github.com/appium/appium-android-driver/compare/v9.7.2...v9.7.3) (2024-07-03)
+
+### Bug Fixes
+
+* Add retry for keyboard hide ([#947](https://github.com/appium/appium-android-driver/issues/947)) ([26ef625](https://github.com/appium/appium-android-driver/commit/26ef6251f49a76271e083a814658da3e57b50d2a))
+
 ## [9.7.2](https://github.com/appium/appium-android-driver/compare/v9.7.1...v9.7.2) (2024-06-24)
 
 ### Miscellaneous Chores
