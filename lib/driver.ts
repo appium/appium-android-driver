@@ -329,6 +329,12 @@ class AndroidDriver
       await removeAllSessionWebSocketHandlers(this.server, sessionId);
     }
 
+    try {
+      await this.adb?.stopLogcat();
+    } catch (e) {
+      this.log.warn(`Cannot stop the logcat process. Original error: ${e.message}`);
+    }
+
     await super.deleteSession(sessionId);
   }
 
