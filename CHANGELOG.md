@@ -1,3 +1,9 @@
+## [9.8.0](https://github.com/appium/appium-android-driver/compare/v9.7.5...v9.8.0) (2024-07-15)
+
+### Features
+
+* Emit an event when syslog collection is started ([#951](https://github.com/appium/appium-android-driver/issues/951)) ([63aa3be](https://github.com/appium/appium-android-driver/commit/63aa3bee0746c7322d811ddffecf854b92aa774e))
+
 ## [9.7.5](https://github.com/appium/appium-android-driver/compare/v9.7.4...v9.7.5) (2024-07-10)
 
 ### Miscellaneous Chores
