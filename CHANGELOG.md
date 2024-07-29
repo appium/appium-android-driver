@@ -1,3 +1,9 @@
+## [9.8.1](https://github.com/appium/appium-android-driver/compare/v9.8.0...v9.8.1) (2024-07-29)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @types/node from 20.14.13 to 22.0.0 ([#952](https://github.com/appium/appium-android-driver/issues/952)) ([13439bd](https://github.com/appium/appium-android-driver/commit/13439bd649fa9b3d1ced60eac4e268bef301d1fa))
+
 ## [9.8.0](https://github.com/appium/appium-android-driver/compare/v9.7.5...v9.8.0) (2024-07-15)
 
 ### Features
