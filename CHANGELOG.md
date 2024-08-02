@@ -1,3 +1,9 @@
+## [9.8.2](https://github.com/appium/appium-android-driver/compare/v9.8.1...v9.8.2) (2024-08-02)
+
+### Bug Fixes
+
+* Tune application termination condition ([#953](https://github.com/appium/appium-android-driver/issues/953)) ([970085a](https://github.com/appium/appium-android-driver/commit/970085a2712c7dd1e8e3f731dbe349e47f584e9a))
+
 ## [9.8.1](https://github.com/appium/appium-android-driver/compare/v9.8.0...v9.8.1) (2024-07-29)
 
 ### Miscellaneous Chores
