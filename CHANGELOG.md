@@ -1,3 +1,9 @@
+## [9.8.3](https://github.com/appium/appium-android-driver/compare/v9.8.2...v9.8.3) (2024-08-06)
+
+### Miscellaneous Chores
+
+* Bump adb ([c9439df](https://github.com/appium/appium-android-driver/commit/c9439df800b6f0a4c619a82671b2415323051bbe))
+
 ## [9.8.2](https://github.com/appium/appium-android-driver/compare/v9.8.1...v9.8.2) (2024-08-02)
 
 ### Bug Fixes
