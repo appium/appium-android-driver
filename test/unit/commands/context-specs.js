@@ -319,6 +319,10 @@ describe('Context', function () {
       let chromedriver = await setupNewChromedriver.bind(driver)({enablePerformanceLogging: true});
       chromedriver.start.getCall(0).args[0].loggingPrefs.should.deep.equal({performance: 'ALL'});
     });
+    it('should use prefixed logging preferences', async function () {
+      let chromedriver = await setupNewChromedriver.bind(driver)({'goog:loggingPrefs': { 'performance': 'ALL', 'browser': 'INFO' }});
+      chromedriver.start.getCall(0).args[0].loggingPrefs.should.deep.equal({performance: 'ALL', 'browser': 'INFO'});
+    });
     it('should set androidActivity to appActivity if browser name is chromium-webview', async function () {
       let chromedriver = await setupNewChromedriver.bind(driver)({
         browserName: 'chromium-webview',
@@ -328,7 +332,7 @@ describe('Context', function () {
         .getCall(0)
         .args[0].chromeOptions.androidActivity.should.be.equal('app_act');
     });
-    it('should be able to set loggingPrefs capability', async function () {
+    it('should be able to set pageLoad strategy', async function () {
       let chromedriver = await setupNewChromedriver.bind(driver)({pageLoadStrategy: 'strategy'});
       chromedriver.start.getCall(0).args[0].pageLoadStrategy.should.be.equal('strategy');
     });
