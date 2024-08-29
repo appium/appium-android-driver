@@ -1,3 +1,9 @@
+## [9.9.0](https://github.com/appium/appium-android-driver/compare/v9.8.3...v9.9.0) (2024-08-29)
+
+### Features
+
+* support 'goog:loggingPrefs' value when creating a session ([#954](https://github.com/appium/appium-android-driver/issues/954)) ([8392b89](https://github.com/appium/appium-android-driver/commit/8392b8940870db53378546ccac422fd648f8b7a7))
+
 ## [9.8.3](https://github.com/appium/appium-android-driver/compare/v9.8.2...v9.8.3) (2024-08-06)
 
 ### Miscellaneous Chores
