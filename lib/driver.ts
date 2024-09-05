@@ -160,6 +160,7 @@ import {
   mobileStopLogsBroadcast,
   getLogTypes,
   getLog,
+  assignBiDiLogListener,
 } from './commands/log';
 import {
   mobileIsMediaProjectionRecordingRunning,
@@ -252,6 +253,8 @@ class AndroidDriver
 
   _logcatWebsocketListener?: LogcatListener;
 
+  _bidiServerLogListener?: (...args: any[]) => void;
+
   opts: AndroidDriverOpts;
 
   constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
@@ -271,6 +274,7 @@ class AndroidDriver
     this.curContext = this.defaultContextName();
     this.opts = opts as AndroidDriverOpts;
     this._cachedActivityArgs = {};
+    this.doesSupportBidi = true;
   }
 
   get settingsApp(): SettingsApp {
@@ -330,9 +334,14 @@ class AndroidDriver
     }
 
     try {
+      this.adb?.logcat?.removeAllListeners();
       await this.adb?.stopLogcat();
     } catch (e) {
       this.log.warn(`Cannot stop the logcat process. Original error: ${e.message}`);
+    }
+
+    if (this._bidiServerLogListener) {
+      this.log.unwrap().off('log', this._bidiServerLogListener);
     }
 
     await super.deleteSession(sessionId);
@@ -488,6 +497,7 @@ class AndroidDriver
   mobileStopLogsBroadcast = mobileStopLogsBroadcast;
   getLogTypes = getLogTypes;
   getLog = getLog;
+  assignBiDiLogListener = assignBiDiLogListener;
 
   mobileIsMediaProjectionRecordingRunning = mobileIsMediaProjectionRecordingRunning;
   mobileStartMediaProjectionRecording = mobileStartMediaProjectionRecording;
