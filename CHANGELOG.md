@@ -1,3 +1,9 @@
+## [9.10.0](https://github.com/appium/appium-android-driver/compare/v9.9.0...v9.10.0) (2024-09-08)
+
+### Features
+
+* Emit logs over BiDi socket ([#955](https://github.com/appium/appium-android-driver/issues/955)) ([4f7045b](https://github.com/appium/appium-android-driver/commit/4f7045bc76b1550c925a73b80ffdc7de88acf176))
+
 ## [9.9.0](https://github.com/appium/appium-android-driver/compare/v9.8.3...v9.9.0) (2024-08-29)
 
 ### Features
