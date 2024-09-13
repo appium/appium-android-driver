@@ -1,3 +1,9 @@
+## [9.10.1](https://github.com/appium/appium-android-driver/compare/v9.10.0...v9.10.1) (2024-09-13)
+
+### Bug Fixes
+
+* Strip colors from server logs ([#958](https://github.com/appium/appium-android-driver/issues/958)) ([7b475a7](https://github.com/appium/appium-android-driver/commit/7b475a7526ecdba3b8fee412fc73b8007aca8547))
+
 ## [9.10.0](https://github.com/appium/appium-android-driver/compare/v9.9.0...v9.10.0) (2024-09-08)
 
 ### Features
