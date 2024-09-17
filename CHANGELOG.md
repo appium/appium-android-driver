@@ -1,3 +1,9 @@
+## [9.11.0](https://github.com/appium/appium-android-driver/compare/v9.10.2...v9.11.0) (2024-09-17)
+
+### Features
+
+* Bump chromedriver ([#960](https://github.com/appium/appium-android-driver/issues/960)) ([55d5eb6](https://github.com/appium/appium-android-driver/commit/55d5eb6a198cf8675a5753e4e27654d954585e16))
+
 ## [9.10.2](https://github.com/appium/appium-android-driver/compare/v9.10.1...v9.10.2) (2024-09-13)
 
 ### Miscellaneous Chores
