@@ -126,6 +126,9 @@ import {
   mobileRefreshGpsCache,
   toggleLocationServices,
   isLocationServicesEnabled,
+  mobileGetGeolocation,
+  mobileSetGeolocation,
+  mobileResetGeolocation,
 } from './commands/geolocation';
 import {
   performActions,
@@ -453,6 +456,9 @@ class AndroidDriver
   mobileRefreshGpsCache = mobileRefreshGpsCache;
   toggleLocationServices = toggleLocationServices;
   isLocationServicesEnabled = isLocationServicesEnabled;
+  mobileGetGeolocation = mobileGetGeolocation;
+  mobileSetGeolocation = mobileSetGeolocation;
+  mobileResetGeolocation = mobileResetGeolocation;
 
   performActions = performActions;
 
