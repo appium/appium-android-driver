@@ -1,3 +1,9 @@
+## [9.12.0](https://github.com/appium/appium-android-driver/compare/v9.11.0...v9.12.0) (2024-09-23)
+
+### Features
+
+* Add mobile wrappers to geolocation APIs ([#961](https://github.com/appium/appium-android-driver/issues/961)) ([839545d](https://github.com/appium/appium-android-driver/commit/839545d0a7033027a5abfdf77f768a9c269c4369))
+
 ## [9.11.0](https://github.com/appium/appium-android-driver/compare/v9.10.2...v9.11.0) (2024-09-17)
 
 ### Features
