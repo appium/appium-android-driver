@@ -347,7 +347,7 @@ describe('Context', function () {
     it('should return pakage for chromebeta', function () {
       webviewHelpers.getChromePkg('chromebeta').should.deep.equal({
         pkg: 'com.chrome.beta',
-        activity: 'com.google.android.apps.chrome.Main',
+        activity: 'com.google.android.apps.chrome.IntentDispatcher',
       });
     });
     it('should return pakage for browser', function () {
@@ -359,7 +359,7 @@ describe('Context', function () {
     it('should return pakage for chromium-browser', function () {
       webviewHelpers.getChromePkg('chromium-browser').should.deep.equal({
         pkg: 'org.chromium.chrome',
-        activity: 'com.google.android.apps.chrome.Main',
+        activity: 'com.google.android.apps.chrome.IntentDispatcher',
       });
     });
     it('should return pakage for chromium-webview', function () {
