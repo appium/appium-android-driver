@@ -119,12 +119,12 @@ describe('App Management', function () {
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appPackage, appActivity});
       sandbox.stub(B, 'delay');
       sandbox.stub(driver.adb, 'startApp');
-      sandbox.stub(driver, 'activateApp');
+      sandbox.stub(driver.adb, 'activateApp');
       await driver.background(10);
       driver.adb.getFocusedPackageAndActivity.calledOnce.should.be.true;
       driver.adb.goToHome.calledOnce.should.be.true;
       B.delay.calledWithExactly(10000).should.be.true;
-      driver.activateApp.calledWithExactly(appPackage).should.be.true;
+      driver.adb.activateApp.calledWithExactly(appPackage).should.be.true;
       driver.adb.startApp.notCalled.should.be.true;
     });
     it('should bring app to background and back if started after session init', async function () {
@@ -154,13 +154,13 @@ describe('App Management', function () {
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appPackage, appActivity});
       sandbox.stub(B, 'delay');
       sandbox.stub(driver.adb, 'startApp');
-      sandbox.stub(driver, 'activateApp');
+      sandbox.stub(driver.adb, 'activateApp');
       await driver.background(10);
       driver.adb.getFocusedPackageAndActivity.calledOnce.should.be.true;
       driver.adb.goToHome.calledOnce.should.be.true;
       B.delay.calledWithExactly(10000).should.be.true;
       driver.adb.startApp.calledWithExactly(params).should.be.true;
-      driver.activateApp.notCalled.should.be.true;
+      driver.adb.activateApp.notCalled.should.be.true;
     });
     it('should bring app to background and back if waiting for other pkg / activity', async function () {
       //eslint-disable-line
@@ -185,12 +185,12 @@ describe('App Management', function () {
         .returns({appPackage: appWaitPackage, appActivity: appWaitActivity});
       sandbox.stub(B, 'delay');
       sandbox.stub(driver.adb, 'startApp');
-      sandbox.stub(driver, 'activateApp');
+      sandbox.stub(driver.adb, 'activateApp');
       await driver.background(10);
       driver.adb.getFocusedPackageAndActivity.calledOnce.should.be.true;
       driver.adb.goToHome.calledOnce.should.be.true;
       B.delay.calledWithExactly(10000).should.be.true;
-      driver.activateApp.calledWithExactly(appWaitPackage).should.be.true;
+      driver.adb.activateApp.calledWithExactly(appWaitPackage).should.be.true;
       driver.adb.startApp.notCalled.should.be.true;
     });
     it('should not bring app back if seconds are negative', async function () {

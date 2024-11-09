@@ -81,7 +81,6 @@ import {
   mobileTerminateApp,
   terminateApp,
   removeApp,
-  activateApp,
   queryAppState,
   isAppInstalled,
 } from './commands/app-management';
@@ -409,7 +408,6 @@ class AndroidDriver
   mobileTerminateApp = mobileTerminateApp;
   terminateApp = terminateApp;
   removeApp = removeApp;
-  activateApp = activateApp;
   queryAppState = queryAppState;
   isAppInstalled = isAppInstalled;
 
