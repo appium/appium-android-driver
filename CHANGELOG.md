@@ -1,3 +1,9 @@
+## [9.12.2](https://github.com/appium/appium-android-driver/compare/v9.12.1...v9.12.2) (2024-11-09)
+
+### Miscellaneous Chores
+
+* use activateApp from adb ([#964](https://github.com/appium/appium-android-driver/issues/964)) ([0fc63f5](https://github.com/appium/appium-android-driver/commit/0fc63f53821c2a10202a081ca603f95a5401dd34))
+
 ## [9.12.1](https://github.com/appium/appium-android-driver/compare/v9.12.0...v9.12.1) (2024-10-31)
 
 ### Miscellaneous Chores
