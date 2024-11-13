@@ -35,6 +35,9 @@ import {
   suspendChromedriverProxy,
   startChromeSession,
   mobileGetContexts,
+  getWindowHandle,
+  getWindowHandles,
+  setWindow,
 } from './commands/context/exports';
 import {
   getDeviceInfoFromCaps,
@@ -365,6 +368,9 @@ class AndroidDriver
   isWebContext = isWebContext;
   mobileGetContexts = mobileGetContexts;
   setContext = setContext as any as (this: AndroidDriver, name?: string) => Promise<void>;
+  setWindow = setWindow;
+  getWindowHandle = getWindowHandle;
+  getWindowHandles = getWindowHandles;
 
   getDeviceInfoFromCaps = getDeviceInfoFromCaps;
   createADB = createADB;
