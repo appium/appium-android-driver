@@ -1,3 +1,9 @@
+## [9.13.0](https://github.com/appium/appium-android-driver/compare/v9.12.3...v9.13.0) (2024-11-13)
+
+### Features
+
+* Return default window handle in native context ([#966](https://github.com/appium/appium-android-driver/issues/966)) ([4426dd2](https://github.com/appium/appium-android-driver/commit/4426dd25aec118f7c849d47366fb40189c57b29e))
+
 ## [9.12.3](https://github.com/appium/appium-android-driver/compare/v9.12.2...v9.12.3) (2024-11-10)
 
 ### Miscellaneous Chores
