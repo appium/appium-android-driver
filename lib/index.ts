@@ -11,6 +11,7 @@ export const utils = {
 } as const;
 export type * from './commands/types';
 export {ANDROID_DRIVER_CONSTRAINTS as commonCapConstraints} from './constraints';
+export {NATIVE_WIN} from './commands/context/helpers';
 export * from './driver';
 export * as doctor from './doctor/checks';
 

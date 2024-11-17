@@ -38,6 +38,7 @@ import {
   getWindowHandle,
   getWindowHandles,
   setWindow,
+  notifyBiDiContextChange,
 } from './commands/context/exports';
 import {
   getDeviceInfoFromCaps,
@@ -371,6 +372,7 @@ class AndroidDriver
   setWindow = setWindow;
   getWindowHandle = getWindowHandle;
   getWindowHandles = getWindowHandles;
+  notifyBiDiContextChange = notifyBiDiContextChange;
 
   getDeviceInfoFromCaps = getDeviceInfoFromCaps;
   createADB = createADB;
