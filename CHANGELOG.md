@@ -1,3 +1,9 @@
+## [9.14.0](https://github.com/appium/appium-android-driver/compare/v9.13.0...v9.14.0) (2024-11-18)
+
+### Features
+
+* Add a BiDi event upon context change ([#967](https://github.com/appium/appium-android-driver/issues/967)) ([26fc1bc](https://github.com/appium/appium-android-driver/commit/26fc1bc38b527650f6ef902a868d04cbd7c80646))
+
 ## [9.13.0](https://github.com/appium/appium-android-driver/compare/v9.12.3...v9.13.0) (2024-11-13)
 
 ### Features
