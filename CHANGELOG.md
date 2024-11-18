@@ -1,3 +1,9 @@
+## [9.14.1](https://github.com/appium/appium-android-driver/compare/v9.14.0...v9.14.1) (2024-11-18)
+
+### Bug Fixes
+
+* Remove redundant export ([2657827](https://github.com/appium/appium-android-driver/commit/26578279d253104c7f879dc14a87c4a7e966b617))
+
 ## [9.14.0](https://github.com/appium/appium-android-driver/compare/v9.13.0...v9.14.0) (2024-11-18)
 
 ### Features
