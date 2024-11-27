@@ -1,3 +1,9 @@
+## [9.14.2](https://github.com/appium/appium-android-driver/compare/v9.14.1...v9.14.2) (2024-11-27)
+
+### Miscellaneous Chores
+
+* Add workaround for CDP host security validation ([#968](https://github.com/appium/appium-android-driver/issues/968)) ([07142ba](https://github.com/appium/appium-android-driver/commit/07142ba1e3a9f163a96b687b658670fdd121764a))
+
 ## [9.14.1](https://github.com/appium/appium-android-driver/compare/v9.14.0...v9.14.1) (2024-11-18)
 
 ### Bug Fixes
