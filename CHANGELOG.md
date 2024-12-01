@@ -1,3 +1,9 @@
+## [9.14.3](https://github.com/appium/appium-android-driver/compare/v9.14.2...v9.14.3) (2024-12-01)
+
+### Miscellaneous Chores
+
+* Update deprecated method name ([#969](https://github.com/appium/appium-android-driver/issues/969)) ([031a26d](https://github.com/appium/appium-android-driver/commit/031a26d61a9545aa0866eddb648d3306ec871ba6))
+
 ## [9.14.2](https://github.com/appium/appium-android-driver/compare/v9.14.1...v9.14.2) (2024-11-27)
 
 ### Miscellaneous Chores
