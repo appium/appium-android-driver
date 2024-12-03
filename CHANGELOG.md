@@ -1,3 +1,9 @@
+## [9.14.4](https://github.com/appium/appium-android-driver/compare/v9.14.3...v9.14.4) (2024-12-03)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump mocha from 10.8.2 to 11.0.1 ([#970](https://github.com/appium/appium-android-driver/issues/970)) ([7790b0e](https://github.com/appium/appium-android-driver/commit/7790b0e40d5359618c8e3ff9b631062afe5548cd))
+
 ## [9.14.3](https://github.com/appium/appium-android-driver/compare/v9.14.2...v9.14.3) (2024-12-01)
 
 ### Miscellaneous Chores
