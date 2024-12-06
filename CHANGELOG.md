@@ -1,3 +1,9 @@
+## [9.14.5](https://github.com/appium/appium-android-driver/compare/v9.14.4...v9.14.5) (2024-12-06)
+
+### Miscellaneous Chores
+
+* **deps:** bump @appium/support from 5.1.8 to 6.0.0 ([#971](https://github.com/appium/appium-android-driver/issues/971)) ([2804311](https://github.com/appium/appium-android-driver/commit/2804311756eefc847ba7d582a51629e2f78935cd))
+
 ## [9.14.4](https://github.com/appium/appium-android-driver/compare/v9.14.3...v9.14.4) (2024-12-03)
 
 ### Miscellaneous Chores
