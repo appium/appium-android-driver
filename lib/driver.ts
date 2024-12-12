@@ -316,7 +316,7 @@ class AndroidDriver
         );
       }
       if (caps.appPackage) {
-        throw this.log.errorAndThrow(
+        throw this.log.errorWithException(
           `The desired should not include both of an 'appPackage' and a 'browserName'`,
         );
       }
@@ -326,7 +326,7 @@ class AndroidDriver
       try {
         parseArray(caps.uninstallOtherPackages);
       } catch (e) {
-        throw this.log.errorAndThrow(
+        throw this.log.errorWithException(
           `Could not parse "uninstallOtherPackages" capability: ${(e as Error).message}`,
         );
       }
