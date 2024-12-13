@@ -1,3 +1,9 @@
+## [9.14.6](https://github.com/appium/appium-android-driver/compare/v9.14.5...v9.14.6) (2024-12-13)
+
+### Miscellaneous Chores
+
+* Replace occurrences of the deprecated errorAndThrow API ([#972](https://github.com/appium/appium-android-driver/issues/972)) ([32a5451](https://github.com/appium/appium-android-driver/commit/32a545101dfac698327a9edc1dbed3a0df8d432b))
+
 ## [9.14.5](https://github.com/appium/appium-android-driver/compare/v9.14.4...v9.14.5) (2024-12-06)
 
 ### Miscellaneous Chores
