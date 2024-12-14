@@ -1,3 +1,9 @@
+## [9.14.7](https://github.com/appium/appium-android-driver/compare/v9.14.6...v9.14.7) (2024-12-14)
+
+### Miscellaneous Chores
+
+* Tune contextUpdate event generation ([#973](https://github.com/appium/appium-android-driver/issues/973)) ([cbb42bb](https://github.com/appium/appium-android-driver/commit/cbb42bb17a972cdee07afff899f604ff432440b4))
+
 ## [9.14.6](https://github.com/appium/appium-android-driver/compare/v9.14.5...v9.14.6) (2024-12-13)
 
 ### Miscellaneous Chores
