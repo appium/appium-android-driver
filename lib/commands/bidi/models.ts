@@ -1,17 +1,32 @@
 import type { LogEntryAddedEvent, ContextUpdatedEvent } from './types';
 import { NATIVE_WIN } from '../context/helpers';
-import { CONTEXT_UPDATED_EVENT, LOG_ENTRY_ADDED_EVENT } from './constants';
+import {
+  CONTEXT_UPDATED_EVENT,
+  LOG_ENTRY_ADDED_EVENT,
+  CONTEXT_UPDATED_EVENT_OBSOLETE,
+} from './constants';
 import type { LogcatRecord as LogEntry } from 'appium-adb';
 
-export function makeContextUpdatedEvent(contextName: string): ContextUpdatedEvent {
+function toContextUpdatedEvent(method: string, contextName: string): ContextUpdatedEvent {
   return {
-    method: CONTEXT_UPDATED_EVENT,
+    method,
     params: {
       name: contextName,
       type: contextName === NATIVE_WIN ? 'NATIVE' : 'WEB',
     },
   };
 }
+
+export const makeContextUpdatedEvent = (contextName: string, domain: string) => toContextUpdatedEvent(
+  CONTEXT_UPDATED_EVENT(domain), contextName
+);
+
+/**
+ * @deprecated Use {@link makeContextUpdatedEvent} instead
+ */
+export const makeObsoleteContextUpdatedEvent = (contextName: string) => toContextUpdatedEvent(
+  CONTEXT_UPDATED_EVENT_OBSOLETE, contextName
+);
 
 export function makeLogEntryAddedEvent(entry: LogEntry, context: string, type: string): LogEntryAddedEvent {
   return {
