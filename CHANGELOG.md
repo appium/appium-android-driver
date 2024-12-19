@@ -1,3 +1,9 @@
+## [9.14.8](https://github.com/appium/appium-android-driver/compare/v9.14.7...v9.14.8) (2024-12-19)
+
+### Bug Fixes
+
+* Adjust log level for BiDi events ([#974](https://github.com/appium/appium-android-driver/issues/974)) ([3a4e264](https://github.com/appium/appium-android-driver/commit/3a4e264f9337f66fe3a1945755d2bf25b891d99f))
+
 ## [9.14.7](https://github.com/appium/appium-android-driver/compare/v9.14.6...v9.14.7) (2024-12-14)
 
 ### Miscellaneous Chores
