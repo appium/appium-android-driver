@@ -1,3 +1,9 @@
+## [9.14.9](https://github.com/appium/appium-android-driver/compare/v9.14.8...v9.14.9) (2024-12-27)
+
+### Bug Fixes
+
+* Tune retrieval of package launch info ([#975](https://github.com/appium/appium-android-driver/issues/975)) ([bbdcc18](https://github.com/appium/appium-android-driver/commit/bbdcc1806948c63fdb455fdf489c7e6a1d1b5a97))
+
 ## [9.14.8](https://github.com/appium/appium-android-driver/compare/v9.14.7...v9.14.8) (2024-12-19)
 
 ### Bug Fixes
