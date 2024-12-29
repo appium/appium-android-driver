@@ -1,3 +1,9 @@
+## [9.14.10](https://github.com/appium/appium-android-driver/compare/v9.14.9...v9.14.10) (2024-12-29)
+
+### Bug Fixes
+
+* Update activity resolution logs ([#976](https://github.com/appium/appium-android-driver/issues/976)) ([6fd4035](https://github.com/appium/appium-android-driver/commit/6fd403571b5b74afbc978cd024c794e36f1d57dc))
+
 ## [9.14.9](https://github.com/appium/appium-android-driver/compare/v9.14.8...v9.14.9) (2024-12-27)
 
 ### Bug Fixes
