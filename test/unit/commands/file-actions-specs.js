@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
 import * as support from '@appium/support';
-import ADB from 'appium-adb';
+import {ADB} from 'appium-adb';
 
 /** @type {AndroidDriver} */
 let driver;

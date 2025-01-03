@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
 import {fs} from '@appium/support';
 import B from 'bluebird';
-import ADB from 'appium-adb';
+import {ADB} from 'appium-adb';
 import { errors } from 'appium/driver';
 
 /** @type {AndroidDriver} */
@@ -163,7 +163,6 @@ describe('App Management', function () {
       driver.adb.activateApp.notCalled.should.be.true;
     });
     it('should bring app to background and back if waiting for other pkg / activity', async function () {
-      //eslint-disable-line
       const appPackage = 'somepkg';
       const appActivity = 'someacv';
       const appWaitPackage = 'somewaitpkg';

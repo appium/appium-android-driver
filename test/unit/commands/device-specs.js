@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import ADB from 'appium-adb';
+import {ADB} from 'appium-adb';
 import _ from 'lodash';
 import {AndroidDriver} from '../../../lib/driver';
 import {prepareAvdArgs, prepareEmulator} from '../../../lib/commands/device/utils';

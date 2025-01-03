@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
-import ADB from 'appium-adb';
+import {ADB} from 'appium-adb';
 import {errors} from 'appium/driver';
 
 describe('IME', function () {

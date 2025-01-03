@@ -8,7 +8,7 @@ import {
   setupNewChromedriver,
 } from '../../../lib/commands/context/helpers';
 import {AndroidDriver} from '../../../lib/driver';
-import Chromedriver from 'appium-chromedriver';
+import {Chromedriver} from 'appium-chromedriver';
 import {errors} from 'appium/driver';
 
 /** @type {AndroidDriver} */

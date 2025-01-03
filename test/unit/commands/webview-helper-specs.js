@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import {DEVTOOLS_SOCKET_PATTERN} from '../../../lib/commands/context/helpers';
 import * as webviewHelpers from '../../../lib/commands/context/helpers';
-import ADB from 'appium-adb';
+import {ADB} from 'appium-adb';
 import { AndroidDriver } from '../../../lib/driver';
 
 let sandbox = sinon.createSandbox();

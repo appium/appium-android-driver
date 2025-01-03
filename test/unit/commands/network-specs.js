@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import ADB from 'appium-adb';
+import {ADB} from 'appium-adb';
 import {AndroidDriver} from '../../../lib/driver';
 import B from 'bluebird';
 import { SettingsApp } from 'io.appium.settings';
