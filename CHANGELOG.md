@@ -1,3 +1,9 @@
+## [9.14.11](https://github.com/appium/appium-android-driver/compare/v9.14.10...v9.14.11) (2025-01-03)
+
+### Miscellaneous Chores
+
+* Bump eslint version ([#977](https://github.com/appium/appium-android-driver/issues/977)) ([70314c5](https://github.com/appium/appium-android-driver/commit/70314c52efd37b5da15bcf99c7fb58318908c383))
+
 ## [9.14.10](https://github.com/appium/appium-android-driver/compare/v9.14.9...v9.14.10) (2024-12-29)
 
 ### Bug Fixes
