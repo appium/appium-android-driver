@@ -1,7 +1,7 @@
 import {AndroidDriver} from '../../../lib/driver';
 import {withMocks} from '@appium/test-support';
 import {fs, tempDir} from '@appium/support';
-import ADB from 'appium-adb';
+import {ADB} from 'appium-adb';
 
 let driver = new AndroidDriver();
 let adb = new ADB();

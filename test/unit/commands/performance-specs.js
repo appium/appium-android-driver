@@ -12,7 +12,7 @@ import {
   getNetworkTrafficInfo,
 } from '../../../lib/commands/performance';
 import _ from 'lodash';
-import ADB from 'appium-adb';
+import {ADB} from 'appium-adb';
 import * as asyncbox from 'asyncbox';
 
 const PACKAGE_NAME = 'io.appium.android.apis';

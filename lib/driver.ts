@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import type {
   DriverCaps,
   DriverOpts,
@@ -10,11 +8,11 @@ import type {
   W3CDriverCaps,
 } from '@appium/types';
 import _ from 'lodash';
-import ADB from 'appium-adb';
+import {ADB} from 'appium-adb';
 import type {LogcatListener} from 'appium-adb';
 import type {default as AppiumChromedriver} from 'appium-chromedriver';
 import {BaseDriver} from 'appium/driver';
-import ANDROID_DRIVER_CONSTRAINTS, {AndroidDriverConstraints} from './constraints';
+import {ANDROID_DRIVER_CONSTRAINTS, AndroidDriverConstraints} from './constraints';
 import {newMethodMap} from './method-map';
 import {SettingsApp} from 'io.appium.settings';
 import {parseArray, removeAllSessionWebSocketHandlers} from './utils';
