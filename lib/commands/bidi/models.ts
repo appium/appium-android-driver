@@ -5,7 +5,7 @@ import {
   LOG_ENTRY_ADDED_EVENT,
   CONTEXT_UPDATED_EVENT_OBSOLETE,
 } from './constants';
-import type { LogcatRecord as LogEntry } from 'appium-adb';
+import type { LogEntry } from 'appium-adb';
 import _ from 'lodash';
 
 function toContextUpdatedEvent(method: string, contextName: string): ContextUpdatedEvent {
