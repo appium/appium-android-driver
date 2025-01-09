@@ -279,6 +279,7 @@ class AndroidDriver
     this.curContext = this.defaultContextName();
     this.opts = opts as AndroidDriverOpts;
     this._cachedActivityArgs = {};
+    // @ts-ignore Remove it after min supported server version is ^2.14.0
     this.doesSupportBidi = true;
   }
 
