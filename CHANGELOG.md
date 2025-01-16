@@ -1,3 +1,9 @@
+## [9.14.13](https://github.com/appium/appium-android-driver/compare/v9.14.12...v9.14.13) (2025-01-16)
+
+### Miscellaneous Chores
+
+* bump io.appium.settings to include the broad cast receiver update ([#979](https://github.com/appium/appium-android-driver/issues/979)) ([27fc11e](https://github.com/appium/appium-android-driver/commit/27fc11ef2fe5a3dfd243e11364b1d06f827aff05))
+
 ## [9.14.12](https://github.com/appium/appium-android-driver/compare/v9.14.11...v9.14.12) (2025-01-09)
 
 ### Miscellaneous Chores
