@@ -1,3 +1,9 @@
+## [9.15.0](https://github.com/appium/appium-android-driver/compare/v9.14.13...v9.15.0) (2025-01-24)
+
+### Features
+
+* bump appium-adb to handle screenState=SCREEN_STATE_OFF as locked ([#980](https://github.com/appium/appium-android-driver/issues/980)) ([838ddaf](https://github.com/appium/appium-android-driver/commit/838ddafb928dbd4c2e238fb5b89e697f4b27c53d))
+
 ## [9.14.13](https://github.com/appium/appium-android-driver/compare/v9.14.12...v9.14.13) (2025-01-16)
 
 ### Miscellaneous Chores
