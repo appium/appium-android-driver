@@ -1,3 +1,118 @@
+## [10.0.0](https://github.com/appium/appium-android-driver/compare/v9.15.1...v10.0.0) (2025-01-31)
+
+### ⚠ BREAKING CHANGES
+
+* The following driver methods and properties were removed:
+
+- executeMobile
+- mobileCommandsMapping
+- mobileLock
+- mobilePushFile
+- mobilePullFolder
+- mobilePullFile
+- mobileActivateApp
+- mobileQueryAppState
+* Arguments of the following driver methods were changed:
+
+- mobileExecEmuConsoleCommand
+- mobileShell
+- mobileChangePermissions
+- mobileGetPermissions
+- mobilePerformEditorAction
+- mobileGetDeviceTime
+- mobileStartScreenStreaming
+- mobileDeleteFile
+- mobileIsAppInstalled
+- mobileRemoveApp
+- mobileTerminateApp
+- mobileInstallApp
+- mobileClearApp
+- mobileStartService
+- mobileStopService
+- mobileStartActivity
+- mobileBroadcast
+- mobileGetContexts
+- mobileUnlock
+- mobileRefreshGpsCache
+- mobileStartMediaProjectionRecording
+- mobileStopMediaProjectionRecording
+- mobileGetConnectivity
+- mobileSetConnectivity
+- mobileDeviceidle
+- mobileBluetooth
+- mobileNfc
+- mobileSetUiMode
+- mobileGetUiMode
+- mobileInjectEmulatorCameraImage
+- mobileSendTrimMemory
+- mobileGetPerformanceData
+- mobilePerformStatusBarCommand
+- mobileFingerprint
+- mobileSendSms
+- mobileGsmCall
+- mobileGsmSignal
+- mobileGsmVoice
+- mobilePowerAc
+- mobilePowerCapacity
+- mobileNetworkSpeed
+- sensorSet
+- mobileSetGeolocation
+* The following obsolete type definitions were removed:
+
+- ExecOptions
+- ShellOpts
+- ChangePermissionsOpts
+- GetPermissionsOpts
+- PerformEditorActionOpts
+- DeviceTimeOpts
+- StartScreenStreamingOpts
+- PushFileOpts
+- PullFolderOpts
+- PullFileOpts
+- DeleteFileOpts
+- IsAppInstalledOpts
+- ActivateAppOpts
+- QueryAppStateOpts
+- RemoveAppOpts
+- TerminateAppOpts
+- InstallAppOpts
+- ClearAppOpts
+- StartServiceOpts
+- StopServiceOpts
+- StartActivityOpts
+- BroadcastOpts
+- LockOpts
+- UnlockOptions
+- GpsCacheRefreshOpts
+- StartMediaProjectionRecordingOpts
+- StopMediaProjectionRecordingOpts
+- GetConnectivityOpts
+- SetConnectivityOpts
+- DeviceidleOpts
+- BluetoothOptions
+- NfcOptions
+- SetUiModeOpts
+- GetUiModeOpts
+- ImageInjectionOpts
+- SendTrimMemoryOpts
+- PerformanceDataOpts
+- StatusBarCommandOpts
+- FingerprintOpts
+- SendSMSOpts
+- GsmCallOpts
+- GsmSignalStrengthOpts
+- GsmVoiceState
+- PowerACOpts
+- PowerCapacityOpts
+- NetworkSpeedOpts
+- SensorSetOpts
+- DragOpts
+- SwipeOpts
+
+### Features
+
+* Add support of executeMethodMap ([#982](https://github.com/appium/appium-android-driver/issues/982)) ([b68f3fa](https://github.com/appium/appium-android-driver/commit/b68f3fa741c08d963762cbd0c9748e31ec80cf21))
+
 ## [9.15.1](https://github.com/appium/appium-android-driver/compare/v9.15.0...v9.15.1) (2025-01-26)
 
 ### Miscellaneous Chores
