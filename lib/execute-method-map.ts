@@ -461,4 +461,11 @@ export const executeMethodMap = {
   'mobile: resetGeolocation': {
     command: 'mobileResetGeolocation',
   },
+
+  'mobile: getAppStrings': {
+    command: 'getStrings',
+    params: {
+      optional: ['language'],
+    }
+  },
 } as const satisfies ExecuteMethodMap<any>;
