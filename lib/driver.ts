@@ -76,9 +76,7 @@ import {
   mobileClearApp,
   mobileInstallApp,
   installApp,
-  mobileActivateApp,
   mobileIsAppInstalled,
-  mobileQueryAppState,
   mobileRemoveApp,
   mobileTerminateApp,
   terminateApp,
@@ -109,16 +107,11 @@ import {
 } from './commands/element';
 import {
   execute,
-  executeMobile,
-  mobileCommandsMapping,
 } from './commands/execute';
 import {
   pullFile,
-  mobilePullFile,
   pullFolder,
-  mobilePullFolder,
   pushFile,
-  mobilePushFile,
   mobileDeleteFile,
 } from './commands/file-actions';
 import {findElOrEls, doFindElementOrEls} from './commands/find';
@@ -158,7 +151,7 @@ import {
   longPressKeyCode,
   mobilePerformEditorAction,
 } from './commands/keyboard';
-import {lock, unlock, mobileLock, mobileUnlock, isLocked} from './commands/lock/exports';
+import {lock, unlock, mobileUnlock, isLocked} from './commands/lock/exports';
 import {
   supportedLogTypes,
   mobileStartLogsBroadcast,
@@ -213,6 +206,7 @@ import {mobileShell} from './commands/shell';
 import {mobileStartScreenStreaming, mobileStopScreenStreaming} from './commands/streamscreen';
 import {getSystemBars, mobilePerformStatusBarCommand} from './commands/system-bars';
 import {getDeviceTime, mobileGetDeviceTime} from './commands/time';
+import { executeMethodMap } from './execute-method-map';
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
 export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;
@@ -226,6 +220,8 @@ class AndroidDriver
   implements ExternalDriver<AndroidDriverConstraints, string, StringRecord>
 {
   static newMethodMap = newMethodMap;
+  static executeMethodMap = executeMethodMap;
+
   jwpProxyAvoid: RouteMatcher[];
 
   adb: ADB;
@@ -409,9 +405,7 @@ class AndroidDriver
   mobileClearApp = mobileClearApp;
   mobileInstallApp = mobileInstallApp;
   installApp = installApp;
-  mobileActivateApp = mobileActivateApp;
   mobileIsAppInstalled = mobileIsAppInstalled;
-  mobileQueryAppState = mobileQueryAppState;
   mobileRemoveApp = mobileRemoveApp;
   mobileTerminateApp = mobileTerminateApp;
   terminateApp = terminateApp;
@@ -444,15 +438,10 @@ class AndroidDriver
   getSize = getSize;
 
   execute = execute;
-  executeMobile = executeMobile;
-  mobileCommandsMapping = mobileCommandsMapping;
 
   pullFile = pullFile;
-  mobilePullFile = mobilePullFile;
   pullFolder = pullFolder;
-  mobilePullFolder = mobilePullFolder;
   pushFile = pushFile;
-  mobilePushFile = mobilePushFile;
   mobileDeleteFile = mobileDeleteFile;
 
   findElOrEls = findElOrEls;
@@ -501,7 +490,6 @@ class AndroidDriver
 
   lock = lock;
   unlock = unlock;
-  mobileLock = mobileLock;
   mobileUnlock = mobileUnlock;
   isLocked = isLocked;
 

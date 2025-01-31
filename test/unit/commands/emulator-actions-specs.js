@@ -24,16 +24,16 @@ describe('Emulator Actions', function () {
   });
   describe('sensorSet', function () {
     it('should call sensorSet', async function () {
-      sandbox.stub(driver, 'sensorSet');
-      await driver.executeMobile('sensorSet', {sensorType: 'light', value: 0});
-      driver.sensorSet.calledWithExactly({sensorType: 'light', value: 0}).should.be.true;
+      const sensorSetStub = sandbox.stub(driver, 'sensorSet');
+      await driver.execute('mobile:sensorSet', [{sensorType: 'light', value: 0}]);
+      sensorSetStub.calledWith('light', 0).should.be.true;
     });
     it('should be reject if arguments are missing', function () {
       driver
-        .executeMobile('sensorSet', {sensor: 'light', value: 0})
+        .execute('mobile: sensorSet', [{sensor: 'light', value: 0}])
         .should.eventually.be.rejectedWith(`'sensorType' argument is required`);
       driver
-        .executeMobile('sensorSet', {sensorType: 'light', val: 0})
+        .execute('mobile:  sensorSet', [{sensorType: 'light', val: 0}])
         .should.eventually.be.rejectedWith(`'value' argument is required`);
     });
   });

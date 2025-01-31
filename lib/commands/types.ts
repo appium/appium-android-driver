@@ -1,41 +1,10 @@
 import type {HTTPMethod, StringRecord} from '@appium/types';
-import type {InstallOptions, UninstallOptions} from 'appium-adb';
 import type {AndroidDriverCaps} from '../driver';
-
-export interface SwipeOpts {
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-  steps: number;
-  elementId?: string | number;
-}
-
-export interface DragOpts {
-  elementId?: string | number;
-  destElId?: string | number;
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-  steps: number;
-}
 
 /**
  * @privateRemarks probably better defined in `appium-adb`
  */
 export type GsmAction = 'call' | 'accept' | 'cancel' | 'hold';
-
-export interface GsmCallOpts {
-  /**
-   * The phone number to call to
-   */
-  phoneNumber: string;
-  /**
-   * Action to take
-   */
-  action: GsmAction;
-}
 
 /**
  * One of possible signal strength values, where 4 is the best signal.
@@ -43,66 +12,9 @@ export interface GsmCallOpts {
  */
 export type GsmSignalStrength = 0 | 1 | 2 | 3 | 4;
 
-export interface GsmSignalStrengthOpts {
-  /**
-   * The signal strength value
-   */
-  strength: GsmSignalStrength;
-}
-
-export interface SendSMSOpts {
-  /**
-   * The phone number to send SMS to
-   */
-  phoneNumber: string;
-  /**
-   * The message payload
-   */
-  message: string;
-}
-
-export interface FingerprintOpts {
-  /**
-   * The value is the `finger_id` for the finger that was "scanned". It is a
-   * unique integer that you assign for each virtual fingerprint. When the app
-   * is running you can run this same command each time the emulator prompts you
-   * for a fingerprint, you can run the adb command and pass it the `finger_id`
-   * to simulate the fingerprint scan.
-   */
-  fingerprintId: string | number;
-}
-
 export type GsmVoiceState = 'on' | 'off';
 
 export type PowerACState = 'on' | 'off';
-
-export interface GsmVoiceOpts {
-  state: GsmVoiceState;
-}
-
-export interface PowerACOpts {
-  state: PowerACState;
-}
-
-export interface PowerCapacityOpts {
-  /**
-   * Percentage value in range `[0, 100]`
-   */
-  percent: number;
-}
-
-export interface SensorSetOpts {
-  /**
-   * Sensor type as declared in `adb.SENSORS`
-   * @privateRemarks what is `adb.SENSORS`?
-   *
-   */
-  sensorType: string;
-  /**
-   * Value to set to the sensor
-   */
-  value: string;
-}
 
 export type NetworkSpeed =
   | 'gsm'
@@ -114,37 +26,6 @@ export type NetworkSpeed =
   | 'lte'
   | 'evdo'
   | 'full';
-
-export interface NetworkSpeedOpts {
-  speed: NetworkSpeed;
-}
-
-export interface IsAppInstalledOpts {
-  /**
-   * Application package identifier
-   */
-  appId: string;
-
-  /**
-   * The user ID for which the package is installed.
-   * The `current` user id is used by default.
-   */
-  user?: string | number;
-}
-
-export interface ClearAppOpts {
-  /**
-   * Application package identifier
-   */
-  appId: string;
-}
-
-export interface QueryAppStateOpts {
-  /**
-   * Application package identifier
-   */
-  appId: string;
-}
 
 /**
  * Returned by `queryAppState`
@@ -161,26 +42,6 @@ export interface TerminateAppOpts {
    * @defaultValue 500
    */
   timeout?: number | string;
-  /**
-   * Application package identifier
-   */
-  appId: string;
-}
-
-export interface ActivateAppOpts {
-  /**
-   * Application package identifier
-   */
-  appId: string;
-}
-
-export interface RemoveAppOpts extends UninstallOptions {
-  appId: string;
-}
-
-export interface InstallAppOpts extends InstallOptions {
-  appPath: string;
-  checkVersion: boolean;
 }
 
 export interface WebviewsMapping {
@@ -267,70 +128,6 @@ export interface DoSetElementValueOpts {
   replace: boolean;
 }
 
-export interface ExecOptions {
-  /**
-   * The actual command to execute.
-   *
-   * @see {@link https://developer.android.com/studio/run/emulator-console}
-   */
-  command: string | string[];
-  /**
-   * A timeout used to wait for a server reply to the given command in
-   * milliseconds
-   * @defaultValue 60000
-   */
-  execTimeout?: number;
-  /**
-   * Console connection timeout in milliseconds
-   * @defaultValue 5000
-   */
-  connTimeout?: number;
-  /**
-   * Telnet console initialization timeout in milliseconds (the time between the
-   * connection happens and the command prompt is available)
-   */
-  initTimeout?: number;
-}
-
-export interface PullFileOpts {
-  /**
-   * The full path to the remote file or a specially formatted path, which
-   * points to an item inside an app bundle, for example `@my.app.id/my/path`.
-   * It is mandatory for the app bundle to have debugging enabled in order to
-   * use the latter `remotePath` format.
-   */
-  remotePath: string;
-}
-
-export interface PushFileOpts {
-  /**
-   * The full path to the remote file or a specially formatted path, which
-   * points to an item inside an app bundle, for example `@my.app.id/my/path`.
-   * It is mandatory for the app bundle to have debugging enabled in order to
-   * use the latter `remotePath` format.
-   */
-  remotePath: string;
-  /**
-   * Base64-encoded content of the file to be pushed.
-   */
-  payload: string;
-}
-
-export interface PullFolderOpts {
-  /**
-   * The full path to the remote folder
-   */
-  remotePath: string;
-}
-
-export interface DeleteFileOpts {
-  /**
-   * The full path to the remote file or a file inside an application bundle
-   * (for example `@my.app.id/path/in/bundle`)
-   */
-  remotePath: string;
-}
-
 export interface FindElementOpts {
   strategy: string;
   selector: string;
@@ -344,17 +141,6 @@ export interface SendKeysOpts {
   replace?: boolean;
 }
 
-export interface DeviceTimeOpts {
-  /**
-   * @defaultValue 'YYYY-MM-DDTHH:mm:ssZ'
-   */
-  format?: string;
-}
-
-export interface PerformEditorActionOpts {
-  action: string | number;
-}
-
 export interface ListSmsOpts {
   /**
    * Maximum count of recent SMS messages
@@ -366,35 +152,6 @@ export interface ListSmsOpts {
 export type UnlockType = 'pin' | 'pinWithKeyEvent' | 'password' | 'pattern';
 
 export type UnlockStrategy = 'locksettings' | 'uiautomator';
-
-export interface UnlockOptions {
-  /**
-   * The unlock key. The value of this key depends on the actual unlock type and
-   * could be a pin/password/pattern value or a biometric finger id.
-   *
-   * If not provided then the corresponding value from session capabilities is
-   * used.
-   */
-  key?: string;
-  /**
-   * The unlock type.
-   *
-   * If not provided then the corresponding value from session capabilities is
-   * used.
-   */
-  type?: UnlockType;
-  /**
-   * Setting it to 'uiautomator' will enforce the driver to avoid using special
-   * ADB shortcuts in order to speed up the unlock procedure.
-   * @defaultValue 'uiautomator'
-   */
-  strategy?: UnlockStrategy;
-  /**
-   * The maximum time in milliseconds to wait until the screen gets unlocked
-   * @defaultValue 2000
-   */
-  timeoutMs?: number;
-}
 
 export interface IntentOpts {
   /**
@@ -482,148 +239,6 @@ export interface IntentOpts {
   flags?: string;
 }
 
-export interface StartActivityOpts extends IntentOpts {
-  /**
-   * Set it to `true` if you want to block the method call
-   * until the activity manager's process returns the control to the system.
-   * @defaultValue false
-   */
-  wait?: boolean;
-  /**
-   * Set it to `true` to force stop the target
-   * app before starting the activity
-   * @defaultValue false
-   */
-  stop?: boolean;
-  /**
-   * The windowing mode to launch the activity into.
-   *
-   * Check
-   * https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/WindowConfiguration.java
-   * for more details on possible windowing modes (constants starting with
-   * `WINDOWING_MODE_`).
-   */
-  windowingMode?: number | string;
-  /**
-   * The activity type to launch the activity as.
-   *
-   * Check https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/WindowConfiguration.java
-   * for more details on possible activity types (constants starting with `ACTIVITY_TYPE_`).
-   */
-  activityType?: number | string;
-  /**
-   * The display identifier to launch the activity into.
-   */
-  display?: number | string;
-}
-
-export interface BroadcastOpts extends IntentOpts {
-  /**
-   * The user ID for which the broadcast is sent.
-   *
-   * The `current` alias assumes the current user ID.
-   * @defaultValue `all`
-   */
-  user?: string | number;
-  /**
-   * Require receiver to hold the given permission.
-   */
-  receiverPermission?: string;
-  /**
-   * Whether the receiver may start activities even if in the background.
-   */
-  allowBackgroundActivityStarts?: boolean;
-}
-
-export interface StartServiceOpts extends IntentOpts {
-  /**
-   * Set it to `true` if your service must be started as foreground service.
-   *
-   * This option is ignored if the API level of the device under test is below
-   *   26 (Android 8).
-   */
-  foreground?: boolean;
-}
-
-export type StopServiceOpts = IntentOpts;
-
-export interface StartMediaProjectionRecordingOpts {
-  /**
-   * Maximum supported resolution on-device (Detected automatically by the app
-   * itself), which usually equals to Full HD 1920x1080 on most phones however
-   * you can change it to following supported resolutions as well: "1920x1080",
-   * "1280x720", "720x480", "320x240", "176x144".
-   */
-  resolution?: string;
-  /**
-   * Maximum allowed duration is 15 minutes; you can increase it if your test
-   * takes longer than that.
-   * @defaultValue 900
-   */
-  maxDurationSec?: number;
-  /**
-   * Recording thread priority.
-   *
-   * If you face performance drops during testing with recording enabled, you
-   * can reduce recording priority
-   *
-   * @defaultValue 'high'
-   */
-  priority?: 'high' | 'normal' | 'low';
-  /**
-   * You can type recording video file name as you want, but recording currently
-   * supports only "mp4" format so your filename must end with ".mp4". An
-   * invalid file name will fail to start the recording. If not provided then
-   * the current timestamp will be used as file name.
-   */
-  filename?: string;
-}
-
-export interface StopMediaProjectionRecordingOpts {
-  /**
-   * The path to the remote location, where the resulting video should be
-   * uploaded. The following protocols are supported: http/https, ftp. Null or
-   * empty string value (the default setting) means the content of resulting
-   * file should be encoded as Base64 and passed as the endpoont response value.
-   * An exception will be thrown if the generated media file is too big to fit
-   * into the available process memory.
-   */
-  remotePath?: string;
-  /**
-   * The name of the user for the remote authentication.
-   */
-  user?: string;
-  /**
-   * The password for the remote authentication.
-   */
-  pass?: string;
-  /**
-   * The http multipart upload method name.
-   * @defaultValue 'PUT'
-   */
-  method?: HTTPMethod;
-  /**
-   * Additional headers mapping for multipart http(s) uploads
-   */
-  headers?: StringRecord;
-  /**
-   * The name of the form field, where the file content BLOB should be stored
-   * for http(s) uploads
-   * @defaultValue 'file'
-   */
-  fileFieldName?: string;
-  /**
-   * Additional form fields for multipart http(s) uploads
-   */
-  formFields?: FormFields;
-  /**
-   * The actual media upload request timeout in milliseconds.
-   *
-   * Defaults to `@appium/support.net.DEFAULT_TIMEOUT_MS`
-   */
-  uploadTimeout?: number;
-}
-
 export type FormFields = StringRecord | [key: string, value: any][];
 
 export interface GetConnectivityResult {
@@ -643,100 +258,7 @@ export interface GetConnectivityResult {
 
 export type ServiceType = 'wifi' | 'data' | 'airplaneMode';
 
-export interface GetConnectivityOpts {
-  /**
-   * one or more services to get the connectivity for.
-   */
-  services?: ServiceType[] | ServiceType;
-}
-
-export interface SetConnectivityOpts {
-  /**
-   * Either to enable or disable Wi-Fi.
-   * An unset value means to not change the state for the given service.
-   */
-  wifi?: boolean;
-
-  /**
-   * Either to enable or disable mobile data connection.
-   * An unset value means to not change the state for the given service.
-   */
-  data?: boolean;
-
-  /**
-   * Either to enable to disable the Airplane Mode
-   * An unset value means to not change the state for the given service.
-   */
-  airplaneMode?: boolean;
-}
-
-export interface GpsCacheRefreshOpts {
-  /**
-   * The maximum number of milliseconds
-   * to block until GPS cache is refreshed. Providing zero or a negative
-   * value to it skips waiting completely.
-   * @defaultValue 20000
-   */
-  timeoutMs?: number;
-}
-
-export interface PerformanceDataOpts {
-  /**
-   * The name of the package identifier to fetch the data for
-   */
-  packageName: string;
-  /**
-   * One of supported subsystem to fetch the data for.
-   */
-  dataType: PerformanceDataType;
-}
-
 export type PerformanceDataType = 'batteryinfo' | 'cpuinfo' | 'memoryinfo' | 'networkinfo';
-
-export interface GetPermissionsOpts {
-  /**
-   * One of possible permission types to get.
-   * @defaultValue 'requested'
-   */
-  type?: string;
-  /**
-   * The application package to set change permissions on. Defaults to the
-   * package name under test
-   */
-  appPackage?: string;
-}
-
-export interface ChangePermissionsOpts {
-  /**
-   * If `target` is set to 'pm':
-   *  The full name of the permission to be changed
-   * or a list of permissions. Check https://developer.android.com/reference/android/Manifest.permission
-   * to get the full list of standard Android permssion names. Mandatory argument.
-   * If 'all' magic string is passed then the chosen action is going to be applied to all
-   * permisisons requested/granted by 'appPackage'.
-   * If `target` is set to 'appops':
-   * The full name of the appops permission to be changed
-   * or a list of permissions. Check AppOpsManager.java sources to get the full list of
-   * available appops permission names. Mandatory argument.
-   * Examples: 'ACTIVITY_RECOGNITION', 'SMS_FINANCIAL_TRANSACTIONS', 'READ_SMS', 'ACCESS_NOTIFICATIONS'.
-   * The 'all' magic string is unsupported.
-   */
-  permissions: string | string[];
-  /**
-   * The application package to set change permissions on. Defaults to the
-   * package name under test
-   */
-  appPackage?: string;
-  /**
-   *  One of `PM_ACTION` values if `target` is set to 'pm', otherwise one of `APPOPS_ACTION` values
-   */
-  action?: string;
-  /**
-   * Either 'pm' or 'appops'. The 'appops' one requires 'adb_shell' server security option to be enabled.
-   * @defaultValue 'pm'
-   */
-  target?: 'pm' | 'appops';
-}
 
 export interface StartScreenRecordingOpts {
   /**
@@ -867,95 +389,6 @@ export interface StopScreenRecordingOpts {
   formFields?: FormFields;
 }
 
-/**
- * @privateRemarks inferred from usage
- */
-export interface ShellOpts {
-  command: string;
-  args?: string[];
-  timeout?: number;
-  includeStderr?: boolean;
-}
-
-export interface StartScreenStreamingOpts {
-  /**
-   * The scaled width of the device's screen.
-   *
-   * If unset then the script will assign it to the actual screen width measured
-   * in pixels.
-   */
-  width?: number;
-  /**
-   * The scaled height of the device's screen.
-   *
-   * If unset then the script will assign it to the actual screen height
-   * measured in pixels.
-   */
-  height?: number;
-  /**
-   * The video bit rate for the video, in bits per second.
-   *
-   * The default value is 4 Mb/s. You can increase the bit rate to improve video
-   * quality, but doing so results in larger movie files.
-   * @defaultValue 4000000
-   */
-  bitRate?: number;
-  /**
-   * The IP address/host name to start the MJPEG server on.
-   *
-   * You can set it to `0.0.0.0` to trigger the broadcast on all available
-   * network interfaces.
-   *
-   * @defaultValue '127.0.0.1'
-   */
-  host?: string;
-  /**
-   * The HTTP request path the MJPEG server should be available on.
-   *
-   * If unset, then any pathname on the given `host`/`port` combination will
-   * work. Note that the value should always start with a single slash: `/`
-   */
-  pathname?: string;
-  /**
-   * The port number to start the internal TCP MJPEG broadcast on.
-   *
-   * This type of broadcast always starts on the loopback interface
-   * (`127.0.0.1`).
-   *
-   * @defaultValue 8094
-   */
-  tcpPort?: number;
-  /**
-   * The port number to start the MJPEG server on.
-   *
-   * @defaultValue 8093
-   */
-  port?: number;
-  /**
-   * The quality value for the streamed JPEG images.
-   *
-   * This number should be in range `[1,100]`, where `100` is the best quality.
-   *
-   * @defaultValue 70
-   */
-  quality?: number;
-  /**
-   * If set to `true` then GStreamer pipeline will increase the dimensions of
-   * the resulting images to properly fit images in both landscape and portrait
-   * orientations.
-   *
-   * Set it to `true` if the device rotation is not going to be the same during
-   * the broadcasting session.
-   */
-  considerRotation?: boolean;
-  /**
-   * Whether to log GStreamer pipeline events into the standard log output.
-   *
-   * Might be useful for debugging purposes.
-   */
-  logPipelineDetails?: boolean;
-}
-
 export interface DeviceInfo {
   width: number;
   height: number;
@@ -1016,77 +449,6 @@ export type StatusBarCommand =
   | 'removeTile'
   | 'clickTile'
   | 'getStatusIcons';
-
-export interface StatusBarCommandOpts {
-  /**
-   * Each list item must separated with a new line (`\n`) character.
-   */
-  command: StatusBarCommand;
-  /**
-   * The name of the tile component.
-   *
-   * It is only required for `(add|remove|click)Tile` commands.
-   * Example value: `com.package.name/.service.QuickSettingsTileComponent`
-   */
-  component?: string;
-}
-
-export interface LockOpts {
-  /**
-   * The number to keep the locked.
-   * 0 or empty value will keep the device locked.
-   */
-  seconds?: number;
-}
-
-export interface DeviceidleOpts {
-  /** The action name to execute */
-  action: 'whitelistAdd' | 'whitelistRemove';
-  /** Either a single package or multiple packages to add or remove from the idle whitelist */
-  packages?: string | string[];
-}
-
-export interface SendTrimMemoryOpts {
-  /** The package name to send the `trimMemory` event to */
-  pkg: string;
-  /** The actual memory trim level to be sent */
-  level:
-    | 'COMPLETE'
-    | 'MODERATE'
-    | 'BACKGROUND'
-    | 'UI_HIDDEN'
-    | 'RUNNING_CRITICAL'
-    | 'RUNNING_LOW'
-    | 'RUNNING_MODERATE';
-}
-
-export interface ImageInjectionOpts {
-  /** Base64-encoded payload of a .png image to be injected */
-  payload: string;
-}
-
-export interface SetUiModeOpts {
-  /**
-   * The UI mode to set the value for.
-   * Supported values are: 'night' and 'car'
-   */
-  mode: string;
-  /**
-   * The actual mode value to set.
-   * Supported value for different UI modes are:
-   * - night: yes|no|auto|custom_schedule|custom_bedtime
-   * - car: yes|no
-   */
-  value: string;
-}
-
-export interface GetUiModeOpts {
-  /**
-   * The UI mode to set the value for.
-   * Supported values are: 'night' and 'car'
-   */
-  mode: string;
-}
 
 export interface SmsListResultItem {
   id: string;
@@ -1225,14 +587,6 @@ export type ADBLaunchInfo = Pick<
   AndroidDriverCaps,
   'appPackage' | 'appWaitActivity' | 'appActivity' | 'appWaitPackage'
 >;
-
-export interface BluetoothOptions {
-  action: 'enable' | 'disable' | 'unpairAll';
-}
-
-export interface NfcOptions {
-  action: 'enable' | 'disable';
-}
 
 export interface InjectedImageSize {
   /** X scale value in range (0..) */

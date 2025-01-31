@@ -3,7 +3,6 @@ import {AndroidDriver} from '../../../lib/driver';
 import {fs} from '@appium/support';
 import B from 'bluebird';
 import {ADB} from 'appium-adb';
-import { errors } from 'appium/driver';
 
 /** @type {AndroidDriver} */
 let driver;
@@ -60,24 +59,21 @@ describe('App Management', function () {
     });
   });
   describe('mobileIsAppInstalled', function () {
-    it('should raise required error if appId was not provided', async function () {
-      await driver.mobileIsAppInstalled({}).should.be.rejectedWith(errors.InvalidArgumentError);
-    });
     it('should return true if app is installed', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').returns(true);
-      (await driver.mobileIsAppInstalled({appId: 'pkg'})).should.be.true;
+      (await driver.mobileIsAppInstalled('pkg')).should.be.true;
     });
     it('should return true if app is installed with undefined user', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').returns(true);
-      (await driver.mobileIsAppInstalled({appId: 'pkg'})).should.be.true;
+      (await driver.mobileIsAppInstalled('pkg')).should.be.true;
     });
     it('should return true if app is installed with user string', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg', {user: '1'}).returns(true);
-      (await driver.mobileIsAppInstalled({appId: 'pkg', user: '1'})).should.be.true;
+      (await driver.mobileIsAppInstalled('pkg', '1')).should.be.true;
     });
     it('should return true if app is installed with user number', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg', {user: '1'}).returns(true);
-      (await driver.mobileIsAppInstalled({appId: 'pkg', user: 1})).should.be.true;
+      (await driver.mobileIsAppInstalled('pkg', 1)).should.be.true;
     });
   });
   describe('removeApp', function () {
