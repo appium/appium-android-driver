@@ -1,3 +1,9 @@
+## [10.1.0](https://github.com/appium/appium-android-driver/compare/v10.0.0...v10.1.0) (2025-01-31)
+
+### Features
+
+* Add execute method for fetching of application strings ([827d812](https://github.com/appium/appium-android-driver/commit/827d812bd4a3a3af0efa7301df046efdb67fa7a9))
+
 ## [10.0.0](https://github.com/appium/appium-android-driver/compare/v9.15.1...v10.0.0) (2025-01-31)
 
 ### ⚠ BREAKING CHANGES
