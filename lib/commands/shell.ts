@@ -4,14 +4,13 @@ import _ from 'lodash';
 import {exec} from 'teen_process';
 import {ADB_SHELL_FEATURE} from '../utils';
 
-/**
- * @this {import('../driver').AndroidDriver}
- * @param {import('./types').ShellOpts} [opts={}]
- * @returns {Promise<string | {stderr: string; stdout: string}>};
- */
-export async function mobileShell(opts) {
+export async function mobileShell<T extends boolean>(
+  command: string,
+  args: string[] = [],
+  timeout: number = 20000,
+  includeStderr?: T,
+): Promise<T extends true ? { stdout: string; stderr: string; } : string> {
   this.assertFeatureEnabled(ADB_SHELL_FEATURE);
-  const {command, args = /** @type {string[]} */ ([]), timeout = 20000, includeStderr} = opts ?? {};
 
   if (!_.isString(command)) {
     throw new errors.InvalidArgumentError(`The 'command' argument is mandatory`);
@@ -22,11 +21,13 @@ export async function mobileShell(opts) {
   try {
     const {stdout, stderr} = await exec(this.adb.executable.path, adbArgs, {timeout});
     if (includeStderr) {
+      // @ts-ignore We know what we are doing here
       return {
         stdout,
         stderr,
       };
     }
+    // @ts-ignore We know what we are doing here
     return stdout;
   } catch (e) {
     const err = /** @type {import('teen_process').ExecError} */ (e);
@@ -37,7 +38,3 @@ export async function mobileShell(opts) {
     );
   }
 }
-
-/**
- * @typedef {import('appium-adb').ADB} ADB
- */
