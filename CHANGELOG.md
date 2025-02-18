@@ -1,3 +1,9 @@
+## [10.1.1](https://github.com/appium/appium-android-driver/compare/v10.1.0...v10.1.1) (2025-02-18)
+
+### Miscellaneous Chores
+
+* Log better error message if CDP data collection fails ([#983](https://github.com/appium/appium-android-driver/issues/983)) ([9476fd1](https://github.com/appium/appium-android-driver/commit/9476fd1bfbe5432767d5aa9df7cd095a99fa192c))
+
 ## [10.1.0](https://github.com/appium/appium-android-driver/compare/v10.0.0...v10.1.0) (2025-01-31)
 
 ### Features
