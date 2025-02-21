@@ -1,3 +1,9 @@
+## [10.1.2](https://github.com/appium/appium-android-driver/compare/v10.1.1...v10.1.2) (2025-02-21)
+
+### Miscellaneous Chores
+
+* Bump appium-settings ([#210](https://github.com/appium/appium-android-driver/issues/210))
+
 ## [10.1.1](https://github.com/appium/appium-android-driver/compare/v10.1.0...v10.1.1) (2025-02-18)
 
 ### Miscellaneous Chores
