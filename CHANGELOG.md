@@ -1,3 +1,9 @@
+## [10.1.2](https://github.com/appium/appium-android-driver/compare/v10.1.1...v10.1.2) (2025-02-22)
+
+### Bug Fixes
+
+* Pass reqBasePath option to chromedriver ([#985](https://github.com/appium/appium-android-driver/issues/985)) ([d59cb28](https://github.com/appium/appium-android-driver/commit/d59cb28eec262b6fd03bc99771d120224a756483))
+
 ## [10.1.1](https://github.com/appium/appium-android-driver/compare/v10.1.0...v10.1.1) (2025-02-18)
 
 ### Miscellaneous Chores
