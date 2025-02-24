@@ -452,7 +452,7 @@ export const executeMethodMap = {
     command: 'mobileSetGeolocation',
     params: {
       required: ['latitude', 'longitude'],
-      optional: ['altitude'],
+      optional: ['altitude', 'satellites', 'speed', 'bearing', 'accuracy'],
     }
   },
   'mobile: getGeolocation': {
