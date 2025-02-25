@@ -1,3 +1,9 @@
+## [10.2.0](https://github.com/appium/appium-android-driver/compare/v10.1.2...v10.2.0) (2025-02-25)
+
+### Features
+
+* extend mobile: setGeoLocation ([#986](https://github.com/appium/appium-android-driver/issues/986)) ([c1c6f67](https://github.com/appium/appium-android-driver/commit/c1c6f67051849c4a982fb97634c5e2cfb70f5b05))
+
 ## [10.1.2](https://github.com/appium/appium-android-driver/compare/v10.1.1...v10.1.2) (2025-02-22)
 
 ### Bug Fixes
