@@ -156,7 +156,7 @@ describe('Network', function () {
       await driver.mobileGetConnectivity(['data', 'airplaneMode'])
         .should.eventually.eql({ data: true, airplaneMode: false});
     });
-  })
+  });
   describe('toggleData', function () {
     it('should toggle data', async function () {
       adb.isDataOn.returns(false);
