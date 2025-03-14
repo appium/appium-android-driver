@@ -128,6 +128,9 @@ describe('Network', function () {
       await driver.mobileGetConnectivity(['bad', 'array'])
         .should.eventually.rejectedWith(errors.InvalidArgumentError);
     });
+    it('should raise unsupported services with an empty array', async function () {
+      await driver.mobileGetConnectivity().should.eventually.eql({});
+    });
     it('should return all supported services', async function () {
       adb.isWifiOn.returns(true);
       adb.isDataOn.returns(true);
