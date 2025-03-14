@@ -1,3 +1,9 @@
+## [10.2.2](https://github.com/appium/appium-android-driver/compare/v10.2.1...v10.2.2) (2025-03-14)
+
+### Bug Fixes
+
+* get connectivity return value ([#987](https://github.com/appium/appium-android-driver/issues/987)) ([e6b2cf3](https://github.com/appium/appium-android-driver/commit/e6b2cf3f417383b942e6bc7e4a8baf0a16323ff7))
+
 ## [10.2.1](https://github.com/appium/appium-android-driver/compare/v10.2.0...v10.2.1) (2025-03-10)
 
 ### Miscellaneous Chores
