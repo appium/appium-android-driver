@@ -3,6 +3,7 @@ import {ADB} from 'appium-adb';
 import {AndroidDriver} from '../../../lib/driver';
 import B from 'bluebird';
 import { SettingsApp } from 'io.appium.settings';
+import { errors } from 'appium/driver';
 
 /** @type {AndroidDriver} */
 let driver;
@@ -118,6 +119,44 @@ describe('Network', function () {
       driver.setDataState.calledWithExactly(true).should.be.true;
     });
   });
+  describe('mobileGetConnectivity', function () {
+    it('should raise unsupported services in string', async function () {
+      await driver.mobileGetConnectivity('bad')
+        .should.eventually.rejectedWith(errors.InvalidArgumentError);
+    });
+    it('should raise unsupported services in array', async function () {
+      await driver.mobileGetConnectivity(['bad', 'array'])
+        .should.eventually.rejectedWith(errors.InvalidArgumentError);
+    });
+    it('should return all supported services', async function () {
+      adb.isWifiOn.returns(true);
+      adb.isDataOn.returns(true);
+      adb.isAirplaneModeOn.returns(true);
+      await driver.mobileGetConnectivity()
+        .should.eventually.eql({ wifi: true, data: true, airplaneMode: true });
+    });
+    it('should return only wifi', async function () {
+      adb.isWifiOn.returns(true);
+      adb.isDataOn.returns(true);
+      adb.isAirplaneModeOn.returns(true);
+      await driver.mobileGetConnectivity('wifi')
+        .should.eventually.eql({ wifi: true });
+    });
+    it('should return only data', async function () {
+      adb.isWifiOn.returns(true);
+      adb.isDataOn.returns(true);
+      adb.isAirplaneModeOn.returns(true);
+      await driver.mobileGetConnectivity(['data'])
+        .should.eventually.eql({ data: true });
+    });
+    it('should return only data and airplaneMode', async function () {
+      adb.isWifiOn.returns(true);
+      adb.isDataOn.returns(true);
+      adb.isAirplaneModeOn.returns(false);
+      await driver.mobileGetConnectivity(['data', 'airplaneMode'])
+        .should.eventually.eql({ data: true, airplaneMode: false});
+    });
+  })
   describe('toggleData', function () {
     it('should toggle data', async function () {
       adb.isDataOn.returns(false);
