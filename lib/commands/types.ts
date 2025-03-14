@@ -245,15 +245,15 @@ export interface GetConnectivityResult {
   /**
    * True if wifi is enabled
    */
-  wifi: boolean;
+  wifi?: boolean;
   /**
    * True if mobile data connection is enabled
    */
-  data: boolean;
+  data?: boolean;
   /**
    * True if Airplane Mode is enabled
    */
-  airplaneMode: boolean;
+  airplaneMode?: boolean;
 }
 
 export type ServiceType = 'wifi' | 'data' | 'airplaneMode';
