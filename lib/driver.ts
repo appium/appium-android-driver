@@ -413,6 +413,7 @@ class AndroidDriver
   activateApp = activateApp;
   queryAppState = queryAppState;
   isAppInstalled = isAppInstalled;
+  mobileBackgroundApp = background;
 
   mobileGetUiMode = mobileGetUiMode;
   mobileSetUiMode = mobileSetUiMode;

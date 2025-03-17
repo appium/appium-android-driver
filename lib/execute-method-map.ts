@@ -174,7 +174,12 @@ export const executeMethodMap = {
       required: ['appId'],
     },
   },
-
+  'mobile: backgroundApp': {
+    command: 'mobileBackgroundApp',
+    params: {
+      optional: ['seconds'],
+    }
+  },
   'mobile: startService': {
     command: 'mobileStartService',
     params: {
