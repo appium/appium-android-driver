@@ -71,6 +71,7 @@ import {
   installAUT,
   resetAUT,
   background,
+  mobileBackgroundApp,
   getCurrentActivity,
   getCurrentPackage,
   mobileClearApp,
@@ -413,7 +414,7 @@ class AndroidDriver
   activateApp = activateApp;
   queryAppState = queryAppState;
   isAppInstalled = isAppInstalled;
-  mobileBackgroundApp = background;
+  mobileBackgroundApp = mobileBackgroundApp;
 
   mobileGetUiMode = mobileGetUiMode;
   mobileSetUiMode = mobileSetUiMode;
