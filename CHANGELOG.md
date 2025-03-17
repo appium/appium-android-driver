@@ -1,3 +1,9 @@
+## [10.2.3](https://github.com/appium/appium-android-driver/compare/v10.2.2...v10.2.3) (2025-03-17)
+
+### Bug Fixes
+
+* add backgroundApp ([#988](https://github.com/appium/appium-android-driver/issues/988)) ([a6424cc](https://github.com/appium/appium-android-driver/commit/a6424cc81fa962d54a4c8c45ff4b91378f8f524f))
+
 ## [10.2.2](https://github.com/appium/appium-android-driver/compare/v10.2.1...v10.2.2) (2025-03-14)
 
 ### Bug Fixes
