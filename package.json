@@ -85,6 +85,7 @@
     "@types/ws": "^8.5.4",
     "@xmldom/xmldom": "^0.x",
     "android-apidemos": "^4.1.0",
+    "appium-uiautomator2-driver": "^4.1.2",
     "chai": "^5.1.1",
     "chai-as-promised": "^8.0.0",
     "conventional-changelog-conventionalcommits": "^8.0.0",
