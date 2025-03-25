@@ -1,3 +1,9 @@
+## [10.2.4](https://github.com/appium/appium-android-driver/compare/v10.2.3...v10.2.4) (2025-03-25)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 19.0.5 to 20.0.0 ([#989](https://github.com/appium/appium-android-driver/issues/989)) ([58966f1](https://github.com/appium/appium-android-driver/commit/58966f1bf61588a1d53e3622abdb7946393ce53b))
+
 ## [10.2.3](https://github.com/appium/appium-android-driver/compare/v10.2.2...v10.2.3) (2025-03-17)
 
 ### Bug Fixes
