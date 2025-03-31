@@ -618,3 +618,8 @@ export interface InjectedImageProperties {
   position?: InjectedImagePosition;
   rotation?: InjectedImageRotation;
 }
+
+export interface CreateNewWindow {
+  handle: string;
+  type: string;
+}
