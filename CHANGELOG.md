@@ -1,3 +1,9 @@
+## [10.3.0](https://github.com/appium/appium-android-driver/compare/v10.2.4...v10.3.0) (2025-04-17)
+
+### Features
+
+* Add /session/:sessionId/network_connection to the method map ([#994](https://github.com/appium/appium-android-driver/issues/994)) ([ea48ef4](https://github.com/appium/appium-android-driver/commit/ea48ef4bec515ab886d9d62265c0e8555901f5cc))
+
 ## [10.2.4](https://github.com/appium/appium-android-driver/compare/v10.2.3...v10.2.4) (2025-03-25)
 
 ### Miscellaneous Chores
