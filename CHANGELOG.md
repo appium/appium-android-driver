@@ -1,3 +1,9 @@
+## [10.3.1](https://github.com/appium/appium-android-driver/compare/v10.3.0...v10.3.1) (2025-04-23)
+
+### Miscellaneous Chores
+
+* Bump settings app version ([b41f872](https://github.com/appium/appium-android-driver/commit/b41f8723477b44be92a2e9a65677886983b5d5cf))
+
 ## [10.3.0](https://github.com/appium/appium-android-driver/compare/v10.2.4...v10.3.0) (2025-04-17)
 
 ### Features
