@@ -1,3 +1,9 @@
+## [10.3.3](https://github.com/appium/appium-android-driver/compare/v10.3.2...v10.3.3) (2025-04-24)
+
+### Miscellaneous Chores
+
+* add deprecated: true for network_connection ([#996](https://github.com/appium/appium-android-driver/issues/996)) ([a0a4d0a](https://github.com/appium/appium-android-driver/commit/a0a4d0a22811dda5f55f26813aaecde9fbe1fdd5))
+
 ## [10.3.2](https://github.com/appium/appium-android-driver/compare/v10.3.1...v10.3.2) (2025-04-24)
 
 ### Miscellaneous Chores
