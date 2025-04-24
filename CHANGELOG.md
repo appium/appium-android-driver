@@ -1,3 +1,9 @@
+## [10.3.2](https://github.com/appium/appium-android-driver/compare/v10.3.1...v10.3.2) (2025-04-24)
+
+### Miscellaneous Chores
+
+* add deprecated marks in lib/method-map.js ([#995](https://github.com/appium/appium-android-driver/issues/995)) ([5bcf23e](https://github.com/appium/appium-android-driver/commit/5bcf23ef91009b0442dfd5b82c4122a627a24acb))
+
 ## [10.3.1](https://github.com/appium/appium-android-driver/compare/v10.3.0...v10.3.1) (2025-04-23)
 
 ### Miscellaneous Chores
