@@ -1,3 +1,9 @@
+## [10.3.4](https://github.com/appium/appium-android-driver/compare/v10.3.3...v10.3.4) (2025-05-09)
+
+### Miscellaneous Chores
+
+* Add Appium3-beta as supported peer dependency ([e2646c2](https://github.com/appium/appium-android-driver/commit/e2646c2c3022430d3dc2c33712bac87dab25494b))
+
 ## [10.3.3](https://github.com/appium/appium-android-driver/compare/v10.3.2...v10.3.3) (2025-04-24)
 
 ### Miscellaneous Chores
