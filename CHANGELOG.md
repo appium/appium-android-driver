@@ -1,3 +1,9 @@
+## [10.3.6](https://github.com/appium/appium-android-driver/compare/v10.3.5...v10.3.6) (2025-05-29)
+
+### Miscellaneous Chores
+
+* Add geolocation endpoints to the method map ([#998](https://github.com/appium/appium-android-driver/issues/998)) ([422b07b](https://github.com/appium/appium-android-driver/commit/422b07b2f7595963762b8ed146437632300d9d5f))
+
 ## [10.3.5](https://github.com/appium/appium-android-driver/compare/v10.3.4...v10.3.5) (2025-05-21)
 
 ### Miscellaneous Chores
