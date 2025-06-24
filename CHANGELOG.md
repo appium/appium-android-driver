@@ -1,3 +1,13 @@
+## [10.3.9](https://github.com/appium/appium-android-driver/compare/v10.3.8...v10.3.9) (2025-06-24)
+
+### Miscellaneous Chores
+
+* Detect bars based on their types ([#1002](https://github.com/appium/appium-android-driver/issues/1002)) ([b74bb82](https://github.com/appium/appium-android-driver/commit/b74bb82fb3fcd8f458f9a4c8bfaf7b798b28e364))
+
+### Code Refactoring
+
+* remove unused import & use for..of ([#1001](https://github.com/appium/appium-android-driver/issues/1001)) ([19e4490](https://github.com/appium/appium-android-driver/commit/19e4490991523452def408e1884bbf4b09514376))
+
 ## [10.3.8](https://github.com/appium/appium-android-driver/compare/v10.3.7...v10.3.8) (2025-06-13)
 
 ### Miscellaneous Chores
