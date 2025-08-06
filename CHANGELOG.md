@@ -1,3 +1,9 @@
+## [10.3.11](https://github.com/appium/appium-android-driver/compare/v10.3.10...v10.3.11) (2025-08-06)
+
+### Bug Fixes
+
+* Make sure session id is set before cleaning up socket handlers ([#1005](https://github.com/appium/appium-android-driver/issues/1005)) ([f2ec9bc](https://github.com/appium/appium-android-driver/commit/f2ec9bccc4082316ebb103e9fc67810ea737ee43))
+
 ## [10.3.10](https://github.com/appium/appium-android-driver/compare/v10.3.9...v10.3.10) (2025-07-06)
 
 ### Miscellaneous Chores
