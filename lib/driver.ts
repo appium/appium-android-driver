@@ -332,9 +332,7 @@ class AndroidDriver
   }
 
   override async deleteSession(sessionId?: string | null) {
-    if (this.server) {
-      await removeAllSessionWebSocketHandlers(this.server, sessionId);
-    }
+    await removeAllSessionWebSocketHandlers.bind(this)();
 
     try {
       this.adb?.logcat?.removeAllListeners();
