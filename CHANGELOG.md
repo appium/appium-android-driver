@@ -1,3 +1,9 @@
+## [10.3.12](https://github.com/appium/appium-android-driver/compare/v10.3.11...v10.3.12) (2025-08-17)
+
+### Miscellaneous Chores
+
+* drop rimraf deps from dev deps as no references ([#1006](https://github.com/appium/appium-android-driver/issues/1006)) ([71e1ee3](https://github.com/appium/appium-android-driver/commit/71e1ee326914d27470dd5079f79e2213f698fdab))
+
 ## [10.3.11](https://github.com/appium/appium-android-driver/compare/v10.3.10...v10.3.11) (2025-08-06)
 
 ### Bug Fixes

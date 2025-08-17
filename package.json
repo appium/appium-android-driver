@@ -1,6 +1,6 @@
 {
   "name": "appium-android-driver",
-  "version": "10.3.11",
+  "version": "10.3.12",
   "description": "Android UiAutomator and Chrome support for Appium",
   "keywords": [
     "appium",
