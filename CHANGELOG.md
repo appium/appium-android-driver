@@ -1,3 +1,15 @@
+## [11.0.0](https://github.com/appium/appium-android-driver/compare/v10.3.12...v11.0.0) (2025-08-17)
+
+### ⚠ BREAKING CHANGES
+
+* Required Node.js version has been bumped to ^20.19.0 || ^22.12.0 || >=24.0.0
+* Required npm version has been bumped to >=10
+* Required Appium server version has been bumped to >=3.0.0-rc.2
+
+### Features
+
+* Update server compatibility ([#1007](https://github.com/appium/appium-android-driver/issues/1007)) ([aac5acb](https://github.com/appium/appium-android-driver/commit/aac5acb054ff8aaa397d852119dc5583226aaf9b))
+
 ## [10.3.12](https://github.com/appium/appium-android-driver/compare/v10.3.11...v10.3.12) (2025-08-17)
 
 ### Miscellaneous Chores
