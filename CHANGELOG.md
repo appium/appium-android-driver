@@ -1,3 +1,10 @@
+## [11.0.1](https://github.com/appium/appium-android-driver/compare/v11.0.0...v11.0.1) (2025-08-23)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump chai from 5.3.2 to 6.0.0 ([#1008](https://github.com/appium/appium-android-driver/issues/1008)) ([05c574f](https://github.com/appium/appium-android-driver/commit/05c574f2da04cb76da477bd3fac244691f157af6))
+* **deps:** bump lru-cache from 10.4.3 to 11.1.0 ([#990](https://github.com/appium/appium-android-driver/issues/990)) ([f48bacd](https://github.com/appium/appium-android-driver/commit/f48bacd21220e4db4bd84989d63bf283d847b9a6))
+
 ## [11.0.0](https://github.com/appium/appium-android-driver/compare/v10.3.12...v11.0.0) (2025-08-17)
 
 ### ⚠ BREAKING CHANGES
