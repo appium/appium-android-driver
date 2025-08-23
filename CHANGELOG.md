@@ -1,3 +1,9 @@
+## [11.0.2](https://github.com/appium/appium-android-driver/compare/v11.0.1...v11.0.2) (2025-08-23)
+
+### Miscellaneous Chores
+
+* Remove apkanalyzer from doctor checks ([#1009](https://github.com/appium/appium-android-driver/issues/1009)) ([5c27e79](https://github.com/appium/appium-android-driver/commit/5c27e792203cc961a5c8d35bef225245d6800e0f))
+
 ## [11.0.1](https://github.com/appium/appium-android-driver/compare/v11.0.0...v11.0.1) (2025-08-23)
 
 ### Miscellaneous Chores
