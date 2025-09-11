@@ -1,3 +1,9 @@
+## [11.0.3](https://github.com/appium/appium-android-driver/compare/v11.0.2...v11.0.3) (2025-09-11)
+
+### Bug Fixes
+
+* fix isBoolean to true for recreateChromeDriverSessions ([#1010](https://github.com/appium/appium-android-driver/issues/1010)) ([6564b25](https://github.com/appium/appium-android-driver/commit/6564b251cc3d90c3ce6688d63d188b2d0dd2fb6c))
+
 ## [11.0.2](https://github.com/appium/appium-android-driver/compare/v11.0.1...v11.0.2) (2025-08-23)
 
 ### Miscellaneous Chores
