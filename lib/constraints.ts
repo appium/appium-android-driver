@@ -143,7 +143,7 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
     isBoolean: true,
   },
   recreateChromeDriverSessions: {
-    isBoolean: false,
+    isBoolean: true,
   },
   autoLaunch: {
     isBoolean: true,
