@@ -1,3 +1,9 @@
+## [11.0.4](https://github.com/appium/appium-android-driver/compare/v11.0.3...v11.0.4) (2025-09-15)
+
+### Miscellaneous Chores
+
+* **deps:** bump type-fest from 4.41.0 to 5.0.0 ([#1012](https://github.com/appium/appium-android-driver/issues/1012)) ([d743004](https://github.com/appium/appium-android-driver/commit/d74300462997ad033a9473201e0ff1d121814033))
+
 ## [11.0.3](https://github.com/appium/appium-android-driver/compare/v11.0.2...v11.0.3) (2025-09-11)
 
 ### Bug Fixes
