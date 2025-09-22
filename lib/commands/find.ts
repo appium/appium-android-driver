@@ -70,7 +70,7 @@ export async function findElOrEls(
     await this.implicitWaitForCondition(doFind);
   } catch (e) {
     const err = e as Error;
-    if (err.message && err.message.match(/Condition unmet/)) {
+    if (err.message?.match(/Condition unmet/)) {
       // only get here if we are looking for multiple elements
       // condition was not met setting res to empty array
       element = [];
