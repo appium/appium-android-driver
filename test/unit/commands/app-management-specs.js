@@ -293,12 +293,12 @@ describe('App Management', function () {
         .onFirstCall()
         .returns({wasUninstalled: false, appState: 'sameVersionInstalled'});
       sandbox.stub(driver, 'resetAUT').onFirstCall();
-      await driver.installAUT(Object.assign({}, opts, {fastReset: true}));
+      await driver.installAUT({ ...opts, fastReset: true });
     });
     it('should reinstall app if full reset is set to true', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade').throws();
       sandbox.stub(driver, 'resetAUT').onFirstCall();
-      await driver.installAUT(Object.assign({}, opts, {fastReset: true, fullReset: true}));
+      await driver.installAUT({ ...opts, fastReset: true, fullReset: true });
     });
     it('should not run reset if the corresponding option is not set', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade')
@@ -314,7 +314,7 @@ describe('App Management', function () {
         .onFirstCall()
         .returns({wasUninstalled: false, appState: 'notInstalled'});
       sandbox.stub(driver, 'resetAUT').throws();
-      await driver.installAUT(Object.assign({}, opts, {fastReset: true}));
+      await driver.installAUT({ ...opts, fastReset: true });
     });
   });
   describe('installOtherApks', function () {
