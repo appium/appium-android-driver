@@ -1,3 +1,15 @@
+## [11.0.5](https://github.com/appium/appium-android-driver/compare/v11.0.4...v11.0.5) (2025-10-03)
+
+### Miscellaneous Chores
+
+* Bump adb ([e700d50](https://github.com/appium/appium-android-driver/commit/e700d503fe6379598ecbb3697f8b6a52ad05972e))
+
+### Code Refactoring
+
+* remove unexpected use of comma operator in test ([#1014](https://github.com/appium/appium-android-driver/issues/1014)) ([c456c0f](https://github.com/appium/appium-android-driver/commit/c456c0f1729e71a8414a01326f27e156d337243d))
+* use an object spread instead of Object.assign ([#1015](https://github.com/appium/appium-android-driver/issues/1015)) ([3eeddb4](https://github.com/appium/appium-android-driver/commit/3eeddb451440c483a06f77c7be9bf128c9f23ca8))
+* use optional chain ([#1013](https://github.com/appium/appium-android-driver/issues/1013)) ([8b9a9a5](https://github.com/appium/appium-android-driver/commit/8b9a9a5f36b9346ff79154ecac1cc42d3f7268ed))
+
 ## [11.0.4](https://github.com/appium/appium-android-driver/compare/v11.0.3...v11.0.4) (2025-09-15)
 
 ### Miscellaneous Chores
