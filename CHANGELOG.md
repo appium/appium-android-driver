@@ -1,3 +1,9 @@
+## [11.0.7](https://github.com/appium/appium-android-driver/compare/v11.0.6...v11.0.7) (2025-10-17)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump semantic-release from 24.2.9 to 25.0.0 ([#1016](https://github.com/appium/appium-android-driver/issues/1016)) ([f544111](https://github.com/appium/appium-android-driver/commit/f544111c83c72f09ad30f8d9e31c205b7dd12cef))
+
 ## [11.0.6](https://github.com/appium/appium-android-driver/compare/v11.0.5...v11.0.6) (2025-10-08)
 
 ### Miscellaneous Chores
