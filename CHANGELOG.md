@@ -1,3 +1,9 @@
+## [11.0.8](https://github.com/appium/appium-android-driver/compare/v11.0.7...v11.0.8) (2025-10-22)
+
+### Bug Fixes
+
+* Simplify screenrecord termination ([#1017](https://github.com/appium/appium-android-driver/issues/1017)) ([ce1eb56](https://github.com/appium/appium-android-driver/commit/ce1eb56516b9a95893ecbdc420223117f53b299c))
+
 ## [11.0.7](https://github.com/appium/appium-android-driver/compare/v11.0.6...v11.0.7) (2025-10-17)
 
 ### Miscellaneous Chores
