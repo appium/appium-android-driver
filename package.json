@@ -50,8 +50,8 @@
   "dependencies": {
     "@appium/support": "^7.0.0-rc.1",
     "@colors/colors": "^1.6.0",
-    "appium-adb": "^13.0.9",
-    "appium-chromedriver": "^8.0.0",
+    "appium-adb": "^14.0.0",
+    "appium-chromedriver": "^8.0.16",
     "asyncbox": "^3.0.0",
     "axios": "^1.x",
     "bluebird": "^3.4.7",
