@@ -1,3 +1,9 @@
+## [11.0.9](https://github.com/appium/appium-android-driver/compare/v11.0.8...v11.0.9) (2025-10-23)
+
+### Miscellaneous Chores
+
+* Bump appium-adb ([#1018](https://github.com/appium/appium-android-driver/issues/1018)) ([cde1054](https://github.com/appium/appium-android-driver/commit/cde10548542b6a5b389f07b6bc24b14bf2bb125e))
+
 ## [11.0.8](https://github.com/appium/appium-android-driver/compare/v11.0.7...v11.0.8) (2025-10-22)
 
 ### Bug Fixes
