@@ -1,3 +1,9 @@
+## [11.0.10](https://github.com/appium/appium-android-driver/compare/v11.0.9...v11.0.10) (2025-10-24)
+
+### Bug Fixes
+
+* Use proper API to check if app is running ([#1019](https://github.com/appium/appium-android-driver/issues/1019)) ([329d4ca](https://github.com/appium/appium-android-driver/commit/329d4cac6a7b30639ceabc14e66c13b68bc3b602))
+
 ## [11.0.9](https://github.com/appium/appium-android-driver/compare/v11.0.8...v11.0.9) (2025-10-23)
 
 ### Miscellaneous Chores
