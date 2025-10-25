@@ -29,17 +29,6 @@ describe('recording the screen', function () {
           .startRecordingScreen()
           .should.be.rejectedWith(/Screen recording does not work on emulators/);
       });
-
-      it('should fail to recording the screen on a device with API level 18', async function () {
-        mocks.driver.expects('isEmulator').returns(false);
-        mocks.adb.expects('getApiLevel').returns(18);
-
-        await driver
-          .startRecordingScreen()
-          .should.be.rejectedWith(
-            /Screen recording not available on API Level 18. Minimum API Level is 19/
-          );
-      });
     })
   );
 });

@@ -159,15 +159,6 @@ describe('performance data', function () {
            GL mtrack      110      105        0      555        0        0        0
                TOTAL      555      555      555        0               555      555
                TOTAL      106      101      555        0      555      555      555`;
-    const dumpsysDataAPI18 = `
-                                Shared  Private     Heap     Heap     Heap
-                          Pss    Dirty    Dirty     Size    Alloc     Free
-                       ------   ------   ------   ------   ------   ------
-              Native      107      555      102      112      111      555
-              Dalvik      108      555      103      555      555      555
-                 EGL      109      555      104      555        0        0
-                  GL      110      555      105      555        0        0
-               TOTAL      106      555      101      555      555      555`;
     const expectedResult = [
       MEMORY_KEYS,
       [
@@ -217,12 +208,6 @@ describe('performance data', function () {
     it('should return memory info for 18<API<30', async function () {
       adb.getApiLevel.returns(19);
       adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI19);
-      (await getMemoryInfo.bind(driver)(PACKAGE_NAME)).should.be.deep.equal(expectedResult);
-      asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
-    });
-    it('should return memory info for API<=18', async function () {
-      adb.getApiLevel.returns(18);
-      adb.shell.withArgs(shellArgs).returns(dumpsysDataAPI18);
       (await getMemoryInfo.bind(driver)(PACKAGE_NAME)).should.be.deep.equal(expectedResult);
       asyncbox.retryInterval.calledWith(RETRY_COUNT, RETRY_PAUSE).should.be.true;
     });
