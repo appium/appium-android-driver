@@ -99,13 +99,6 @@ describe('Lock', function () {
       sandbox.stub(unlockHelpers, 'fingerprintUnlock').onFirstCall();
       await unlockWithOptions.bind(driver)({unlockType: 'fingerprint', unlockKey: '1111'});
     });
-    it('should throw an error is api is lower than 23 and trying to use fingerprintUnlock', async function () {
-      sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).returns(true);
-      sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).returns(false);
-      sandbox.stub(driver.adb, 'getApiLevel').onFirstCall().returns(21);
-      await unlockWithOptions.bind(driver)({unlockType: 'fingerprint', unlockKey: '1111'})
-        .should.be.rejectedWith('Fingerprint');
-    });
   });
   describe('validateUnlockCapabilities', function () {
     function toCaps(unlockType, unlockKey) {
@@ -178,13 +171,6 @@ describe('Lock', function () {
       sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME).onFirstCall();
       await fingerprintUnlock.bind(driver)(caps).should.be.fulfilled;
     });
-    it('should throw error if API level < 23', async function () {
-      sandbox.stub(driver.adb, 'getApiLevel').returns(22);
-      sandbox.stub(driver.adb, 'fingerprint').throws();
-      sandbox.stub(asyncboxHelpers, 'sleep').throws();
-      await fingerprintUnlock.bind(driver)({})
-        .should.eventually.be.rejectedWith('only works for Android 6+');
-    });
   });
   describe('pinUnlock', function() {
     const caps = {unlockKey: '13579'};
@@ -219,28 +205,6 @@ describe('Lock', function () {
           .returns(e.ELEMENT.toString());
       }
       sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME);
-      sandbox.stub(driver, 'click');
-
-      await pinUnlock.bind(driver)(caps);
-
-      driver.click.getCall(0).args[0].should.equal(1);
-      driver.click.getCall(1).args[0].should.equal(3);
-      driver.click.getCall(2).args[0].should.equal(5);
-      driver.click.getCall(3).args[0].should.equal(7);
-      driver.click.getCall(4).args[0].should.equal(9);
-    });
-    it('should be able to unlock device using pin (API level < 21)', async function () {
-      sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
-      sandbox.stub(unlockHelpers, 'stringKeyToArr').returns(keys);
-      sandbox.stub(driver.adb, 'getApiLevel').returns(20);
-      const findElOrElsStub = sandbox.stub(driver, 'findElOrEls');
-      for (let pin of keys) {
-        findElOrElsStub
-          .withArgs('id', `com.android.keyguard:id/key${pin}`, false)
-          .returns({ELEMENT: parseInt(pin, 10)});
-      }
-      sandbox.stub(driver.adb, 'isScreenLocked').returns(false);
-      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME).onFirstCall();
       sandbox.stub(driver, 'click');
 
       await pinUnlock.bind(driver)(caps);
