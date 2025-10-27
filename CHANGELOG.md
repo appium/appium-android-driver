@@ -1,3 +1,9 @@
+## [11.0.11](https://github.com/appium/appium-android-driver/compare/v11.0.10...v11.0.11) (2025-10-27)
+
+### Miscellaneous Chores
+
+* **deps:** bump io.appium.settings from 6.0.8 to 7.0.0 ([#1021](https://github.com/appium/appium-android-driver/issues/1021)) ([ddfa543](https://github.com/appium/appium-android-driver/commit/ddfa5439bbff03dd88675aeeae5c0a667b2555af))
+
 ## [11.0.10](https://github.com/appium/appium-android-driver/compare/v11.0.9...v11.0.10) (2025-10-24)
 
 ### Bug Fixes
