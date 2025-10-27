@@ -1,3 +1,9 @@
+## [11.0.12](https://github.com/appium/appium-android-driver/compare/v11.0.11...v11.0.12) (2025-10-27)
+
+### Miscellaneous Chores
+
+* Revert "chore(deps): bump io.appium.settings from 6.0.8 to 7.0.0" ([#1022](https://github.com/appium/appium-android-driver/issues/1022)) ([ed2b463](https://github.com/appium/appium-android-driver/commit/ed2b4631c68645a5d9e1fcc2964380d693b41b60))
+
 ## [11.0.11](https://github.com/appium/appium-android-driver/compare/v11.0.10...v11.0.11) (2025-10-27)
 
 ### Miscellaneous Chores
