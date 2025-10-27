@@ -1,3 +1,9 @@
+## [12.0.1](https://github.com/appium/appium-android-driver/compare/v12.0.0...v12.0.1) (2025-10-27)
+
+### Miscellaneous Chores
+
+* modify readme to release with newer io.appium.settings ([5de7ca4](https://github.com/appium/appium-android-driver/commit/5de7ca424cc6638b458c78caf07b014f2e0b83e0))
+
 ## [12.0.0](https://github.com/appium/appium-android-driver/compare/v11.0.12...v12.0.0) (2025-10-27)
 
 ### ⚠ BREAKING CHANGES
