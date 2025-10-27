@@ -1,3 +1,13 @@
+## [12.0.0](https://github.com/appium/appium-android-driver/compare/v11.0.12...v12.0.0) (2025-10-27)
+
+### ⚠ BREAKING CHANGES
+
+* Assume the minimum device API level is 26
+
+### Features
+
+* Assume the minimum device API level is 26 ([#1020](https://github.com/appium/appium-android-driver/issues/1020)) ([142a353](https://github.com/appium/appium-android-driver/commit/142a3538a041a360c2dbdddf8443211fad4a2be7))
+
 ## [11.0.12](https://github.com/appium/appium-android-driver/compare/v11.0.11...v11.0.12) (2025-10-27)
 
 ### Miscellaneous Chores
