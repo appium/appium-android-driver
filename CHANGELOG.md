@@ -1,3 +1,9 @@
+## [12.0.2](https://github.com/appium/appium-android-driver/compare/v12.0.1...v12.0.2) (2025-10-28)
+
+### Miscellaneous Chores
+
+* bump io.appium.settings to 7.0.1 ([#1024](https://github.com/appium/appium-android-driver/issues/1024)) ([6d11ef4](https://github.com/appium/appium-android-driver/commit/6d11ef4f79bc49658e524c60afd788734afe44fe))
+
 ## [12.0.1](https://github.com/appium/appium-android-driver/compare/v12.0.0...v12.0.1) (2025-10-27)
 
 ### Miscellaneous Chores
