@@ -1,3 +1,9 @@
+## [12.1.1](https://github.com/appium/appium-android-driver/compare/v12.1.0...v12.1.1) (2025-10-30)
+
+### Bug Fixes
+
+* Put webSocketUrl to chrome caps root ([#1026](https://github.com/appium/appium-android-driver/issues/1026)) ([0f01763](https://github.com/appium/appium-android-driver/commit/0f0176341f45783096021be140cbd0320f67724e))
+
 ## [12.1.0](https://github.com/appium/appium-android-driver/compare/v12.0.2...v12.1.0) (2025-10-30)
 
 ### Features
