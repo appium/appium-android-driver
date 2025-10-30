@@ -1,3 +1,9 @@
+## [12.1.0](https://github.com/appium/appium-android-driver/compare/v12.0.2...v12.1.0) (2025-10-30)
+
+### Features
+
+* Add chromedriverForwardBiDi capability ([#1025](https://github.com/appium/appium-android-driver/issues/1025)) ([fa8b92e](https://github.com/appium/appium-android-driver/commit/fa8b92ebe82790496fa8562081fe44e63643396a))
+
 ## [12.0.2](https://github.com/appium/appium-android-driver/compare/v12.0.1...v12.0.2) (2025-10-28)
 
 ### Miscellaneous Chores
