@@ -208,6 +208,7 @@ import {mobileStartScreenStreaming, mobileStopScreenStreaming} from './commands/
 import {getSystemBars, mobilePerformStatusBarCommand} from './commands/system-bars';
 import {getDeviceTime, mobileGetDeviceTime} from './commands/time';
 import { executeMethodMap } from './execute-method-map';
+import { LRUCache } from 'lru-cache';
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
 export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;
@@ -224,39 +225,28 @@ class AndroidDriver
   static executeMethodMap = executeMethodMap;
 
   jwpProxyAvoid: RouteMatcher[];
-
   adb: ADB;
-
   _settingsApp: SettingsApp;
-
   proxyReqRes?: (...args: any) => any;
-
   contexts?: string[];
-
   sessionChromedrivers: StringRecord<AppiumChromedriver>;
-
   chromedriver?: AppiumChromedriver;
-
   proxyCommand?: AndroidExternalDriver['proxyCommand'];
   jwpProxyActive: boolean;
   curContext: string;
-
   useUnlockHelperApp?: boolean;
-
   defaultIME?: string;
-
   _wasWindowAnimationDisabled?: boolean;
-
   _cachedActivityArgs: StringRecord;
-
   _screenStreamingProps?: StringRecord;
-
   _screenRecordingProperties?: StringRecord;
-
   _logcatWebsocketListener?: LogcatListener;
-
   _bidiServerLogListener?: (...args: any[]) => void;
-
+  _bidiProxyUrl: string | null = null;
+  _bidiProxyUrlCache: LRUCache<string, string> = new LRUCache({
+    max: 20,
+    updateAgeOnGet: true,
+  });
   opts: AndroidDriverOpts;
 
   constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
@@ -276,8 +266,10 @@ class AndroidDriver
     this.curContext = this.defaultContextName();
     this.opts = opts as AndroidDriverOpts;
     this._cachedActivityArgs = {};
-    // @ts-ignore Remove it after min supported server version is ^2.14.0
-    this.doesSupportBidi = true;
+  }
+
+  get bidiProxyUrl(): string | null {
+    return this.opts.chromedriverForwardBiDi ? this._bidiProxyUrl : null;
   }
 
   get settingsApp(): SettingsApp {

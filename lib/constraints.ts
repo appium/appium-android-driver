@@ -93,6 +93,9 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   chromedriverArgs: {
     isObject: true,
   },
+  chromedriverForwardBiDi: {
+    isBoolean: true,
+  },
   chromedriverExecutable: {
     isString: true,
   },
