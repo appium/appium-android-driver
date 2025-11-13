@@ -91,7 +91,7 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
     isArray: true,
   },
   chromedriverArgs: {
-    isObject: true,
+    isArray: true,
   },
   chromedriverForwardBiDi: {
     isBoolean: true,
