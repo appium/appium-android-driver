@@ -1,3 +1,9 @@
+## [12.2.0](https://github.com/appium/appium-android-driver/compare/v12.1.3...v12.2.0) (2025-11-15)
+
+### Features
+
+* Add 'mobile: getChromeCapabilities' extension method ([#1029](https://github.com/appium/appium-android-driver/issues/1029)) ([023a95a](https://github.com/appium/appium-android-driver/commit/023a95a5048b4c1dde88df04305adbdaaa80a50d))
+
 ## [12.1.3](https://github.com/appium/appium-android-driver/compare/v12.1.2...v12.1.3) (2025-11-15)
 
 ### Miscellaneous Chores
