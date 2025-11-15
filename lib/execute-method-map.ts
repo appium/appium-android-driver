@@ -230,6 +230,10 @@ export const executeMethodMap = {
     },
   },
 
+  'mobile: getChromeCapabilities': {
+    command: 'mobileGetChromeCapabilities',
+  },
+
   'mobile: lock': {
     command: 'lock',
     params: {
