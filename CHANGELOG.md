@@ -1,3 +1,9 @@
+## [12.1.3](https://github.com/appium/appium-android-driver/compare/v12.1.2...v12.1.3) (2025-11-15)
+
+### Miscellaneous Chores
+
+* publish via trusted publisher ([#1028](https://github.com/appium/appium-android-driver/issues/1028)) ([98d4540](https://github.com/appium/appium-android-driver/commit/98d4540356434a00710864defc3b141f4208f06a))
+
 ## [12.1.2](https://github.com/appium/appium-android-driver/compare/v12.1.1...v12.1.2) (2025-11-13)
 
 ### Miscellaneous Chores
