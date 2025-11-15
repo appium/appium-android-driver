@@ -33,6 +33,7 @@ import {
   suspendChromedriverProxy,
   startChromeSession,
   mobileGetContexts,
+  mobileGetChromeCapabilities,
   getWindowHandle,
   getWindowHandles,
   setWindow,
@@ -243,7 +244,7 @@ class AndroidDriver
   _logcatWebsocketListener?: LogcatListener;
   _bidiServerLogListener?: (...args: any[]) => void;
   _bidiProxyUrl: string | null = null;
-  _bidiProxyUrlCache: LRUCache<string, string> = new LRUCache({
+  _chromedriverCapsCache: LRUCache<string, StringRecord> = new LRUCache({
     max: 20,
     updateAgeOnGet: true,
   });
@@ -354,6 +355,7 @@ class AndroidDriver
   onChromedriverStop = onChromedriverStop;
   isWebContext = isWebContext;
   mobileGetContexts = mobileGetContexts;
+  mobileGetChromeCapabilities = mobileGetChromeCapabilities;
   setContext = setContext as any as (this: AndroidDriver, name?: string) => Promise<void>;
   setWindow = setWindow;
   getWindowHandle = getWindowHandle;
