@@ -2,19 +2,14 @@ import sinon from 'sinon';
 import {ADB} from 'appium-adb';
 import { AndroidDriver } from '../../../lib/driver';
 import { setMockLocationApp } from '../../../lib/commands/geolocation';
+import { use } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+use(chaiAsPromised);
 
 describe('Geolocation', function () {
-  let driver;
-  let sandbox = sinon.createSandbox();
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-  });
+  let driver: AndroidDriver;
+  const sandbox = sinon.createSandbox();
 
   beforeEach(function () {
     const adb = new ADB();
@@ -35,5 +30,5 @@ describe('Geolocation', function () {
       await setMockLocationApp.bind(driver)('io.appium.settings');
     });
   });
-
 });
+

@@ -1,27 +1,20 @@
 import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
 import {ADB} from 'appium-adb';
+import { expect, use } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
-/** @type {AndroidDriver} */
-let driver;
-let sandbox = sinon.createSandbox();
+use(chaiAsPromised);
+
+let driver: AndroidDriver;
+const sandbox = sinon.createSandbox();
 
 describe('Keyboard', function () {
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-  });
-
   beforeEach(function () {
     driver = new AndroidDriver();
     driver.adb = new ADB();
-    driver.caps = {};
-    driver.opts = {};
+    driver.caps = {} as any;
+    driver.opts = {} as any;
   });
   afterEach(function () {
     sandbox.restore();
@@ -29,51 +22,52 @@ describe('Keyboard', function () {
   describe('isKeyboardShown', function () {
     it('should return true if the keyboard is shown', async function () {
       driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
-        return {isKeyboardShown: true, canCloseKeyboard: true};
+        return Promise.resolve({isKeyboardShown: true, canCloseKeyboard: true});
       };
-      (await driver.isKeyboardShown()).should.equal(true);
+      expect(await driver.isKeyboardShown()).to.equal(true);
     });
     it('should return false if the keyboard is not shown', async function () {
       driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
-        return {isKeyboardShown: false, canCloseKeyboard: true};
+        return Promise.resolve({isKeyboardShown: false, canCloseKeyboard: true});
       };
-      (await driver.isKeyboardShown()).should.equal(false);
+      expect(await driver.isKeyboardShown()).to.equal(false);
     });
   });
   describe('hideKeyboard', function () {
     it('should hide keyboard with ESC command', async function () {
-      sandbox.stub(driver.adb, 'keyevent');
+      const keyeventStub1 = sandbox.stub(driver.adb, 'keyevent');
       let callIdx = 0;
       driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
         callIdx++;
-        return {
+        return Promise.resolve({
           isKeyboardShown: callIdx <= 1,
           canCloseKeyboard: callIdx <= 1,
-        };
+        });
       };
-      await driver.hideKeyboard().should.eventually.be.fulfilled;
-      driver.adb.keyevent.calledWithExactly(111).should.be.true;
+      await await expect(driver.hideKeyboard()).to.eventually.be.fulfilled;
+      expect(keyeventStub1.calledWithExactly(111)).to.be.true;
     });
     it('should throw if cannot close keyboard', async function () {
       this.timeout(10000);
-      sandbox.stub(driver.adb, 'keyevent');
       driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
-        return {
+        return Promise.resolve({
           isKeyboardShown: true,
           canCloseKeyboard: false,
-        };
+        });
       };
-      await driver.hideKeyboard().should.eventually.be.rejected;
-      driver.adb.keyevent.notCalled.should.be.true;
+      const keyeventStub = sandbox.stub(driver.adb, 'keyevent');
+      await await expect(driver.hideKeyboard()).to.eventually.be.rejected;
+      expect(keyeventStub.notCalled).to.be.true;
     });
     it('should not throw if no keyboard is present', async function () {
       driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
-        return {
+        return Promise.resolve({
           isKeyboardShown: false,
           canCloseKeyboard: false,
-        };
+        });
       };
-      await driver.hideKeyboard().should.eventually.be.fulfilled;
+      await await expect(driver.hideKeyboard()).to.eventually.be.fulfilled;
     });
   });
 });
+

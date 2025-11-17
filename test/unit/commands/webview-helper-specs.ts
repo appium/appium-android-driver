@@ -3,18 +3,19 @@ import {DEVTOOLS_SOCKET_PATTERN} from '../../../lib/commands/context/helpers';
 import * as webviewHelpers from '../../../lib/commands/context/helpers';
 import {ADB} from 'appium-adb';
 import {AndroidDriver} from '../../../lib/driver';
+import { expect, use } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
-let sandbox = sinon.createSandbox();
+use(chaiAsPromised);
+
+const sandbox = sinon.createSandbox();
 
 describe('Webview Helpers', function () {
-  let adb = new ADB();
+  const adb = new ADB();
   let driver = new AndroidDriver();
-  let chai;
+  let stubbedShell: sinon.SinonStub;
 
   before(async function () {
-    chai = await import('chai');
-    chai.should();
-
     driver = new AndroidDriver();
     driver.adb = adb;
   });
@@ -25,13 +26,13 @@ describe('Webview Helpers', function () {
 
   describe('DEVTOOLS_SOCKET_PATTERN', function () {
     it('patting patterns with webview_devtools_remote_22138', function () {
-      DEVTOOLS_SOCKET_PATTERN.test('@webview_devtools_remote_22138').should.be.true;
+      expect(DEVTOOLS_SOCKET_PATTERN.test('@webview_devtools_remote_22138')).to.be.true;
     });
     it('patting patterns with webview_devtools_remote_m6x_27719', function () {
-      DEVTOOLS_SOCKET_PATTERN.test('@webview_devtools_remote_m6x_27719').should.be.true;
+      expect(DEVTOOLS_SOCKET_PATTERN.test('@webview_devtools_remote_m6x_27719')).to.be.true;
     });
     it('patting patterns with chrome_devtools_remote', function () {
-      DEVTOOLS_SOCKET_PATTERN.test('@chrome_devtools_remote').should.be.true;
+      expect(DEVTOOLS_SOCKET_PATTERN.test('@chrome_devtools_remote')).to.be.true;
     });
   });
 
@@ -40,15 +41,15 @@ describe('Webview Helpers', function () {
       let webViews;
 
       beforeEach(async function () {
-        sandbox.stub(adb, 'shell').callsFake(function () {
-          return (
+        stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
+          return Promise.resolve(
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @webview_devtools_remote_123\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n'
           );
-        });
+        }) as sinon.SinonStub;
         const webviewsMapping = await webviewHelpers.getWebViewsMapping.bind(driver)({
           androidDeviceSocket: 'webview_devtools_remote_123',
           ensureWebviewsHavePages: false,
@@ -60,13 +61,13 @@ describe('Webview Helpers', function () {
       });
 
       it('then the unix sockets are queried', function () {
-        adb.shell.calledOnce.should.be.true;
-        adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+      expect(stubbedShell.calledOnce).to.be.true;
+        expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
       });
 
       it('then the webview is returned', function () {
-        webViews.length.should.equal(1);
-        webViews.should.deep.equal(['WEBVIEW_123']);
+      expect(webViews.length).to.equal(1);
+      expect(webViews).to.deep.equal(['WEBVIEW_123']);
       });
     });
 
@@ -74,7 +75,7 @@ describe('Webview Helpers', function () {
       let webViews;
 
       beforeEach(async function () {
-        sandbox.stub(adb, 'shell').callsFake(function () {
+        stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
           return (
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
@@ -95,13 +96,13 @@ describe('Webview Helpers', function () {
       });
 
       it('then the unix sockets are queried', function () {
-        adb.shell.calledOnce.should.be.true;
-        adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+      expect(stubbedShell.calledOnce).to.be.true;
+        expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
       });
 
       it('then the webview is returned', function () {
-        webViews.length.should.equal(1);
-        webViews.should.deep.equal(['CHROMIUM']);
+      expect(webViews.length).to.equal(1);
+      expect(webViews).to.deep.equal(['CHROMIUM']);
       });
     });
 
@@ -109,7 +110,7 @@ describe('Webview Helpers', function () {
       let webViews;
 
       beforeEach(async function () {
-        sandbox.stub(adb, 'shell').callsFake(function () {
+        stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
           return (
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
@@ -126,12 +127,12 @@ describe('Webview Helpers', function () {
       });
 
       it('then the unix sockets are queried', function () {
-        adb.shell.calledOnce.should.be.true;
-        adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+      expect(stubbedShell.calledOnce).to.be.true;
+        expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
       });
 
       it('then no webviews are returned', function () {
-        webViews.length.should.equal(0);
+      expect(webViews.length).to.equal(0);
       });
     });
 
@@ -139,7 +140,7 @@ describe('Webview Helpers', function () {
       let webViews;
 
       beforeEach(function () {
-        sandbox.stub(adb, 'shell').callsFake(function () {
+        stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
           return (
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
@@ -162,13 +163,13 @@ describe('Webview Helpers', function () {
         });
 
         it('then the unix sockets are queried', function () {
-          adb.shell.calledOnce.should.be.true;
-          adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+      expect(stubbedShell.calledOnce).to.be.true;
+          expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
         });
 
         it('then the webview is returned', function () {
-          webViews.length.should.equal(1);
-          webViews.should.deep.equal(['WEBVIEW_com.application.myapp']);
+      expect(webViews.length).to.equal(1);
+      expect(webViews).to.deep.equal(['WEBVIEW_com.application.myapp']);
         });
       });
 
@@ -185,13 +186,13 @@ describe('Webview Helpers', function () {
         });
 
         it('then the unix sockets are queried', function () {
-          adb.shell.calledOnce.should.be.true;
-          adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+      expect(stubbedShell.calledOnce).to.be.true;
+          expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
         });
 
         it('then the webview is returned', function () {
-          webViews.length.should.equal(1);
-          webViews.should.deep.equal(['WEBVIEW_com.application.myapp']);
+      expect(webViews.length).to.equal(1);
+      expect(webViews).to.deep.equal(['WEBVIEW_com.application.myapp']);
         });
       });
 
@@ -204,12 +205,12 @@ describe('Webview Helpers', function () {
         });
 
         it('then the unix sockets are queried', function () {
-          adb.shell.calledOnce.should.be.true;
-          adb.shell.getCall(0).args[0].should.deep.equal(['cat', '/proc/net/unix']);
+      expect(stubbedShell.calledOnce).to.be.true;
+          expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
         });
 
         it('then no webviews are returned', function () {
-          webViews.length.should.equal(0);
+      expect(webViews.length).to.equal(0);
         });
       });
     });

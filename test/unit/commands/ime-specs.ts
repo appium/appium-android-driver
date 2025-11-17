@@ -2,20 +2,14 @@ import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
 import {ADB} from 'appium-adb';
 import {errors} from 'appium/driver';
+import { expect, use } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+use(chaiAsPromised);
 
 describe('IME', function () {
-  /** @type {AndroidDriver} */
-  let driver;
-  let sandbox = sinon.createSandbox();
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-  });
+  let driver: AndroidDriver;
+  const sandbox = sinon.createSandbox();
 
   beforeEach(function () {
     driver = new AndroidDriver();
@@ -26,41 +20,42 @@ describe('IME', function () {
   });
   describe('isIMEActivated', function () {
     it('should allways return true', async function () {
-      await driver.isIMEActivated().should.eventually.be.true;
+      await await expect(driver.isIMEActivated()).to.eventually.be.true;
     });
   });
   describe('availableIMEEngines', function () {
     it('should return available IMEEngines', async function () {
       sandbox.stub(driver.adb, 'availableIMEs').returns(['IME1', 'IME2']);
-      await driver.availableIMEEngines().should.eventually.be.deep.equal(['IME1', 'IME2']);
+      await await expect(driver.availableIMEEngines()).to.eventually.be.deep.equal(['IME1', 'IME2']);
     });
   });
   describe('getActiveIMEEngine', function () {
     it('should return active IME engine', async function () {
       sandbox.stub(driver.adb, 'defaultIME').returns('default_ime_engine');
-      await driver.getActiveIMEEngine().should.become('default_ime_engine');
+      await expect(driver.getActiveIMEEngine()).to.become('default_ime_engine');
     });
   });
   describe('activateIMEEngine', function () {
     it('should activate IME engine', async function () {
       sandbox.stub(driver.adb, 'availableIMEs').returns(['IME1', 'IME2']);
-      sandbox.stub(driver.adb, 'enableIME');
-      sandbox.stub(driver.adb, 'setIME');
-      await driver.activateIMEEngine('IME2').should.be.fulfilled;
-      driver.adb.enableIME.calledWithExactly('IME2').should.be.true;
-      driver.adb.setIME.calledWithExactly('IME2').should.be.true;
+      const enableIMEStub = sandbox.stub(driver.adb, 'enableIME');
+      const setIMEStub = sandbox.stub(driver.adb, 'setIME');
+      await expect(driver.activateIMEEngine('IME2')).to.be.fulfilled;
+      expect(enableIMEStub.calledWithExactly('IME2')).to.be.true;
+      expect(setIMEStub.calledWithExactly('IME2')).to.be.true;
     });
     it('should throws error if IME not found', async function () {
       sandbox.stub(driver.adb, 'availableIMEs').returns(['IME1', 'IME2']);
-      await driver.activateIMEEngine('IME3').should.be.rejectedWith(errors.IMENotAvailableError);
+      await expect(driver.activateIMEEngine('IME3')).to.be.rejectedWith(errors.IMENotAvailableError);
     });
   });
   describe('deactivateIMEEngine', function () {
     it('should deactivate IME engine', async function () {
       sandbox.stub(driver, 'getActiveIMEEngine').returns('active_ime_engine');
-      sandbox.stub(driver.adb, 'disableIME');
-      await driver.deactivateIMEEngine().should.be.fulfilled;
-      driver.adb.disableIME.calledWithExactly('active_ime_engine');
+      const disableIMEStub = sandbox.stub(driver.adb, 'disableIME');
+      await expect(driver.deactivateIMEEngine()).to.be.fulfilled;
+      expect(disableIMEStub.calledWithExactly('active_ime_engine')).to.be.true;
     });
   });
 });
+
