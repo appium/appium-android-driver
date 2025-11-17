@@ -1,3 +1,9 @@
+## [12.2.1](https://github.com/appium/appium-android-driver/compare/v12.2.0...v12.2.1) (2025-11-17)
+
+### Miscellaneous Chores
+
+* Bump settings ([810cdce](https://github.com/appium/appium-android-driver/commit/810cdce241fedf9bca1a23365a7ad355a5115240))
+
 ## [12.2.0](https://github.com/appium/appium-android-driver/compare/v12.1.3...v12.2.0) (2025-11-15)
 
 ### Features
