@@ -6,22 +6,15 @@ import {prepareAvdArgs, prepareEmulator} from '../../../lib/commands/device/util
 import * as deviceUtils from '../../../lib/commands/device/utils';
 import * as geolocationHelpers from '../../../lib/commands/geolocation';
 import * as keyboardHelpers from '../../../lib/commands/keyboard';
+import { expect, use } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+use(chaiAsPromised);
 
 describe('Device Helpers', function () {
-  /** @type {AndroidDriver} */
-  let driver;
-  /** @type {ADB} */
-  let adb;
-  let sandbox = sinon.createSandbox();
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-  });
+  let driver: AndroidDriver;
+  let adb: ADB;
+  const sandbox = sinon.createSandbox();
 
   beforeEach(function () {
     adb = new ADB();
@@ -35,35 +28,35 @@ describe('Device Helpers', function () {
   describe('isEmulator', function () {
     it('should be true if driver opts contain avd', function () {
       const driver = new AndroidDriver();
-      driver.opts = {avd: 'yolo'};
-      driver.isEmulator().should.be.true;
+      driver.opts = {avd: 'yolo'} as any;
+      expect(driver.isEmulator()).to.be.true;
     });
     it('should be true if driver opts contain emulator udid', function () {
       const driver = new AndroidDriver();
-      driver.opts = {udid: 'Emulator-5554'};
-      driver.isEmulator().should.be.true;
+      driver.opts = {udid: 'Emulator-5554'} as any;
+      expect(driver.isEmulator()).to.be.true;
     });
     it('should be false if driver opts do not contain emulator udid', function () {
       const driver = new AndroidDriver();
-      driver.opts = {udid: 'ABCD1234'};
-      driver.isEmulator().should.be.false;
+      driver.opts = {udid: 'ABCD1234'} as any;
+      expect(driver.isEmulator()).to.be.false;
     });
     it('should be true if device id in adb contains emulator', function () {
       const driver = new AndroidDriver();
-      driver.adb = {curDeviceId: 'emulator-5554'};
-      driver.isEmulator().should.be.true;
+      driver.adb = {curDeviceId: 'emulator-5554'} as any;
+      expect(driver.isEmulator()).to.be.true;
     });
     it('should be false if device id in adb does not contain emulator', function () {
       const driver = new AndroidDriver();
-      driver.adb = {curDeviceId: 'ABCD1234'};
-      driver.isEmulator().should.be.false;
+      driver.adb = {curDeviceId: 'ABCD1234'} as any;
+      expect(driver.isEmulator()).to.be.false;
     });
   });
   describe('prepareEmulator', function () {
     beforeEach(function () {
-      driver.opts = {avd: 'foo@bar', avdArgs: '', language: 'en', locale: 'us'};
+      driver.opts = {avd: 'foo@bar', avdArgs: '', language: 'en', locale: 'us'} as any;
     });
-    this.afterEach(function () {
+    afterEach(function () {
       sandbox.verify();
     });
 
@@ -96,7 +89,7 @@ describe('Device Helpers', function () {
           k1: 'v1',
           k2: 'v2',
         },
-      };
+      } as any;
       sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
       sandbox
         .stub(adb, 'launchAVD')
@@ -118,7 +111,7 @@ describe('Device Helpers', function () {
       driver.opts = {
         avd: 'foobar',
         avdArgs: ['--arg1', 'value 1', '--arg2', 'value 2'],
-      };
+      } as any;
       sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').throws();
       sandbox
         .stub(adb, 'launchAVD')
@@ -134,43 +127,43 @@ describe('Device Helpers', function () {
       await prepareEmulator.bind(driver)(adb);
     });
     it('should kill emulator if avdArgs contains -wipe-data', async function () {
-      driver.opts = {avd: 'foo@bar', avdArgs: '-wipe-data'};
+      driver.opts = {avd: 'foo@bar', avdArgs: '-wipe-data'} as any;
       sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').returns('foo');
       sandbox.stub(adb, 'killEmulator').withArgs('foobar').onFirstCall();
       sandbox.stub(adb, 'launchAVD').onFirstCall();
       await prepareEmulator.bind(driver)(adb);
     });
     it('should fail if avd name is not specified', async function () {
-      driver.opts = {};
-      await prepareEmulator.bind(driver)(adb).should.eventually.be.rejected;
+      driver.opts = {} as any;
+      await expect(prepareEmulator.bind(driver)(adb)).to.eventually.be.rejected;
     });
   });
   describe('prepareAvdArgs', function () {
     it('should set the correct avdArgs', function () {
-      driver.opts = {avdArgs: '-wipe-data'};
-      prepareAvdArgs.bind(driver)().should.eql(['-wipe-data']);
+      driver.opts = {avdArgs: '-wipe-data'} as any;
+      expect(prepareAvdArgs.bind(driver)()).to.eql(['-wipe-data']);
     });
     it('should add headless arg', function () {
-      driver.opts = {avdArgs: '-wipe-data', isHeadless: true};
-      let args = prepareAvdArgs.bind(driver)();
-      args.should.eql(['-wipe-data', '-no-window']);
+      driver.opts = {avdArgs: '-wipe-data', isHeadless: true} as any;
+      const args = prepareAvdArgs.bind(driver)();
+      expect(args).to.eql(['-wipe-data', '-no-window']);
     });
     it('should add network speed arg', function () {
-      driver.opts = {avdArgs: '-wipe-data', networkSpeed: 'edge'};
-      let args = prepareAvdArgs.bind(driver)();
-      args.should.eql(['-wipe-data', '-netspeed', 'edge']);
+      driver.opts = {avdArgs: '-wipe-data', networkSpeed: 'edge'} as any;
+      const args = prepareAvdArgs.bind(driver)();
+      expect(args).to.eql(['-wipe-data', '-netspeed', 'edge']);
     });
     it('should not include empty avdArgs', function () {
-      driver.opts = {avdArgs: '', isHeadless: true};
-      let args = prepareAvdArgs.bind(driver)();
-      args.should.eql(['-no-window']);
+      driver.opts = {avdArgs: '', isHeadless: true} as any;
+      const args = prepareAvdArgs.bind(driver)();
+      expect(args).to.eql(['-no-window']);
     });
   });
 
   describe('getDeviceInfoFromCaps', function () {
     // list of device/emu udids to their os versions
     // using list instead of map to preserve order
-    let devices = [
+    const devices = [
       {udid: 'emulator-1234', os: '4.9.2'},
       {udid: 'rotalume-1339', os: '5.1.5'},
       {udid: 'rotalume-1338', os: '5.0.1'},
@@ -213,104 +206,102 @@ describe('Device Helpers', function () {
     });
 
     after(function () {
-      ADB.createADB.restore();
+      (ADB.createADB as sinon.SinonStub).restore();
     });
 
     it('should throw error when udid not in list', async function () {
       const driver = new AndroidDriver();
       driver.opts = {
         udid: 'foomulator',
-      };
+      } as any;
       driver.adb = await ADB.createADB();
-      await driver.getDeviceInfoFromCaps().should.be.rejectedWith('foomulator');
+      await expect(driver.getDeviceInfoFromCaps()).to.be.rejectedWith('foomulator');
     });
     it('should get deviceId and emPort when udid is present', async function () {
       const driver = new AndroidDriver();
       driver.opts = {
         udid: 'emulator-1234',
-      };
+      } as any;
       driver.adb = await ADB.createADB();
-      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      udid.should.equal('emulator-1234');
-      emPort.should.equal(1234);
+      const {udid, emPort} = await driver.getDeviceInfoFromCaps();
+      expect(udid).to.equal('emulator-1234');
+      expect(emPort).to.equal(1234);
     });
     it('should get first deviceId and emPort if avd, platformVersion, and udid are not given', async function () {
       const driver = new AndroidDriver();
       driver.adb = await ADB.createADB();
-      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      udid.should.equal('emulator-1234');
-      emPort.should.equal(1234);
+      const {udid, emPort} = await driver.getDeviceInfoFromCaps();
+      expect(udid).to.equal('emulator-1234');
+      expect(emPort).to.equal(1234);
     });
     it('should get deviceId and emPort when avd is present', async function () {
       const driver = new AndroidDriver();
       driver.opts = {
         avd: 'AVD_NAME',
-      };
+      } as any;
       driver.adb = await ADB.createADB();
-      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      udid.should.equal('emulator-1234');
-      emPort.should.equal(1234);
+      const {udid, emPort} = await driver.getDeviceInfoFromCaps();
+      expect(udid).to.equal('emulator-1234');
+      expect(emPort).to.equal(1234);
     });
     it('should fail if the given platformVersion is not found', async function () {
       const driver = new AndroidDriver();
       driver.opts = {
         platformVersion: '1234567890',
-      };
+      } as any;
       driver.adb = await ADB.createADB();
-      await driver
-        .getDeviceInfoFromCaps()
-        .should.be.rejectedWith('Unable to find an active device or emulator with OS 1234567890');
+      await expect(driver.getDeviceInfoFromCaps()).to.be.rejectedWith('Unable to find an active device or emulator with OS 1234567890');
     });
     it('should get deviceId and emPort if platformVersion is found and unique', async function () {
       const driver = new AndroidDriver();
       driver.opts = {
         platformVersion: '6.0',
-      };
+      } as any;
       driver.adb = await ADB.createADB();
-      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      udid.should.equal('roamulet-9000');
-      emPort.should.equal(1234);
+      const {udid, emPort} = await driver.getDeviceInfoFromCaps();
+      expect(udid).to.equal('roamulet-9000');
+      expect(emPort).to.equal(1234);
     });
     it('should get deviceId and emPort if platformVersion is shorter than os version', async function () {
       const driver = new AndroidDriver();
       driver.opts = {
         platformVersion: 9,
-      };
+      } as any;
       driver.adb = await ADB.createADB();
-      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      udid.should.equal('roamulet-2019');
-      emPort.should.equal(1234);
+      const {udid, emPort} = await driver.getDeviceInfoFromCaps();
+      expect(udid).to.equal('roamulet-2019');
+      expect(emPort).to.equal(1234);
     });
     it('should get the first deviceId and emPort if platformVersion is found multiple times', async function () {
       const driver = new AndroidDriver();
       driver.opts = {
         platformVersion: '5.0.1',
-      };
+      } as any;
       driver.adb = await ADB.createADB();
-      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      udid.should.equal('rotalume-1338');
-      emPort.should.equal(1234);
+      const {udid, emPort} = await driver.getDeviceInfoFromCaps();
+      expect(udid).to.equal('rotalume-1338');
+      expect(emPort).to.equal(1234);
     });
     it('should get the deviceId and emPort of most recent version if we have partial match', async function () {
       const driver = new AndroidDriver();
       driver.opts = {
         platformVersion: '5.0',
-      };
+      } as any;
       driver.adb = await ADB.createADB();
-      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      udid.should.equal('rotalume-1338');
-      emPort.should.equal(1234);
+      const {udid, emPort} = await driver.getDeviceInfoFromCaps();
+      expect(udid).to.equal('rotalume-1338');
+      expect(emPort).to.equal(1234);
     });
     it('should get deviceId and emPort by udid if udid and platformVersion are given', async function () {
       const driver = new AndroidDriver();
       driver.opts = {
         udid: '0123456789',
         platformVersion: '2.3',
-      };
+      } as any;
       driver.adb = await ADB.createADB();
-      let {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      udid.should.equal('0123456789');
-      emPort.should.equal(1234);
+      const {udid, emPort} = await driver.getDeviceInfoFromCaps();
+      expect(udid).to.equal('0123456789');
+      expect(emPort).to.equal(1234);
     });
   });
   describe('createADB', function () {
@@ -330,12 +321,12 @@ describe('Device Helpers', function () {
       });
     });
     after(function () {
-      ADB.createADB.restore();
+      (ADB.createADB as sinon.SinonStub).restore();
     });
     it('should create adb and set device id and emulator port', async function () {
       driver.opts = {
         udid: '111222',
-        emPort: '111',
+        emPort: 111,
         adbPort: '222',
         suppressKillServer: true,
         remoteAdbHost: 'remote_host',
@@ -349,9 +340,9 @@ describe('Device Helpers', function () {
         remoteAppsCacheLimit: 5,
         buildToolsVersion: '1.2.3',
         allowOfflineDevices: true,
-      };
+      } as any;
       await driver.createADB();
-      ADB.createADB.calledWithExactly({
+      expect((ADB.createADB as sinon.SinonStub).calledWithExactly({
         adbPort: '222',
         suppressKillServer: true,
         remoteAdbHost: 'remote_host',
@@ -366,21 +357,21 @@ describe('Device Helpers', function () {
         buildToolsVersion: '1.2.3',
         allowOfflineDevices: true,
         allowDelayAdb: undefined,
-      }).should.be.true;
-      curDeviceId.should.equal('111222');
-      emulatorPort.should.equal('111');
+      })).to.be.true;
+      expect(curDeviceId).to.equal('111222');
+      expect(emulatorPort).to.equal(111);
     });
     it('should not set emulator port if emPort is undefined', async function () {
       emulatorPort = 5555;
       await driver.createADB();
-      emulatorPort.should.equal(5555);
+      expect(emulatorPort).to.equal(5555);
     });
   });
   describe('initDevice', function () {
     it('should init a real device', async function () {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
-      driver.opts = {language: 'en', locale: 'us', localeScript: 'Script'};
+      driver.opts = {language: 'en', locale: 'us', localeScript: 'Script'} as any;
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
@@ -397,7 +388,7 @@ describe('Device Helpers', function () {
     it('should init device without locale and language', async function () {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
-      driver.opts = {};
+      driver.opts = {} as any;
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
@@ -411,7 +402,7 @@ describe('Device Helpers', function () {
     it('should init device with either locale or language', async function () {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
-      driver.opts = {language: 'en'};
+      driver.opts = {language: 'en'} as any;
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
@@ -428,7 +419,7 @@ describe('Device Helpers', function () {
     it('should not install mock location on emulator', async function () {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
-      driver.opts = {avd: 'avd'};
+      driver.opts = {avd: 'avd'} as any;
       sandbox.stub(driver.adb, 'waitForDevice').onFirstCall();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
@@ -439,7 +430,7 @@ describe('Device Helpers', function () {
     it('should set empty IME if hideKeyboard is set to true', async function () {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
-      driver.opts = {hideKeyboard: true};
+      driver.opts = {hideKeyboard: true} as any;
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();
@@ -451,7 +442,7 @@ describe('Device Helpers', function () {
     it('should init device without starting logcat', async function () {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
-      driver.opts = {skipLogcatCapture: true};
+      driver.opts = {skipLogcatCapture: true} as any;
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').throws();
       sandbox.stub(deviceUtils, 'pushSettingsApp').onFirstCall();

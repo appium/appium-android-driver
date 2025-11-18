@@ -8,5 +8,5 @@
     "strict": false,
     "checkJs": true
   },
-  "include": ["lib"]
+  "include": ["lib", "test"]
 }

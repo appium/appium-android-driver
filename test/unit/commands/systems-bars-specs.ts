@@ -1,25 +1,20 @@
 import {AndroidDriver} from '../../../lib/driver';
 import {parseWindowProperties, parseWindows} from '../../../lib/commands/system-bars';
+import { expect, use } from 'chai'; // expect is used
+import chaiAsPromised from 'chai-as-promised';
+
+use(chaiAsPromised);
 
 describe('System Bars', function () {
-  /** @type {AndroidDriver} */
-  let driver;
-  let chai;
-  let expect;
+  let driver: AndroidDriver;
 
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    expect = chai.expect;
-    chai.use(chaiAsPromised.default);
     driver = new AndroidDriver();
   });
 
   describe('parseWindowProperties', function () {
     it('should return visible true if the surface is visible', function () {
-      parseWindowProperties.bind(driver)(
+      expect(parseWindowProperties.bind(driver)(
         'yolo',
         `
       mDisplayId=0 rootTaskId=1 mSession=Session{6fdbba 684:u0a10144} mClient=android.os.BinderProxy@dbd59e0
@@ -58,7 +53,7 @@ describe('System Bars', function () {
       isVisible=true
       mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
       `.split('\n')
-      ).should.be.eql({
+      )).to.eql({
         visible: true,
         x: 0,
         y: 1794,
@@ -67,7 +62,7 @@ describe('System Bars', function () {
       });
     });
     it('should return visible false if the surface is not visible', function () {
-      parseWindowProperties.bind(driver)(
+      expect(parseWindowProperties.bind(driver)(
         'foo',
         `
       mDisplayId=0 rootTaskId=1 mSession=Session{6fdbba 684:u0a10144} mClient=android.os.BinderProxy@dbd59e0
@@ -106,7 +101,7 @@ describe('System Bars', function () {
       isVisible=true
       mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
       `.split('\n')
-      ).should.be.eql({
+      )).to.eql({
         visible: false,
         x: 0,
         y: 1794,
@@ -1151,7 +1146,7 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
       }).to.throw(Error);
     });
     it('should return defaults if only non matching windows were found', function () {
-      parseWindows.bind(driver)(`
+      expect(parseWindows.bind(driver)(`
       WINDOW MANAGER WINDOWS (dumpsys window windows)
         Window #0 Window{d1b7133 u0 pip-dismiss-overlay}:
           mDisplayId=0 rootTaskId=1 mSession=Session{6fdbba 684:u0a10144} mClient=android.os.BinderProxy@a5e1e9f
@@ -1183,38 +1178,38 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
           isOnScreen=false
           isVisible=false
           mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
-      `).should.be.eql({
+      `)).to.eql({
         statusBar: {visible: false, x: 0, y: 0, width: 0, height: 0},
         navigationBar: {visible: false, x: 0, y: 0, width: 0, height: 0},
       });
     });
     it('should return status and navigation bar for Android 11 and below', function () {
-      parseWindows.bind(driver)(validWindowOutputA11).should.be.eql(validSystemBarsA11);
+      expect(parseWindows.bind(driver)(validWindowOutputA11)).to.eql(validSystemBarsA11);
     });
     it('should return status and navigation bar for Android 12', function () {
-      parseWindows.bind(driver)(validWindowOutputA12).should.be.eql(validSystemBarsA12);
+      expect(parseWindows.bind(driver)(validWindowOutputA12)).to.eql(validSystemBarsA12);
     });
     it('should return status and navigation bar for Android 13 and above', function () {
-      parseWindows.bind(driver)(validWindowOutputA13).should.be.eql(validSystemBarsA13);
+      expect(parseWindows.bind(driver)(validWindowOutputA13)).to.eql(validSystemBarsA13);
     });
   });
 
   describe('getSystemBars', function () {
-    let driver;
+    let driver: AndroidDriver;
 
     it('should throw an error if was unable to retrieve dumpsys output', async function () {
       driver = new AndroidDriver();
-      driver.adb = {};
-      driver.adb.shell = () => {
+      driver.adb = {} as any;
+      driver.adb.shell = (() => {
         throw new Error();
-      };
-      await driver.getSystemBars().should.be.rejected;
+      }) as any;
+      await expect(driver.getSystemBars()).to.be.rejected;
     });
     it('should return the parsed system bar info below Android 11', async function () {
       driver = new AndroidDriver();
-      driver.adb = {};
-      driver.adb.shell = () => validWindowOutputA11;
-      (await driver.getSystemBars()).should.be.eql(validSystemBarsA11);
+      driver.adb = {} as any;
+      driver.adb.shell = (() => Promise.resolve(validWindowOutputA11)) as any;
+      expect(await driver.getSystemBars()).to.eql(validSystemBarsA11);
     });
   });
 });

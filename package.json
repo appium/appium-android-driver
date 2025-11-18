@@ -40,7 +40,7 @@
     "prepare": "npm run rebuild",
     "rebuild": "npm run clean; npm run build",
     "format": "prettier -w ./lib",
-    "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\""
+    "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.ts\""
   },
   "prettier": {
     "bracketSpacing": false,
@@ -82,7 +82,6 @@
     "@types/source-map-support": "^0.5.6",
     "@types/ws": "^8.5.4",
     "@xmldom/xmldom": "^0.x",
-    "android-apidemos": "^5.0.0",
     "chai": "^6.0.0",
     "chai-as-promised": "^8.0.0",
     "conventional-changelog-conventionalcommits": "^9.0.0",
