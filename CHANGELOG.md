@@ -1,3 +1,9 @@
+## [12.3.0](https://github.com/appium/appium-android-driver/compare/v12.2.1...v12.3.0) (2025-11-21)
+
+### Features
+
+* add context for BiDi `LogEntrySource`  ([#1031](https://github.com/appium/appium-android-driver/issues/1031)) ([ae6c619](https://github.com/appium/appium-android-driver/commit/ae6c6197a03607d96454b5b3890899bf49ee00c5))
+
 ## [12.2.1](https://github.com/appium/appium-android-driver/compare/v12.2.0...v12.2.1) (2025-11-17)
 
 ### Miscellaneous Chores
