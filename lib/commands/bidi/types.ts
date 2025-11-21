@@ -20,6 +20,7 @@ interface LogEntryAddedEventParams {
 
 // https://w3c.github.io/webdriver-bidi/#event-log-entryAdded
 export interface LogEntryAddedEvent extends BiDiEvent<LogEntryAddedEventParams> {
+  context: string;
 }
 
 interface ContentUpdatedParams {

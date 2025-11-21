@@ -31,6 +31,7 @@ export const makeObsoleteContextUpdatedEvent = (contextName: string) => toContex
 
 export function makeLogEntryAddedEvent(entry: LogEntry, context: string, type: string): LogEntryAddedEvent {
   return {
+    context,
     method: LOG_ENTRY_ADDED_EVENT,
     params: {
       type,
