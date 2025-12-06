@@ -29,11 +29,11 @@ describe('General', function () {
   });
   describe('getDisplayDensity', function () {
     it('should return the display density of a device', async function () {
-      driver.adb.shell = () => Promise.resolve('123');
+      driver.adb.shell = (() => Promise.resolve('123')) as any;
       expect(await driver.getDisplayDensity()).to.equal(123);
     });
     it('should return the display density of an emulator', async function () {
-      driver.adb.shell = (cmd: any) => {
+      driver.adb.shell = ((cmd: any) => {
         const joinedCmd = cmd.join(' ');
         if (joinedCmd.indexOf('ro.sf') !== -1) {
           // device property look up
@@ -43,15 +43,15 @@ describe('General', function () {
           return Promise.resolve('456');
         }
         return Promise.resolve('');
-      };
+      }) as any;
       expect(await driver.getDisplayDensity()).to.equal(456);
     });
     it("should throw an error if the display density property can't be found", async function () {
-      driver.adb.shell = () => Promise.resolve('');
+      driver.adb.shell = (() => Promise.resolve('')) as any;
       await expect(driver.getDisplayDensity()).to.be.rejectedWith(/Failed to get display density property/);
     });
     it('should throw and error if the display density is not a number', async function () {
-      driver.adb.shell = () => Promise.resolve('abc');
+      driver.adb.shell = (() => Promise.resolve('abc')) as any;
       await expect(driver.getDisplayDensity()).to.be.rejectedWith(/Failed to get display density property/);
     });
   });
