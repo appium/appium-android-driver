@@ -1,3 +1,9 @@
+## [12.4.1](https://github.com/appium/appium-android-driver/compare/v12.4.0...v12.4.1) (2025-12-07)
+
+### Miscellaneous Chores
+
+* Ditch usage of @appium/test-support ([#1033](https://github.com/appium/appium-android-driver/issues/1033)) ([4f1f49f](https://github.com/appium/appium-android-driver/commit/4f1f49fec3d69d63fffab75231179a56fc070895))
+
 ## [12.4.0](https://github.com/appium/appium-android-driver/compare/v12.3.0...v12.4.0) (2025-12-07)
 
 ### Features
