@@ -1,3 +1,9 @@
+## [12.4.0](https://github.com/appium/appium-android-driver/compare/v12.3.0...v12.4.0) (2025-12-07)
+
+### Features
+
+* add adb_listen_all_network flag and adbListenAllNetwork cap to add -a option for adb ([#1032](https://github.com/appium/appium-android-driver/issues/1032)) ([f1b9193](https://github.com/appium/appium-android-driver/commit/f1b9193c4ea968076485e319acca7902509a0b94))
+
 ## [12.3.0](https://github.com/appium/appium-android-driver/compare/v12.2.1...v12.3.0) (2025-11-21)
 
 ### Features
