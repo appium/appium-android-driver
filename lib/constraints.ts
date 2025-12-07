@@ -257,6 +257,9 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   allowDelayAdb: {
     isBoolean: true,
   },
+  adbListenAllNetwork: {
+    isBoolean: true
+  },
   ignoreUnimportantViews: {
     isBoolean: true,
   },
