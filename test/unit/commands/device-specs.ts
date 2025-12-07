@@ -303,6 +303,28 @@ describe('Device Helpers', function () {
       expect(udid).to.equal('0123456789');
       expect(emPort).to.equal(1234);
     });
+    it('should require adb_listen_all_network with adbListenAllNetwork', async function () {
+      const driver = new AndroidDriver();
+      driver.opts = {
+        udid: 'foomulator',
+        adbListenAllNetwork: true,
+
+      } as any;
+      driver.adb = await ADB.createADB();
+      await expect(driver.getDeviceInfoFromCaps()).to.be.rejected;
+    });
+    it('should get deviceId and emPort when udid is present with adbListenAllNetwork', async function () {
+      const driver = new AndroidDriver();
+      driver.opts = {
+        udid: 'emulator-1234',
+        adbListenAllNetwork: true,
+      } as any;
+      sandbox.stub(driver, 'assertFeatureEnabled').withArgs('adb_listen_all_network').onFirstCall();
+      driver.adb = await ADB.createADB();
+      const {udid, emPort} = await driver.getDeviceInfoFromCaps();
+      expect(udid).to.equal('emulator-1234');
+      expect(emPort).to.equal(1234);
+    });
   });
   describe('createADB', function () {
     let curDeviceId = '';
@@ -357,6 +379,7 @@ describe('Device Helpers', function () {
         buildToolsVersion: '1.2.3',
         allowOfflineDevices: true,
         allowDelayAdb: undefined,
+        listenAllNetwork: undefined,
       })).to.be.true;
       expect(curDeviceId).to.equal('111222');
       expect(emulatorPort).to.equal(111);
@@ -365,6 +388,22 @@ describe('Device Helpers', function () {
       emulatorPort = 5555;
       await driver.createADB();
       expect(emulatorPort).to.equal(5555);
+    });
+
+    describe('adbListenAllNetwork', function () {
+      it('should require adb_listen_all_network', async function () {
+        driver.opts = {
+          adbListenAllNetwork: true,
+        } as any;
+        await expect(driver.createADB()).to.be.rejected;
+      });
+      it('should succeeded in creating adb', async function () {
+        driver.opts = {
+          adbListenAllNetwork: true,
+        } as any;
+        sandbox.stub(driver, 'assertFeatureEnabled').withArgs('adb_listen_all_network').onFirstCall();
+        await driver.createADB();
+      });
     });
   });
   describe('initDevice', function () {
