@@ -3,6 +3,7 @@ import {system, fs, doctor} from '@appium/support';
 import path from 'path';
 import '@colors/colors';
 import {getAndroidBinaryPath, getSdkRootFromEnv} from 'appium-adb';
+import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
 
 const JAVA_HOME_VAR_NAME = system.isWindows() ? '%JAVA_HOME%' : '$JAVA_HOME';
 const ENVIRONMENT_VARS_TUTORIAL_URL =
@@ -16,26 +17,22 @@ const GSTREAMER_INSTALL_LINK =
   'https://gstreamer.freedesktop.org/documentation/installing/index.html?gi-language=c';
 const FFMPEG_INSTALL_LINK = 'https://www.ffmpeg.org/download.html';
 
-/**
- * @typedef EnvVarCheckOptions
- * @property {boolean} [expectDir] If set to true then
- * the path is expected to be a valid folder
- * @property {boolean} [expectFile] If set to true then
- * the path is expected to be a valid file
- */
+interface EnvVarCheckOptions {
+  expectDir?: boolean;
+  expectFile?: boolean;
+}
 
-/** @satisfies {import('@appium/types').IDoctorCheck} */
-class EnvVarAndPathCheck {
-  /**
-   * @param {string} varName
-   * @param {EnvVarCheckOptions} [opts={}]
-   */
-  constructor(varName, opts = {}) {
+class EnvVarAndPathCheck implements IDoctorCheck {
+  log!: AppiumLogger;
+  varName: string;
+  opts: EnvVarCheckOptions;
+
+  constructor(varName: string, opts: EnvVarCheckOptions = {}) {
     this.varName = varName;
     this.opts = opts;
   }
 
-  async diagnose() {
+  async diagnose(): Promise<DoctorCheckResult> {
     const varValue = process.env[this.varName];
     if (!varValue) {
       return doctor.nok(`${this.varName} environment variable is NOT set!`);
@@ -64,27 +61,28 @@ class EnvVarAndPathCheck {
     return doctor.ok(`${this.varName} is set to: ${varValue}`);
   }
 
-  async fix() {
+  async fix(): Promise<string> {
     return (
       `Make sure the environment variable ${this.varName.bold} is properly configured for the Appium process. ` +
       `Refer ${ENVIRONMENT_VARS_TUTORIAL_URL} for more details.`
     );
   }
 
-  hasAutofix() {
+  hasAutofix(): boolean {
     return false;
   }
 
-  isOptional() {
+  isOptional(): boolean {
     return false;
   }
 }
 export const androidHomeCheck = new EnvVarAndPathCheck('ANDROID_HOME', {expectDir: true});
 export const javaHomeCheck = new EnvVarAndPathCheck('JAVA_HOME', {expectDir: true});
 
-/** @satisfies {import('@appium/types').IDoctorCheck} */
-export class JavaHomeValueCheck {
-  async diagnose() {
+export class JavaHomeValueCheck implements IDoctorCheck {
+  log!: AppiumLogger;
+
+  async diagnose(): Promise<DoctorCheckResult> {
     const envVar = process.env.JAVA_HOME;
     if (!envVar) {
       return doctor.nok(`${JAVA_HOME_VAR_NAME} environment variable must be set`);
@@ -101,31 +99,29 @@ export class JavaHomeValueCheck {
     return doctor.ok(`'${javaBinaryRelativePath}' exists under '${envVar}'`);
   }
 
-  async fix() {
+  async fix(): Promise<string> {
     return (
       `Set ${JAVA_HOME_VAR_NAME} environment variable to the root folder path of your local JDK installation. ` +
       `Read ${JAVA_HOME_TUTORIAL}`
     );
   }
 
-  hasAutofix() {
+  hasAutofix(): boolean {
     return false;
   }
 
-  isOptional() {
+  isOptional(): boolean {
     return false;
   }
 }
 export const javaHomeValueCheck = new JavaHomeValueCheck();
 
-/** @satisfies {import('@appium/types').IDoctorCheck} */
-export class AndroidSdkCheck {
-  /** @type {import('@appium/types').AppiumLogger} */
-  log;
+export class AndroidSdkCheck implements IDoctorCheck {
+  log!: AppiumLogger;
 
-  TOOL_NAMES = ['adb', 'emulator'];
+  TOOL_NAMES: readonly string[] = ['adb', 'emulator'];
 
-  async diagnose() {
+  async diagnose(): Promise<DoctorCheckResult> {
     const listOfTools = this.TOOL_NAMES.join(', ');
     const sdkRoot = getSdkRootFromEnv();
     if (!sdkRoot) {
@@ -133,7 +129,7 @@ export class AndroidSdkCheck {
     }
 
     this.log.info(`   Checking ${listOfTools}`);
-    const missingBinaries = [];
+    const missingBinaries: string[] = [];
     for (const binary of this.TOOL_NAMES) {
       try {
         this.log.info(`     '${binary}' exists in ${await getAndroidBinaryPath(binary)}`);
@@ -149,33 +145,34 @@ export class AndroidSdkCheck {
     return doctor.ok(`${listOfTools} exist in '${sdkRoot}'`);
   }
 
-  async fix() {
+  async fix(): Promise<string> {
     return (
       `Manually install ${'Android SDK'.bold} and set ${'ANDROID_HOME'.bold}. ` +
       `Read ${[ANDROID_SDK_LINK1, ANDROID_SDK_LINK2].join(' and ')}.`
     );
   }
 
-  hasAutofix() {
+  hasAutofix(): boolean {
     return false;
   }
 
-  isOptional() {
+  isOptional(): boolean {
     return false;
   }
 }
 export const androidSdkCheck = new AndroidSdkCheck();
 
-/** @satisfies {import('@appium/types').IDoctorCheck} */
-export class OptionalBundletoolCheck {
-  async diagnose() {
+export class OptionalBundletoolCheck implements IDoctorCheck {
+  log!: AppiumLogger;
+
+  async diagnose(): Promise<DoctorCheckResult> {
     const bundletoolPath = await resolveExecutablePath('bundletool.jar');
     return bundletoolPath
       ? doctor.okOptional(`bundletool.jar is installed at: ${bundletoolPath}`)
       : doctor.nokOptional('bundletool.jar cannot be found');
   }
 
-  async fix() {
+  async fix(): Promise<string> {
     return (
       `${'bundletool.jar'.bold} is used to handle Android App bundles. ` +
       `Please download the binary from ${BUNDLETOOL_RELEASES_LINK} and store it ` +
@@ -184,22 +181,22 @@ export class OptionalBundletoolCheck {
     );
   }
 
-  hasAutofix() {
+  hasAutofix(): boolean {
     return false;
   }
 
-  isOptional() {
+  isOptional(): boolean {
     return true;
   }
 }
 export const optionalBundletoolCheck = new OptionalBundletoolCheck();
 
-/** @satisfies {import('@appium/types').IDoctorCheck} */
-export class OptionalGstreamerCheck {
+export class OptionalGstreamerCheck implements IDoctorCheck {
+  log!: AppiumLogger;
   GSTREAMER_BINARY = `gst-launch-1.0${system.isWindows() ? '.exe' : ''}`;
   GST_INSPECT_BINARY = `gst-inspect-1.0${system.isWindows() ? '.exe' : ''}`;
 
-  async diagnose() {
+  async diagnose(): Promise<DoctorCheckResult> {
     const gstreamerPath = await resolveExecutablePath(this.GSTREAMER_BINARY);
     const gstInspectPath = await resolveExecutablePath(this.GST_INSPECT_BINARY);
 
@@ -212,7 +209,7 @@ export class OptionalGstreamerCheck {
         );
   }
 
-  async fix() {
+  async fix(): Promise<string> {
     return (
       `${
         `${this.GSTREAMER_BINARY} and ${this.GST_INSPECT_BINARY}`.bold
@@ -221,21 +218,21 @@ export class OptionalGstreamerCheck {
     );
   }
 
-  hasAutofix() {
+  hasAutofix(): boolean {
     return false;
   }
 
-  isOptional() {
+  isOptional(): boolean {
     return true;
   }
 }
 export const optionalGstreamerCheck = new OptionalGstreamerCheck();
 
-/** @satisfies {import('@appium/types').IDoctorCheck} */
-export class OptionalFfmpegCheck {
+export class OptionalFfmpegCheck implements IDoctorCheck {
+  log!: AppiumLogger;
   FFMPEG_BINARY = `ffmpeg${system.isWindows() ? '.exe' : ''}`;
 
-  async diagnose() {
+  async diagnose(): Promise<DoctorCheckResult> {
     const ffmpegPath = await resolveExecutablePath(this.FFMPEG_BINARY);
 
     return ffmpegPath
@@ -243,19 +240,20 @@ export class OptionalFfmpegCheck {
       : doctor.nokOptional(`${this.FFMPEG_BINARY} cannot be found`);
   }
 
-  async fix() {
+  async fix(): Promise<string> {
     return (
       `${`${this.FFMPEG_BINARY}`.bold} is used to capture screen recordings from the device under test. ` +
       `Please read ${FFMPEG_INSTALL_LINK}.`
     );
   }
 
-  hasAutofix() {
+  hasAutofix(): boolean {
     return false;
   }
 
-  isOptional() {
+  isOptional(): boolean {
     return true;
   }
 }
 export const optionalFfmpegCheck = new OptionalFfmpegCheck();
+

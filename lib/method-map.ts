@@ -1,4 +1,7 @@
-export const newMethodMap = /** @type {const} */ ({
+import type { MethodMap } from '@appium/types';
+import type { AndroidDriver } from './driver';
+
+export const newMethodMap = {
   '/session/:sessionId/timeouts/implicit_wait': {
     POST: {
       command: 'implicitWait',
@@ -300,4 +303,5 @@ export const newMethodMap = /** @type {const} */ ({
       deprecated: true,
     },
   },
-});
+} as const satisfies MethodMap<AndroidDriver>;
+

@@ -1,5 +1,9 @@
 import _ from 'lodash';
 import {errors} from 'appium/driver';
+import type {LogEntry} from 'appium-adb';
+import type {AndroidDriver} from './driver';
+
+export type {LogEntry};
 
 export const ADB_SHELL_FEATURE = 'adb_shell';
 export const ADB_LISTEN_ALL_NETWORK_FEATURE = 'adb_listen_all_network';
@@ -9,11 +13,11 @@ const COLOR_CODE_PATTERN = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-
 /**
  * Assert the presence of particular keys in the given object
  *
- * @param {string|string[]} argNames one or more key names
- * @param {any} opts the object to check
- * @returns {Record<string, any>} the same given object
+ * @param argNames one or more key names
+ * @param opts the object to check
+ * @returns the same given object
  */
-export function requireArgs(argNames, opts) {
+export function requireArgs(argNames: string | string[], opts: Record<string, any>): Record<string, any> {
   for (const argName of _.isArray(argNames) ? argNames : [argNames]) {
     if (!_.has(opts, argName)) {
       throw new errors.InvalidArgumentError(`'${argName}' argument must be provided`);
@@ -24,14 +28,13 @@ export function requireArgs(argNames, opts) {
 
 /**
  *
- * @param {string | string[]} cap
- * @returns {string[]}
+ * @param cap
+ * @returns
  */
-export function parseArray(cap) {
+export function parseArray(cap: string | string[]): string[] {
   let parsedCaps;
   try {
-    // @ts-ignore this is fine
-    parsedCaps = JSON.parse(cap);
+    parsedCaps = JSON.parse(cap as string);
   } catch {}
 
   if (_.isArray(parsedCaps)) {
@@ -44,10 +47,10 @@ export function parseArray(cap) {
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<void>}
+ * @this AndroidDriver
+ * @returns
  */
-export async function removeAllSessionWebSocketHandlers() {
+export async function removeAllSessionWebSocketHandlers(this: AndroidDriver): Promise<void> {
   if (!this.sessionId || !_.isFunction(this.server?.getWebSocketHandlers)) {
     return;
   }
@@ -58,15 +61,22 @@ export async function removeAllSessionWebSocketHandlers() {
   }
 }
 
+interface LogEntryWithPrefix {
+  message: string;
+  prefix?: string;
+  timestamp?: number;
+  level?: string;
+}
+
 /**
  *
- * @param {Object} x
- * @returns {LogEntry}
+ * @param x
+ * @returns
  */
-export function nativeLogEntryToSeleniumEntry (x) {
+export function nativeLogEntryToSeleniumEntry(x: LogEntryWithPrefix): LogEntry {
   const msg = _.isEmpty(x.prefix) ? x.message : `[${x.prefix}] ${x.message}`;
   return toLogRecord(
-    /** @type {any} */ (x).timestamp ?? Date.now(),
+    x.timestamp ?? Date.now(),
     _.replace(msg, COLOR_CODE_PATTERN, '')
   );
 }
@@ -74,21 +84,16 @@ export function nativeLogEntryToSeleniumEntry (x) {
 /**
  *
  * @see {@link https://github.com/SeleniumHQ/selenium/blob/0d425676b3c9df261dd641917f867d4d5ce7774d/java/client/src/org/openqa/selenium/logging/LogEntry.java}
- * @param {number} timestamp
- * @param {string} message
- * @param {string} [level='ALL']
- * @returns {LogEntry}
+ * @param timestamp
+ * @param message
+ * @param level
+ * @returns
  */
-export function toLogRecord(timestamp, message, level = 'ALL') {
+export function toLogRecord(timestamp: number, message: string, level: string = 'ALL'): LogEntry {
   return {
     timestamp,
-    // @ts-ignore It's ok
-    level,
+    level: level as any,
     message,
   };
 }
 
-/**
- * @typedef {import('appium-adb').LogEntry} LogEntry
- * @typedef {import('./driver').AndroidDriver} AndroidDriver
- */
