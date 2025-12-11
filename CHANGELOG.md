@@ -1,3 +1,9 @@
+## [12.4.4](https://github.com/appium/appium-android-driver/compare/v12.4.3...v12.4.4) (2025-12-11)
+
+### Miscellaneous Chores
+
+* Fix doctor exports ([0424c38](https://github.com/appium/appium-android-driver/commit/0424c384098a7947e9acababd614d85561c9e1c0))
+
 ## [12.4.3](https://github.com/appium/appium-android-driver/compare/v12.4.2...v12.4.3) (2025-12-11)
 
 ### Miscellaneous Chores
