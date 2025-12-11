@@ -17,7 +17,7 @@ const GSTREAMER_INSTALL_LINK =
   'https://gstreamer.freedesktop.org/documentation/installing/index.html?gi-language=c';
 const FFMPEG_INSTALL_LINK = 'https://www.ffmpeg.org/download.html';
 
-interface EnvVarCheckOptions {
+export interface EnvVarCheckOptions {
   expectDir?: boolean;
   expectFile?: boolean;
 }
