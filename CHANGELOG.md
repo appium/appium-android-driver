@@ -1,3 +1,9 @@
+## [12.4.3](https://github.com/appium/appium-android-driver/compare/v12.4.2...v12.4.3) (2025-12-11)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @types/node from 24.10.3 to 25.0.0 ([#1035](https://github.com/appium/appium-android-driver/issues/1035)) ([fbf4e1c](https://github.com/appium/appium-android-driver/commit/fbf4e1cea9776b75ce1ac1898625a7ee3b53a48b))
+
 ## [12.4.2](https://github.com/appium/appium-android-driver/compare/v12.4.1...v12.4.2) (2025-12-10)
 
 ### Miscellaneous Chores
