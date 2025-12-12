@@ -1,6 +1,3 @@
-import {install} from 'source-map-support';
-install();
-
 import {AndroidDriver} from './driver';
 import {getChromePkg} from './commands/context/helpers';
 import {parseArray, requireArgs} from './utils';
