@@ -1,3 +1,9 @@
+## [12.4.5](https://github.com/appium/appium-android-driver/compare/v12.4.4...v12.4.5) (2025-12-12)
+
+### Miscellaneous Chores
+
+* **deps:** remove `source-map-support` ([#1036](https://github.com/appium/appium-android-driver/issues/1036)) ([78c3277](https://github.com/appium/appium-android-driver/commit/78c3277eb2b0b78093eb620c4fda5bc3b370e5ec))
+
 ## [12.4.4](https://github.com/appium/appium-android-driver/compare/v12.4.3...v12.4.4) (2025-12-11)
 
 ### Miscellaneous Chores
