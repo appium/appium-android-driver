@@ -1,6 +1,7 @@
-// @ts-check
 import {retryInterval} from 'asyncbox';
 import _ from 'lodash';
+import type {AndroidDriver} from '../driver';
+import type {PerformanceDataType} from './types';
 
 export const NETWORK_KEYS = [
   [
@@ -14,9 +15,10 @@ export const NETWORK_KEYS = [
     'bucketDuration',
   ],
   ['st', 'activeTime', 'rb', 'rp', 'tb', 'tp', 'op', 'bucketDuration'],
-];
-export const CPU_KEYS = /** @type {const} */ (['user', 'kernel']);
-export const BATTERY_KEYS = ['power'];
+] as const;
+
+export const CPU_KEYS = ['user', 'kernel'] as const;
+export const BATTERY_KEYS = ['power'] as const;
 export const MEMORY_KEYS = [
   'totalPrivateDirty',
   'nativePrivateDirty',
@@ -33,7 +35,8 @@ export const MEMORY_KEYS = [
   'nativeRss',
   'dalvikRss',
   'totalRss',
-];
+] as const;
+
 export const SUPPORTED_PERFORMANCE_DATA_TYPES = Object.freeze({
   cpuinfo:
     'the amount of cpu by user and kernel process - cpu information for applications on real devices and simulators',
@@ -43,7 +46,8 @@ export const SUPPORTED_PERFORMANCE_DATA_TYPES = Object.freeze({
     'the remaining battery power - battery power information for applications on real devices and simulators',
   networkinfo:
     'the network statistics - network rx/tx information for applications on real devices and simulators',
-});
+} as const);
+
 export const MEMINFO_TITLES = Object.freeze({
   NATIVE: 'Native',
   DALVIK: 'Dalvik',
@@ -52,41 +56,49 @@ export const MEMINFO_TITLES = Object.freeze({
   MTRACK: 'mtrack',
   TOTAL: 'TOTAL',
   HEAP: 'Heap',
-});
+} as const);
+
 const RETRY_PAUSE_MS = 1000;
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<import('./types').PerformanceDataType[]>}
+ * Retrieves the list of available performance data types.
+ *
+ * @returns An array of supported performance data type names.
+ * The possible values are: 'cpuinfo', 'memoryinfo', 'batteryinfo', 'networkinfo'.
  */
-export async function getPerformanceDataTypes() {
-  return /** @type {import('./types').PerformanceDataType[]} */ (
-    _.keys(SUPPORTED_PERFORMANCE_DATA_TYPES)
-  );
+export async function getPerformanceDataTypes(
+  this: AndroidDriver,
+): Promise<PerformanceDataType[]> {
+  return _.keys(SUPPORTED_PERFORMANCE_DATA_TYPES) as PerformanceDataType[];
 }
 
 /**
- * @this {AndroidDriver}
- * @param {string} packageName
- * @param {string} dataType
- * @param {number} [retries=2]
- * @returns {Promise<any[][]>}
+ * Retrieves performance data for the specified data type.
+ *
+ * @param packageName The package name of the application to get performance data for.
+ * Required for 'cpuinfo' and 'memoryinfo' data types.
+ * @param dataType The type of performance data to retrieve.
+ * Must be one of values returned by {@link getPerformanceDataTypes}.
+ * @param retries The number of retry attempts if data retrieval fails.
+ * @returns A two-dimensional array where the first row contains column names
+ * and subsequent rows contain the sampled data values.
+ * @throws {Error} If the data type is not supported or data retrieval fails.
  */
-export async function getPerformanceData(packageName, dataType, retries = 2) {
-  let result;
+export async function getPerformanceData(
+  this: AndroidDriver,
+  packageName: string,
+  dataType: string,
+  retries: number = 2,
+): Promise<any[][]> {
   switch (_.toLower(dataType)) {
     case 'batteryinfo':
-      result = await getBatteryInfo.call(this, retries);
-      break;
+      return await getBatteryInfo.call(this, retries);
     case 'cpuinfo':
-      result = await getCPUInfo.call(this, packageName, retries);
-      break;
+      return await getCPUInfo.call(this, packageName, retries);
     case 'memoryinfo':
-      result = await getMemoryInfo.call(this, packageName, retries);
-      break;
+      return await getMemoryInfo.call(this, packageName, retries);
     case 'networkinfo':
-      result = await getNetworkTrafficInfo.call(this, retries);
-      break;
+      return await getNetworkTrafficInfo.call(this, retries);
     default:
       throw new Error(
         `No performance data of type '${dataType}' found. ` +
@@ -97,7 +109,6 @@ export async function getPerformanceData(packageName, dataType, retries = 2) {
           )}`,
       );
   }
-  return /** @type {any[][]} */ (result);
 }
 
 /**
@@ -118,13 +129,12 @@ export async function getPerformanceData(packageName, dataType, retries = 2) {
  *   [1478091600, null, null, 2714683, 11821, 1420564, 12650, 0, 3600], [1478095200, null, null, 10079213, 19962, 2487705, 20015, 0, 3600],
  *   [1478098800, null, null, 4444433, 10227, 1430356, 10493, 0, 3600]]
  * - cpuinfo: [[user, kernel], [0.9, 1.3]]
- *
- * @this {AndroidDriver}
- * @param {string} packageName The name of the package identifier to fetch the data for
- * @param {import('./types').PerformanceDataType} dataType One of supported subsystem to fetch the data for.
- * @returns {Promise<any[][]>}
  */
-export async function mobileGetPerformanceData(packageName, dataType) {
+export async function mobileGetPerformanceData(
+  this: AndroidDriver,
+  packageName: string,
+  dataType: PerformanceDataType,
+): Promise<any[][]> {
   return await this.getPerformanceData(packageName, dataType);
 }
 
@@ -136,7 +146,10 @@ export async function mobileGetPerformanceData(packageName, dataType) {
  * except 'TOTAL', which skips the second type name
  * !!! valDict gets mutated
  */
-function parseMeminfoForApi19To29(entries, valDict) {
+function parseMeminfoForApi19To29(
+  entries: string[],
+  valDict: Record<string, string | number>,
+): void {
   const [type, subType] = entries;
   if (type === MEMINFO_TITLES.NATIVE && subType === MEMINFO_TITLES.HEAP) {
     [
@@ -166,7 +179,10 @@ function parseMeminfoForApi19To29(entries, valDict) {
  * ['<System Type>', '<Memory Type>', <pss total>, <private dirty>, <private clean>, <swapPss dirty>, <rss total>, <heap size>, <heap alloc>, <heap free>]
  * !!! valDict gets mutated
  */
-function parseMeminfoForApiAbove29(entries, valDict) {
+function parseMeminfoForApiAbove29(
+  entries: string[],
+  valDict: Record<string, string | number>,
+): void {
   const [type, subType] = entries;
   if (type === MEMINFO_TITLES.NATIVE && subType === MEMINFO_TITLES.HEAP) {
     [
@@ -193,13 +209,28 @@ function parseMeminfoForApiAbove29(entries, valDict) {
 }
 
 /**
+ * Retrieves memory information for the specified application package.
  *
- * @this {AndroidDriver}
- * @param {string} packageName
- * @param {number} retries
+ * The data is parsed from the output of `dumpsys meminfo` command.
+ * The output format varies depending on the Android API level:
+ * - API 18-29: Contains PSS, private dirty, and heap information
+ * - API 30+: Additionally includes RSS information
+ *
+ * @param packageName The package name of the application to get memory information for.
+ * @param retries The number of retry attempts if data retrieval fails.
+ * @returns A two-dimensional array where the first row contains memory metric names
+ * (totalPrivateDirty, nativePrivateDirty, dalvikPrivateDirty, eglPrivateDirty,
+ * glPrivateDirty, totalPss, nativePss, dalvikPss, eglPss, glPss,
+ * nativeHeapAllocatedSize, nativeHeapSize, nativeRss, dalvikRss, totalRss)
+ * and the second row contains the corresponding values.
+ * @throws {Error} If memory data cannot be retrieved or parsed.
  */
-export async function getMemoryInfo(packageName, retries = 2) {
-  return await retryInterval(retries, RETRY_PAUSE_MS, async () => {
+export async function getMemoryInfo(
+  this: AndroidDriver,
+  packageName: string,
+  retries: number = 2,
+): Promise<any[][]> {
+  return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
     const cmd = [
       'dumpsys',
       'meminfo',
@@ -214,7 +245,7 @@ export async function getMemoryInfo(packageName, retries = 2) {
     if (!data) {
       throw new Error('No data from dumpsys');
     }
-    const valDict = {totalPrivateDirty: ''};
+    const valDict: Record<string, string | number> = {totalPrivateDirty: ''};
     const apiLevel = await this.adb.getApiLevel();
     for (const line of data.split('\n')) {
       const entries = line.trim().split(/\s+/).filter(Boolean);
@@ -231,19 +262,40 @@ export async function getMemoryInfo(packageName, retries = 2) {
     }
 
     throw new Error(`Unable to parse memory data: '${data}'`);
-  });
+  })) as any[][];
 }
 
 /**
- * @this {AndroidDriver}
- * @param {number} retries
+ * Retrieves network traffic statistics from the device.
+ *
+ * The data is parsed from the output of `dumpsys netstats` command.
+ * The output format differs between emulators and real devices:
+ * - Emulators: Uses full key names (bucketStart, activeTime, rxBytes, etc.)
+ * - Real devices (Android 7.1+): Uses abbreviated keys (st, rb, rp, tb, tp, op)
+ *
+ * @param retries The number of retry attempts if data retrieval fails.
+ * @returns A two-dimensional array where the first row contains network metric names
+ * (bucketStart/st, activeTime, rxBytes/rb, rxPackets/rp, txBytes/tb, txPackets/tp,
+ * operations/op, bucketDuration) and subsequent rows contain the sampled data
+ * for each time bucket.
+ * @throws {Error} If network traffic data cannot be retrieved or parsed.
  */
-export async function getNetworkTrafficInfo(retries = 2) {
-  return await retryInterval(retries, RETRY_PAUSE_MS, async () => {
-    let returnValue = [];
-    let bucketDuration, bucketStart, activeTime, rxBytes, rxPackets, txBytes, txPackets, operations;
+export async function getNetworkTrafficInfo(
+  this: AndroidDriver,
+  retries: number = 2,
+): Promise<any[][]> {
+  return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
+    const returnValue: any[][] = [];
+    let bucketDuration: string | undefined;
+    let bucketStart: string | undefined;
+    let activeTime: string | undefined;
+    let rxBytes: string | undefined;
+    let rxPackets: string | undefined;
+    let txBytes: string | undefined;
+    let txPackets: string | undefined;
+    let operations: string | undefined;
 
-    let cmd = ['dumpsys', 'netstats'];
+    const cmd = ['dumpsys', 'netstats'];
     let data = await this.adb.shell(cmd);
     if (!data) throw new Error('No data from dumpsys'); //eslint-disable-line curly
 
@@ -278,12 +330,12 @@ export async function getNetworkTrafficInfo(retries = 2) {
     //   st=1478095200 rb=10079213 rp=19962 tb=2487705 tp=20015 op=0
     //   st=1478098800 rb=4444433 rp=10227 tb=1430356 tp=10493 op=0
     let index = 0;
-    let fromXtstats = data.indexOf('Xt stats:');
+    const fromXtstats = data.indexOf('Xt stats:');
 
     let start = data.indexOf('Pending bytes:', fromXtstats);
     let delimiter = data.indexOf(':', start + 1);
     let end = data.indexOf('\n', delimiter + 1);
-    let pendingBytes = data.substring(delimiter + 1, end).trim();
+    const pendingBytes = data.substring(delimiter + 1, end).trim();
 
     if (end > delimiter) {
       start = data.indexOf('bucketDuration', end + 1);
@@ -294,7 +346,7 @@ export async function getNetworkTrafficInfo(retries = 2) {
 
     if (start >= 0) {
       data = data.substring(end + 1, data.length);
-      let arrayList = data.split('\n');
+      const arrayList = data.split('\n');
 
       if (arrayList.length > 0) {
         start = -1;
@@ -304,7 +356,7 @@ export async function getNetworkTrafficInfo(retries = 2) {
 
           if (start >= 0) {
             index = j;
-            returnValue[0] = /** @type {string[]} */ ([]);
+            returnValue[0] = [];
 
             for (let k = 0; k < NETWORK_KEYS[j].length; ++k) {
               returnValue[0][k] = NETWORK_KEYS[j][k];
@@ -314,65 +366,65 @@ export async function getNetworkTrafficInfo(retries = 2) {
         }
 
         let returnIndex = 1;
-        for (const data of arrayList) {
-          start = data.indexOf(NETWORK_KEYS[index][0]);
+        for (const dataLine of arrayList) {
+          start = dataLine.indexOf(NETWORK_KEYS[index][0]);
 
           if (start >= 0) {
-            delimiter = data.indexOf('=', start + 1);
-            end = data.indexOf(' ', delimiter + 1);
-            bucketStart = data.substring(delimiter + 1, end).trim();
+            delimiter = dataLine.indexOf('=', start + 1);
+            end = dataLine.indexOf(' ', delimiter + 1);
+            bucketStart = dataLine.substring(delimiter + 1, end).trim();
 
             if (end > delimiter) {
-              start = data.indexOf(NETWORK_KEYS[index][1], end + 1);
+              start = dataLine.indexOf(NETWORK_KEYS[index][1], end + 1);
               if (start >= 0) {
-                delimiter = data.indexOf('=', start + 1);
-                end = data.indexOf(' ', delimiter + 1);
-                activeTime = data.substring(delimiter + 1, end).trim();
+                delimiter = dataLine.indexOf('=', start + 1);
+                end = dataLine.indexOf(' ', delimiter + 1);
+                activeTime = dataLine.substring(delimiter + 1, end).trim();
               }
             }
 
             if (end > delimiter) {
-              start = data.indexOf(NETWORK_KEYS[index][2], end + 1);
+              start = dataLine.indexOf(NETWORK_KEYS[index][2], end + 1);
               if (start >= 0) {
-                delimiter = data.indexOf('=', start + 1);
-                end = data.indexOf(' ', delimiter + 1);
-                rxBytes = data.substring(delimiter + 1, end).trim();
+                delimiter = dataLine.indexOf('=', start + 1);
+                end = dataLine.indexOf(' ', delimiter + 1);
+                rxBytes = dataLine.substring(delimiter + 1, end).trim();
               }
             }
 
             if (end > delimiter) {
-              start = data.indexOf(NETWORK_KEYS[index][3], end + 1);
+              start = dataLine.indexOf(NETWORK_KEYS[index][3], end + 1);
               if (start >= 0) {
-                delimiter = data.indexOf('=', start + 1);
-                end = data.indexOf(' ', delimiter + 1);
-                rxPackets = data.substring(delimiter + 1, end).trim();
+                delimiter = dataLine.indexOf('=', start + 1);
+                end = dataLine.indexOf(' ', delimiter + 1);
+                rxPackets = dataLine.substring(delimiter + 1, end).trim();
               }
             }
 
             if (end > delimiter) {
-              start = data.indexOf(NETWORK_KEYS[index][4], end + 1);
+              start = dataLine.indexOf(NETWORK_KEYS[index][4], end + 1);
               if (start >= 0) {
-                delimiter = data.indexOf('=', start + 1);
-                end = data.indexOf(' ', delimiter + 1);
-                txBytes = data.substring(delimiter + 1, end).trim();
+                delimiter = dataLine.indexOf('=', start + 1);
+                end = dataLine.indexOf(' ', delimiter + 1);
+                txBytes = dataLine.substring(delimiter + 1, end).trim();
               }
             }
 
             if (end > delimiter) {
-              start = data.indexOf(NETWORK_KEYS[index][5], end + 1);
+              start = dataLine.indexOf(NETWORK_KEYS[index][5], end + 1);
               if (start >= 0) {
-                delimiter = data.indexOf('=', start + 1);
-                end = data.indexOf(' ', delimiter + 1);
-                txPackets = data.substring(delimiter + 1, end).trim();
+                delimiter = dataLine.indexOf('=', start + 1);
+                end = dataLine.indexOf(' ', delimiter + 1);
+                txPackets = dataLine.substring(delimiter + 1, end).trim();
               }
             }
 
             if (end > delimiter) {
-              start = data.indexOf(NETWORK_KEYS[index][6], end + 1);
+              start = dataLine.indexOf(NETWORK_KEYS[index][6], end + 1);
               if (start >= 0) {
-                delimiter = data.indexOf('=', start + 1);
-                end = data.length;
-                operations = data.substring(delimiter + 1, end).trim();
+                delimiter = dataLine.indexOf('=', start + 1);
+                end = dataLine.length;
+                operations = dataLine.substring(delimiter + 1, end).trim();
               }
             }
             returnValue[returnIndex++] = [
@@ -399,7 +451,7 @@ export async function getNetworkTrafficInfo(retries = 2) {
     } else {
       throw new Error(`Unable to parse network traffic data: '${data}'`);
     }
-  });
+  })) as any[][];
 }
 
 /**
@@ -412,15 +464,18 @@ export async function getNetworkTrafficInfo(retries = 2) {
  * from 2023-02-07 12:04:40.556 to 2023-02-07 12:09:40.668. No process information
  * exists in the result if the process was not running during the period.
  *
- * @this {AndroidDriver}
- * @param {string} packageName The package name to get the CPU information.
- * @param {number} retries The number of retry count.
- * @returns {Promise<[typeof CPU_KEYS, [user: string, kernel: string]]>} The array of the parsed CPU upsage percentages.
+ * @param packageName The package name to get the CPU information.
+ * @param retries The number of retry count.
+ * @returns The array of the parsed CPU upsage percentages.
  *                  e.g. ['cpuinfo', ['14.3', '28.2']]
  *                  '14.3' is usage by the user (%), '28.2' is usage by the kernel (%)
  * @throws {Error} If it failed to parse the result of dumpsys, or no package name exists.
  */
-export async function getCPUInfo(packageName, retries = 2) {
+export async function getCPUInfo(
+  this: AndroidDriver,
+  packageName: string,
+  retries: number = 2,
+): Promise<[typeof CPU_KEYS, [user: string, kernel: string]]> {
   // TODO: figure out why this is
   // sometimes, the function of 'adb.shell' fails. when I tested this function on the target of 'Galaxy Note5',
   // adb.shell(dumpsys cpuinfo) returns cpu datas for other application packages, but I can't find the data for packageName.
@@ -430,12 +485,11 @@ export async function getCPUInfo(packageName, retries = 2) {
   // @ts-expect-error retryInterval says it can return `null`, but it doesn't look like it actually can.
   // FIXME: fix this in asyncbox
   return await retryInterval(retries, RETRY_PAUSE_MS, async () => {
-    /** @type {string} */
-    let output;
+    let output: string;
     try {
       output = await this.adb.shell(['dumpsys', 'cpuinfo']);
     } catch (e) {
-      const err = /** @type {import('teen_process').ExecError} */ (e);
+      const err = e as import('teen_process').ExecError;
       if (err.stderr) {
         this.log.info(err.stderr);
       }
@@ -454,35 +508,40 @@ export async function getCPUInfo(packageName, retries = 2) {
         `Unable to parse cpu usage data for '${packageName}'. Check the server log for more details`,
       );
     }
-    const user = /** @type {string} */ (match[1]);
-    const kernel = /** @type {string} */ (match[2]);
+    const user = match[1];
+    const kernel = match[2];
     return [CPU_KEYS, [user, kernel]];
   });
 }
 
 /**
- * @this {AndroidDriver}
- * @param {number} retries
+ * Retrieves battery level information from the device.
+ *
+ * The data is parsed from the output of `dumpsys battery` command.
+ *
+ * @param retries The number of retry attempts if data retrieval fails.
+ * @returns A two-dimensional array where the first row contains the metric name ['power']
+ * and the second row contains the battery level as a string (0-100).
+ * @throws {Error} If battery data cannot be retrieved or parsed.
  */
-export async function getBatteryInfo(retries = 2) {
-  return await retryInterval(retries, RETRY_PAUSE_MS, async () => {
-    let cmd = ['dumpsys', 'battery', '|', 'grep', 'level'];
-    let data = await this.adb.shell(cmd);
+export async function getBatteryInfo(
+  this: AndroidDriver,
+  retries: number = 2,
+): Promise<any[][]> {
+  return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
+    const cmd = ['dumpsys', 'battery', '|', 'grep', 'level'];
+    const data = await this.adb.shell(cmd);
     if (!data) throw new Error('No data from dumpsys'); //eslint-disable-line curly
 
-    let power = parseInt((data.split(':')[1] || '').trim(), 10);
+    const power = parseInt((data.split(':')[1] || '').trim(), 10);
 
     if (!Number.isNaN(power)) {
       return [_.clone(BATTERY_KEYS), [power.toString()]];
     } else {
       throw new Error(`Unable to parse battery data: '${data}'`);
     }
-  });
+  })) as any[][];
 }
 
 // #endregion
 
-/**
- * @typedef {import('../driver').AndroidDriver} AndroidDriver
- * @typedef {import('appium-adb').ADB} ADB
- */

@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/**
- * @module
- */
 
 import _ from 'lodash';
 import {errors, isErrorType} from 'appium/driver';
@@ -9,6 +6,16 @@ import type {AndroidDriver} from '../driver';
 import type {Element} from '@appium/types';
 import type {FindElementOpts} from './types';
 
+/**
+ * @param strategy The element location strategy to use (e.g., 'id', 'xpath', 'class name').
+ * @param selector The selector value to search for.
+ * @param mult If `true`, searches for multiple elements; if `false`, searches for a single element.
+ * @param context The context (e.g., webview) in which to search. Defaults to empty string (native context).
+ * @returns If `mult` is `false`, returns a single `Element` object.
+ * If `mult` is `true`, returns an array of `Element` objects (may be empty).
+ * @throws {Error} If `selector` is not provided.
+ * @throws {errors.NoSuchElementError} If a single element search fails and no element is found.
+ */
 export async function findElOrEls(
   this: AndroidDriver,
   strategy: string,
@@ -88,6 +95,16 @@ export async function findElOrEls(
   return element as Element;
 }
 
+/**
+ * Performs the actual element search operation.
+ *
+ * This is an abstract method that must be implemented by subclasses or specific
+ * context handlers (e.g., native context, webview context).
+ *
+ * @param params The search parameters containing strategy, selector, context, and multiple flag.
+ * @returns A single `Element` if `params.multiple` is `false`, or an array of `Element` objects if `true`.
+ * @throws {errors.NotImplementedError} This method must be implemented by the specific context handler.
+ */
 export async function doFindElementOrEls(
   this: AndroidDriver,
   params: FindElementOpts,
