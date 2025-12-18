@@ -1,4 +1,5 @@
 import {fs, net, system, tempDir, timing, util} from '@appium/support';
+import type {NetOptions, HttpUploadOptions} from '@appium/support';
 import {waitForCondition} from 'asyncbox';
 import _ from 'lodash';
 import path from 'path';
@@ -199,7 +200,7 @@ async function uploadRecordedMedia(
   }
 
   const {user, pass, method, headers, fileFieldName, formFields} = uploadOptions;
-  const options: import('@appium/support').NetOptions & import('@appium/support').HttpUploadOptions = {
+  const options: NetOptions & HttpUploadOptions = {
     method: method || 'PUT',
     headers,
     fileFieldName,
