@@ -1,5 +1,7 @@
 import type {HTTPMethod, StringRecord} from '@appium/types';
 import type {AndroidDriverCaps} from '../driver';
+import type {SubProcess} from 'teen_process';
+import {timing} from '@appium/support';
 
 /**
  * @privateRemarks probably better defined in `appium-adb`
@@ -617,4 +619,19 @@ export interface InjectedImageProperties {
   size?: InjectedImageSize;
   position?: InjectedImagePosition;
   rotation?: InjectedImageRotation;
+}
+
+/**
+ * @internal
+ */
+export interface ScreenRecordingProperties {
+  timer: timing.Timer;
+  videoSize?: string;
+  timeLimit: string | number;
+  currentTimeLimit?: string | number;
+  bitRate?: string | number;
+  bugReport?: boolean;
+  records: string[];
+  recordingProcess: SubProcess | null;
+  stopped: boolean;
 }

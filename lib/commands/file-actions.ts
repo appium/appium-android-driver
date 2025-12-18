@@ -2,6 +2,8 @@ import _ from 'lodash';
 import {fs, util, zip, tempDir} from '@appium/support';
 import path from 'path';
 import {errors} from 'appium/driver';
+import type {AndroidDriver} from '../driver';
+import type {ADB} from 'appium-adb';
 
 const CONTAINER_PATH_MARKER = '@';
 // https://regex101.com/r/PLdB0G/2
@@ -9,21 +11,31 @@ const CONTAINER_PATH_PATTERN = new RegExp(`^${CONTAINER_PATH_MARKER}([^/]+)/(.+)
 const ANDROID_MEDIA_RESCAN_INTENT = 'android.intent.action.MEDIA_SCANNER_SCAN_FILE';
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @param {string} remotePath The full path to the remote file or a specially formatted path, which
+ * Pulls a file from the remote device.
+ *
+ * The full path to the remote file or a specially formatted path, which
  * points to an item inside an app bundle, for example `@my.app.id/my/path`.
  * It is mandatory for the app bundle to have debugging enabled in order to
  * use the latter `remotePath` format.
- * @returns {Promise<string>}
+ *
+ * @param remotePath The full path to the remote file or a specially formatted path, which
+ * points to an item inside an app bundle, for example `@my.app.id/my/path`.
+ * It is mandatory for the app bundle to have debugging enabled in order to
+ * use the latter `remotePath` format.
+ * @returns Promise that resolves to the file content as a base64-encoded string.
+ * @throws {errors.InvalidArgumentError} If the remote path points to a folder instead of a file.
  */
-export async function pullFile(remotePath) {
+export async function pullFile(
+  this: AndroidDriver,
+  remotePath: string,
+): Promise<string> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
       `It is expected that remote path points to a file and not to a folder. ` +
         `'${remotePath}' is given instead`,
     );
   }
-  let tmpDestination = null;
+  let tmpDestination: string | null = null;
   if (remotePath.startsWith(CONTAINER_PATH_MARKER)) {
     const [packageId, pathInContainer] = parseContainerPath(remotePath);
     this.log.debug(
@@ -41,7 +53,7 @@ export async function pullFile(remotePath) {
       throw this.log.errorWithException(
         `Cannot access the container of '${packageId}' application. ` +
           `Is the application installed and has 'debuggable' build option set to true? ` +
-          `Original error: ${/** @type {Error} */ (e).message}`,
+          `Original error: ${(e as Error).message}`,
       );
     }
   }
@@ -60,15 +72,27 @@ export async function pullFile(remotePath) {
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @param {string} remotePath The full path to the remote file or a specially formatted path, which
+ * Pushes a file to the remote device.
+ *
+ * The full path to the remote file or a specially formatted path, which
  * points to an item inside an app bundle, for example `@my.app.id/my/path`.
  * It is mandatory for the app bundle to have debugging enabled in order to
  * use the latter `remotePath` format.
- * @param {string} base64Data Base64-encoded content of the file to be pushed.
- * @returns {Promise<void>}
+ *
+ * @param remotePath The full path to the remote file or a specially formatted path, which
+ * points to an item inside an app bundle, for example `@my.app.id/my/path`.
+ * It is mandatory for the app bundle to have debugging enabled in order to
+ * use the latter `remotePath` format.
+ * @param base64Data Base64-encoded content of the file to be pushed.
+ * Can be a string or an array of numbers (for Java clients that send byte arrays).
+ * @returns Promise that resolves when the file is pushed.
+ * @throws {errors.InvalidArgumentError} If the remote path points to a folder instead of a file.
  */
-export async function pushFile(remotePath, base64Data) {
+export async function pushFile(
+  this: AndroidDriver,
+  remotePath: string,
+  base64Data: string | number[],
+): Promise<void> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
       `It is expected that remote path points to a file and not to a folder. ` +
@@ -76,13 +100,16 @@ export async function pushFile(remotePath, base64Data) {
     );
   }
   const localFile = await tempDir.path({prefix: 'appium', suffix: '.tmp'});
+  let base64String: string;
   if (_.isArray(base64Data)) {
     // some clients (ahem) java, send a byte array encoding utf8 characters
     // instead of a string, which would be infinitely better!
-    base64Data = Buffer.from(base64Data).toString('utf8');
+    base64String = Buffer.from(base64Data).toString('utf8');
+  } else {
+    base64String = base64Data;
   }
-  const content = Buffer.from(base64Data, 'base64');
-  let tmpDestination = null;
+  const content = Buffer.from(base64String, 'base64');
+  let tmpDestination: string | null = null;
   try {
     await fs.writeFile(localFile, content.toString('binary'), 'binary');
     if (remotePath.startsWith(CONTAINER_PATH_MARKER)) {
@@ -110,7 +137,7 @@ export async function pushFile(remotePath, base64Data) {
         throw this.log.errorWithException(
           `Cannot access the container of '${packageId}' application. ` +
             `Is the application installed and has 'debuggable' build option set to true? ` +
-            `Original error: ${/** @type {Error} */ (e).message}`,
+            `Original error: ${(e as Error).message}`,
         );
       }
     } else {
@@ -132,11 +159,15 @@ export async function pushFile(remotePath, base64Data) {
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @param {string} remotePath The full path to the remote folder
- * @returns {Promise<string>}
+ * Pulls a folder from the remote device.
+ *
+ * @param remotePath The full path to the remote folder.
+ * @returns Promise that resolves to the folder content as a base64-encoded zip file string.
  */
-export async function pullFolder(remotePath) {
+export async function pullFolder(
+  this: AndroidDriver,
+  remotePath: string,
+): Promise<string> {
   const tmpRoot = await tempDir.openDir();
   try {
     await this.adb.pull(remotePath, tmpRoot);
@@ -151,12 +182,17 @@ export async function pullFolder(remotePath) {
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @param {string} remotePath The full path to the remote file or a file inside an application bundle
- * (for example `@my.app.id/path/in/bundle`)
- * @returns {Promise<boolean>}
+ * Deletes a file from the remote device.
+ *
+ * @param remotePath The full path to the remote file or a file inside an application bundle
+ * (for example `@my.app.id/path/in/bundle`).
+ * @returns Promise that resolves to `true` if the file was successfully deleted, `false` if it doesn't exist.
+ * @throws {errors.InvalidArgumentError} If the remote path points to a folder instead of a file.
  */
-export async function mobileDeleteFile(remotePath) {
+export async function mobileDeleteFile(
+  this: AndroidDriver,
+  remotePath: string,
+): Promise<boolean> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
       `It is expected that remote path points to a folder and not to a file. ` +
@@ -169,21 +205,20 @@ export async function mobileDeleteFile(remotePath) {
 /**
  * Deletes the given folder or file from the remote device
  *
- * @param {ADB} adb
- * @param {string} remotePath The full path to the remote folder
- * or file (folder names must end with a single slash)
  * @throws {Error} If the provided remote path is invalid or
  * the package content cannot be accessed
- * @returns {Promise<boolean>} `true` if the remote item has been successfully deleted.
+ * @returns `true` if the remote item has been successfully deleted.
  * If the remote path is valid, but the remote path does not exist
  * this function return `false`.
- * @this {import('../driver').AndroidDriver}
  */
-async function deleteFileOrFolder(adb, remotePath) {
+async function deleteFileOrFolder(
+  this: AndroidDriver,
+  adb: ADB,
+  remotePath: string,
+): Promise<boolean> {
   const {isDir, isPresent, isFile} = createFSTests(adb);
   let dstPath = remotePath;
-  /** @type {string|undefined} */
-  let pkgId;
+  let pkgId: string | undefined;
   if (remotePath.startsWith(CONTAINER_PATH_MARKER)) {
     const [packageId, pathInContainer] = parseContainerPath(remotePath);
     this.log.debug(`Parsed package identifier '${packageId}' from '${remotePath}'`);
@@ -198,7 +233,7 @@ async function deleteFileOrFolder(adb, remotePath) {
       throw this.log.errorWithException(
         `Cannot access the container of '${pkgId}' application. ` +
           `Is the application installed and has 'debuggable' build option set to true? ` +
-          `Original error: ${/** @type {Error} */ (e).message}`,
+          `Original error: ${(e as Error).message}`,
       );
     }
   }
@@ -233,13 +268,11 @@ async function deleteFileOrFolder(adb, remotePath) {
 /**
  * Parses the actual destination path from the given value
  *
- * @param {string} remotePath The preformatted remote path, which looks like
- * `@my.app.id/my/path`
- * @returns {Array<string>} An array, where the first item is the parsed package
+ * @returns An array, where the first item is the parsed package
  * identifier and the second one is the actual destination path inside the package.
  * @throws {Error} If the given string cannot be parsed
  */
-function parseContainerPath(remotePath) {
+function parseContainerPath(remotePath: string): [string, string] {
   const match = CONTAINER_PATH_PATTERN.exec(remotePath);
   if (!match) {
     throw new Error(
@@ -254,11 +287,11 @@ function parseContainerPath(remotePath) {
  * Scans the given file/folder on the remote device
  * and adds matching items to the device's media library.
  * Exceptions are ignored and written into the log.
- *
- * @this {import('../driver').AndroidDriver}
- * @param {string} remotePath The file/folder path on the remote device
  */
-async function scanMedia(remotePath) {
+async function scanMedia(
+  this: AndroidDriver,
+  remotePath: string,
+): Promise<void> {
   this.log.debug(`Performing media scan of '${remotePath}'`);
   try {
     // https://github.com/appium/appium/issues/16184
@@ -275,7 +308,7 @@ async function scanMedia(remotePath) {
       ]);
     }
   } catch (e) {
-    const err = /** @type {any} */ (e);
+    const err = e as {stderr?: string; message?: string};
     // FIXME: what has a `stderr` prop?
     this.log.warn(
       `Ignoring an unexpected error upon media scanning of '${remotePath}': ${
@@ -288,27 +321,20 @@ async function scanMedia(remotePath) {
 /**
  * A small helper, which escapes single quotes in paths,
  * so they are safe to be passed as arguments of shell commands
- *
- * @param {string} p The initial remote path
- * @returns {string} The escaped path value
  */
-function escapePath(p) {
+function escapePath(p: string): string {
   return p.replace(/'/g, `\\'`);
 }
 
 /**
  * Factory providing filesystem test functions using ADB
- * @param {ADB} adb
  */
-function createFSTests(adb) {
-  /**
-   *
-   * @param {string} p
-   * @param {'d'|'f'|'e'} op
-   * @param {string} [runAs]
-   * @returns
-   */
-  const performRemoteFsCheck = async (p, op, runAs) => {
+function createFSTests(adb: ADB) {
+  const performRemoteFsCheck = async (
+    p: string,
+    op: 'd' | 'f' | 'e',
+    runAs?: string,
+  ): Promise<boolean> => {
     const passFlag = '__PASS__';
     const checkCmd = `[ -${op} '${escapePath(p)}' ] && echo ${passFlag}`;
     const fullCmd = runAs ? `run-as ${runAs} ${checkCmd}` : checkCmd;
@@ -319,27 +345,15 @@ function createFSTests(adb) {
     }
   };
 
-  /**
-   * @param {string} p
-   * @param {string} [runAs]
-   */
-  const isFile = async (p, runAs) => await performRemoteFsCheck(p, 'f', runAs);
-  /**
-   * @param {string} p
-   * @param {string} [runAs]
-   */
-  const isDir = async (p, runAs) => await performRemoteFsCheck(p, 'd', runAs);
-  /**
-   * @param {string} p
-   * @param {string} [runAs]
-   */
-  const isPresent = async (p, runAs) => await performRemoteFsCheck(p, 'e', runAs);
+  const isFile = async (p: string, runAs?: string): Promise<boolean> =>
+    await performRemoteFsCheck(p, 'f', runAs);
+  const isDir = async (p: string, runAs?: string): Promise<boolean> =>
+    await performRemoteFsCheck(p, 'd', runAs);
+  const isPresent = async (p: string, runAs?: string): Promise<boolean> =>
+    await performRemoteFsCheck(p, 'e', runAs);
 
   return {isFile, isDir, isPresent};
 }
 
 // #endregion
 
-/**
- * @typedef {import('appium-adb').ADB} ADB
- */
