@@ -1,5 +1,3 @@
-// @ts-check
-
 import {fs, logger, system, util} from '@appium/support';
 import {waitForCondition} from 'asyncbox';
 import B from 'bluebird';
@@ -10,6 +8,10 @@ import net from 'node:net';
 import url from 'node:url';
 import {checkPortStatus} from 'portscanner';
 import {SubProcess, exec} from 'teen_process';
+import type {AndroidDriver} from '../driver';
+import type {ADB} from 'appium-adb';
+import type {AppiumLogger} from '@appium/types';
+import type {DeviceInfo, InitGStreamerPipelineOpts} from './types';
 
 const RECORDING_INTERVAL_SEC = 5;
 const STREAMING_STARTUP_TIMEOUT_MS = 5000;
@@ -21,7 +23,7 @@ const REQUIRED_GST_PLUGINS = {
   jpegenc: 'gst-plugins-good',
   tcpserversink: 'gst-plugins-base',
   multipartmux: 'gst-plugins-good',
-};
+} as const;
 const SCREENRECORD_BINARY = 'screenrecord';
 const GST_TUTORIAL_URL = 'https://gstreamer.freedesktop.org/documentation/installing/index.html';
 const DEFAULT_HOST = '127.0.0.1';
@@ -34,47 +36,58 @@ const BOUNDARY_STRING = '--2ae9746887f170b8cf7c271047ce314c';
 const ADB_SCREEN_STREAMING_FEATURE = 'adb_screen_streaming';
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @param {number} [width] The scaled width of the device's screen.
+ * Starts a screen streaming session that broadcasts the device screen as an MJPEG stream.
+ *
+ * This method uses Android's `screenrecord` command to capture the screen and GStreamer
+ * to encode it as an MJPEG stream accessible via HTTP. The stream can be viewed in any
+ * web browser or MJPEG-compatible client.
+ *
+ * Requirements:
+ * - The device must have the `screenrecord` binary available
+ * - The host system must have GStreamer installed with required plugins
+ * - The ADB screen streaming feature must be enabled
+ *
+ * @param width The scaled width of the device's screen.
  * If unset then the script will assign it to the actual screen width measured
  * in pixels.
- * @param {number} [height] The scaled height of the device's screen.
+ * @param height The scaled height of the device's screen.
  * If unset then the script will assign it to the actual screen height
  * measured in pixels.
- * @param {number} [bitRate=4000000] The video bit rate for the video, in bits per second.
+ * @param bitRate The video bit rate for the video, in bits per second.
  * The default value is 4 Mb/s. You can increase the bit rate to improve video
  * quality, but doing so results in larger movie files.
- * @param {string} [host='127.0.0.1'] The IP address/host name to start the MJPEG server on.
+ * @param host The IP address/host name to start the MJPEG server on.
  * You can set it to `0.0.0.0` to trigger the broadcast on all available
  * network interfaces.
- * @param {number} [port=8093] The port number to start the MJPEG server on.
- * @param {number} [tcpPort=8094] The port number to start the internal TCP MJPEG broadcast on.
- * @param {string} [pathname] The HTTP request path the MJPEG server should be available on.
+ * @param port The port number to start the MJPEG server on.
+ * @param tcpPort The port number to start the internal TCP MJPEG broadcast on.
+ * @param pathname The HTTP request path the MJPEG server should be available on.
  * If unset, then any pathname on the given `host`/`port` combination will
  * work. Note that the value should always start with a single slash: `/`
- * @param {number} [quality=70] The quality value for the streamed JPEG images.
+ * @param quality The quality value for the streamed JPEG images.
  * This number should be in range `[1,100]`, where `100` is the best quality.
- * @param {boolean} [considerRotation=false] If set to `true` then GStreamer pipeline will increase the dimensions of
+ * @param considerRotation If set to `true` then GStreamer pipeline will increase the dimensions of
  * the resulting images to properly fit images in both landscape and portrait
  * orientations.
  * Set it to `true` if the device rotation is not going to be the same during
  * the broadcasting session.
- * @param {boolean} [logPipelineDetails=false] Whether to log GStreamer pipeline events into the standard log output.
+ * @param logPipelineDetails Whether to log GStreamer pipeline events into the standard log output.
  * Might be useful for debugging purposes.
- * @returns {Promise<void>}
-*/
+ * @throws {Error} If streaming requirements are not met, ports are busy, or streaming fails to start.
+ */
 export async function mobileStartScreenStreaming(
-  width,
-  height,
-  bitRate,
-  host = DEFAULT_HOST,
-  port = DEFAULT_PORT,
-  pathname,
-  tcpPort = DEFAULT_PORT + 1,
-  quality = DEFAULT_QUALITY,
-  considerRotation = false,
-  logPipelineDetails = false,
-) {
+  this: AndroidDriver,
+  width?: number,
+  height?: number,
+  bitRate?: number,
+  host: string = DEFAULT_HOST,
+  port: number = DEFAULT_PORT,
+  pathname?: string,
+  tcpPort: number = DEFAULT_PORT + 1,
+  quality: number = DEFAULT_QUALITY,
+  considerRotation: boolean = false,
+  logPipelineDetails: boolean = false,
+): Promise<void> {
   this.assertFeatureEnabled(ADB_SCREEN_STREAMING_FEATURE);
 
   if (_.isUndefined(this._screenStreamingProps)) {
@@ -124,12 +137,10 @@ export async function mobileStartScreenStreaming(
     throw e;
   }
 
-  /** @type {import('node:net').Socket|undefined} */
-  let mjpegSocket;
-  /** @type {import('node:http').Server|undefined} */
-  let mjpegServer;
+  let mjpegSocket: net.Socket | undefined;
+  let mjpegServer: http.Server | undefined;
   try {
-    await new B((resolve, reject) => {
+    await new B<void>((resolve, reject) => {
       mjpegSocket = net.createConnection(tcpPort, TCP_HOST, () => {
         this.log.info(`Successfully connected to MJPEG stream at tcp://${TCP_HOST}:${tcpPort}`);
         mjpegServer = http.createServer((req, res) => {
@@ -162,7 +173,9 @@ export async function mobileStartScreenStreaming(
             'Content-Type': `multipart/x-mixed-replace; boundary=${BOUNDARY_STRING}`,
           });
 
-          /** @type {import('node:net').Socket} */ (mjpegSocket).pipe(res);
+          if (mjpegSocket) {
+            mjpegSocket.pipe(res);
+          }
         });
         mjpegServer.on('error', (e) => {
           this.log.warn(e);
@@ -210,10 +223,16 @@ export async function mobileStartScreenStreaming(
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @returns {Promise<void>}
+ * Stops the currently running screen streaming session.
+ *
+ * This method gracefully terminates all processes involved in screen streaming:
+ * - The MJPEG HTTP server
+ * - The GStreamer pipeline
+ * - The device screen recording process
+ *
+ * If no streaming session is active, this method returns without error.
  */
-export async function mobileStopScreenStreaming() {
+export async function mobileStopScreenStreaming(this: AndroidDriver): Promise<void> {
   if (_.isEmpty(this._screenStreamingProps)) {
     if (!_.isUndefined(this._screenStreamingProps)) {
       this.log.debug(`Screen streaming is not running. There is nothing to stop`);
@@ -252,13 +271,7 @@ export async function mobileStopScreenStreaming() {
 
 // #region Internal helpers
 
-/**
- *
- * @param {string} streamName
- * @param {string} udid
- * @returns {AppiumLogger}
- */
-function createStreamingLogger(streamName, udid) {
+function createStreamingLogger(streamName: string, udid: string): AppiumLogger {
   return logger.getLogger(
     `${streamName}@` +
       _.truncate(udid, {
@@ -268,18 +281,14 @@ function createStreamingLogger(streamName, udid) {
   );
 }
 
-/**
- *
- * @param {ADB} adb
- */
-async function verifyStreamingRequirements(adb) {
+async function verifyStreamingRequirements(adb: ADB): Promise<void> {
   if (!_.trim(await adb.shell(['which', SCREENRECORD_BINARY]))) {
     throw new Error(
       `The required '${SCREENRECORD_BINARY}' binary is not available on the device under test`,
     );
   }
 
-  const gstreamerCheckPromises = [];
+  const gstreamerCheckPromises: Promise<void>[] = [];
   for (const binaryName of [GSTREAMER_BINARY, GST_INSPECT_BINARY]) {
     gstreamerCheckPromises.push(
       (async () => {
@@ -296,7 +305,7 @@ async function verifyStreamingRequirements(adb) {
   }
   await B.all(gstreamerCheckPromises);
 
-  const moduleCheckPromises = [];
+  const moduleCheckPromises: Promise<void>[] = [];
   for (const [name, modName] of _.toPairs(REQUIRED_GST_PLUGINS)) {
     moduleCheckPromises.push(
       (async () => {
@@ -313,23 +322,15 @@ async function verifyStreamingRequirements(adb) {
   await B.all(moduleCheckPromises);
 }
 
-const deviceInfoRegexes = /** @type {const} */ ([
+const deviceInfoRegexes = [
   ['width', /\bdeviceWidth=(\d+)/],
   ['height', /\bdeviceHeight=(\d+)/],
   ['fps', /\bfps=(\d+)/],
-]);
+] as const;
 
-/**
- *
- * @param {ADB} adb
- * @param {AppiumLogger} [log]
- */
-async function getDeviceInfo(adb, log) {
+async function getDeviceInfo(adb: ADB, log?: AppiumLogger): Promise<DeviceInfo> {
   const output = await adb.shell(['dumpsys', 'display']);
-  /**
-   * @type {DeviceInfo}
-   */
-  const result = {};
+  const result: Partial<DeviceInfo> = {};
   for (const [key, pattern] of deviceInfoRegexes) {
     const match = pattern.exec(output);
     if (!match) {
@@ -342,18 +343,15 @@ async function getDeviceInfo(adb, log) {
     result[key] = parseInt(match[1], 10);
   }
   result.udid = String(adb.curDeviceId);
-  return result;
+  return result as DeviceInfo;
 }
 
-/**
- *
- * @param {ADB} adb
- * @param {AppiumLogger} log
- * @param {DeviceInfo} deviceInfo
- * @param {{width?: string|number, height?: string|number, bitRate?: string|number}} opts
- * @returns
- */
-async function initDeviceStreamingProc(adb, log, deviceInfo, opts = {}) {
+async function initDeviceStreamingProc(
+  adb: ADB,
+  log: AppiumLogger,
+  deviceInfo: DeviceInfo,
+  opts: {width?: string | number; height?: string | number; bitRate?: string | number} = {},
+): Promise<ReturnType<typeof spawn>> {
   const {width, height, bitRate} = opts;
   const adjustedWidth = _.isUndefined(width) ? deviceInfo.width : parseInt(String(width), 10);
   const adjustedHeight = _.isUndefined(height) ? deviceInfo.height : parseInt(String(height), 10);
@@ -383,11 +381,7 @@ async function initDeviceStreamingProc(adb, log, deviceInfo, opts = {}) {
 
   let isStarted = false;
   const deviceStreamingLogger = createStreamingLogger(SCREENRECORD_BINARY, deviceInfo.udid);
-  /**
-   *
-   * @param {Buffer|string} chunk
-   */
-  const errorsListener = (chunk) => {
+  const errorsListener = (chunk: Buffer | string) => {
     const stderr = chunk.toString();
     if (_.trim(stderr)) {
       deviceStreamingLogger.debug(stderr);
@@ -395,11 +389,7 @@ async function initDeviceStreamingProc(adb, log, deviceInfo, opts = {}) {
   };
   deviceStreaming.stderr.on('data', errorsListener);
 
-  /**
-   *
-   * @param {Buffer|string} chunk
-   */
-  const startupListener = (chunk) => {
+  const startupListener = (chunk: Buffer | string) => {
     if (!isStarted) {
       isStarted = !_.isEmpty(chunk);
     }
@@ -415,7 +405,7 @@ async function initDeviceStreamingProc(adb, log, deviceInfo, opts = {}) {
   } catch (e) {
     throw log.errorWithException(
       `Cannot start the screen streaming process. Original error: ${
-        /** @type {Error} */ (e).message
+        (e as Error).message
       }`,
     );
   } finally {
@@ -425,14 +415,12 @@ async function initDeviceStreamingProc(adb, log, deviceInfo, opts = {}) {
   return deviceStreaming;
 }
 
-/**
- *
- * @param {import('node:child_process').ChildProcess} deviceStreamingProc
- * @param {DeviceInfo} deviceInfo
- * @param {AppiumLogger} log
- * @param {import('./types').InitGStreamerPipelineOpts} opts
- */
-async function initGstreamerPipeline(deviceStreamingProc, deviceInfo, log, opts) {
+async function initGstreamerPipeline(
+  deviceStreamingProc: ReturnType<typeof spawn>,
+  deviceInfo: DeviceInfo,
+  log: AppiumLogger,
+  opts: InitGStreamerPipelineOpts,
+): Promise<SubProcess> {
   const {width, height, quality, tcpPort, considerRotation, logPipelineDetails} = opts;
   const adjustedWidth = parseInt(String(width), 10) || deviceInfo.width;
   const adjustedHeight = parseInt(String(height), 10) || deviceInfo.height;
@@ -477,12 +465,7 @@ async function initGstreamerPipeline(deviceStreamingProc, deviceInfo, log, opts)
     log.debug(`Pipeline streaming process exited with code ${code}, signal ${signal}`);
   });
   const gstreamerLogger = createStreamingLogger('gst', deviceInfo.udid);
-  /**
-   *
-   * @param {string} stdout
-   * @param {string} stderr
-   */
-  const gstOutputListener = (stdout, stderr) => {
+  const gstOutputListener = (stdout: string, stderr: string) => {
     if (_.trim(stderr || stdout)) {
       gstreamerLogger.debug(stderr || stdout);
     }
@@ -509,7 +492,7 @@ async function initGstreamerPipeline(deviceStreamingProc, deviceInfo, log, opts)
     didFail = true;
     throw log.errorWithException(
       `Cannot start the screen streaming pipeline. Original error: ${
-        /** @type {Error} */ (e).message
+        (e as Error).message
       }`,
     );
   } finally {
@@ -521,23 +504,17 @@ async function initGstreamerPipeline(deviceStreamingProc, deviceInfo, log, opts)
 }
 
 /**
- * @param {import('node:http').IncomingMessage} req
  * @privateRemarks This may need to be future-proofed, as `IncomingMessage.connection` is deprecated and its `socket` prop is likely private
  */
-function extractRemoteAddress(req) {
+function extractRemoteAddress(req: http.IncomingMessage): string {
   return (
-    req.headers['x-forwarded-for'] ||
+    (req.headers['x-forwarded-for'] as string) ||
     req.socket.remoteAddress ||
-    req.connection.remoteAddress ||
-    // @ts-expect-error socket may be a private API??
-    req.connection.socket.remoteAddress
+    (req as any).connection?.remoteAddress ||
+    (req as any).connection?.socket?.remoteAddress ||
+    'unknown'
   );
 }
 
 // #endregion
 
-/**
- * @typedef {import('appium-adb').ADB} ADB
- * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
- * @typedef {import('./types').DeviceInfo} DeviceInfo
- */
