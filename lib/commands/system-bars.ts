@@ -22,11 +22,6 @@ const DEFAULT_WINDOW_PROPERTIES: WindowProperties = {
   height: 0,
 };
 
-interface SystemBarsResult {
-  statusBar?: WindowProperties;
-  navigationBar?: WindowProperties;
-}
-
 /**
  * Gets the system bars (status bar and navigation bar) properties.
  *
@@ -197,4 +192,9 @@ export function parseWindows(
 }
 
 // #endregion
+
+interface SystemBarsResult {
+  statusBar?: WindowProperties;
+  navigationBar?: WindowProperties;
+}
 

@@ -25,11 +25,6 @@ const PERMISSIONS_TYPE = Object.freeze({
   REQUESTED: 'requested',
 } as const);
 
-type PMAction = typeof PM_ACTION[keyof typeof PM_ACTION];
-type AppOpsAction = typeof APPOPS_ACTION[keyof typeof APPOPS_ACTION];
-type PermissionTarget = typeof PERMISSION_TARGET[keyof typeof PERMISSION_TARGET];
-type PermissionsType = typeof PERMISSIONS_TYPE[keyof typeof PERMISSIONS_TYPE];
-
 /**
  * Changes permissions for an Android application.
  *
@@ -129,7 +124,7 @@ export async function mobileGetPermissions(
 async function changePermissionsViaPm(
   this: AndroidDriver,
   permissions: string | string[],
-  appPackage: string | undefined,
+  appPackage: string,
   action: PMAction,
 ): Promise<void> {
   if (!_.values(PM_ACTION).includes(action)) {
@@ -141,10 +136,10 @@ async function changePermissionsViaPm(
 
   let affectedPermissions = _.isArray(permissions) ? permissions : [permissions];
   if (_.isString(permissions) && _.toLower(permissions) === ALL_PERMISSIONS_MAGIC) {
-    const dumpsys = await this.adb.shell(['dumpsys', 'package', appPackage as string]);
-    const grantedPermissions = await this.adb.getGrantedPermissions(appPackage as string, dumpsys);
+    const dumpsys = await this.adb.shell(['dumpsys', 'package', appPackage]);
+    const grantedPermissions = await this.adb.getGrantedPermissions(appPackage, dumpsys);
     if (action === PM_ACTION.GRANT) {
-      const reqPermissons = await this.adb.getReqPermissions(appPackage as string, dumpsys);
+      const reqPermissons = await this.adb.getReqPermissions(appPackage, dumpsys);
       affectedPermissions = _.difference(reqPermissons, grantedPermissions);
     } else {
       affectedPermissions = grantedPermissions;
@@ -156,16 +151,16 @@ async function changePermissionsViaPm(
   }
 
   if (action === PM_ACTION.GRANT) {
-    await this.adb.grantPermissions(appPackage as string, affectedPermissions);
+    await this.adb.grantPermissions(appPackage, affectedPermissions);
   } else {
-    await B.all(affectedPermissions.map((name) => this.adb.revokePermission(appPackage as string, name)));
+    await B.all(affectedPermissions.map((name) => this.adb.revokePermission(appPackage, name)));
   }
 }
 
 async function changePermissionsViaAppops(
   this: AndroidDriver,
   permissions: string | string[],
-  appPackage: string | undefined,
+  appPackage: string,
   action: AppOpsAction,
 ): Promise<void> {
   if (!_.values(APPOPS_ACTION).includes(action)) {
@@ -183,10 +178,15 @@ async function changePermissionsViaAppops(
   }
 
   const promises = (_.isArray(permissions) ? permissions : [permissions]).map((permission) =>
-    this.adb.shell(['appops', 'set', appPackage as string, permission, action]),
+    this.adb.shell(['appops', 'set', appPackage, permission, action]),
   );
   await B.all(promises);
 }
 
 // #endregion
+
+type PMAction = typeof PM_ACTION[keyof typeof PM_ACTION];
+type AppOpsAction = typeof APPOPS_ACTION[keyof typeof APPOPS_ACTION];
+type PermissionTarget = typeof PERMISSION_TARGET[keyof typeof PERMISSION_TARGET];
+type PermissionsType = typeof PERMISSIONS_TYPE[keyof typeof PERMISSIONS_TYPE];
 
