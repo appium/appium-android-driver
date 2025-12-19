@@ -1,3 +1,9 @@
+## [12.4.9](https://github.com/appium/appium-android-driver/compare/v12.4.8...v12.4.9) (2025-12-19)
+
+### Miscellaneous Chores
+
+* Migrate command modules to typescript (part3) ([#1040](https://github.com/appium/appium-android-driver/issues/1040)) ([ebc73ba](https://github.com/appium/appium-android-driver/commit/ebc73bac7433c552c41bc241bfec535c30b3b157))
+
 ## [12.4.8](https://github.com/appium/appium-android-driver/compare/v12.4.7...v12.4.8) (2025-12-19)
 
 ### Miscellaneous Chores
