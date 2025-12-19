@@ -2,8 +2,10 @@ import _ from 'lodash';
 import {fs, tempDir} from '@appium/support';
 import path from 'node:path';
 import B from 'bluebird';
+import type {Location} from '@appium/types';
 import {SETTINGS_HELPER_ID} from 'io.appium.settings';
 import {getThirdPartyPackages} from './app-management';
+import type {AndroidDriver} from '../driver';
 
 // The value close to zero, but not zero, is needed
 // to trick JSON generation and send a float value instead of an integer,
@@ -14,17 +16,21 @@ const GEO_EPSILON = Number.MIN_VALUE;
 const MOCK_APP_IDS_STORE = '/data/local/tmp/mock_apps.json';
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @param {import('@appium/types').Location} location
- * @returns {Promise<import('@appium/types').Location>}
+ * Sets the device geolocation.
+ *
+ * @param location The geolocation object containing latitude, longitude, and altitude.
+ * @returns Promise that resolves to the current geolocation after setting it.
  */
-export async function setGeoLocation(location) {
+export async function setGeoLocation(
+  this: AndroidDriver,
+  location: Location,
+): Promise<Location> {
   await this.settingsApp.setGeoLocation(location, this.isEmulator());
   try {
     return await this.getGeoLocation();
   } catch (e) {
     this.log.warn(
-      `Could not get the current geolocation info: ${/** @type {Error} */ (e).message}`,
+      `Could not get the current geolocation info: ${(e as Error).message}`,
     );
     this.log.warn(`Returning the default zero'ed values`);
     return {
@@ -38,28 +44,28 @@ export async function setGeoLocation(location) {
 /**
  * Set the device geolocation.
  *
- * @this {import('../driver').AndroidDriver}
- * @param {number} latitude Valid latitude value.
- * @param {number} longitude Valid longitude value.
- * @param {number} [altitude] Valid altitude value.
- * @param {number} [satellites] Number of satellites being tracked (1-12). Available for emulators.
- * @param {number} [speed] Valid speed value.
+ * @param latitude Valid latitude value.
+ * @param longitude Valid longitude value.
+ * @param altitude Valid altitude value.
+ * @param satellites Number of satellites being tracked (1-12). Available for emulators.
+ * @param speed Valid speed value.
  * https://developer.android.com/reference/android/location/Location#setSpeed(float)
- * @param {number} [bearing] Valid bearing value. Available for real devices.
+ * @param bearing Valid bearing value. Available for real devices.
  * https://developer.android.com/reference/android/location/Location#setBearing(float)
- * @param {number} [accuracy] Valid accuracy value. Available for real devices.
+ * @param accuracy Valid accuracy value. Available for real devices.
  * https://developer.android.com/reference/android/location/Location#setAccuracy(float),
  * https://developer.android.com/reference/android/location/Criteria
  */
 export async function mobileSetGeolocation(
-  latitude,
-  longitude,
-  altitude,
-  satellites,
-  speed,
-  bearing,
-  accuracy
-) {
+  this: AndroidDriver,
+  latitude: number,
+  longitude: number,
+  altitude?: number,
+  satellites?: number,
+  speed?: number,
+  bearing?: number,
+  accuracy?: number,
+): Promise<void> {
   await this.settingsApp.setGeoLocation({
     latitude,
     longitude,
@@ -67,7 +73,7 @@ export async function mobileSetGeolocation(
     satellites,
     speed,
     bearing,
-    accuracy
+    accuracy,
   }, this.isEmulator());
 }
 
@@ -78,22 +84,27 @@ export async function mobileSetGeolocation(
  * installed. In case the vanilla LocationManager is used the device API level
  * must be at version 30 (Android R) or higher.
  *
- * @this {import('../driver').AndroidDriver}
- * @param {number} [timeoutMs] The maximum number of milliseconds
+ * @param timeoutMs The maximum number of milliseconds
  * to block until GPS cache is refreshed. Providing zero or a negative
  * value to it skips waiting completely.
  * 20000ms by default.
- * @returns {Promise<void>}
+ * @returns Promise that resolves when the GPS cache refresh is initiated.
  */
-export async function mobileRefreshGpsCache(timeoutMs) {
+export async function mobileRefreshGpsCache(
+  this: AndroidDriver,
+  timeoutMs?: number,
+): Promise<void> {
   await this.settingsApp.refreshGeoLocationCache(timeoutMs);
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @returns {Promise<import('@appium/types').Location>}
+ * Gets the current device geolocation.
+ *
+ * @returns Promise that resolves to the current geolocation object.
  */
-export async function getGeoLocation() {
+export async function getGeoLocation(
+  this: AndroidDriver,
+): Promise<Location> {
   const {latitude, longitude, altitude} = await this.settingsApp.getGeoLocation();
   return {
     latitude: parseFloat(String(latitude)) || GEO_EPSILON,
@@ -103,26 +114,35 @@ export async function getGeoLocation() {
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @returns {Promise<import('@appium/types').Location>}
+ * Gets the current device geolocation.
+ *
+ * @returns Promise that resolves to the current geolocation object.
  */
-export async function mobileGetGeolocation() {
+export async function mobileGetGeolocation(
+  this: AndroidDriver,
+): Promise<Location> {
   return await this.getGeoLocation();
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @returns {Promise<boolean>}
+ * Checks if location services are enabled.
+ *
+ * @returns Promise that resolves to `true` if location services are enabled, `false` otherwise.
  */
-export async function isLocationServicesEnabled() {
+export async function isLocationServicesEnabled(
+  this: AndroidDriver,
+): Promise<boolean> {
   return (await this.adb.getLocationProviders()).includes('gps');
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @returns {Promise<void>}
+ * Toggles the location services state.
+ *
+ * @returns Promise that resolves when the location services state is toggled.
  */
-export async function toggleLocationServices() {
+export async function toggleLocationServices(
+  this: AndroidDriver,
+): Promise<void> {
   this.log.info('Toggling location services');
   const isGpsEnabled = await this.isLocationServicesEnabled();
   this.log.debug(
@@ -133,10 +153,14 @@ export async function toggleLocationServices() {
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @returns {Promise<void>}
+ * Resets the geolocation to the default state.
+ *
+ * @returns Promise that resolves when the geolocation is reset.
+ * @throws {Error} If called on an emulator (geolocation reset does not work on emulators).
  */
-export async function mobileResetGeolocation() {
+export async function mobileResetGeolocation(
+  this: AndroidDriver,
+): Promise<void> {
   if (this.isEmulator()) {
     throw new Error('Geolocation reset does not work on emulators');
   }
@@ -146,20 +170,23 @@ export async function mobileResetGeolocation() {
 // #region Internal helpers
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @param {string} appId
- * @returns {Promise<void>}
+ * Sets the mock location permission for a specific app.
+ *
+ * @param appId The application package identifier.
+ * @returns Promise that resolves when the mock location permission is set.
  */
-export async function setMockLocationApp(appId) {
+export async function setMockLocationApp(
+  this: AndroidDriver,
+  appId: string,
+): Promise<void> {
   try {
     await this.adb.shell(['appops', 'set', appId, 'android:mock_location', 'allow']);
   } catch (err) {
-    this.log.warn(`Unable to set mock location for app '${appId}': ${err.message}`);
+    this.log.warn(`Unable to set mock location for app '${appId}': ${(err as Error).message}`);
     return;
   }
   try {
-    /** @type {string[]} */
-    let pkgIds = [];
+    let pkgIds: string[] = [];
     if (await this.adb.fileExists(MOCK_APP_IDS_STORE)) {
       try {
         pkgIds = JSON.parse(await this.adb.shell(['cat', MOCK_APP_IDS_STORE]));
@@ -178,18 +205,21 @@ export async function setMockLocationApp(appId) {
       await fs.rimraf(tmpRoot);
     }
   } catch (e) {
-    this.log.warn(`Unable to persist mock location app id '${appId}': ${e.message}`);
+    this.log.warn(`Unable to persist mock location app id '${appId}': ${(e as Error).message}`);
   }
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @returns {Promise<void>}
+ * Resets the mock location permissions for all apps.
+ *
+ * @returns Promise that resolves when the mock location permissions are reset.
  */
-async function resetMockLocation() {
+async function resetMockLocation(
+  this: AndroidDriver,
+): Promise<void> {
   try {
     const thirdPartyPkgIdsPromise = getThirdPartyPackages.bind(this)();
-    let pkgIds = [];
+    let pkgIds: string[] = [];
     if (await this.adb.fileExists(MOCK_APP_IDS_STORE)) {
       try {
         pkgIds = JSON.parse(await this.adb.shell(['cat', MOCK_APP_IDS_STORE]));
@@ -220,8 +250,9 @@ async function resetMockLocation() {
       ),
     );
   } catch (err) {
-    this.log.warn(`Unable to reset mock location: ${err.message}`);
+    this.log.warn(`Unable to reset mock location: ${(err as Error).message}`);
   }
 }
 
 // #endregion Internal helpers
+

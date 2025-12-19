@@ -2,51 +2,42 @@ import {DEFAULT_WS_PATHNAME_PREFIX, BaseDriver} from 'appium/driver';
 import _ from 'lodash';
 import os from 'node:os';
 import WebSocket from 'ws';
+import type {AppiumServer, WSServer} from '@appium/types';
+import type {EventEmitter} from 'node:events';
+import type {ADB} from 'appium-adb';
+import type {Chromedriver} from 'appium-chromedriver';
 import {
   GET_SERVER_LOGS_FEATURE,
   toLogRecord,
   nativeLogEntryToSeleniumEntry,
+  type LogEntry,
 } from '../utils';
 import { NATIVE_WIN } from './context/helpers';
 import { BIDI_EVENT_NAME } from './bidi/constants';
 import { makeLogEntryAddedEvent } from './bidi/models';
+import type {AndroidDriver} from '../driver';
 
 export const supportedLogTypes = {
   logcat: {
     description: 'Logs for Android applications on real device and emulators via ADB',
-    /**
-     *
-     * @param {import('../driver').AndroidDriver} self
-     * @returns
-     */
-    getter: (self) => /** @type {ADB} */ (self.adb).getLogcatLogs(),
+    getter: (self: AndroidDriver) => (self.adb as ADB).getLogcatLogs(),
   },
   bugreport: {
     description: `'adb bugreport' output for advanced issues diagnostic`,
-    /**
-     *
-     * @param {import('../driver').AndroidDriver} self
-     * @returns
-     */
-    getter: async (self) => {
-      const output = await /** @type {ADB} */ (self.adb).bugreport();
+    getter: async (self: AndroidDriver) => {
+      const output = await (self.adb as ADB).bugreport();
       const timestamp = Date.now();
       return output.split(os.EOL).map((x) => toLogRecord(timestamp, x));
     },
   },
   server: {
     description: 'Appium server logs',
-    /**
-     *
-     * @param {import('../driver').AndroidDriver} self
-     * @returns
-     */
-    getter: (self) => {
+    getter: (self: AndroidDriver) => {
       self.assertFeatureEnabled(GET_SERVER_LOGS_FEATURE);
       return self.log.unwrap().record.map(nativeLogEntryToSeleniumEntry);
     },
   },
-};
+} as const;
 
 /**
  * Starts Android logcat broadcast websocket on the same host and port
@@ -56,12 +47,13 @@ export const supportedLogTypes = {
  * Each connected websocket listener will receive logcat log lines
  * as soon as they are visible to Appium.
  *
- * @this {import('../driver').AndroidDriver}
- * @returns {Promise<void>}
+ * @returns Promise that resolves when the logcat broadcasting websocket is started.
  */
-export async function mobileStartLogsBroadcast() {
-  const server = /** @type {import('@appium/types').AppiumServer} */ (this.server);
-  const pathname = WEBSOCKET_ENDPOINT(/** @type {string} */ (this.sessionId));
+export async function mobileStartLogsBroadcast(
+  this: AndroidDriver,
+): Promise<void> {
+  const server = this.server as AppiumServer;
+  const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
   if (!_.isEmpty(await server.getWebSocketHandlers(pathname))) {
     this.log.debug(`The logcat broadcasting web socket server is already listening at ${pathname}`);
     return;
@@ -78,7 +70,7 @@ export async function mobileStartLogsBroadcast() {
   wss.on('connection', (ws, req) => {
     if (req) {
       const remoteIp = _.isEmpty(req.headers['x-forwarded-for'])
-        ? req.connection?.remoteAddress
+        ? (req.socket as any)?.remoteAddress
         : req.headers['x-forwarded-for'];
       this.log.debug(`Established a new logcat listener web socket connection from ${remoteIp}`);
     } else {
@@ -86,7 +78,7 @@ export async function mobileStartLogsBroadcast() {
     }
 
     if (_.isEmpty(this._logcatWebsocketListener)) {
-      this._logcatWebsocketListener = (logRecord) => {
+      this._logcatWebsocketListener = (logRecord: LogEntry) => {
         if (ws?.readyState === WebSocket.OPEN) {
           ws.send(logRecord.message);
         }
@@ -112,19 +104,20 @@ export async function mobileStartLogsBroadcast() {
       this.log.debug(closeMsg);
     });
   });
-  await server.addWebSocketHandler(pathname, /** @type {import('@appium/types').WSServer} */ (wss));
+  await server.addWebSocketHandler(pathname, wss as WSServer);
 }
 
 /**
  * Stops the previously started logcat broadcasting wesocket server.
  * This method will return immediately if no server is running.
  *
- * @this {import('../driver').AndroidDriver}
- * @returns {Promise<void>}
+ * @returns Promise that resolves when the logcat broadcasting websocket is stopped.
  */
-export async function mobileStopLogsBroadcast() {
-  const pathname = WEBSOCKET_ENDPOINT(/** @type {string} */ (this.sessionId));
-  const server = /** @type {import('@appium/types').AppiumServer} */ (this.server);
+export async function mobileStopLogsBroadcast(
+  this: AndroidDriver,
+): Promise<void> {
+  const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
+  const server = this.server as AppiumServer;
   if (_.isEmpty(await server.getWebSocketHandlers(pathname))) {
     return;
   }
@@ -137,40 +130,53 @@ export async function mobileStopLogsBroadcast() {
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @returns {Promise<string[]>}
+ * Gets the list of available log types.
+ *
+ * @returns Promise that resolves to an array of log type names.
  */
-export async function getLogTypes() {
+export async function getLogTypes(
+  this: AndroidDriver,
+): Promise<string[]> {
   // XXX why doesn't `super` work here?
   const nativeLogTypes = await BaseDriver.prototype.getLogTypes.call(this);
   if (this.isWebContext()) {
-    const webLogTypes = /** @type {string[]} */ (
-      await /** @type {import('appium-chromedriver').Chromedriver} */ (
-        this.chromedriver
-      ).jwproxy.command('/log/types', 'GET')
-    );
+    const webLogTypes = await (this.chromedriver as Chromedriver).jwproxy.command('/log/types', 'GET') as string[];
     return [...nativeLogTypes, ...webLogTypes];
   }
   return nativeLogTypes;
 }
 
+export interface BiDiListenerProperties {
+  type: string;
+  srcEventName?: string;
+  context?: string;
+  entryTransformer?: (x: LogEntry) => LogEntry;
+}
+
+export type LogListener = (logEntry: LogEntry) => any;
+
 /**
+ * Assigns a BiDi log listener to an event emitter.
+ *
  * https://w3c.github.io/webdriver-bidi/#event-log-entryAdded
  *
- * @template {import('node:events').EventEmitter} EE
- * @this {import('../driver').AndroidDriver}
- * @param {EE} logEmitter
- * @param {BiDiListenerProperties} properties
- * @returns {[EE, LogListener]}
+ * @template EE The event emitter type.
+ * @param logEmitter The event emitter to attach the listener to.
+ * @param properties The BiDi listener properties.
+ * @returns A tuple containing the event emitter and the listener function.
  */
-export function assignBiDiLogListener (logEmitter, properties) {
+export function assignBiDiLogListener<EE extends EventEmitter>(
+  this: AndroidDriver,
+  logEmitter: EE,
+  properties: BiDiListenerProperties,
+): [EE, LogListener] {
   const {
     type,
     context = NATIVE_WIN,
     srcEventName = 'output',
     entryTransformer,
   } = properties;
-  const listener = (/** @type {import('../utils').LogEntry} */ logEntry) => {
+  const listener: LogListener = (logEntry: LogEntry) => {
     const finalEntry = entryTransformer ? entryTransformer(logEntry) : logEntry;
     this.eventEmitter.emit(BIDI_EVENT_NAME, makeLogEntryAddedEvent(finalEntry, context, type));
   };
@@ -179,42 +185,31 @@ export function assignBiDiLogListener (logEmitter, properties) {
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @param {string} logType
- * @returns {Promise<any>}
+ * Gets logs of a specific type.
+ *
+ * @param logType The type of logs to retrieve.
+ * @returns Promise that resolves to the logs for the specified type.
  */
-export async function getLog(logType) {
+export async function getLog(
+  this: AndroidDriver,
+  logType: string,
+): Promise<any> {
   if (this.isWebContext() && !_.keys(this.supportedLogTypes).includes(logType)) {
-    return await /** @type {import('appium-chromedriver').Chromedriver} */ (
-      this.chromedriver
-    ).jwproxy.command('/log', 'POST', {type: logType});
+    return await (this.chromedriver as Chromedriver).jwproxy.command('/log', 'POST', {type: logType});
   }
-  // XXX why doesn't `super` work here?
   return await BaseDriver.prototype.getLog.call(this, logType);
 }
 
 // #region Internal helpers
 
 /**
- * @param {string} sessionId
- * @returns {string}
+ * Generates the websocket endpoint path for logcat broadcasting.
+ *
+ * @param sessionId The session ID.
+ * @returns The websocket endpoint path.
  */
-const WEBSOCKET_ENDPOINT = (sessionId) =>
+const WEBSOCKET_ENDPOINT = (sessionId: string): string =>
   `${DEFAULT_WS_PATHNAME_PREFIX}/session/${sessionId}/appium/device/logcat`;
-
 
 // #endregion
 
-/**
- * @typedef {import('appium-adb').ADB} ADB
- */
-
-/**
- * @typedef {Object} BiDiListenerProperties
- * @property {string} type
- * @property {string} [srcEventName='output']
- * @property {string} [context=NATIVE_WIN]
- * @property {(x: Object) => import('../utils').LogEntry} [entryTransformer]
- */
-
-/** @typedef {(logEntry: import('../utils').LogEntry) => any} LogListener */
