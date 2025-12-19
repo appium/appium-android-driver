@@ -70,7 +70,7 @@ export async function mobileStartLogsBroadcast(
   wss.on('connection', (ws, req) => {
     if (req) {
       const remoteIp = _.isEmpty(req.headers['x-forwarded-for'])
-        ? (req.socket as any)?.remoteAddress
+        ? req.socket.remoteAddress
         : req.headers['x-forwarded-for'];
       this.log.debug(`Established a new logcat listener web socket connection from ${remoteIp}`);
     } else {
