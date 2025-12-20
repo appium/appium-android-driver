@@ -146,15 +146,6 @@ export async function getLogTypes(
   return nativeLogTypes;
 }
 
-export interface BiDiListenerProperties {
-  type: string;
-  srcEventName?: string;
-  context?: string;
-  entryTransformer?: (x: LogEntry) => LogEntry;
-}
-
-export type LogListener = (logEntry: LogEntry) => any;
-
 /**
  * Assigns a BiDi log listener to an event emitter.
  *
@@ -212,4 +203,13 @@ const WEBSOCKET_ENDPOINT = (sessionId: string): string =>
   `${DEFAULT_WS_PATHNAME_PREFIX}/session/${sessionId}/appium/device/logcat`;
 
 // #endregion
+
+export interface BiDiListenerProperties {
+  type: string;
+  srcEventName?: string;
+  context?: string;
+  entryTransformer?: (x: LogEntry) => LogEntry;
+}
+
+export type LogListener = (logEntry: LogEntry) => any;
 

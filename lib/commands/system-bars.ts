@@ -1,5 +1,8 @@
 import {errors} from 'appium/driver';
 import _ from 'lodash';
+import type {StringRecord} from '@appium/types';
+import type {AndroidDriver} from '../driver';
+import type {StatusBarCommand, WindowProperties} from './types';
 
 const WINDOW_TITLE_PATTERN = /^\s+Window\s#\d+\sWindow\{[0-9a-f]+\s\w+\s([\w-]+)\}:$/;
 const FRAME_PATTERN = /\bm?[Ff]rame=\[([0-9.-]+),([0-9.-]+)\]\[([0-9.-]+),([0-9.-]+)\]/;
@@ -11,7 +14,7 @@ const VIEW_VISIBILITY_PATTERN = /\bmViewVisibility=(0x[0-9a-fA-F]+)/;
 const VIEW_VISIBLE = 0x0;
 const STATUS_BAR_WINDOW_NAME_PREFIX = 'StatusBar';
 const NAVIGATION_BAR_WINDOW_NAME_PREFIX = 'NavigationBar';
-const DEFAULT_WINDOW_PROPERTIES = {
+const DEFAULT_WINDOW_PROPERTIES: WindowProperties = {
   visible: false,
   x: 0,
   y: 0,
@@ -20,48 +23,53 @@ const DEFAULT_WINDOW_PROPERTIES = {
 };
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @returns {Promise<StringRecord>}
+ * Gets the system bars (status bar and navigation bar) properties.
+ *
+ * @returns Promise that resolves to an object containing statusBar and navigationBar properties.
+ * @throws {Error} If system bars details cannot be retrieved or parsed.
  */
-export async function getSystemBars() {
-  /** @type {string} */
-  let stdout;
+export async function getSystemBars(
+  this: AndroidDriver,
+): Promise<StringRecord> {
+  let stdout: string;
   try {
     stdout = await this.adb.shell(['dumpsys', 'window', 'windows']);
   } catch (e) {
     throw new Error(
-      `Cannot retrieve system bars details. Original error: ${/** @type {Error} */ (e).message}`,
+      `Cannot retrieve system bars details. Original error: ${(e as Error).message}`,
     );
   }
   return parseWindows.bind(this)(stdout);
 }
 
 /**
- * @this {import('../driver').AndroidDriver}
- * @param {import('./types').StatusBarCommand} command Each list
- * item must separated with a new line (`\n`) character.
- * @param {string} [component] The name of the tile component.
+ * Performs a status bar command.
+ *
+ * @param command The status bar command to perform.
+ * @param component The name of the tile component.
  * It is only required for `(add|remove|click)Tile` commands.
  * Example value: `com.package.name/.service.QuickSettingsTileComponent`
- * @returns {Promise<string>}
+ * @returns Promise that resolves to the command output string.
+ * @throws {errors.InvalidArgumentError} If the command is unknown.
  */
-export async function mobilePerformStatusBarCommand(command, component) {
-  /**
-   *
-   * @param {string} cmd
-   * @param {(() => string[]|string)} [argsCallable]
-   * @returns
-   */
-  const toStatusBarCommandCallable = (cmd, argsCallable) => async () =>
+export async function mobilePerformStatusBarCommand(
+  this: AndroidDriver,
+  command: StatusBarCommand,
+  component?: string,
+): Promise<string> {
+  const toStatusBarCommandCallable = (
+    cmd: string,
+    argsCallable?: () => string[] | string,
+  ) => async (): Promise<string> =>
     await this.adb.shell([
       'cmd',
       'statusbar',
       cmd,
       ...(argsCallable ? _.castArray(argsCallable()) : []),
     ]);
-  const tileCommandArgsCallable = () => /** @type {string} */ (component);
+  const tileCommandArgsCallable = () => component as string;
   const statusBarCommands = _.fromPairs(
-    /** @type {const} */ ([
+    ([
       ['expandNotifications', ['expand-notifications']],
       ['expandSettings', ['expand-settings']],
       ['collapse', ['collapse']],
@@ -69,8 +77,8 @@ export async function mobilePerformStatusBarCommand(command, component) {
       ['removeTile', ['remove-tile', tileCommandArgsCallable]],
       ['clickTile', ['click-tile', tileCommandArgsCallable]],
       ['getStatusIcons', ['get-status-icons']],
-    ]).map(([name, args]) => [name, toStatusBarCommandCallable(args[0], args[1])]),
-  );
+    ] as const).map(([name, args]) => [name, toStatusBarCommandCallable(args[0], args[1])]),
+  ) as Record<StatusBarCommand, () => Promise<string>>;
 
   const action = statusBarCommands[command];
   if (!action) {
@@ -87,14 +95,17 @@ export async function mobilePerformStatusBarCommand(command, component) {
 /**
  * Parses window properties from adb dumpsys output
  *
- * @this {import('../driver').AndroidDriver}
- * @param {string} name The name of the window whose properties are being parsed
- * @param {Array<string>} props The list of particular window property lines.
+ * @param name The name of the window whose properties are being parsed
+ * @param props The list of particular window property lines.
  * Check the corresponding unit tests for more details on the input format.
- * @returns {WindowProperties} Parsed properties object
+ * @returns Parsed properties object
  * @throws {Error} If there was an issue while parsing the properties string
  */
-export function parseWindowProperties(name, props) {
+export function parseWindowProperties(
+  this: AndroidDriver,
+  name: string,
+  props: string[],
+): WindowProperties {
   const result = _.cloneDeep(DEFAULT_WINDOW_PROPERTIES);
   const propLines = props.join('\n');
   const frameMatch = FRAME_PATTERN.exec(propLines);
@@ -118,19 +129,18 @@ export function parseWindowProperties(name, props) {
 /**
  * Extracts status and navigation bar information from the window manager output.
  *
- * @this {import('../driver').AndroidDriver}
- * @param {string} lines Output from dumpsys command.
+ * @param lines Output from dumpsys command.
  * Check the corresponding unit tests for more details on the input format.
- * @return {StringRecord} An object containing two items where keys are statusBar and navigationBar,
+ * @return An object containing two items where keys are statusBar and navigationBar,
  * and values are corresponding WindowProperties objects
  * @throws {Error} If no window properties could be parsed
  */
-export function parseWindows(lines) {
-  /**
-   * @type {StringRecord}
-   */
-  const windows = {};
-  let currentWindowName = null;
+export function parseWindows(
+  this: AndroidDriver,
+  lines: string,
+): SystemBarsResult {
+  const windows: StringRecord<string[]> = {};
+  let currentWindowName: string | null = null;
   for (const line of lines.split('\n').map(_.trimEnd)) {
     const match = WINDOW_TITLE_PATTERN.exec(line);
     if (match) {
@@ -152,40 +162,39 @@ export function parseWindows(lines) {
     throw new Error('Cannot parse any window information from the dumpsys output');
   }
 
-  /** @type {{statusBar?: WindowProperties, navigationBar?: WindowProperties}} */
-  const result = {};
+  const result: SystemBarsResult = {};
   for (const [name, props] of _.toPairs(windows)) {
     if (
       name.startsWith(STATUS_BAR_WINDOW_NAME_PREFIX)
-      || props.some((/** @type {string} */ line) => STATUS_BAR_TYPE_PATTERN.test(line))
+      || props.some((line: string) => STATUS_BAR_TYPE_PATTERN.test(line))
     ) {
       result.statusBar = parseWindowProperties.bind(this)(name, props);
     } else if (
       name.startsWith(NAVIGATION_BAR_WINDOW_NAME_PREFIX)
-      || props.some((/** @type {string} */ line) => NAVIGATION_BAR_TYPE_PATTERN.test(line))
+      || props.some((line: string) => NAVIGATION_BAR_TYPE_PATTERN.test(line))
     ) {
       result.navigationBar = parseWindowProperties.bind(this)(name, props);
     }
   }
-  const unmatchedWindows = /** @type {const} */ ([
+  const unmatchedWindows = ([
     ['statusBar', STATUS_BAR_WINDOW_NAME_PREFIX],
     ['navigationBar', NAVIGATION_BAR_WINDOW_NAME_PREFIX],
-  ]).filter(([name]) => _.isNil(result[name]));
+  ] as const).filter(([name]) => _.isNil(result[name as keyof SystemBarsResult]));
   for (const [window, namePrefix] of unmatchedWindows) {
     this.log.info(
       `No windows have been found whose title matches to ` +
         `'${namePrefix}'. Assuming it is invisible. ` +
         `Only the following windows are available: ${_.keys(windows)}`,
     );
-    result[window] = _.cloneDeep(DEFAULT_WINDOW_PROPERTIES);
+    result[window as keyof SystemBarsResult] = _.cloneDeep(DEFAULT_WINDOW_PROPERTIES);
   }
   return result;
 }
 
 // #endregion
 
-/**
- * @typedef {import('appium-adb').ADB} ADB
- * @typedef {import('@appium/types').StringRecord} StringRecord
- * @typedef {import('./types').WindowProperties} WindowProperties
- */
+interface SystemBarsResult {
+  statusBar?: WindowProperties;
+  navigationBar?: WindowProperties;
+}
+
