@@ -11,24 +11,28 @@ import {
   pushSettingsApp,
 } from './utils';
 import {adjustTimeZone} from '../time';
-import { retryInterval } from 'asyncbox';
+import {retryInterval} from 'asyncbox';
 import {
   GET_SERVER_LOGS_FEATURE,
   nativeLogEntryToSeleniumEntry
 } from '../../utils';
+import type {AndroidDriver} from '../../driver';
+import type {ADBDeviceInfo, ADBLaunchInfo} from '../types';
+import type {ADB} from 'appium-adb';
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<import('../types').ADBDeviceInfo>}
+ * Gets device information from capabilities, including UDID and emulator port.
+ *
+ * @returns Device information with UDID and emulator port
  */
-export async function getDeviceInfoFromCaps() {
+export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDeviceInfo> {
   // we can create a throwaway ADB instance here, so there is no dependency
   // on instantiating on earlier (at this point, we have no udid)
   // we can only use this ADB object for commands that would not be confused
   // if multiple devices are connected
   const adb = await createBaseADB.bind(this)();
   let udid = this.opts.udid;
-  let emPort;
+  let emPort: number | false | undefined;
 
   // a specific avd name was given. try to initialize with that
   if (this.opts?.avd) {
@@ -55,13 +59,12 @@ export async function getDeviceInfoFromCaps() {
 
       // in case we fail to find something, give the user a useful log that has
       // the device udids and os versions so they know what's available
-      const availDevices = [];
-      let partialMatchCandidate;
+      const availDevices: string[] = [];
+      let partialMatchCandidate: Record<string, string | semver.SemVer> | undefined;
       // first try started devices/emulators
       for (const device of devices) {
         // direct adb calls to the specific device
         adb.setDeviceId(device.udid);
-        /** @type {string} */
         const rawDeviceOS = await adb.getPlatformVersion();
         // The device OS could either be a number, like `6.0`
         // or an abbreviation, like `R`
@@ -78,8 +81,8 @@ export async function getDeviceInfoFromCaps() {
         const bothVersionsAreStrings = _.isString(deviceOS) && _.isString(platformVersion);
         if (
           (bothVersionsCanBeCoerced &&
-            /** @type {semver.SemVer} */ (semverDO).version ===
-              /** @type {semver.SemVer} */ (semverPV).version) ||
+            (semverDO as semver.SemVer).version ===
+              (semverPV as semver.SemVer).version) ||
           (bothVersionsAreStrings && _.toLower(deviceOS) === _.toLower(platformVersion))
         ) {
           // Got an exact match - proceed immediately
@@ -90,10 +93,10 @@ export async function getDeviceInfoFromCaps() {
           continue;
         }
 
-        const pvMajor = /** @type {semver.SemVer} */ (semverPV).major;
-        const pvMinor = /** @type {semver.SemVer} */ (semverPV).minor;
-        const dvMajor = /** @type {semver.SemVer} */ (semverDO).major;
-        const dvMinor = /** @type {semver.SemVer} */ (semverDO).minor;
+        const pvMajor = (semverPV as semver.SemVer).major;
+        const pvMinor = (semverPV as semver.SemVer).minor;
+        const dvMajor = (semverDO as semver.SemVer).major;
+        const dvMinor = (semverDO as semver.SemVer).minor;
         if (
           ((!_.includes(this.opts.platformVersion, '.') && pvMajor === dvMajor) ||
             (pvMajor === dvMajor && pvMinor === dvMinor)) &&
@@ -132,12 +135,12 @@ export async function getDeviceInfoFromCaps() {
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<import('appium-adb').ADB>}
+ * Creates an ADB instance configured with the device UDID and emulator port from options.
+ *
+ * @returns A configured ADB instance
  */
-export async function createADB() {
-  // @ts-expect-error do not put arbitrary properties on opts
-  const {udid, emPort} = this.opts;
+export async function createADB(this: AndroidDriver): Promise<ADB> {
+  const {udid, emPort} = this.opts as any;
   const adb = await createBaseADB.bind(this)();
   adb.setDeviceId(udid ?? '');
   if (emPort) {
@@ -147,20 +150,26 @@ export async function createADB() {
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<import('../types').ADBLaunchInfo | undefined>}
+ * Gets launch information (package and activity) from the app manifest or options.
+ *
+ * @returns Launch information with package and activity names, or undefined if not needed
  */
-export async function getLaunchInfo() {
-  let {appPackage, appActivity, appWaitPackage, appWaitActivity, app} = this.opts;
-  if (appPackage && appActivity || (!app && !appPackage)) {
+export async function getLaunchInfo(this: AndroidDriver): Promise<ADBLaunchInfo | undefined> {
+  const {app: appOpt, appPackage: appPackageOpt, appActivity: appActivityOpt, appWaitPackage: appWaitPackageOpt, appWaitActivity: appWaitActivityOpt} = this.opts;
+  let appPackage = appPackageOpt;
+  let appActivity = appActivityOpt;
+  let appWaitPackage = appWaitPackageOpt;
+  let appWaitActivity = appWaitActivityOpt;
+
+  if ((appPackage && appActivity) || (!appOpt && !appPackage)) {
     return;
   }
 
-  let apkPackage;
-  let apkActivity;
-  if (app) {
-    this.log.debug(`Parsing package and activity from the '${path.basename(app)}' file manifest`);
-    ({apkPackage, apkActivity} = await this.adb.packageAndLaunchActivityFromManifest(app));
+  let apkPackage: string | undefined;
+  let apkActivity: string | undefined;
+  if (appOpt) {
+    this.log.debug(`Parsing package and activity from the '${path.basename(appOpt)}' file manifest`);
+    ({apkPackage, apkActivity} = await this.adb.packageAndLaunchActivityFromManifest(appOpt));
   } else if (appPackage) {
     this.log.debug(`Parsing activity from the installed '${appPackage}' package manifest`);
     apkActivity = await this.adb.resolveLaunchableActivity(appPackage);
@@ -183,10 +192,9 @@ export async function getLaunchInfo() {
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<void>}
+ * Initializes the device with various settings like locale, keyboard, logcat, etc.
  */
-export async function initDevice() {
+export async function initDevice(this: AndroidDriver): Promise<void> {
   const {
     skipDeviceInitialization,
     locale,
@@ -228,8 +236,7 @@ export async function initDevice() {
     await pushSettingsApp.bind(this)(shouldThrowError);
   }
 
-  /** @type {Promise[]} */
-  const setupPromises = [];
+  const setupPromises: Promise<void>[] = [];
   if (!this.isEmulator()) {
     setupPromises.push((async () => {
       if (mockLocationApp || _.isUndefined(mockLocationApp)) {
@@ -245,7 +252,7 @@ export async function initDevice() {
   if (skipLogcatCapture) {
     this.log.info(`'skipLogcatCapture' is set. Skipping starting logcat capture.`);
   } else {
-    const logcatStartupPromise = async () => {
+    const logcatStartupPromise = async (): Promise<void> => {
       await this.adb.startLogcat({
         format: logcatFormat,
         filterSpecs: logcatFilterSpecs,
@@ -294,6 +301,3 @@ export async function initDevice() {
   await B.all(setupPromises);
 }
 
-/**
- * @typedef {import('../../driver').AndroidDriver} AndroidDriver
- */

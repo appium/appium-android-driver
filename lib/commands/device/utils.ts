@@ -9,28 +9,32 @@ import {
   EMPTY_IME,
 } from 'io.appium.settings';
 import B from 'bluebird';
-import { prepareEmulatorForImageInjection } from '../image-injection';
-import { ADB_LISTEN_ALL_NETWORK_FEATURE } from '../../utils';
+import {prepareEmulatorForImageInjection} from '../image-injection';
+import {ADB_LISTEN_ALL_NETWORK_FEATURE} from '../../utils';
+import type {AndroidDriver} from '../../driver';
 
 const HELPER_APP_INSTALL_RETRIES = 3;
 const HELPER_APP_INSTALL_RETRY_DELAY_MS = 5000;
 
 /**
- * @this {import('../../driver').AndroidDriver}
- * @param {string} errMsg
+ * Requires that the current device is an emulator, throwing an error if not.
+ *
+ * @param errMsg - Error message to throw if not an emulator
+ * @throws {Error} If the device is not an emulator
  */
-export function requireEmulator(errMsg) {
+export function requireEmulator(this: AndroidDriver, errMsg: string): void {
   if (!this.isEmulator()) {
     throw this.log.errorWithException(errMsg);
   }
 }
 
 /**
- * @this {import('../../driver').AndroidDriver}
- * @param {string} networkSpeed
- * @returns {string}
+ * Ensures the network speed value is valid, returning the default if not.
+ *
+ * @param networkSpeed - The network speed value to validate
+ * @returns The validated network speed value
  */
-export function ensureNetworkSpeed(networkSpeed) {
+export function ensureNetworkSpeed(this: AndroidDriver, networkSpeed: string): string {
   if (networkSpeed.toUpperCase() in this.adb.NETWORK_SPEED) {
     return networkSpeed;
   }
@@ -42,12 +46,13 @@ export function ensureNetworkSpeed(networkSpeed) {
 }
 
 /**
- * @this {import('../../driver').AndroidDriver}
- * @returns {string[]}
+ * Prepares AVD arguments based on options.
+ *
+ * @returns An array of AVD arguments
  */
-export function prepareAvdArgs() {
+export function prepareAvdArgs(this: AndroidDriver): string[] {
   const {networkSpeed, isHeadless, avdArgs} = this.opts;
-  const result = [];
+  const result: string[] = [];
   if (avdArgs) {
     if (_.isArray(avdArgs)) {
       result.push(...avdArgs);
@@ -65,11 +70,11 @@ export function prepareAvdArgs() {
 }
 
 /**
- * @this {import('../../driver').AndroidDriver}
- * @param {ADB} adb
- * @returns {Promise<void>}
+ * Prepares and launches an emulator with the specified AVD name.
+ *
+ * @param adb - The ADB instance to use
  */
-export async function prepareEmulator(adb) {
+export async function prepareEmulator(this: AndroidDriver, adb: ADB): Promise<void> {
   const {
     avd,
     avdEnv: env,
@@ -88,12 +93,13 @@ export async function prepareEmulator(adb) {
     // This API implicitly modifies curDeviceId and emulatorPort properties of the adb instance
     await adb.getRunningAVDWithRetry(avdName, 5000);
   } catch (e) {
-    this.log.debug(`Emulator '${avdName}' is not running: ${e.message}`);
+    const err = e as Error;
+    this.log.debug(`Emulator '${avdName}' is not running: ${err.message}`);
     isEmulatorRunning = false;
   }
   const args = prepareAvdArgs.bind(this)();
   if (isEmulatorRunning) {
-    if (await prepareEmulatorForImageInjection.bind(this)(/** @type {string} */ (adb.sdkRoot))
+    if (await prepareEmulatorForImageInjection.bind(this)(adb.sdkRoot as string)
       || args.includes('-wipe-data')) {
       this.log.debug(`Killing '${avdName}'`);
       await adb.killEmulator(avdName);
@@ -113,10 +119,11 @@ export async function prepareEmulator(adb) {
 }
 
 /**
- * @this {import('../../driver').AndroidDriver}
- * @returns {Promise<ADB>}
+ * Creates a base ADB instance with options from driver configuration.
+ *
+ * @returns A configured ADB instance
  */
-export async function createBaseADB() {
+export async function createBaseADB(this: AndroidDriver): Promise<ADB> {
   // filter out any unwanted options sent in
   // this list should be updated as ADB takes more arguments
   const {
@@ -161,11 +168,11 @@ export async function createBaseADB() {
 }
 
 /**
- * @this {import('../../driver').AndroidDriver}
- * @param {boolean} throwIfError
- * @returns {Promise<void>}
+ * Pushes and installs the settings app on the device.
+ *
+ * @param throwIfError - Whether to throw an error if installation fails
  */
-export async function pushSettingsApp(throwIfError) {
+export async function pushSettingsApp(this: AndroidDriver, throwIfError: boolean): Promise<void> {
   this.log.debug('Pushing settings apk to the device...');
 
   try {
@@ -180,13 +187,14 @@ export async function pushSettingsApp(throwIfError) {
         }),
     );
   } catch (err) {
+    const error = err as Error;
     if (throwIfError) {
-      throw err;
+      throw error;
     }
 
     this.log.warn(
       `Ignored error while installing '${SETTINGS_APK_PATH}': ` +
-        `'${err.message}'. Features that rely on this helper ` +
+        `'${error.message}'. Features that rely on this helper ` +
         'require the apk such as toggle WiFi and getting location ' +
         'will raise an error if you try to use them.',
     );
@@ -207,7 +215,8 @@ export async function pushSettingsApp(throwIfError) {
       this.settingsApp.adjustMediaProjectionServicePermissions(),
     ]);
   } catch (e) {
-    this.log.debug(e.stack);
+    const err = e as Error;
+    this.log.debug(err.stack);
   }
 
   // launch io.appium.settings app due to settings failing to be set
@@ -218,19 +227,18 @@ export async function pushSettingsApp(throwIfError) {
       timeout: this.isEmulator() ? 30000 : 5000,
     });
   } catch (err) {
-    this.log.debug(err.stack);
+    const error = err as Error;
+    this.log.debug(error.stack);
     if (throwIfError) {
-      throw err;
+      throw error;
     }
   }
 }
 
 /**
  * @deprecated
- * @this {import('../../driver').AndroidDriver}
- * @returns {Promise<string?>}
  */
-export async function initUnicodeKeyboard() {
+export async function initUnicodeKeyboard(this: AndroidDriver): Promise<string | null> {
   this.log.debug('Enabling Unicode keyboard support');
 
   // get the default IME so we can return back to it later if we want
@@ -244,11 +252,11 @@ export async function initUnicodeKeyboard() {
 }
 
 /**
- * @this {import('../../driver').AndroidDriver}
- * @returns {Promise<void>}
+ * Hides the on-screen keyboard completely by setting an empty IME.
  */
-export async function hideKeyboardCompletely() {
+export async function hideKeyboardCompletely(this: AndroidDriver): Promise<void> {
   this.log.debug(`Hiding the on-screen keyboard by setting IME to '${EMPTY_IME}'`);
   await this.adb.enableIME(EMPTY_IME);
   await this.adb.setIME(EMPTY_IME);
 }
+
