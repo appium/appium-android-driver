@@ -1,3 +1,9 @@
+## [12.5.0](https://github.com/appium/appium-android-driver/compare/v12.4.11...v12.5.0) (2025-12-20)
+
+### Features
+
+* Migrate context helpers to typescript ([#1043](https://github.com/appium/appium-android-driver/issues/1043)) ([ac13f41](https://github.com/appium/appium-android-driver/commit/ac13f415c455d3db8b9251863057a7f987089b01))
+
 ## [12.4.11](https://github.com/appium/appium-android-driver/compare/v12.4.10...v12.4.11) (2025-12-20)
 
 ### Miscellaneous Chores
