@@ -1,5 +1,6 @@
 import {retryInterval} from 'asyncbox';
 import _ from 'lodash';
+import type {ExecError} from 'teen_process';
 import type {AndroidDriver} from '../driver';
 import type {PerformanceDataType} from './types';
 
@@ -489,7 +490,7 @@ export async function getCPUInfo(
     try {
       output = await this.adb.shell(['dumpsys', 'cpuinfo']);
     } catch (e) {
-      const err = e as import('teen_process').ExecError;
+      const err = e as ExecError;
       if (err.stderr) {
         this.log.info(err.stderr);
       }

@@ -1,3 +1,5 @@
+import type {AndroidDriver} from '../driver';
+
 const RESPONSE_PATTERN = /:\s+(\w+)/;
 
 /**
@@ -13,7 +15,7 @@ const RESPONSE_PATTERN = /:\s+(\w+)/;
  * @returns Promise that resolves when the UI mode is set.
  */
 export async function mobileSetUiMode(
-  this: import('../driver').AndroidDriver,
+  this: AndroidDriver,
   mode: string,
   value: string,
 ): Promise<void> {
@@ -31,7 +33,7 @@ export async function mobileSetUiMode(
  * @throws {Error} If the command response cannot be parsed.
  */
 export async function mobileGetUiMode(
-  this: import('../driver').AndroidDriver,
+  this: AndroidDriver,
   mode: string,
 ): Promise<string> {
   const response = await this.adb.shell(['cmd', 'uimode', mode]);
