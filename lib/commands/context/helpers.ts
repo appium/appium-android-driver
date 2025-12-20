@@ -434,7 +434,7 @@ function createChromedriverCaps(
   this: AndroidDriver,
   opts: any,
   deviceId: string,
-  webViewDetails: WebViewDetails | null | undefined,
+  webViewDetails?: WebViewDetails | null,
 ): StringRecord {
   const caps: any = {chromeOptions: {}};
 
@@ -536,6 +536,11 @@ function createChromedriverCaps(
 
 /**
  * Allocates a local port for devtools communication.
+ *
+ * @param socketName - The remote Unix socket name
+ * @param webviewDevtoolsPort - The local port number or null to apply autodetection
+ * @returns The host name and the port number to connect to if the remote socket has been forwarded successfully
+ * @throws {Error} If there was an error while allocating the local port
  */
 async function allocateDevtoolsChannel(
   this: AndroidDriver,
@@ -581,6 +586,12 @@ async function allocateDevtoolsChannel(
  * Wrapper for Chrome Debugger Protocol data collection.
  * No error is thrown if CDP request fails - in such case no data will be
  * recorded into the corresponding `webviewsMapping` item.
+ *
+ * @param webviewsMapping - The current webviews mapping. Each item of this array gets mutated
+ *                          (`info`/`pages` properties get added based on the provided `opts`)
+ *                          if the requested details have been successfully retrieved for it
+ * @param opts - If both `ensureWebviewsHavePages` and `enableWebviewDetailsCollection`
+ *               properties are falsy then no details collection is performed
  */
 async function collectWebviewsDetails(
   this: AndroidDriver,
@@ -724,6 +735,9 @@ async function getPotentialWebviewProcs(this: AndroidDriver): Promise<string[]> 
  * If a deviceSocket is provided, only attempts to find webviews which match
  * that socket name (for apps which embed Chromium, which isn't the
  * same as chrome-backed webviews).
+ *
+ * @param deviceSocket - The explicitly-named device socket to use, or null to find all webviews
+ * @returns An array of webview process objects with proc and webview properties
  */
 async function webviewsFromProcs(
   this: AndroidDriver,

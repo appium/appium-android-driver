@@ -14,7 +14,7 @@ export const WEBVIEWS_DETAILS_CACHE = new LRUCache<string, WebViewDetails>({
  * @param webview - The webview name
  * @returns A cache key string in the format `deviceId:webview`
  */
-export function toDetailsCacheKey(adb: ADB | null | undefined, webview: string): string {
+export function toDetailsCacheKey(adb: ADB, webview: string): string {
   return `${adb?.curDeviceId}:${webview}`;
 }
 
@@ -25,7 +25,7 @@ export function toDetailsCacheKey(adb: ADB | null | undefined, webview: string):
  * @param webview - The webview name
  * @returns The cached webview details, or undefined if not found
  */
-export function getWebviewDetails(adb: ADB | null | undefined, webview: string): WebViewDetails | undefined {
+export function getWebviewDetails(adb: ADB, webview: string): WebViewDetails | undefined {
   const key = toDetailsCacheKey(adb, webview);
   return WEBVIEWS_DETAILS_CACHE.get(key);
 }
