@@ -1,13 +1,18 @@
 import moment from 'moment-timezone';
+import type {AndroidDriver} from '../driver';
 
 const MOMENT_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
 
 /**
- * @this {AndroidDriver}
- * @param {string} [format=MOMENT_FORMAT_ISO8601]
- * @returns {Promise<string>}
+ * Gets the current device time.
+ *
+ * @param format The format string for the time. Defaults to ISO8601 format.
+ * @returns Promise that resolves to the formatted device time string.
  */
-export async function getDeviceTime(format = MOMENT_FORMAT_ISO8601) {
+export async function getDeviceTime(
+  this: AndroidDriver,
+  format: string = MOMENT_FORMAT_ISO8601,
+): Promise<string> {
   this.log.debug(
     'Attempting to capture android device date and time. ' + `The format specifier is '${format}'`,
   );
@@ -23,20 +28,29 @@ export async function getDeviceTime(format = MOMENT_FORMAT_ISO8601) {
 }
 
 /**
- * @this {AndroidDriver}
- * @param {string} [format='YYYY-MM-DDTHH:mm:ssZ']
- * @returns {Promise<string>}
+ * Gets the current device time.
+ *
+ * @param format The format string for the time. Defaults to 'YYYY-MM-DDTHH:mm:ssZ'.
+ * @returns Promise that resolves to the formatted device time string.
  */
-export async function mobileGetDeviceTime(format) {
+export async function mobileGetDeviceTime(
+  this: AndroidDriver,
+  format?: string,
+): Promise<string> {
   return await this.getDeviceTime(format);
 }
 
 /**
- * @this {AndroidDriver}
- * @param {string} zoneName
- * @returns {Promise<void>}
+ * Adjusts the device time zone.
+ *
+ * @param zoneName The time zone identifier (e.g., 'America/New_York', 'Europe/London').
+ * @returns Promise that resolves when the time zone is set.
+ * @throws {Error} If the time zone identifier is not known.
  */
-export async function adjustTimeZone(zoneName) {
+export async function adjustTimeZone(
+  this: AndroidDriver,
+  zoneName: string,
+): Promise<void> {
   if (!moment.tz.names().includes(zoneName)) {
     throw new Error(
       `The provided time zone identifier '${zoneName}' is not known. ` +
@@ -52,7 +66,3 @@ export async function adjustTimeZone(zoneName) {
   await this.adb.shell(['service', 'call', 'alarm', '3', 's16', zoneName]);
 }
 
-/**
- * @typedef {import('appium-adb').ADB} ADB
- * @typedef {import('../driver').AndroidDriver} AndroidDriver
- */
