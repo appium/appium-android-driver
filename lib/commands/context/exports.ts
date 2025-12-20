@@ -1,6 +1,7 @@
 import {util} from '@appium/support';
 import {Chromedriver} from 'appium-chromedriver';
 import {errors, PROTOCOLS} from 'appium/driver';
+import type {StringRecord} from '@appium/types';
 import _ from 'lodash';
 import {
   CHROMIUM_WIN,
@@ -16,37 +17,43 @@ import {
   shouldDismissChromeWelcome,
 } from './helpers';
 import {APP_STATE} from '../app-management';
-import { BIDI_EVENT_NAME } from '../bidi/constants';
-import { makeContextUpdatedEvent, makeObsoleteContextUpdatedEvent } from '../bidi/models';
+import {BIDI_EVENT_NAME} from '../bidi/constants';
+import {makeContextUpdatedEvent, makeObsoleteContextUpdatedEvent} from '../bidi/models';
+import type {AndroidDriver} from '../../driver';
+import type {WebviewsMapping} from '../types';
 
 // https://github.com/appium/appium/issues/20710
 const DEFAULT_NATIVE_WINDOW_HANDLE = '1';
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<string>}
+ * Gets the current context name. Returns the default context if no context is explicitly set.
+ *
+ * @returns The current context name
  */
-export async function getCurrentContext() {
+export async function getCurrentContext(this: AndroidDriver): Promise<string> {
   // if the current context is `null`, indicating no context
   // explicitly set, it is the default context
   return this.curContext || this.defaultContextName();
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<string[]>}
+ * Gets a list of all available contexts (native and webviews).
+ *
+ * @returns An array of context names
  */
-export async function getContexts() {
+export async function getContexts(this: AndroidDriver): Promise<string[]> {
   const webviewsMapping = await getWebViewsMapping.bind(this)(this.opts);
   return this.assignContexts(webviewsMapping);
 }
 
 /**
- * @this {AndroidDriver}
- * @param {string?} name
- * @returns {Promise<void>}
+ * Sets the current context to the specified context name.
+ *
+ * @param name - The context name to switch to. If not provided or null, defaults to the native context.
+ *               If "WEBVIEW", uses the default webview name.
+ * @throws {errors.NoSuchContextError} If the specified context does not exist
  */
-export async function setContext(name) {
+export async function setContext(this: AndroidDriver, name?: string | null): Promise<void> {
   let newContext = name;
   if (!util.hasValue(newContext)) {
     newContext = this.defaultContextName();
@@ -72,11 +79,15 @@ export async function setContext(name) {
 }
 
 /**
- * @this {AndroidDriver}
- * @param {number} [waitForWebviewMs]
- * @returns {Promise<import('../types').WebviewsMapping[]>}
+ * Gets a detailed list of all available webview contexts with their mapping information.
+ *
+ * @param waitForWebviewMs - Optional timeout in milliseconds to wait for webviews to appear
+ * @returns An array of webview mapping objects containing detailed information about each webview
  */
-export async function mobileGetContexts(waitForWebviewMs) {
+export async function mobileGetContexts(
+  this: AndroidDriver,
+  waitForWebviewMs?: number,
+): Promise<WebviewsMapping[]> {
   const _opts = {
     androidDeviceSocket: this.opts.androidDeviceSocket,
     ensureWebviewsHavePages: true,
@@ -88,12 +99,16 @@ export async function mobileGetContexts(waitForWebviewMs) {
 }
 
 /**
- * @this {AndroidDriver}
- * @param {import('../types').WebviewsMapping[]} webviewsMapping
- * @returns {string[]}
+ * Assigns and returns a list of available contexts based on the webviews mapping.
+ *
+ * @param webviewsMapping - Array of webview mapping objects
+ * @returns An array of context names (always includes NATIVE_APP as the first element)
  */
-export function assignContexts(webviewsMapping) {
-  const opts = { isChromeSession: this.isChromeSession, ...this.opts };
+export function assignContexts(
+  this: AndroidDriver,
+  webviewsMapping: WebviewsMapping[],
+): string[] {
+  const opts = {isChromeSession: this.isChromeSession, ...this.opts};
   const webviews = parseWebviewNames.bind(this)(webviewsMapping, opts);
   this.contexts = [NATIVE_WIN, ...webviews];
   this.log.debug(`Available contexts: ${JSON.stringify(this.contexts)}`);
@@ -101,12 +116,17 @@ export function assignContexts(webviewsMapping) {
 }
 
 /**
- * @this {AndroidDriver}
- * @param {string} name
- * @param {import('../types').WebviewsMapping[]} webviewsMapping
- * @returns {Promise<void>}
+ * Switches to the specified context. Handles Chromedriver proxy setup/teardown as needed.
+ *
+ * @param name - The context name to switch to
+ * @param webviewsMapping - Array of webview mapping objects
+ * @throws {Error} If the context cannot be handled
  */
-export async function switchContext(name, webviewsMapping) {
+export async function switchContext(
+  this: AndroidDriver,
+  name: string,
+  webviewsMapping: WebviewsMapping[],
+): Promise<void> {
   this._bidiProxyUrl = null;
   // We have some options when it comes to webviews. If we want a
   // Chromedriver webview, we can only control one at a time.
@@ -130,87 +150,94 @@ export async function switchContext(name, webviewsMapping) {
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {string}
+ * Returns the default native context name.
+ *
+ * @returns The native context name ("NATIVE_APP")
  */
-export function defaultContextName() {
+export function defaultContextName(this: AndroidDriver): string {
   return NATIVE_WIN;
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {string}
+ * Returns the default webview name based on the app package or auto webview name option.
+ *
+ * @returns The default webview name
  */
-export function defaultWebviewName() {
+export function defaultWebviewName(this: AndroidDriver): string {
   return WEBVIEW_BASE + (this.opts.autoWebviewName || this.opts.appPackage);
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {boolean}
+ * Checks if the current context is a web context (not native).
+ *
+ * @returns True if the current context is a webview, false otherwise
  */
-export function isWebContext() {
+export function isWebContext(this: AndroidDriver): boolean {
   return this.curContext !== null && this.curContext !== NATIVE_WIN;
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<string>}
+ * Gets the current window handle. Returns a default handle for native contexts.
+ *
+ * @returns The current window handle
  */
-export async function getWindowHandle() {
+export async function getWindowHandle(this: AndroidDriver): Promise<string> {
   if (!this.isWebContext()) {
     return DEFAULT_NATIVE_WINDOW_HANDLE;
   }
 
-  const chromedriver = /** @type {Chromedriver} */ (this.chromedriver);
+  const chromedriver = this.chromedriver as Chromedriver;
   const isJwp = chromedriver.jwproxy.downstreamProtocol === PROTOCOLS.MJSONWP;
   const endpoint = isJwp ? '/window_handle' : '/window/handle';
-  return /** @type {string} */ (await chromedriver.jwproxy.command(endpoint, 'GET'));
+  return (await chromedriver.jwproxy.command(endpoint, 'GET')) as string;
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<string[]>}
+ * Gets all available window handles. Returns a default handle for native contexts.
+ *
+ * @returns An array of window handles
  */
-export async function getWindowHandles() {
+export async function getWindowHandles(this: AndroidDriver): Promise<string[]> {
   if (!this.isWebContext()) {
     return [DEFAULT_NATIVE_WINDOW_HANDLE];
   }
 
-  const chromedriver = /** @type {Chromedriver} */ (this.chromedriver);
+  const chromedriver = this.chromedriver as Chromedriver;
   const isJwp = chromedriver.jwproxy.downstreamProtocol === PROTOCOLS.MJSONWP;
   const endpoint = isJwp ? '/window_handles' : '/window/handles';
-  return /** @type {string[]} */ (await chromedriver.jwproxy.command(endpoint, 'GET'));
+  return (await chromedriver.jwproxy.command(endpoint, 'GET')) as string[];
 }
 
 /**
- * @this {AndroidDriver}
- * @param {string} handle
- * @returns {Promise<void>}
+ * Sets the current window to the specified handle. Does nothing for native contexts.
+ *
+ * @param handle - The window handle to switch to
  */
-export async function setWindow(handle) {
+export async function setWindow(this: AndroidDriver, handle: string): Promise<void> {
   if (!this.isWebContext()) {
     return;
   }
 
-  const chromedriver = /** @type {Chromedriver} */ (this.chromedriver);
+  const chromedriver = this.chromedriver as Chromedriver;
   const isJwp = chromedriver.jwproxy.downstreamProtocol === PROTOCOLS.MJSONWP;
   const paramName = isJwp ? 'name' : 'handle';
   await chromedriver.jwproxy.command('/window', 'POST', {[paramName]: handle});
 }
 
 /**
- * Turn on proxying to an existing Chromedriver session or a new one
+ * Turns on proxying to an existing Chromedriver session or creates a new one.
  *
- * @this {AndroidDriver}
- * @param {string} context
- * @param {import('../types').WebviewsMapping[]} webviewsMapping
- * @returns {Promise<void>}
+ * @param context - The context name to connect to
+ * @param webviewsMapping - Array of webview mapping objects
  */
-export async function startChromedriverProxy(context, webviewsMapping) {
+export async function startChromedriverProxy(
+  this: AndroidDriver,
+  context: string,
+  webviewsMapping: WebviewsMapping[],
+): Promise<void> {
   this.log.debug(`Connecting to chrome-backed webview context '${context}'`);
 
-  let cd;
+  let cd: Chromedriver;
   if (this.sessionChromedrivers[context]) {
     // in the case where we've already set up a chromedriver for a context,
     // we want to reconnect to it, not create a whole new one
@@ -219,7 +246,7 @@ export async function startChromedriverProxy(context, webviewsMapping) {
     await setupExistingChromedriver.bind(this)(cd, context);
   } else {
     // XXX: this suppresses errors about putting arbitrary stuff on opts
-    const opts = /** @type {any} */ (_.cloneDeep(this.opts));
+    const opts = _.cloneDeep(this.opts) as any;
     opts.chromeUseRunningApp = true;
 
     // if requested, tell chromedriver to attach to the android package we have
@@ -228,7 +255,7 @@ export async function startChromedriverProxy(context, webviewsMapping) {
     // and someone wants to switch to it, we should let chromedriver connect to
     // chrome rather than staying stuck on the AUT
     if (opts.extractChromeAndroidPackageFromContextName || context === `${WEBVIEW_BASE}chrome`) {
-      let androidPackage = context.match(`${WEBVIEW_BASE}(.+)`);
+      const androidPackage = context.match(`${WEBVIEW_BASE}(.+)`);
       if (androidPackage && androidPackage.length > 0) {
         opts.chromeAndroidPackage = androidPackage[1];
       }
@@ -264,10 +291,9 @@ export async function startChromedriverProxy(context, webviewsMapping) {
           for (const wm of webviewsMapping) {
             if (wm.webviewName === context && _.has(wm?.info, 'Android-Package')) {
               // XXX: should be a type guard here
-              opts.chromeAndroidPackage =
-                /** @type {NonNullable<import('../types').WebviewsMapping['info']>} */ (wm.info)[
-                  'Android-Package'
-                ];
+              opts.chromeAndroidPackage = (wm.info as NonNullable<WebviewsMapping['info']>)[
+                'Android-Package'
+              ];
               this.log.debug(
                 `Identified chromeAndroidPackage as '${opts.chromeAndroidPackage}' ` +
                   `for context '${context}' by CDP`,
@@ -281,7 +307,7 @@ export async function startChromedriverProxy(context, webviewsMapping) {
 
     cd = await setupNewChromedriver.bind(this)(
       opts,
-      /** @type {string} */ (this.adb.curDeviceId),
+      this.adb.curDeviceId as string,
       context,
     );
     // bind our stop/exit handler, passing in context so we know which
@@ -296,22 +322,17 @@ export async function startChromedriverProxy(context, webviewsMapping) {
   }
   // hook up the local variables so we can proxy this biz
   this.chromedriver = cd;
-  // @ts-ignore chromedriver is defined
   this.proxyReqRes = this.chromedriver.proxyReq.bind(this.chromedriver);
-  this.proxyCommand = /** @type {import('@appium/types').ExternalDriver['proxyCommand']} */ (
-    // @ts-ignore chromedriver is defined
-    this.chromedriver.jwproxy.command.bind(this.chromedriver.jwproxy)
-  );
+  this.proxyCommand = this.chromedriver.jwproxy.command.bind(
+    this.chromedriver.jwproxy,
+  ) as typeof this.proxyCommand;
   this.jwpProxyActive = true;
 }
 
 /**
- * Stop proxying to any Chromedriver
- *
- * @this {AndroidDriver}
- * @returns {void}
+ * Stops proxying to any Chromedriver and clears the proxy state.
  */
-export function suspendChromedriverProxy() {
+export function suspendChromedriverProxy(this: AndroidDriver): void {
   this.chromedriver = undefined;
   this.proxyReqRes = undefined;
   this.proxyCommand = undefined;
@@ -319,18 +340,18 @@ export function suspendChromedriverProxy() {
 }
 
 /**
- * Handle an out-of-band Chromedriver stop event
+ * Handles an out-of-band Chromedriver stop event.
+ * If the stopped context is the current context, triggers an unexpected shutdown.
+ * Otherwise, logs a warning and removes the context from the session.
  *
- * @this {AndroidDriver}
- * @param {string} context
- * @returns {Promise<void>}
+ * @param context - The context name where Chromedriver stopped
  */
-export async function onChromedriverStop(context) {
+export async function onChromedriverStop(this: AndroidDriver, context: string): Promise<void> {
   this.log.warn(`Chromedriver for context ${context} stopped unexpectedly`);
   if (context === this.curContext) {
     // we exited unexpectedly while automating the current context and so want
     // to shut down the session and respond with an error
-    let err = new Error('Chromedriver quit unexpectedly during session');
+    const err = new Error('Chromedriver quit unexpectedly during session');
     await this.startUnexpectedShutdown(err);
   } else {
     // if a Chromedriver in the non-active context barfs, we don't really
@@ -343,57 +364,58 @@ export async function onChromedriverStop(context) {
 }
 
 /**
- * Intentionally stop all the chromedrivers currently active, and ignore
- * their exit events
- *
- * @this {AndroidDriver}
- * @returns {Promise<void>}
+ * Intentionally stops all the chromedrivers currently active and ignores their exit events.
  */
-export async function stopChromedriverProxies() {
+export async function stopChromedriverProxies(this: AndroidDriver): Promise<void> {
   this.suspendChromedriverProxy(); // make sure we turn off the proxy flag
-  for (let context of _.keys(this.sessionChromedrivers)) {
-    let cd = this.sessionChromedrivers[context];
+  for (const context of _.keys(this.sessionChromedrivers)) {
+    const cd = this.sessionChromedrivers[context];
     this.log.debug(`Stopping chromedriver for context ${context}`);
     // stop listening for the stopped state event
     cd.removeAllListeners(Chromedriver.EVENT_CHANGED);
     try {
       await cd.stop();
     } catch (err) {
-      this.log.warn(`Error stopping Chromedriver: ${/** @type {Error} */ (err).message}`);
+      this.log.warn(`Error stopping Chromedriver: ${(err as Error).message}`);
     }
     delete this.sessionChromedrivers[context];
   }
 }
 
 /**
- * @this {AndroidDriver}
- * @param {string} viewName
- * @returns {boolean}
+ * Checks if a context name represents a Chromedriver-backed webview context.
+ *
+ * @param viewName - The context name to check
+ * @returns True if the context is a Chromedriver context, false otherwise
  */
-export function isChromedriverContext(viewName) {
+export function isChromedriverContext(this: AndroidDriver, viewName: string): boolean {
   return _.includes(viewName, WEBVIEW_WIN) || viewName === CHROMIUM_WIN;
 }
 
 /**
- * https://github.com/appium/appium/issues/20741
- *
- * @this {AndroidDriver}
- * @returns {Promise<void>}
+ * Notifies BiDi clients about a context change event.
+ * See https://github.com/appium/appium/issues/20741
  */
-export async function notifyBiDiContextChange() {
+export async function notifyBiDiContextChange(this: AndroidDriver): Promise<void> {
   const name = await this.getCurrentContext();
-  this.eventEmitter.emit(BIDI_EVENT_NAME, makeContextUpdatedEvent(_.toLower(String(this.opts.automationName)), name));
+  this.eventEmitter.emit(
+    BIDI_EVENT_NAME,
+    makeContextUpdatedEvent(_.toLower(String(this.opts.automationName)), name),
+  );
   this.eventEmitter.emit(BIDI_EVENT_NAME, makeObsoleteContextUpdatedEvent(name));
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<import('@appium/types').StringRecord>}
+ * Gets the ChromeDriver session capabilities for the current webview context.
+ *
+ * @returns The ChromeDriver session capabilities
+ * @throws {errors.InvalidContextError} If not in a webview context
+ * @throws {Error} If no ChromeDriver session capabilities are found
  */
-export async function mobileGetChromeCapabilities() {
+export async function mobileGetChromeCapabilities(this: AndroidDriver): Promise<StringRecord> {
   if (!this.isWebContext()) {
     throw new errors.InvalidContextError(
-      'mobile: getChromeCapabilities can only be called in a webview context'
+      'mobile: getChromeCapabilities can only be called in a webview context',
     );
   }
 
@@ -402,20 +424,19 @@ export async function mobileGetChromeCapabilities() {
   if (!sessionCaps) {
     throw new Error(
       `No ChromeDriver session capabilities found for context '${currentContext}'. ` +
-      'The ChromeDriver session may not have been initialized yet.'
+        'The ChromeDriver session may not have been initialized yet.',
     );
   }
   return sessionCaps;
 }
 
 /**
- * @this {AndroidDriver}
- * @returns {Promise<void>}
+ * Starts a Chrome-based browser session and sets up the Chromedriver proxy.
  */
-export async function startChromeSession() {
+export async function startChromeSession(this: AndroidDriver): Promise<void> {
   this.log.info('Starting a chrome-based browser session');
   // XXX: this suppresses errors about putting arbitrary stuff on opts
-  const opts = /** @type {any} */ (_.cloneDeep(this.opts));
+  const opts = _.cloneDeep(this.opts) as any;
 
   const knownPackages = [
     'org.chromium.chrome.shell',
@@ -430,12 +451,12 @@ export async function startChromeSession() {
   } else {
     opts.chromeAndroidActivity = this.opts.appActivity;
   }
-  this.chromedriver = await setupNewChromedriver.bind(this)(
+  const chromedriver = await setupNewChromedriver.bind(this)(
     opts,
-    /** @type {string} */ (this.adb.curDeviceId),
+    this.adb.curDeviceId as string,
   );
-  // @ts-ignore chromedriver is defined
-  this.chromedriver.on(Chromedriver.EVENT_CHANGED, (msg) => {
+  this.chromedriver = chromedriver;
+  chromedriver.on(Chromedriver.EVENT_CHANGED, (msg) => {
     if (msg.state === Chromedriver.STATE_STOPPED) {
       this.onChromedriverStop(CHROMIUM_WIN);
     }
@@ -445,14 +466,11 @@ export async function startChromeSession() {
   // appropriately set and that this chromedriver is added to the list
   // of session chromedrivers so we can switch back and forth
   this.curContext = CHROMIUM_WIN;
-  // @ts-ignore chromedriver is defined
-  this.sessionChromedrivers[CHROMIUM_WIN] = this.chromedriver;
-  // @ts-ignore chromedriver should be defined
-  this.proxyReqRes = this.chromedriver.proxyReq.bind(this.chromedriver);
-  this.proxyCommand = /** @type {import('@appium/types').ExternalDriver['proxyCommand']} */ (
-    // @ts-ignore chromedriver is defined
-    this.chromedriver.jwproxy.command.bind(this.chromedriver.jwproxy)
-  );
+  this.sessionChromedrivers[CHROMIUM_WIN] = chromedriver;
+  this.proxyReqRes = chromedriver.proxyReq.bind(chromedriver);
+  this.proxyCommand = chromedriver.jwproxy.command.bind(
+    chromedriver.jwproxy,
+  ) as typeof this.proxyCommand;
   this.jwpProxyActive = true;
 
   if (shouldDismissChromeWelcome.bind(this)()) {
@@ -461,7 +479,3 @@ export async function startChromeSession() {
   }
 }
 
-/**
- * @typedef {import('appium-adb').ADB} ADB
- * @typedef {import('../../driver').AndroidDriver} AndroidDriver
- */
