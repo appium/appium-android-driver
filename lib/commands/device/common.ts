@@ -155,7 +155,13 @@ export async function createADB(this: AndroidDriver): Promise<ADB> {
  * @returns Launch information with package and activity names, or undefined if not needed
  */
 export async function getLaunchInfo(this: AndroidDriver): Promise<ADBLaunchInfo | undefined> {
-  const {app: appOpt, appPackage: appPackageOpt, appActivity: appActivityOpt, appWaitPackage: appWaitPackageOpt, appWaitActivity: appWaitActivityOpt} = this.opts;
+  const {
+    app: appOpt,
+    appPackage: appPackageOpt,
+    appActivity: appActivityOpt,
+    appWaitPackage: appWaitPackageOpt,
+    appWaitActivity: appWaitActivityOpt
+  } = this.opts;
   let appPackage = appPackageOpt;
   let appActivity = appActivityOpt;
   let appWaitPackage = appWaitPackageOpt;
