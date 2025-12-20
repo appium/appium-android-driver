@@ -1,16 +1,26 @@
 import _ from 'lodash';
 import {errors, PROTOCOLS} from 'appium/driver';
 import { util } from '@appium/support';
+import type {StringRecord, Element} from '@appium/types';
+import type {AndroidDriver} from '../driver';
+import type {Chromedriver} from 'appium-chromedriver';
 
 const EXECUTE_SCRIPT_PREFIX = 'mobile:';
 
 /**
- * @this {AndroidDriver}
- * @param {string} script
- * @param {ExecuteMethodArgs} [args]
- * @returns {Promise<any>}
+ * Executes a script on the device or in a web context.
+ *
+ * @param script The script to execute. If it starts with 'mobile:', it will be treated
+ * as a mobile command. Otherwise, it will be executed in the web context (if available).
+ * @param args Optional arguments to pass to the script.
+ * @returns Promise that resolves to the script execution result.
+ * @throws {errors.NotImplementedError} If not in a web context and script doesn't start with 'mobile:'.
  */
-export async function execute(script, args) {
+export async function execute(
+  this: AndroidDriver,
+  script: string,
+  args?: ExecuteMethodArgs,
+): Promise<any> {
   if (_.startsWith(script, EXECUTE_SCRIPT_PREFIX)) {
     const formattedScript = script.trim().replace(/^mobile:\s*/, `${EXECUTE_SCRIPT_PREFIX} `);
     const executeMethodArgs = preprocessExecuteMethodArgs(args);
@@ -20,13 +30,11 @@ export async function execute(script, args) {
     throw new errors.NotImplementedError();
   }
   const endpoint =
-    /** @type {import('appium-chromedriver').Chromedriver} */ (this.chromedriver).jwproxy
+    (this.chromedriver as Chromedriver).jwproxy
       .downstreamProtocol === PROTOCOLS.MJSONWP
       ? '/execute'
       : '/execute/sync';
-  return await /** @type {import('appium-chromedriver').Chromedriver} */ (
-    this.chromedriver
-  ).jwproxy.command(endpoint, 'POST', {
+  return await (this.chromedriver as Chromedriver).jwproxy.command(endpoint, 'POST', {
     script,
     args,
   });
@@ -37,11 +45,11 @@ export async function execute(script, args) {
 /**
  * Massages the arguments going into an execute method.
  *
- * @param {ExecuteMethodArgs} [args]
- * @returns {StringRecord}
+ * @param args Optional arguments to preprocess.
+ * @returns Preprocessed arguments as a StringRecord.
  */
-function preprocessExecuteMethodArgs(args) {
-  const executeMethodArgs = /** @type {StringRecord} */ ((_.isArray(args) ? _.first(args) : args) ?? {});
+function preprocessExecuteMethodArgs(args?: ExecuteMethodArgs): StringRecord {
+  const executeMethodArgs = (_.isArray(args) ? _.first(args) : args) ?? {} as StringRecord;
 
   /**
    * Renames the deprecated `element` key to `elementId`.  Historically,
@@ -57,7 +65,7 @@ function preprocessExecuteMethodArgs(args) {
    */
   if ('elementId' in executeMethodArgs) {
     executeMethodArgs.elementId = util.unwrapElement(
-      /** @type {import('@appium/types').Element|string} */ (executeMethodArgs.elementId),
+      executeMethodArgs.elementId as Element | string,
     );
   }
 
@@ -66,8 +74,5 @@ function preprocessExecuteMethodArgs(args) {
 
 // #endregion
 
-/**
- * @typedef {import('../driver').AndroidDriver} AndroidDriver
- * @typedef {import('@appium/types').StringRecord} StringRecord
- * @typedef {readonly any[] | readonly [StringRecord] | Readonly<StringRecord>} ExecuteMethodArgs
- */
+type ExecuteMethodArgs = readonly any[] | readonly [StringRecord] | Readonly<StringRecord>;
+

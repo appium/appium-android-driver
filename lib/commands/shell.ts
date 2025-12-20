@@ -2,6 +2,7 @@ import {util} from '@appium/support';
 import {errors} from 'appium/driver';
 import _ from 'lodash';
 import {exec} from 'teen_process';
+import type {ExecError} from 'teen_process';
 import {ADB_SHELL_FEATURE} from '../utils';
 
 /**
@@ -51,7 +52,7 @@ export async function mobileShell<T extends boolean>(
     // @ts-ignore We know what we are doing here
     return stdout;
   } catch (e) {
-    const err = /** @type {import('teen_process').ExecError} */ (e);
+    const err = e as ExecError;
     throw this.log.errorWithException(
       `Cannot execute the '${command}' shell command. ` +
         `Original error: ${err.message}. ` +

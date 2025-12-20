@@ -5,7 +5,7 @@ import {EOL} from 'node:os';
 import B from 'bluebird';
 import type {AndroidDriver, AndroidDriverOpts} from '../driver';
 import type {AppState, TerminateAppOpts} from './types';
-import type {UninstallOptions, InstallOptions} from 'appium-adb';
+import type {UninstallOptions, InstallOptions, StartAppOptions} from 'appium-adb';
 
 const APP_EXTENSIONS = ['.apk', '.apks'] as const;
 const PACKAGE_INSTALL_TIMEOUT_MS = 90000;
@@ -366,7 +366,7 @@ export async function background(
   };
   await longSleep(sleepMs, {thresholdMs, intervalMs, progressCb});
 
-  let args: import('appium-adb').StartAppOptions;
+  let args: StartAppOptions;
   if (this._cachedActivityArgs?.[`${appPackage}/${appActivity}`]) {
     // the activity was started with `startActivity`, so use those args to restart
     args = this._cachedActivityArgs[`${appPackage}/${appActivity}`];
@@ -404,7 +404,7 @@ export async function background(
             stopApp: false,
           };
   }
-  args = _.pickBy(args, (value) => !_.isUndefined(value)) as import('appium-adb').StartAppOptions;
+  args = _.pickBy(args, (value) => !_.isUndefined(value)) as StartAppOptions;
   this.log.debug(`Bringing application back to foreground with arguments: ${JSON.stringify(args)}`);
   return await this.adb.startApp(args);
 }

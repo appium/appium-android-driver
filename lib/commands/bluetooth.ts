@@ -1,22 +1,26 @@
 import {errors} from 'appium/driver';
 import _ from 'lodash';
+import type {AndroidDriver} from '../driver';
 
-const SUPPORTED_ACTIONS = /** @type {const} */ ({
+const SUPPORTED_ACTIONS = {
   ENABLE: 'enable',
   DISABLE: 'disable',
   UNPAIR_ALL: 'unpairAll',
-});
+} as const;
 
 /**
  * Performs the requested action on the default bluetooth adapter
  *
- * @this {AndroidDriver}
- * @param {'enable' | 'disable' | 'unpairAll'} action
- * @returns {Promise<void>}
- * @throws {Error} if the device under test has no default bluetooth adapter
+ * @param action The action to perform: 'enable', 'disable', or 'unpairAll'.
+ * @returns Promise that resolves when the action is completed.
+ * @throws {Error} If the device under test has no default bluetooth adapter
  * or there was a failure while performing the action.
+ * @throws {errors.InvalidArgumentError} If the action is not one of the supported actions.
  */
-export async function mobileBluetooth(action) {
+export async function mobileBluetooth(
+  this: AndroidDriver,
+  action: BluetoothAction,
+): Promise<void> {
   switch (action) {
     case SUPPORTED_ACTIONS.ENABLE:
       await this.settingsApp.setBluetoothState(true);
@@ -34,7 +38,5 @@ export async function mobileBluetooth(action) {
   }
 }
 
-/**
- * @typedef {import('appium-adb').ADB} ADB
- * @typedef {import('../driver').AndroidDriver} AndroidDriver
- */
+type BluetoothAction = typeof SUPPORTED_ACTIONS[keyof typeof SUPPORTED_ACTIONS];
+
