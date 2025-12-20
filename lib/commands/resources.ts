@@ -2,6 +2,7 @@ import _ from 'lodash';
 import {fs, tempDir} from '@appium/support';
 import type {StringRecord} from '@appium/types';
 import type {AndroidDriver, AndroidDriverOpts} from '../driver';
+import type {Locale} from './types';
 
 /**
  * Gets the localized strings from the application.
@@ -123,10 +124,4 @@ function toLocaleAbbr({language, country, script}: Locale): string {
 }
 
 // #endregion
-
-interface Locale {
-  language: string;
-  country: string;
-  script?: string;
-}
 

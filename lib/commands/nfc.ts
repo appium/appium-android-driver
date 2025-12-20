@@ -1,6 +1,7 @@
 import {errors} from 'appium/driver';
 import _ from 'lodash';
 import type {AndroidDriver} from '../driver';
+import type {NfcAction} from './types';
 
 const SUPPORTED_ACTIONS = {
   ENABLE: 'enable',
@@ -33,6 +34,4 @@ export async function mobileNfc(
       );
   }
 }
-
-type NfcAction = typeof SUPPORTED_ACTIONS[keyof typeof SUPPORTED_ACTIONS];
 

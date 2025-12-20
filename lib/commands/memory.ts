@@ -1,5 +1,6 @@
 import {errors} from 'appium/driver';
 import type {AndroidDriver} from '../driver';
+import type {TrimMemoryLevel} from './types';
 
 /**
  * Simulates the onTrimMemory() event for the given package.
@@ -25,13 +26,4 @@ export async function mobileSendTrimMemory(
 
   await this.adb.shell(['am', 'send-trim-memory', pkg, level]);
 }
-
-type TrimMemoryLevel =
-  | 'COMPLETE'
-  | 'MODERATE'
-  | 'BACKGROUND'
-  | 'UI_HIDDEN'
-  | 'RUNNING_CRITICAL'
-  | 'RUNNING_LOW'
-  | 'RUNNING_MODERATE';
 

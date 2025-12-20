@@ -44,4 +44,3 @@ export async function mobileGetUiMode(
   }
   return match[1];
 }
-

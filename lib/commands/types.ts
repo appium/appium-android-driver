@@ -262,6 +262,33 @@ export type ServiceType = 'wifi' | 'data' | 'airplaneMode';
 
 export type PerformanceDataType = 'batteryinfo' | 'cpuinfo' | 'memoryinfo' | 'networkinfo';
 
+/**
+ * NFC actions that can be performed on the default NFC adapter.
+ */
+export type NfcAction = 'enable' | 'disable';
+
+/**
+ * Represents a device locale with language, country, and optional script.
+ */
+export interface Locale {
+  language: string;
+  country: string;
+  script?: string;
+}
+
+/**
+ * Memory trim levels for the onTrimMemory() event.
+ * See https://developer.android.com/topic/performance/memory for more details.
+ */
+export type TrimMemoryLevel =
+  | 'COMPLETE'
+  | 'MODERATE'
+  | 'BACKGROUND'
+  | 'UI_HIDDEN'
+  | 'RUNNING_CRITICAL'
+  | 'RUNNING_LOW'
+  | 'RUNNING_MODERATE';
+
 export interface StartScreenRecordingOpts {
   /**
    * The path to the remote location, where the captured video should be
