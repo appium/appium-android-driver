@@ -1,3 +1,9 @@
+## [12.6.0](https://github.com/appium/appium-android-driver/compare/v12.5.0...v12.6.0) (2025-12-21)
+
+### Features
+
+* Migrate device extensions to typescript ([#1044](https://github.com/appium/appium-android-driver/issues/1044)) ([b6b3a3c](https://github.com/appium/appium-android-driver/commit/b6b3a3c731dc243f1cedfaa4f8bd4615240ff9b1))
+
 ## [12.5.0](https://github.com/appium/appium-android-driver/compare/v12.4.11...v12.5.0) (2025-12-20)
 
 ### Features
