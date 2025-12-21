@@ -1,19 +1,23 @@
 import {util} from '@appium/support';
 import {sleep, waitForCondition} from 'asyncbox';
 import _ from 'lodash';
+import type {ADB} from 'appium-adb';
+import type {Position, StringRecord} from '@appium/types';
+import type {AndroidDriver, AndroidDriverCaps} from '../../driver';
+import type {UnlockType, FastUnlockOptions} from '../types';
 
 export const PIN_UNLOCK = 'pin';
 export const PIN_UNLOCK_KEY_EVENT = 'pinWithKeyEvent';
 export const PASSWORD_UNLOCK = 'password';
 export const PATTERN_UNLOCK = 'pattern';
 export const FINGERPRINT_UNLOCK = 'fingerprint';
-const UNLOCK_TYPES = /** @type {const}  */ ([
+const UNLOCK_TYPES = [
   PIN_UNLOCK,
   PIN_UNLOCK_KEY_EVENT,
   PASSWORD_UNLOCK,
   PATTERN_UNLOCK,
   FINGERPRINT_UNLOCK,
-]);
+] as const;
 export const KEYCODE_NUMPAD_ENTER = 66;
 export const UNLOCK_WAIT_TIME = 100;
 export const INPUT_KEYS_WAIT_TIME = 100;
@@ -21,40 +25,13 @@ const NUMBER_ZERO_KEYCODE = 7;
 const TOUCH_DELAY_MS = 1000;
 
 /**
+ * Converts an unlock type to a credential type string.
  *
- * @param {any} value
- * @returns {value is string}
+ * @param unlockType - The unlock type
+ * @returns The credential type string
+ * @throws {Error} If the unlock type is not known
  */
-function isNonEmptyString(value) {
-  return typeof value === 'string' && value !== '';
-}
-
-/**
- * Wait for the display to be unlocked.
- * Some devices automatically accept typed 'pin' and 'password' code
- * without pressing the Enter key. But some devices need it.
- * This method waits a few seconds first for such automatic acceptance case.
- * If the device is still locked, then this method will try to send
- * the enter key code.
- *
- * @param {import('appium-adb').ADB} adb The instance of ADB
- */
-async function waitForUnlock(adb) {
-  await sleep(UNLOCK_WAIT_TIME);
-  if (!(await adb.isScreenLocked())) {
-    return;
-  }
-
-  await adb.keyevent(KEYCODE_NUMPAD_ENTER);
-  await sleep(UNLOCK_WAIT_TIME);
-}
-
-/**
- *
- * @param {import('../types').UnlockType} unlockType
- * @returns {string}
- */
-export function toCredentialType(unlockType) {
+export function toCredentialType(unlockType: UnlockType): string {
   const result = {
     [PIN_UNLOCK]: 'pin',
     [PIN_UNLOCK_KEY_EVENT]: 'pin',
@@ -68,11 +45,13 @@ export function toCredentialType(unlockType) {
 }
 
 /**
- * @template {AndroidDriverCaps} T
- * @param {T} caps
- * @returns {T}
+ * Validates unlock capabilities and returns them if valid.
+ *
+ * @param caps - The capabilities to validate
+ * @returns The validated capabilities
+ * @throws {Error} If the capabilities are invalid
  */
-export function validateUnlockCapabilities(caps) {
+export function validateUnlockCapabilities<T extends AndroidDriverCaps>(caps: T): T {
   const {unlockKey, unlockType} = caps ?? {};
   if (!isNonEmptyString(unlockType)) {
     throw new Error('A non-empty unlock key value must be provided');
@@ -111,10 +90,11 @@ export function validateUnlockCapabilities(caps) {
 }
 
 /**
- * @this {AndroidDriver}
- * @param {import('../types').FastUnlockOptions} opts
+ * Performs a fast unlock using ADB commands.
+ *
+ * @param opts - Fast unlock options with credential and credential type
  */
-export async function fastUnlock(opts) {
+export async function fastUnlock(this: AndroidDriver, opts: FastUnlockOptions): Promise<void> {
   const {credential, credentialType} = opts;
   this.log.info(`Unlocking the device via ADB using ${credentialType} credential '${credential}'`);
   const wasLockEnabled = await this.adb.isLockEnabled();
@@ -136,39 +116,47 @@ export async function fastUnlock(opts) {
 }
 
 /**
+ * Encodes a password by replacing spaces with %s.
  *
- * @param {string} key
- * @returns {string}
+ * @param key - The password key
+ * @returns The encoded password
  */
-export function encodePassword(key) {
+export function encodePassword(key: string): string {
   return `${key}`.replace(/\s/gi, '%s');
 }
 
 /**
+ * Converts a string key to an array of characters.
  *
- * @param {string} key
- * @returns {string[]}
+ * @param key - The key string
+ * @returns An array of characters
  */
-export function stringKeyToArr(key) {
+export function stringKeyToArr(key: string): string[] {
   return `${key}`.trim().replace(/\s+/g, '').split(/\s*/);
 }
 
 /**
- * @this {AndroidDriver}
- * @param {AndroidDriverCaps} capabilities
- * @returns {Promise<void>}
+ * Unlocks the device using fingerprint.
+ *
+ * @param capabilities - Driver capabilities containing unlockKey
  */
-export async function fingerprintUnlock(capabilities) {
+export async function fingerprintUnlock(
+  this: AndroidDriver,
+  capabilities: AndroidDriverCaps,
+): Promise<void> {
   await this.adb.fingerprint(String(capabilities.unlockKey));
   await sleep(UNLOCK_WAIT_TIME);
 }
 
 /**
- * @this {AndroidDriver}
- * @param {AndroidDriverCaps} capabilities
- * @returns {Promise<void>}
+ * Unlocks the device using PIN by clicking on-screen buttons.
+ *
+ * @param capabilities - Driver capabilities containing unlockKey
  */
-export async function pinUnlock(capabilities) {
+export async function pinUnlock(
+  this: AndroidDriver,
+  capabilities: AndroidDriverCaps,
+): Promise<void> {
   this.log.info(`Trying to unlock device using pin ${capabilities.unlockKey}`);
   await this.adb.dismissKeyguard();
   const keys = stringKeyToArr(String(capabilities.unlockKey));
@@ -177,10 +165,12 @@ export async function pinUnlock(capabilities) {
     // fallback to pin with key event
     return await pinUnlockWithKeyEvent.bind(this)(capabilities);
   }
-  const pins = {};
+  const pins: Record<string, any> = {};
   for (const el of els) {
     const text = await this.getAttribute('text', util.unwrapElement(el));
-    pins[text] = el;
+    if (text) {
+      pins[text] = el;
+    }
   }
   for (const pin of keys) {
     const el = pins[pin];
@@ -190,11 +180,14 @@ export async function pinUnlock(capabilities) {
 }
 
 /**
- * @this {AndroidDriver}
- * @param {AndroidDriverCaps} capabilities
- * @returns {Promise<void>}
+ * Unlocks the device using PIN by sending key events.
+ *
+ * @param capabilities - Driver capabilities containing unlockKey
  */
-export async function pinUnlockWithKeyEvent(capabilities) {
+export async function pinUnlockWithKeyEvent(
+  this: AndroidDriver,
+  capabilities: AndroidDriverCaps,
+): Promise<void> {
   this.log.info(`Trying to unlock device using pin with keycode ${capabilities.unlockKey}`);
   await this.adb.dismissKeyguard();
   const keys = stringKeyToArr(String(capabilities.unlockKey));
@@ -210,11 +203,14 @@ export async function pinUnlockWithKeyEvent(capabilities) {
 }
 
 /**
- * @this {AndroidDriver}
- * @param {AndroidDriverCaps} capabilities
- * @returns {Promise<void>}
+ * Unlocks the device using password.
+ *
+ * @param capabilities - Driver capabilities containing unlockKey
  */
-export async function passwordUnlock(capabilities) {
+export async function passwordUnlock(
+  this: AndroidDriver,
+  capabilities: AndroidDriverCaps,
+): Promise<void> {
   const {unlockKey} = capabilities;
   this.log.info(`Trying to unlock device using password ${unlockKey}`);
   await this.adb.dismissKeyguard();
@@ -230,13 +226,14 @@ export async function passwordUnlock(capabilities) {
 }
 
 /**
+ * Calculates the position of a pattern key based on the initial position and piece size.
  *
- * @param {number} key
- * @param {import('@appium/types').Position} initPos
- * @param {number} piece
- * @returns {import('@appium/types').Position}
+ * @param key - The pattern key number (1-9)
+ * @param initPos - The initial position of the pattern view
+ * @param piece - The size of each pattern piece
+ * @returns The calculated position for the key
  */
-export function getPatternKeyPosition(key, initPos, piece) {
+export function getPatternKeyPosition(key: number, initPos: Position, piece: number): Position {
   /*
   How the math works:
   We have 9 buttons divided in 3 columns and 3 rows inside the lockPatternView,
@@ -245,8 +242,9 @@ export function getPatternKeyPosition(key, initPos, piece) {
   */
   const cols = 3;
   const pins = 9;
-  const xPos = (key, x, piece) => Math.round(x + (key % cols || cols) * piece - piece / 2);
-  const yPos = (key, y, piece) =>
+  const xPos = (key: number, x: number, piece: number) =>
+    Math.round(x + (key % cols || cols) * piece - piece / 2);
+  const yPos = (key: number, y: number, piece: number) =>
     Math.round(y + (Math.ceil((key % pins || pins) / cols) * piece - piece / 2));
   return {
     x: xPos(key, initPos.x, piece),
@@ -255,19 +253,22 @@ export function getPatternKeyPosition(key, initPos, piece) {
 }
 
 /**
- * @param {string[]|number[]} keys
- * @param {import('@appium/types').Position} initPos
- * @param {number} piece
- * @returns {import('@appium/types').StringRecord[]}
+ * Generates pointer actions for pattern unlock gesture.
+ *
+ * @param keys - Array of pattern keys (string or number)
+ * @param initPos - The initial position of the pattern view
+ * @param piece - The size of each pattern piece
+ * @returns An array of W3C action objects for pattern unlock
  */
-export function getPatternActions(keys, initPos, piece) {
-  /** @type {import('@appium/types').StringRecord[]} */
+export function getPatternActions(
+  keys: string[] | number[],
+  initPos: Position,
+  piece: number,
+): StringRecord[] {
   // https://www.w3.org/TR/webdriver2/#actions
-  const pointerActions = [];
-  /** @type {number[]} */
+  const pointerActions: StringRecord[] = [];
   const intKeys = keys.map((key) => (_.isString(key) ? _.parseInt(key) : key));
-  /** @type {import('@appium/types').Position|undefined} */
-  let lastPos;
+  let lastPos: Position | undefined;
   for (const key of intKeys) {
     const keyPos = getPatternKeyPosition(key, initPos, piece);
     if (!lastPos) {
@@ -307,26 +308,30 @@ export function getPatternActions(keys, initPos, piece) {
       type: 'pointerMove',
       duration: TOUCH_DELAY_MS,
       x: moveTo.x + lastPos.x,
-      y: moveTo.y + lastPos.y
+      y: moveTo.y + lastPos.y,
     });
     lastPos = keyPos;
   }
   pointerActions.push({type: 'pointerUp', button: 0});
-  return [{
-    type: 'pointer',
-    id: 'patternUnlock',
-    parameters: {
-      pointerType: 'touch',
+  return [
+    {
+      type: 'pointer',
+      id: 'patternUnlock',
+      parameters: {
+        pointerType: 'touch',
+      },
+      actions: pointerActions,
     },
-    actions: pointerActions,
-  }];
+  ];
 }
 
 /**
- * @this {AndroidDriver}
- * @param {number?} [timeoutMs=null]
+ * Verifies that the device has been unlocked.
+ *
+ * @param timeoutMs - Optional timeout in milliseconds (default: 2000)
+ * @throws {Error} If the device fails to unlock within the timeout
  */
-export async function verifyUnlock(timeoutMs = null) {
+export async function verifyUnlock(this: AndroidDriver, timeoutMs: number | null = null): Promise<void> {
   try {
     await waitForCondition(async () => !(await this.adb.isScreenLocked()), {
       waitMs: timeoutMs ?? 2000,
@@ -339,10 +344,14 @@ export async function verifyUnlock(timeoutMs = null) {
 }
 
 /**
- * @this {AndroidDriver}
- * @param {AndroidDriverCaps} capabilities
+ * Unlocks the device using pattern gesture.
+ *
+ * @param capabilities - Driver capabilities containing unlockKey
  */
-export async function patternUnlock(capabilities) {
+export async function patternUnlock(
+  this: AndroidDriver,
+  capabilities: AndroidDriverCaps,
+): Promise<void> {
   const {unlockKey} = capabilities;
   this.log.info(`Trying to unlock device using pattern ${unlockKey}`);
   await this.adb.dismissKeyguard();
@@ -372,7 +381,33 @@ export async function patternUnlock(capabilities) {
   await sleep(UNLOCK_WAIT_TIME);
 }
 
+// #region Private Functions
+
 /**
- * @typedef {import('@appium/types').Capabilities<import('../../constraints').AndroidDriverConstraints>} AndroidDriverCaps
- * @typedef {import('../../driver').AndroidDriver} AndroidDriver
+ * Type guard to check if a value is a non-empty string.
  */
+function isNonEmptyString(value: any): value is string {
+  return typeof value === 'string' && value !== '';
+}
+
+/**
+ * Waits for the display to be unlocked.
+ * Some devices automatically accept typed 'pin' and 'password' code
+ * without pressing the Enter key. But some devices need it.
+ * This method waits a few seconds first for such automatic acceptance case.
+ * If the device is still locked, then this method will try to send
+ * the enter key code.
+ *
+ * @param adb - The instance of ADB
+ */
+async function waitForUnlock(adb: ADB): Promise<void> {
+  await sleep(UNLOCK_WAIT_TIME);
+  if (!(await adb.isScreenLocked())) {
+    return;
+  }
+
+  await adb.keyevent(KEYCODE_NUMPAD_ENTER);
+  await sleep(UNLOCK_WAIT_TIME);
+}
+
+// #endregion
