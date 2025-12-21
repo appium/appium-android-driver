@@ -1,3 +1,9 @@
+## [12.6.1](https://github.com/appium/appium-android-driver/compare/v12.6.0...v12.6.1) (2025-12-21)
+
+### Miscellaneous Chores
+
+* Migrate lock helpers to typescript ([#1045](https://github.com/appium/appium-android-driver/issues/1045)) ([6779082](https://github.com/appium/appium-android-driver/commit/6779082ba788ee803277c5033dc1c1cb37d68cf4))
+
 ## [12.6.0](https://github.com/appium/appium-android-driver/compare/v12.5.0...v12.6.0) (2025-12-21)
 
 ### Features
