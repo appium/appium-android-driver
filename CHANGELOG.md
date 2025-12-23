@@ -1,3 +1,9 @@
+## [12.6.2](https://github.com/appium/appium-android-driver/compare/v12.6.1...v12.6.2) (2025-12-23)
+
+### Miscellaneous Chores
+
+* **deps:** bump teen_process from 3.0.6 to 4.0.7 ([#1046](https://github.com/appium/appium-android-driver/issues/1046)) ([1e88bc4](https://github.com/appium/appium-android-driver/commit/1e88bc4c83015609200fe8c6bd8b791ede1720fa))
+
 ## [12.6.1](https://github.com/appium/appium-android-driver/compare/v12.6.0...v12.6.1) (2025-12-21)
 
 ### Miscellaneous Chores
