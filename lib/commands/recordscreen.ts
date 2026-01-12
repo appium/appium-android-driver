@@ -323,8 +323,7 @@ async function mergeScreenRecords(
 }
 
 async function terminateBackgroundScreenRecording(adb: ADB, force = true): Promise<boolean> {
-  const isScreenrecordRunning = async (): Promise<boolean> =>
-    _.includes(await adb.listProcessStatus(), SCREENRECORD_BINARY);
+  const isScreenrecordRunning = async (): Promise<boolean> => await adb.processExists(SCREENRECORD_BINARY);
   if (!await isScreenrecordRunning()) {
     return false;
   }
