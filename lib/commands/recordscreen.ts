@@ -323,15 +323,14 @@ async function mergeScreenRecords(
 }
 
 async function terminateBackgroundScreenRecording(adb: ADB, force = true): Promise<boolean> {
-  const isScreenrecordRunning = async (): Promise<boolean> =>
-    _.includes(await adb.listProcessStatus(), SCREENRECORD_BINARY);
-  if (!await isScreenrecordRunning()) {
+  const screenrecordPids = await adb.getProcessIdsByName(SCREENRECORD_BINARY);
+  if (_.isEmpty(screenrecordPids)) {
     return false;
   }
 
   try {
-    await adb.shell(['killall', force ? '-15' : '-2', SCREENRECORD_BINARY]);
-    await waitForCondition(async () => !await isScreenrecordRunning(), {
+    await adb.shell(['kill', force ? '-15' : '-2', ...screenrecordPids.map(String)]);
+    await waitForCondition(async () => _.isEmpty(await adb.getProcessIdsByName(SCREENRECORD_BINARY)), {
       waitMs: PROCESS_SHUTDOWN_TIMEOUT,
       intervalMs: 500,
     });
