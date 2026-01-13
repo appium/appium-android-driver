@@ -1,3 +1,9 @@
+## [12.6.3](https://github.com/appium/appium-android-driver/compare/v12.6.2...v12.6.3) (2026-01-13)
+
+### Bug Fixes
+
+* tune screenrecord termination strategy ([#1048](https://github.com/appium/appium-android-driver/issues/1048)) ([1ae226f](https://github.com/appium/appium-android-driver/commit/1ae226fc4e07ad33e27af5a2b83bb076a8cdafb2))
+
 ## [12.6.2](https://github.com/appium/appium-android-driver/compare/v12.6.1...v12.6.2) (2025-12-23)
 
 ### Miscellaneous Chores
