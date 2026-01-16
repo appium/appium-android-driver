@@ -64,7 +64,7 @@ export const KNOWN_CHROME_PACKAGE_NAMES = [
   'com.chrome.canary',
 ] as const;
 const CHROMEDRIVER_AUTODOWNLOAD_FEATURE = 'chromedriver_autodownload';
-const CROSSWALK_SOCKET_PATTERN = /@([\w.]+)_devtools_remote\b/;
+const CROSSWALK_SOCKET_PATTERN = /@(?!stetho_)([\w.]+)_devtools_remote\b/;
 const CHROMIUM_DEVTOOLS_SOCKET = 'chrome_devtools_remote';
 export const NATIVE_WIN = 'NATIVE_APP';
 export const WEBVIEW_WIN = 'WEBVIEW';

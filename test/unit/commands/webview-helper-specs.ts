@@ -214,5 +214,42 @@ describe('Webview Helpers', function () {
         });
       });
     });
+
+    describe('and stetho socket exists', function () {
+      let webViews;
+
+      beforeEach(function () {
+        stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
+          return (
+            'Num       RefCount Protocol Flags    Type St Inode Path\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @stetho_com.google.android.apps.messaging_devtools_remote\n' +
+            '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n'
+          );
+        });
+      });
+
+      describe('and the device socket is not specified', function () {
+        beforeEach(async function () {
+          const webviewsMapping = await webviewHelpers.getWebViewsMapping.bind(driver)({
+            ensureWebviewsHavePages: false,
+            enableWebviewDetailsCollection: false,
+          });
+          webViews = webviewHelpers.parseWebviewNames.bind(driver)(webviewsMapping, {
+            ensureWebviewsHavePages: false,
+          });
+        });
+
+        it('then the unix sockets are queried', function () {
+          expect(stubbedShell.calledOnce).to.be.true;
+          expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
+        });
+
+        it('then the stetho socket is skipped and no webviews are returned', function () {
+          expect(webViews.length).to.equal(0);
+        });
+      });
+    });
   });
 });
