@@ -1,3 +1,9 @@
+## [12.6.4](https://github.com/appium/appium-android-driver/compare/v12.6.3...v12.6.4) (2026-01-16)
+
+### Bug Fixes
+
+* Exclude stetho-based web views from the crosswalk pattern ([#1050](https://github.com/appium/appium-android-driver/issues/1050)) ([e615034](https://github.com/appium/appium-android-driver/commit/e6150344bca935887246f8f7a616c6c5983bd82c))
+
 ## [12.6.3](https://github.com/appium/appium-android-driver/compare/v12.6.2...v12.6.3) (2026-01-13)
 
 ### Bug Fixes
