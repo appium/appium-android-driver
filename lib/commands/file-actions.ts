@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {fs, util, zip, tempDir} from '@appium/support';
-import path from 'path';
+import path from 'node:path';
 import {errors} from 'appium/driver';
 import type {AndroidDriver} from '../driver';
 import type {ADB} from 'appium-adb';

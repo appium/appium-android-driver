@@ -1,6 +1,6 @@
 import {resolveExecutablePath} from './utils';
 import {system, fs, doctor} from '@appium/support';
-import path from 'path';
+import path from 'node:path';
 import '@colors/colors';
 import {getAndroidBinaryPath, getSdkRootFromEnv} from 'appium-adb';
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
