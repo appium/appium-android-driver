@@ -2,7 +2,7 @@ import {fs, net, system, tempDir, timing, util} from '@appium/support';
 import type {NetOptions, HttpUploadOptions} from '@appium/support';
 import {waitForCondition} from 'asyncbox';
 import _ from 'lodash';
-import path from 'path';
+import path from 'node:path';
 import {exec} from 'teen_process';
 import type {AndroidDriver} from '../driver';
 import type {ADB} from 'appium-adb';

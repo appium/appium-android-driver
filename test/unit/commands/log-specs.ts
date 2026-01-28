@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
-import os from 'os';
+import os from 'node:os';
 import {AndroidDriver} from '../../../lib/driver';
 import { expect, use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
