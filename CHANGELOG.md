@@ -1,3 +1,9 @@
+## [12.6.5](https://github.com/appium/appium-android-driver/compare/v12.6.4...v12.6.5) (2026-01-28)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @appium/eslint-config-appium-ts from 2.0.5 to 3.0.0 ([#1054](https://github.com/appium/appium-android-driver/issues/1054)) ([fbecf84](https://github.com/appium/appium-android-driver/commit/fbecf848955f122cb4c698b7cdf9ba764beaa2df))
+
 ## [12.6.4](https://github.com/appium/appium-android-driver/compare/v12.6.3...v12.6.4) (2026-01-16)
 
 ### Bug Fixes
