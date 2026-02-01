@@ -1,3 +1,9 @@
+## [12.6.6](https://github.com/appium/appium-android-driver/compare/v12.6.5...v12.6.6) (2026-02-01)
+
+### Miscellaneous Chores
+
+* **deps:** bump asyncbox from 4.1.1 to 6.1.0 ([#1055](https://github.com/appium/appium-android-driver/issues/1055)) ([ec65176](https://github.com/appium/appium-android-driver/commit/ec651765e28db6b0c5772cc512cdaa3fcda13a4e))
+
 ## [12.6.5](https://github.com/appium/appium-android-driver/compare/v12.6.4...v12.6.5) (2026-01-28)
 
 ### Miscellaneous Chores
