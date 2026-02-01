@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
 import {fs} from '@appium/support';
-import B from 'bluebird';
+import * as asyncbox from 'asyncbox';
 import {ADB} from 'appium-adb';
 import { expect, use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -110,13 +110,14 @@ describe('App Management', function () {
       } as any;
       const getFocusedStub = sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appPackage, appActivity});
       const goToHomeStub = sandbox.stub(driver.adb, 'goToHome');
-      const delayStub = sandbox.stub(B, 'delay');
+      const sleepStub = sandbox.stub(asyncbox, 'longSleep');
       const startAppStub = sandbox.stub(driver.adb, 'startApp');
       const activateAppStub = sandbox.stub(driver.adb, 'activateApp');
       await driver.background(10);
       expect(getFocusedStub.calledOnce).to.be.true;
       expect(goToHomeStub.calledOnce).to.be.true;
-      expect(delayStub.calledWithExactly(10000)).to.be.true;
+      expect(sleepStub.calledOnce).to.be.true;
+      expect(sleepStub.firstCall.args[0]).to.equal(10_000);
       expect(activateAppStub.calledWithExactly(appPackage)).to.be.true;
       expect(startAppStub.notCalled).to.be.true;
     });
@@ -145,13 +146,13 @@ describe('App Management', function () {
       driver._cachedActivityArgs = {[`${appPackage}/${appActivity}`]: params};
       const getFocusedStub2 = sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appPackage, appActivity});
       const goToHomeStub2 = sandbox.stub(driver.adb, 'goToHome');
-      const delayStub2 = sandbox.stub(B, 'delay');
+      const sleepStub = sandbox.stub(asyncbox, 'longSleep');
       const startAppStub2 = sandbox.stub(driver.adb, 'startApp');
       const activateAppStub2 = sandbox.stub(driver.adb, 'activateApp');
       await driver.background(10);
       expect(getFocusedStub2.calledOnce).to.be.true;
       expect(goToHomeStub2.calledOnce).to.be.true;
-      expect(delayStub2.calledWithExactly(10000)).to.be.true;
+      expect(sleepStub.firstCall.args[0]).to.equal(10_000);
       expect(startAppStub2.calledWithExactly(params)).to.be.true;
       expect(activateAppStub2.notCalled).to.be.true;
     });
@@ -175,13 +176,13 @@ describe('App Management', function () {
         .stub(driver.adb, 'getFocusedPackageAndActivity')
         .returns({appPackage: appWaitPackage, appActivity: appWaitActivity});
       const goToHomeStub3 = sandbox.stub(driver.adb, 'goToHome');
-      const delayStub3 = sandbox.stub(B, 'delay');
+      const sleepStub = sandbox.stub(asyncbox, 'longSleep');
       const startAppStub3 = sandbox.stub(driver.adb, 'startApp');
       const activateAppStub3 = sandbox.stub(driver.adb, 'activateApp');
       await driver.background(10);
       expect(getFocusedStub3.calledOnce).to.be.true;
       expect(goToHomeStub3.calledOnce).to.be.true;
-      expect(delayStub3.calledWithExactly(10000)).to.be.true;
+      expect(sleepStub.firstCall.args[0]).to.equal(10_000);
       expect(activateAppStub3.calledWithExactly(appWaitPackage)).to.be.true;
       expect(startAppStub3.notCalled).to.be.true;
     });
