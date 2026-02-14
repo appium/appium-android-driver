@@ -1,7 +1,6 @@
 import {fs, net, util} from '@appium/support';
 import type {NetOptions, HttpUploadOptions} from '@appium/support';
 import _ from 'lodash';
-import moment from 'moment';
 import path from 'node:path';
 import type {HTTPMethod, StringRecord} from '@appium/types';
 import type {AndroidDriver} from '../driver';
@@ -11,7 +10,21 @@ import type {FormFields} from './types';
 // https://github.com/appium/io.appium.settings#internal-audio--video-recording
 const DEFAULT_EXT = '.mp4';
 const MIN_API_LEVEL = 29;
-const DEFAULT_FILENAME_FORMAT = 'YYYY-MM-DDTHH-mm-ss';
+
+/**
+ * Formats the current date/time as a filename.
+ * Format: YYYY-MM-DDTHH-mm-ss (e.g., 2024-01-15T14-30-45)
+ */
+function getCurrentTimestampFilename(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}-${minutes}-${seconds}`;
+}
 
 /**
  * Starts media projection-based screen recording on the Android device.
@@ -41,7 +54,7 @@ export async function mobileStartMediaProjectionRecording(
   await verifyMediaProjectionRecordingIsSupported(this.adb);
 
   const recorder = this.settingsApp.makeMediaProjectionRecorder();
-  const fname = adjustMediaExtension(filename || moment().format(DEFAULT_FILENAME_FORMAT));
+  const fname = adjustMediaExtension(filename || getCurrentTimestampFilename());
   const didStart = await recorder.start({
     resolution,
     priority,
