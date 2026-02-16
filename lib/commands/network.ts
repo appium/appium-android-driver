@@ -26,9 +26,7 @@ const SUPPORTED_SERVICE_NAMES: ServiceType[] = [
  * - Bit 1 (0b010) = Wi-Fi
  * - Bit 2 (0b100) = Data connection
  */
-export async function getNetworkConnection(
-  this: AndroidDriver,
-): Promise<number> {
+export async function getNetworkConnection(this: AndroidDriver): Promise<number> {
   this.log.info('Getting network connection');
   const airplaneModeOn = await this.adb.isAirplaneModeOn();
   let connection = airplaneModeOn ? AIRPLANE_MODE_MASK : 0;
@@ -49,9 +47,7 @@ export async function getNetworkConnection(
  *
  * @returns Promise that resolves to `true` if Wi-Fi is enabled, `false` otherwise.
  */
-export async function isWifiOn(
-  this: AndroidDriver,
-): Promise<boolean> {
+export async function isWifiOn(this: AndroidDriver): Promise<boolean> {
   return await this.adb.isWifiOn();
 }
 
@@ -148,7 +144,7 @@ export async function mobileGetConnectivity(
   await B.all(_.values(statePromises));
   return _.reduce(
     statePromises,
-    (state, v, k) => _.isUndefined(v.value()) ? state : {...state, [k]: Boolean(v.value())},
+    (state, v, k) => (_.isUndefined(v.value()) ? state : {...state, [k]: Boolean(v.value())}),
     {} as GetConnectivityResult,
   );
 }
@@ -164,10 +160,7 @@ export async function mobileGetConnectivity(
  * - Bit 2 (0b100) = Data connection
  * @returns Promise that resolves to the current network connection state after the change.
  */
-export async function setNetworkConnection(
-  this: AndroidDriver,
-  type: number,
-): Promise<number> {
+export async function setNetworkConnection(this: AndroidDriver, type: number): Promise<number> {
   this.log.info('Setting network connection');
   // decode the input
   const shouldEnableAirplaneMode = (type & AIRPLANE_MODE_MASK) !== 0;
@@ -232,10 +225,7 @@ export async function setNetworkConnection(
  * @param isOn `true` to enable Wi-Fi, `false` to disable it.
  * @returns Promise that resolves when the Wi-Fi state is set.
  */
-export async function setWifiState(
-  this: AndroidDriver,
-  isOn: boolean,
-): Promise<void> {
+export async function setWifiState(this: AndroidDriver, isOn: boolean): Promise<void> {
   await this.settingsApp.setWifiState(isOn, this.isEmulator());
 }
 
@@ -246,10 +236,7 @@ export async function setWifiState(
  * @param isOn `true` to enable mobile data, `false` to disable it.
  * @returns Promise that resolves when the data connection state is set.
  */
-export async function setDataState(
-  this: AndroidDriver,
-  isOn: boolean,
-): Promise<void> {
+export async function setDataState(this: AndroidDriver, isOn: boolean): Promise<void> {
   await this.settingsApp.setDataState(isOn, this.isEmulator());
 }
 
@@ -259,9 +246,7 @@ export async function setDataState(
  * @since Android 12 (only real devices, emulators work in all APIs)
  * @returns Promise that resolves when the data connection state is toggled.
  */
-export async function toggleData(
-  this: AndroidDriver,
-): Promise<void> {
+export async function toggleData(this: AndroidDriver): Promise<void> {
   const isOn = await this.adb.isDataOn();
   this.log.info(`Turning network data ${!isOn ? 'on' : 'off'}`);
   await this.setDataState(!isOn);
@@ -273,9 +258,7 @@ export async function toggleData(
  * @since Android 12 (only real devices, emulators work in all APIs)
  * @returns Promise that resolves when the Wi-Fi state is toggled.
  */
-export async function toggleWiFi(
-  this: AndroidDriver,
-): Promise<void> {
+export async function toggleWiFi(this: AndroidDriver): Promise<void> {
   const isOn = await this.adb.isWifiOn();
   this.log.info(`Turning WiFi ${!isOn ? 'on' : 'off'}`);
   await this.setWifiState(!isOn);
@@ -287,9 +270,7 @@ export async function toggleWiFi(
  * @since Android 12 (only real devices, emulators work in all APIs)
  * @returns Promise that resolves when the airplane mode state is toggled.
  */
-export async function toggleFlightMode(
-  this: AndroidDriver,
-): Promise<void> {
+export async function toggleFlightMode(this: AndroidDriver): Promise<void> {
   const flightMode = !(await this.adb.isAirplaneModeOn());
   this.log.info(`Turning flight mode ${flightMode ? 'on' : 'off'}`);
   await this.adb.setAirplaneMode(flightMode);

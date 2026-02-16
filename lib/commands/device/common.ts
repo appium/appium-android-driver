@@ -5,17 +5,10 @@ import path from 'node:path';
 import {setMockLocationApp} from '../geolocation';
 import {SETTINGS_HELPER_ID} from 'io.appium.settings';
 import {hideKeyboardCompletely, initUnicodeKeyboard} from '../keyboard';
-import {
-  createBaseADB,
-  prepareEmulator,
-  pushSettingsApp,
-} from './utils';
+import {createBaseADB, prepareEmulator, pushSettingsApp} from './utils';
 import {adjustTimeZone} from '../time';
 import {retryInterval} from 'asyncbox';
-import {
-  GET_SERVER_LOGS_FEATURE,
-  nativeLogEntryToSeleniumEntry
-} from '../../utils';
+import {GET_SERVER_LOGS_FEATURE, nativeLogEntryToSeleniumEntry} from '../../utils';
 import type {AndroidDriver} from '../../driver';
 import type {ADBDeviceInfo, ADBLaunchInfo} from '../types';
 import type {ADB} from 'appium-adb';
@@ -47,7 +40,9 @@ export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDev
     // udid was given, lets try to init with that device
     if (udid) {
       if (!_.includes(_.map(devices, 'udid'), udid)) {
-        throw this.log.errorWithException(`Device ${udid} was not in the list of connected devices`);
+        throw this.log.errorWithException(
+          `Device ${udid} was not in the list of connected devices`,
+        );
       }
       emPort = adb.getPortFromEmulatorString(udid);
     } else if (this.opts.platformVersion) {
@@ -81,8 +76,7 @@ export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDev
         const bothVersionsAreStrings = _.isString(deviceOS) && _.isString(platformVersion);
         if (
           (bothVersionsCanBeCoerced &&
-            (semverDO as semver.SemVer).version ===
-              (semverPV as semver.SemVer).version) ||
+            (semverDO as semver.SemVer).version === (semverPV as semver.SemVer).version) ||
           (bothVersionsAreStrings && _.toLower(deviceOS) === _.toLower(platformVersion))
         ) {
           // Got an exact match - proceed immediately
@@ -160,7 +154,7 @@ export async function getLaunchInfo(this: AndroidDriver): Promise<ADBLaunchInfo 
     appPackage: appPackageOpt,
     appActivity: appActivityOpt,
     appWaitPackage: appWaitPackageOpt,
-    appWaitActivity: appWaitActivityOpt
+    appWaitActivity: appWaitActivityOpt,
   } = this.opts;
   let appPackage = appPackageOpt;
   let appActivity = appActivityOpt;
@@ -174,7 +168,9 @@ export async function getLaunchInfo(this: AndroidDriver): Promise<ADBLaunchInfo 
   let apkPackage: string | undefined;
   let apkActivity: string | undefined;
   if (appOpt) {
-    this.log.debug(`Parsing package and activity from the '${path.basename(appOpt)}' file manifest`);
+    this.log.debug(
+      `Parsing package and activity from the '${path.basename(appOpt)}' file manifest`,
+    );
     ({apkPackage, apkActivity} = await this.adb.packageAndLaunchActivityFromManifest(appOpt));
   } else if (appPackage) {
     this.log.debug(`Parsing activity from the installed '${appPackage}' package manifest`);
@@ -232,25 +228,27 @@ export async function initDevice(this: AndroidDriver): Promise<void> {
     // does not throw error even if they fail.
     const shouldThrowError = Boolean(
       language ||
-        locale ||
-        localeScript ||
-        unicodeKeyboard ||
-        hideKeyboard ||
-        disableWindowAnimation ||
-        !skipUnlock,
+      locale ||
+      localeScript ||
+      unicodeKeyboard ||
+      hideKeyboard ||
+      disableWindowAnimation ||
+      !skipUnlock,
     );
     await pushSettingsApp.bind(this)(shouldThrowError);
   }
 
   const setupPromises: Promise<void>[] = [];
   if (!this.isEmulator()) {
-    setupPromises.push((async () => {
-      if (mockLocationApp || _.isUndefined(mockLocationApp)) {
-        await setMockLocationApp.bind(this)(mockLocationApp || SETTINGS_HELPER_ID);
-      } else {
-        await this.mobileResetGeolocation();
-      }
-    })());
+    setupPromises.push(
+      (async () => {
+        if (mockLocationApp || _.isUndefined(mockLocationApp)) {
+          await setMockLocationApp.bind(this)(mockLocationApp || SETTINGS_HELPER_ID);
+        } else {
+          await this.mobileResetGeolocation();
+        }
+      })(),
+    );
   }
   if (language && locale) {
     setupPromises.push(this.ensureDeviceLocale(language, locale, localeScript));
@@ -272,38 +270,39 @@ export async function initDevice(this: AndroidDriver): Promise<void> {
     };
     setupPromises.push(logcatStartupPromise());
   }
-  setupPromises.push((async () => {
-    if (hideKeyboard) {
-      // Sometimes we have a race condition when Android
-      // does not register input services soon enough
-      // after Settings app is installed
-      await retryInterval(3, 500, async () => await hideKeyboardCompletely.bind(this)());
-    } else if (hideKeyboard === false) {
-      await this.adb.shell(['ime', 'reset']);
-    }
-  })());
+  setupPromises.push(
+    (async () => {
+      if (hideKeyboard) {
+        // Sometimes we have a race condition when Android
+        // does not register input services soon enough
+        // after Settings app is installed
+        await retryInterval(3, 500, async () => await hideKeyboardCompletely.bind(this)());
+      } else if (hideKeyboard === false) {
+        await this.adb.shell(['ime', 'reset']);
+      }
+    })(),
+  );
   if (unicodeKeyboard) {
-    setupPromises.push((async () => {
-      this.log.warn(
-        `The 'unicodeKeyboard' capability has been deprecated and will be removed. ` +
-          `Set the 'hideKeyboard' capability to 'true' in order to make the on-screen keyboard invisible.`,
-      );
-      await initUnicodeKeyboard.bind(this)();
-    })());
+    setupPromises.push(
+      (async () => {
+        this.log.warn(
+          `The 'unicodeKeyboard' capability has been deprecated and will be removed. ` +
+            `Set the 'hideKeyboard' capability to 'true' in order to make the on-screen keyboard invisible.`,
+        );
+        await initUnicodeKeyboard.bind(this)();
+      })(),
+    );
   }
   if (timeZone) {
     setupPromises.push(adjustTimeZone.bind(this)(timeZone));
   }
   if (this.isFeatureEnabled(GET_SERVER_LOGS_FEATURE)) {
-    [, this._bidiServerLogListener] = this.assignBiDiLogListener(
-      this.log.unwrap(), {
-        type: 'server',
-        srcEventName: 'log',
-        entryTransformer: nativeLogEntryToSeleniumEntry,
-      }
-    );
+    [, this._bidiServerLogListener] = this.assignBiDiLogListener(this.log.unwrap(), {
+      type: 'server',
+      srcEventName: 'log',
+      entryTransformer: nativeLogEntryToSeleniumEntry,
+    });
   }
 
   await B.all(setupPromises);
 }
-

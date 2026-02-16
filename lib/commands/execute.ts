@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {errors, PROTOCOLS} from 'appium/driver';
-import { util } from '@appium/support';
+import {util} from '@appium/support';
 import type {StringRecord, Element} from '@appium/types';
 import type {AndroidDriver} from '../driver';
 import type {Chromedriver} from 'appium-chromedriver';
@@ -30,8 +30,7 @@ export async function execute(
     throw new errors.NotImplementedError();
   }
   const endpoint =
-    (this.chromedriver as Chromedriver).jwproxy
-      .downstreamProtocol === PROTOCOLS.MJSONWP
+    (this.chromedriver as Chromedriver).jwproxy.downstreamProtocol === PROTOCOLS.MJSONWP
       ? '/execute'
       : '/execute/sync';
   return await (this.chromedriver as Chromedriver).jwproxy.command(endpoint, 'POST', {
@@ -49,7 +48,7 @@ export async function execute(
  * @returns Preprocessed arguments as a StringRecord.
  */
 function preprocessExecuteMethodArgs(args?: ExecuteMethodArgs): StringRecord {
-  const executeMethodArgs = (_.isArray(args) ? _.first(args) : args) ?? {} as StringRecord;
+  const executeMethodArgs = (_.isArray(args) ? _.first(args) : args) ?? ({} as StringRecord);
 
   /**
    * Renames the deprecated `element` key to `elementId`.  Historically,
@@ -75,4 +74,3 @@ function preprocessExecuteMethodArgs(args?: ExecuteMethodArgs): StringRecord {
 // #endregion
 
 type ExecuteMethodArgs = readonly any[] | readonly [StringRecord] | Readonly<StringRecord>;
-

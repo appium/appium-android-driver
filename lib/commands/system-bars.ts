@@ -28,16 +28,12 @@ const DEFAULT_WINDOW_PROPERTIES: WindowProperties = {
  * @returns Promise that resolves to an object containing statusBar and navigationBar properties.
  * @throws {Error} If system bars details cannot be retrieved or parsed.
  */
-export async function getSystemBars(
-  this: AndroidDriver,
-): Promise<StringRecord> {
+export async function getSystemBars(this: AndroidDriver): Promise<StringRecord> {
   let stdout: string;
   try {
     stdout = await this.adb.shell(['dumpsys', 'window', 'windows']);
   } catch (e) {
-    throw new Error(
-      `Cannot retrieve system bars details. Original error: ${(e as Error).message}`,
-    );
+    throw new Error(`Cannot retrieve system bars details. Original error: ${(e as Error).message}`);
   }
   return parseWindows.bind(this)(stdout);
 }
@@ -57,27 +53,27 @@ export async function mobilePerformStatusBarCommand(
   command: StatusBarCommand,
   component?: string,
 ): Promise<string> {
-  const toStatusBarCommandCallable = (
-    cmd: string,
-    argsCallable?: () => string[] | string,
-  ) => async (): Promise<string> =>
-    await this.adb.shell([
-      'cmd',
-      'statusbar',
-      cmd,
-      ...(argsCallable ? _.castArray(argsCallable()) : []),
-    ]);
+  const toStatusBarCommandCallable =
+    (cmd: string, argsCallable?: () => string[] | string) => async (): Promise<string> =>
+      await this.adb.shell([
+        'cmd',
+        'statusbar',
+        cmd,
+        ...(argsCallable ? _.castArray(argsCallable()) : []),
+      ]);
   const tileCommandArgsCallable = () => component as string;
   const statusBarCommands = _.fromPairs(
-    ([
-      ['expandNotifications', ['expand-notifications']],
-      ['expandSettings', ['expand-settings']],
-      ['collapse', ['collapse']],
-      ['addTile', ['add-tile', tileCommandArgsCallable]],
-      ['removeTile', ['remove-tile', tileCommandArgsCallable]],
-      ['clickTile', ['click-tile', tileCommandArgsCallable]],
-      ['getStatusIcons', ['get-status-icons']],
-    ] as const).map(([name, args]) => [name, toStatusBarCommandCallable(args[0], args[1])]),
+    (
+      [
+        ['expandNotifications', ['expand-notifications']],
+        ['expandSettings', ['expand-settings']],
+        ['collapse', ['collapse']],
+        ['addTile', ['add-tile', tileCommandArgsCallable]],
+        ['removeTile', ['remove-tile', tileCommandArgsCallable]],
+        ['clickTile', ['click-tile', tileCommandArgsCallable]],
+        ['getStatusIcons', ['get-status-icons']],
+      ] as const
+    ).map(([name, args]) => [name, toStatusBarCommandCallable(args[0], args[1])]),
   ) as Record<StatusBarCommand, () => Promise<string>>;
 
   const action = statusBarCommands[command];
@@ -135,10 +131,7 @@ export function parseWindowProperties(
  * and values are corresponding WindowProperties objects
  * @throws {Error} If no window properties could be parsed
  */
-export function parseWindows(
-  this: AndroidDriver,
-  lines: string,
-): SystemBarsResult {
+export function parseWindows(this: AndroidDriver, lines: string): SystemBarsResult {
   const windows: StringRecord<string[]> = {};
   let currentWindowName: string | null = null;
   for (const line of lines.split('\n').map(_.trimEnd)) {
@@ -165,21 +158,23 @@ export function parseWindows(
   const result: SystemBarsResult = {};
   for (const [name, props] of _.toPairs(windows)) {
     if (
-      name.startsWith(STATUS_BAR_WINDOW_NAME_PREFIX)
-      || props.some((line: string) => STATUS_BAR_TYPE_PATTERN.test(line))
+      name.startsWith(STATUS_BAR_WINDOW_NAME_PREFIX) ||
+      props.some((line: string) => STATUS_BAR_TYPE_PATTERN.test(line))
     ) {
       result.statusBar = parseWindowProperties.bind(this)(name, props);
     } else if (
-      name.startsWith(NAVIGATION_BAR_WINDOW_NAME_PREFIX)
-      || props.some((line: string) => NAVIGATION_BAR_TYPE_PATTERN.test(line))
+      name.startsWith(NAVIGATION_BAR_WINDOW_NAME_PREFIX) ||
+      props.some((line: string) => NAVIGATION_BAR_TYPE_PATTERN.test(line))
     ) {
       result.navigationBar = parseWindowProperties.bind(this)(name, props);
     }
   }
-  const unmatchedWindows = ([
-    ['statusBar', STATUS_BAR_WINDOW_NAME_PREFIX],
-    ['navigationBar', NAVIGATION_BAR_WINDOW_NAME_PREFIX],
-  ] as const).filter(([name]) => _.isNil(result[name as keyof SystemBarsResult]));
+  const unmatchedWindows = (
+    [
+      ['statusBar', STATUS_BAR_WINDOW_NAME_PREFIX],
+      ['navigationBar', NAVIGATION_BAR_WINDOW_NAME_PREFIX],
+    ] as const
+  ).filter(([name]) => _.isNil(result[name as keyof SystemBarsResult]));
   for (const [window, namePrefix] of unmatchedWindows) {
     this.log.info(
       `No windows have been found whose title matches to ` +
@@ -197,4 +192,3 @@ interface SystemBarsResult {
   statusBar?: WindowProperties;
   navigationBar?: WindowProperties;
 }
-

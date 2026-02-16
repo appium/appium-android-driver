@@ -31,7 +31,7 @@ export async function mobileShell<T extends boolean>(
   args: string[] = [],
   timeout: number = 20000,
   includeStderr?: T,
-): Promise<T extends true ? { stdout: string; stderr: string; } : string> {
+): Promise<T extends true ? {stdout: string; stderr: string} : string> {
   this.assertFeatureEnabled(ADB_SHELL_FEATURE);
 
   if (!_.isString(command)) {

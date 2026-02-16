@@ -67,9 +67,7 @@ const RETRY_PAUSE_MS = 1000;
  * @returns An array of supported performance data type names.
  * The possible values are: 'cpuinfo', 'memoryinfo', 'batteryinfo', 'networkinfo'.
  */
-export async function getPerformanceDataTypes(
-  this: AndroidDriver,
-): Promise<PerformanceDataType[]> {
+export async function getPerformanceDataTypes(this: AndroidDriver): Promise<PerformanceDataType[]> {
   return _.keys(SUPPORTED_PERFORMANCE_DATA_TYPES) as PerformanceDataType[];
 }
 
@@ -525,10 +523,7 @@ export async function getCPUInfo(
  * and the second row contains the battery level as a string (0-100).
  * @throws {Error} If battery data cannot be retrieved or parsed.
  */
-export async function getBatteryInfo(
-  this: AndroidDriver,
-  retries: number = 2,
-): Promise<any[][]> {
+export async function getBatteryInfo(this: AndroidDriver, retries: number = 2): Promise<any[][]> {
   return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
     const cmd = ['dumpsys', 'battery', '|', 'grep', 'level'];
     const data = await this.adb.shell(cmd);
@@ -545,4 +540,3 @@ export async function getBatteryInfo(
 }
 
 // #endregion
-

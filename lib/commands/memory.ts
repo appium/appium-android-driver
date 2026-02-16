@@ -26,4 +26,3 @@ export async function mobileSendTrimMemory(
 
   await this.adb.shell(['am', 'send-trim-memory', pkg, level]);
 }
-

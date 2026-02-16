@@ -33,10 +33,7 @@ export async function getDeviceTime(
  * @param format The format string for the time. Defaults to 'YYYY-MM-DDTHH:mm:ssZ'.
  * @returns Promise that resolves to the formatted device time string.
  */
-export async function mobileGetDeviceTime(
-  this: AndroidDriver,
-  format?: string,
-): Promise<string> {
+export async function mobileGetDeviceTime(this: AndroidDriver, format?: string): Promise<string> {
   return await this.getDeviceTime(format);
 }
 
@@ -47,14 +44,11 @@ export async function mobileGetDeviceTime(
  * @returns Promise that resolves when the time zone is set.
  * @throws {Error} If the time zone identifier is not known.
  */
-export async function adjustTimeZone(
-  this: AndroidDriver,
-  zoneName: string,
-): Promise<void> {
+export async function adjustTimeZone(this: AndroidDriver, zoneName: string): Promise<void> {
   if (!moment.tz.names().includes(zoneName)) {
     throw new Error(
       `The provided time zone identifier '${zoneName}' is not known. ` +
-      `Please choose a valid TZ identifier from https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`
+        `Please choose a valid TZ identifier from https://en.wikipedia.org/wiki/List_of_tz_database_time_zones`,
     );
   }
   this.log.info(`Setting the device time zone to '${zoneName}'`);
@@ -65,4 +59,3 @@ export async function adjustTimeZone(
   // https://cs.android.com/android/platform/superproject/+/master:frameworks/base/apex/jobscheduler/framework/java/android/app/IAlarmManager.aidl;l=1?q=IAlarmManager
   await this.adb.shell(['service', 'call', 'alarm', '3', 's16', zoneName]);
 }
-

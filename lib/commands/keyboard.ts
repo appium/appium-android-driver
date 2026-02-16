@@ -10,9 +10,7 @@ import type {SendKeysOpts} from './types';
  *
  * @returns Promise that resolves to `true` if the keyboard was hidden, `false` otherwise.
  */
-export async function hideKeyboard(
-  this: AndroidDriver,
-): Promise<boolean> {
+export async function hideKeyboard(this: AndroidDriver): Promise<boolean> {
   return await this.adb.hideKeyboard();
 }
 
@@ -21,9 +19,7 @@ export async function hideKeyboard(
  *
  * @returns Promise that resolves to `true` if the keyboard is shown, `false` otherwise.
  */
-export async function isKeyboardShown(
-  this: AndroidDriver,
-): Promise<boolean> {
+export async function isKeyboardShown(this: AndroidDriver): Promise<boolean> {
   const {isKeyboardShown} = await this.adb.isSoftKeyboardPresent();
   return isKeyboardShown;
 }
@@ -34,10 +30,7 @@ export async function isKeyboardShown(
  * @param keys The keys to send, either as a string or an array of strings (which will be joined).
  * @returns Promise that resolves when the keys are sent.
  */
-export async function keys(
-  this: AndroidDriver,
-  keys: string | string[],
-): Promise<void> {
+export async function keys(this: AndroidDriver, keys: string | string[]): Promise<void> {
   // Protocol sends an array; rethink approach
   const keysStr = _.isArray(keys) ? keys.join('') : keys;
   await this.doSendKeys({
@@ -53,10 +46,7 @@ export async function keys(
  * @returns Promise that resolves when the keys are sent.
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
-export async function doSendKeys(
-  this: AndroidDriver,
-  params: SendKeysOpts,
-): Promise<void> {
+export async function doSendKeys(this: AndroidDriver, params: SendKeysOpts): Promise<void> {
   throw new errors.NotImplementedError('Not implemented');
 }
 
@@ -131,9 +121,7 @@ export async function mobilePerformEditorAction(
  * @deprecated
  * @returns Promise that resolves to the default IME identifier that was active before.
  */
-export async function initUnicodeKeyboard(
-  this: AndroidDriver,
-): Promise<string | null> {
+export async function initUnicodeKeyboard(this: AndroidDriver): Promise<string | null> {
   this.log.debug('Enabling Unicode keyboard support');
 
   // get the default IME so we can return back to it later if we want
@@ -151,13 +139,10 @@ export async function initUnicodeKeyboard(
  *
  * @returns Promise that resolves when the keyboard is hidden.
  */
-export async function hideKeyboardCompletely(
-  this: AndroidDriver,
-): Promise<void> {
+export async function hideKeyboardCompletely(this: AndroidDriver): Promise<void> {
   this.log.debug(`Hiding the on-screen keyboard by setting IME to '${EMPTY_IME}'`);
   await this.adb.enableIME(EMPTY_IME);
   await this.adb.setIME(EMPTY_IME);
 }
 
 // #endregion
-

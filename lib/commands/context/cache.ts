@@ -29,4 +29,3 @@ export function getWebviewDetails(adb: ADB, webview: string): WebViewDetails | u
   const key = toDetailsCacheKey(adb, webview);
   return WEBVIEWS_DETAILS_CACHE.get(key);
 }
-

@@ -17,10 +17,7 @@ const SUPPORTED_ACTIONS = {
  * or there was a failure while performing the action.
  * @throws {errors.InvalidArgumentError} If the action is not one of the supported actions.
  */
-export async function mobileBluetooth(
-  this: AndroidDriver,
-  action: BluetoothAction,
-): Promise<void> {
+export async function mobileBluetooth(this: AndroidDriver, action: BluetoothAction): Promise<void> {
   switch (action) {
     case SUPPORTED_ACTIONS.ENABLE:
       await this.settingsApp.setBluetoothState(true);
@@ -33,10 +30,9 @@ export async function mobileBluetooth(
       break;
     default:
       throw new errors.InvalidArgumentError(
-        `You must provide a valid 'action' argument. Supported actions are: ${_.values(SUPPORTED_ACTIONS)}`
+        `You must provide a valid 'action' argument. Supported actions are: ${_.values(SUPPORTED_ACTIONS)}`,
       );
   }
 }
 
-type BluetoothAction = typeof SUPPORTED_ACTIONS[keyof typeof SUPPORTED_ACTIONS];
-
+type BluetoothAction = (typeof SUPPORTED_ACTIONS)[keyof typeof SUPPORTED_ACTIONS];

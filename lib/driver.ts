@@ -89,7 +89,7 @@ import {
 } from './commands/app-management';
 import {mobileGetUiMode, mobileSetUiMode} from './commands/appearance';
 import {mobileDeviceidle} from './commands/deviceidle';
-import { mobileBluetooth } from './commands/bluetooth';
+import {mobileBluetooth} from './commands/bluetooth';
 import {
   getAttribute,
   getName,
@@ -107,15 +107,8 @@ import {
   getLocation,
   getSize,
 } from './commands/element';
-import {
-  execute,
-} from './commands/execute';
-import {
-  pullFile,
-  pullFolder,
-  pushFile,
-  mobileDeleteFile,
-} from './commands/file-actions';
+import {execute} from './commands/execute';
+import {pullFile, pullFolder, pushFile, mobileDeleteFile} from './commands/file-actions';
 import {findElOrEls, doFindElementOrEls} from './commands/find';
 import {
   setGeoLocation,
@@ -127,9 +120,7 @@ import {
   mobileSetGeolocation,
   mobileResetGeolocation,
 } from './commands/geolocation';
-import {
-  performActions,
-} from './commands/gestures';
+import {performActions} from './commands/gestures';
 import {
   isIMEActivated,
   availableIMEEngines,
@@ -196,11 +187,7 @@ import {
   getPerformanceDataTypes,
   mobileGetPerformanceData,
 } from './commands/performance';
-import {
-  reset,
-  closeApp,
-  launchApp,
-} from './commands/legacy';
+import {reset, closeApp, launchApp} from './commands/legacy';
 import {mobileChangePermissions, mobileGetPermissions} from './commands/permissions';
 import {startRecordingScreen, stopRecordingScreen} from './commands/recordscreen';
 import {getStrings, ensureDeviceLocale} from './commands/resources';
@@ -208,8 +195,8 @@ import {mobileShell} from './commands/shell';
 import {mobileStartScreenStreaming, mobileStopScreenStreaming} from './commands/streamscreen';
 import {getSystemBars, mobilePerformStatusBarCommand} from './commands/system-bars';
 import {getDeviceTime, mobileGetDeviceTime} from './commands/time';
-import { executeMethodMap } from './execute-method-map';
-import { LRUCache } from 'lru-cache';
+import {executeMethodMap} from './execute-method-map';
+import {LRUCache} from 'lru-cache';
 import type {ScreenRecordingProperties} from './commands/types';
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;

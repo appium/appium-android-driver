@@ -35,7 +35,7 @@ export async function prepareEmulatorForImageInjection(
   this: AndroidDriver,
   sdkRoot: string,
 ): Promise<boolean> {
-  const { injectedImageProperties: props } = this.opts;
+  const {injectedImageProperties: props} = this.opts;
   if (!props) {
     return false;
   }
@@ -48,7 +48,9 @@ export async function prepareEmulatorForImageInjection(
   if (await fs.exists(configPath)) {
     const configPayload = await fs.readFile(configPath, 'utf8');
     if (configPayload.includes(strProps)) {
-      this.log.info(`The image injection config at '${configPath}' is already up to date. Doing nothing`);
+      this.log.info(
+        `The image injection config at '${configPath}' is already up to date. Doing nothing`,
+      );
       return false;
     }
     const updatedPayload = `${DEFAULT_CONFIG_PAYLOAD_PREFIX}
@@ -62,8 +64,8 @@ export async function prepareEmulatorForImageInjection(
   }
   this.log.info(
     `The image injection config at '${configPath}' has been successfully updated with ` +
-    `${size}, ${position}, ${rotation}. ` +
-    `Expecting further emulator restart to reload the changed config.`
+      `${size}, ${position}, ${rotation}. ` +
+      `Expecting further emulator restart to reload the changed config.`,
   );
   return true;
 }
@@ -92,14 +94,14 @@ export async function mobileInjectEmulatorCameraImage(
 
   if (!_.isString(payload) || _.size(payload) <= PNG_MAGIC_LENGTH) {
     throw new errors.InvalidArgumentError(
-      `You must provide a valid base64-encoded .PNG data as the 'payload' argument`
+      `You must provide a valid base64-encoded .PNG data as the 'payload' argument`,
     );
   }
   const pngBuffer = Buffer.from(payload, 'base64');
   const magic = pngBuffer.toString('hex', 0, PNG_MAGIC_LENGTH);
   if (magic !== PNG_MAGIC) {
     throw new errors.InvalidArgumentError(
-      'The provided image payload must contain a valid base64-encoded .PNG data'
+      'The provided image payload must contain a valid base64-encoded .PNG data',
     );
   }
 
@@ -111,7 +113,7 @@ export async function mobileInjectEmulatorCameraImage(
   await fs.writeFile(tmpImagePath, pngBuffer);
   await this.adb.execEmuConsoleCommand(`virtualscene-image table ${tmpImagePath}`);
   this.log.info(
-    `The provided image has been successully injected to the ${this.adb.curDeviceId} emulator`
+    `The provided image has been successully injected to the ${this.adb.curDeviceId} emulator`,
   );
 }
 
@@ -124,4 +126,3 @@ function calculateImageHash(buffer: Buffer): string {
 }
 
 // #endregion
-

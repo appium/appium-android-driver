@@ -104,10 +104,7 @@ export async function mobileGetContexts(
  * @param webviewsMapping - Array of webview mapping objects
  * @returns An array of context names (always includes NATIVE_APP as the first element)
  */
-export function assignContexts(
-  this: AndroidDriver,
-  webviewsMapping: WebviewsMapping[],
-): string[] {
+export function assignContexts(this: AndroidDriver, webviewsMapping: WebviewsMapping[]): string[] {
   const opts = {isChromeSession: this.isChromeSession, ...this.opts};
   const webviews = parseWebviewNames.bind(this)(webviewsMapping, opts);
   this.contexts = [NATIVE_WIN, ...webviews];
@@ -305,11 +302,7 @@ export async function startChromedriverProxy(
       }
     }
 
-    cd = await setupNewChromedriver.bind(this)(
-      opts,
-      this.adb.curDeviceId as string,
-      context,
-    );
+    cd = await setupNewChromedriver.bind(this)(opts, this.adb.curDeviceId as string, context);
     // bind our stop/exit handler, passing in context so we know which
     // one stopped unexpectedly
     cd.on(Chromedriver.EVENT_CHANGED, (msg) => {
@@ -451,10 +444,7 @@ export async function startChromeSession(this: AndroidDriver): Promise<void> {
   } else {
     opts.chromeAndroidActivity = this.opts.appActivity;
   }
-  const chromedriver = await setupNewChromedriver.bind(this)(
-    opts,
-    this.adb.curDeviceId as string,
-  );
+  const chromedriver = await setupNewChromedriver.bind(this)(opts, this.adb.curDeviceId as string);
   this.chromedriver = chromedriver;
   chromedriver.on(Chromedriver.EVENT_CHANGED, (msg) => {
     if (msg.state === Chromedriver.STATE_STOPPED) {
@@ -478,4 +468,3 @@ export async function startChromeSession(this: AndroidDriver): Promise<void> {
     await dismissChromeWelcome.bind(this)();
   }
 }
-

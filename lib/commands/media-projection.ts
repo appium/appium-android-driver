@@ -198,4 +198,3 @@ interface UploadOptions {
   formFields?: FormFields;
   uploadTimeout?: number;
 }
-

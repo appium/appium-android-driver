@@ -17,7 +17,7 @@ const SUPPORTED_ACTIONS = ['whitelistAdd', 'whitelistRemove'] as const;
  */
 export async function mobileDeviceidle(
   this: AndroidDriver,
-  action: typeof SUPPORTED_ACTIONS[number],
+  action: (typeof SUPPORTED_ACTIONS)[number],
   packages?: string | string[],
 ): Promise<void> {
   if (!(_.isString(packages) || _.isArray(packages))) {
@@ -41,4 +41,3 @@ export async function mobileDeviceidle(
   }
   await this.adb.shellChunks(argsGenerator, packagesArr);
 }
-

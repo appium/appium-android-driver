@@ -178,55 +178,37 @@ export const executeMethodMap = {
     command: 'mobileBackgroundApp',
     params: {
       optional: ['seconds'],
-    }
+    },
   },
   'mobile: startService': {
     command: 'mobileStartService',
     params: {
-      optional: [
-        'foreground',
-        ...INTENT_PARAMS,
-      ],
+      optional: ['foreground', ...INTENT_PARAMS],
     },
   },
   'mobile: stopService': {
     command: 'mobileStopService',
     params: {
-      optional: [
-        ...INTENT_PARAMS,
-      ],
+      optional: [...INTENT_PARAMS],
     },
   },
   'mobile: startActivity': {
     command: 'mobileStartActivity',
     params: {
-      optional: [
-        'wait',
-        'stop',
-        'windowingMode',
-        'activityType',
-        'display',
-        ...INTENT_PARAMS,
-      ],
+      optional: ['wait', 'stop', 'windowingMode', 'activityType', 'display', ...INTENT_PARAMS],
     },
   },
   'mobile: broadcast': {
     command: 'mobileBroadcast',
     params: {
-      optional: [
-        'receiverPermission',
-        'allowBackgroundActivityStarts',
-        ...INTENT_PARAMS,
-      ],
+      optional: ['receiverPermission', 'allowBackgroundActivityStarts', ...INTENT_PARAMS],
     },
   },
 
   'mobile: getContexts': {
     command: 'mobileGetContexts',
     params: {
-      optional: [
-        'waitForWebviewMs',
-      ],
+      optional: ['waitForWebviewMs'],
     },
   },
 
@@ -237,20 +219,13 @@ export const executeMethodMap = {
   'mobile: lock': {
     command: 'lock',
     params: {
-      optional: [
-        'seconds',
-      ],
+      optional: ['seconds'],
     },
   },
   'mobile: unlock': {
     command: 'mobileUnlock',
     params: {
-      optional: [
-        'key',
-        'type',
-        'strategy',
-        'timeoutMs',
-      ],
+      optional: ['key', 'type', 'strategy', 'timeoutMs'],
     },
   },
   'mobile: isLocked': {
@@ -260,21 +235,14 @@ export const executeMethodMap = {
   'mobile: refreshGpsCache': {
     command: 'mobileRefreshGpsCache',
     params: {
-      optional: [
-        'timeoutMs',
-      ],
+      optional: ['timeoutMs'],
     },
   },
 
   'mobile: startMediaProjectionRecording': {
     command: 'mobileStartMediaProjectionRecording',
     params: {
-      optional: [
-        'resolution',
-        'priority',
-        'maxDurationSec',
-        'filename',
-      ],
+      optional: ['resolution', 'priority', 'maxDurationSec', 'filename'],
     },
   },
   'mobile: isMediaProjectionRecordingRunning': {
@@ -300,13 +268,13 @@ export const executeMethodMap = {
     command: 'mobileGetConnectivity',
     params: {
       optional: ['services'],
-    }
+    },
   },
   'mobile: setConnectivity': {
     command: 'mobileSetConnectivity',
     params: {
       optional: ['wifi', 'data', 'airplaneMode'],
-    }
+    },
   },
 
   'mobile: hideKeyboard': {
@@ -321,54 +289,54 @@ export const executeMethodMap = {
     params: {
       required: ['action'],
       optional: ['packages'],
-    }
+    },
   },
 
   'mobile: bluetooth': {
     command: 'mobileBluetooth',
     params: {
       required: ['action'],
-    }
+    },
   },
   'mobile: nfc': {
     command: 'mobileNfc',
     params: {
       required: ['action'],
-    }
+    },
   },
 
   'mobile: setUiMode': {
     command: 'mobileSetUiMode',
     params: {
       required: ['mode', 'value'],
-    }
+    },
   },
   'mobile: getUiMode': {
     command: 'mobileGetUiMode',
     params: {
       required: ['mode'],
-    }
+    },
   },
 
   'mobile: injectEmulatorCameraImage': {
     command: 'mobileInjectEmulatorCameraImage',
     params: {
       required: ['payload'],
-    }
+    },
   },
 
   'mobile: sendTrimMemory': {
     command: 'mobileSendTrimMemory',
     params: {
       required: ['pkg', 'level'],
-    }
+    },
   },
 
   'mobile: getPerformanceData': {
     command: 'mobileGetPerformanceData',
     params: {
       required: ['packageName', 'dataType'],
-    }
+    },
   },
   'mobile: getPerformanceDataTypes': {
     command: 'getPerformanceDataTypes',
@@ -392,62 +360,62 @@ export const executeMethodMap = {
     params: {
       required: ['command'],
       optional: ['component'],
-    }
+    },
   },
 
   'mobile: fingerprint': {
     command: 'mobileFingerprint',
     params: {
       required: ['fingerprintId'],
-    }
+    },
   },
   'mobile: sendSms': {
     command: 'mobileSendSms',
     params: {
       required: ['phoneNumber', 'message'],
-    }
+    },
   },
   'mobile: gsmCall': {
     command: 'mobileGsmCall',
     params: {
       required: ['phoneNumber', 'action'],
-    }
+    },
   },
   'mobile: gsmSignal': {
     command: 'mobileGsmSignal',
     params: {
       required: ['strength'],
-    }
+    },
   },
   'mobile: gsmVoice': {
     command: 'mobileGsmVoice',
     params: {
       required: ['state'],
-    }
+    },
   },
   'mobile: powerAc': {
     command: 'mobilePowerAc',
     params: {
       required: ['state'],
-    }
+    },
   },
   'mobile: powerCapacity': {
     command: 'mobilePowerCapacity',
     params: {
       required: ['percent'],
-    }
+    },
   },
   'mobile: networkSpeed': {
     command: 'mobileNetworkSpeed',
     params: {
       required: ['speed'],
-    }
+    },
   },
   'mobile: sensorSet': {
     command: 'sensorSet',
     params: {
       required: ['sensorType', 'value'],
-    }
+    },
   },
 
   'mobile: getCurrentActivity': {
@@ -462,7 +430,7 @@ export const executeMethodMap = {
     params: {
       required: ['latitude', 'longitude'],
       optional: ['altitude', 'satellites', 'speed', 'bearing', 'accuracy'],
-    }
+    },
   },
   'mobile: getGeolocation': {
     command: 'mobileGetGeolocation',
@@ -475,6 +443,6 @@ export const executeMethodMap = {
     command: 'getStrings',
     params: {
       optional: ['language'],
-    }
+    },
   },
 } as const satisfies ExecuteMethodMap<any>;

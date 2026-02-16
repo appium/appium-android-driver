@@ -32,10 +32,7 @@ export async function mobileSetUiMode(
  * for example 'yes' or 'no'
  * @throws {Error} If the command response cannot be parsed.
  */
-export async function mobileGetUiMode(
-  this: AndroidDriver,
-  mode: string,
-): Promise<string> {
+export async function mobileGetUiMode(this: AndroidDriver, mode: string): Promise<string> {
   const response = await this.adb.shell(['cmd', 'uimode', mode]);
   // response looks like 'Night mode: no'
   const match = RESPONSE_PATTERN.exec(response);

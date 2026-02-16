@@ -6,9 +6,7 @@ import type {AndroidDriver} from '../driver';
  *
  * @returns Promise that resolves to `true` (IME is always activated on Android devices).
  */
-export async function isIMEActivated(
-  this: AndroidDriver,
-): Promise<boolean> {
+export async function isIMEActivated(this: AndroidDriver): Promise<boolean> {
   // IME is always activated on Android devices
   return true;
 }
@@ -18,9 +16,7 @@ export async function isIMEActivated(
  *
  * @returns Promise that resolves to an array of IME engine identifiers.
  */
-export async function availableIMEEngines(
-  this: AndroidDriver,
-): Promise<string[]> {
+export async function availableIMEEngines(this: AndroidDriver): Promise<string[]> {
   this.log.debug('Retrieving available IMEs');
   const engines = await this.adb.availableIMEs();
   this.log.debug(`Engines: ${JSON.stringify(engines)}`);
@@ -32,9 +28,7 @@ export async function availableIMEEngines(
  *
  * @returns Promise that resolves to the active IME engine identifier.
  */
-export async function getActiveIMEEngine(
-  this: AndroidDriver,
-): Promise<string> {
+export async function getActiveIMEEngine(this: AndroidDriver): Promise<string> {
   this.log.debug('Retrieving current default IME');
   return String(await this.adb.defaultIME());
 }
@@ -46,10 +40,7 @@ export async function getActiveIMEEngine(
  * @returns Promise that resolves when the IME is activated.
  * @throws {errors.IMENotAvailableError} If the IME is not available.
  */
-export async function activateIMEEngine(
-  this: AndroidDriver,
-  imeId: string,
-): Promise<void> {
+export async function activateIMEEngine(this: AndroidDriver, imeId: string): Promise<void> {
   this.log.debug(`Attempting to activate IME ${imeId}`);
   const availableEngines = await this.adb.availableIMEs();
   if (availableEngines.indexOf(imeId) === -1) {
@@ -66,9 +57,7 @@ export async function activateIMEEngine(
  *
  * @returns Promise that resolves when the IME is deactivated.
  */
-export async function deactivateIMEEngine(
-  this: AndroidDriver,
-): Promise<void> {
+export async function deactivateIMEEngine(this: AndroidDriver): Promise<void> {
   const currentEngine = await this.getActiveIMEEngine();
   // XXX: this allowed 'null' to be passed into `adb.shell`
   if (currentEngine) {
@@ -76,4 +65,3 @@ export async function deactivateIMEEngine(
     await this.adb.disableIME(currentEngine);
   }
 }
-
