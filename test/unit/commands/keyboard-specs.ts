@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
 import {ADB} from 'appium-adb';
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -70,4 +70,3 @@ describe('Keyboard', function () {
     });
   });
 });
-

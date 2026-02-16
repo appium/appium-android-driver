@@ -3,7 +3,7 @@ import {AndroidDriver} from '../../../lib/driver';
 import {fs} from '@appium/support';
 import * as asyncbox from 'asyncbox';
 import {ADB} from 'appium-adb';
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -91,9 +91,12 @@ describe('App Management', function () {
       expect(installStub.calledOnce).to.be.true;
     });
     it('should throw an error if APK does not exist', async function () {
-      driver.helpers = {configureApp: sandbox.stub().rejects(new Error('does not exist or is not accessible'))} as any;
-      await expect(driver.installApp('non/existent/app.apk', {})
-      ).to.be.rejectedWith(/does not exist or is not accessible/);
+      driver.helpers = {
+        configureApp: sandbox.stub().rejects(new Error('does not exist or is not accessible')),
+      } as any;
+      await expect(driver.installApp('non/existent/app.apk', {})).to.be.rejectedWith(
+        /does not exist or is not accessible/,
+      );
     });
   });
   describe('background', function () {
@@ -108,7 +111,9 @@ describe('App Management', function () {
         intentFlags: 'flgs',
         optionalIntentArguments: 'opt',
       } as any;
-      const getFocusedStub = sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appPackage, appActivity});
+      const getFocusedStub = sandbox
+        .stub(driver.adb, 'getFocusedPackageAndActivity')
+        .returns({appPackage, appActivity});
       const goToHomeStub = sandbox.stub(driver.adb, 'goToHome');
       const sleepStub = sandbox.stub(asyncbox, 'longSleep');
       const startAppStub = sandbox.stub(driver.adb, 'startApp');
@@ -144,7 +149,9 @@ describe('App Management', function () {
         stopApp: false,
       };
       driver._cachedActivityArgs = {[`${appPackage}/${appActivity}`]: params};
-      const getFocusedStub2 = sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appPackage, appActivity});
+      const getFocusedStub2 = sandbox
+        .stub(driver.adb, 'getFocusedPackageAndActivity')
+        .returns({appPackage, appActivity});
       const goToHomeStub2 = sandbox.stub(driver.adb, 'goToHome');
       const sleepStub = sandbox.stub(asyncbox, 'longSleep');
       const startAppStub2 = sandbox.stub(driver.adb, 'startApp');
@@ -227,12 +234,22 @@ describe('App Management', function () {
       params.waitActivity = 'act';
       params.stopApp = true;
       const startAppStub7 = sandbox.stub(driver.adb, 'startApp');
-      await driver.startActivity('pkg', 'act', undefined, undefined, 'act', 'cat', 'flgs', 'opt', false);
+      await driver.startActivity(
+        'pkg',
+        'act',
+        undefined,
+        undefined,
+        'act',
+        'cat',
+        'flgs',
+        'opt',
+        false,
+      );
       expect(startAppStub7.calledWithExactly(params)).to.be.true;
     });
   });
 
-  describe('resetAUT', function() {
+  describe('resetAUT', function () {
     const localApkPath = 'local';
     const pkg = 'pkg';
 
@@ -288,20 +305,22 @@ describe('App Management', function () {
       await expect(driver.installAUT({} as any)).to.be.rejectedWith(/appPackage/);
     });
     it('should install/upgrade and reset app if fast reset is set to true', async function () {
-      sandbox.stub(driver.adb, 'installOrUpgrade')
+      sandbox
+        .stub(driver.adb, 'installOrUpgrade')
         .withArgs(opts.app, opts.appPackage)
         .onFirstCall()
         .returns({wasUninstalled: false, appState: 'sameVersionInstalled'});
       sandbox.stub(driver, 'resetAUT').onFirstCall();
-      await driver.installAUT({ ...opts, fastReset: true } as any);
+      await driver.installAUT({...opts, fastReset: true} as any);
     });
     it('should reinstall app if full reset is set to true', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade').throws();
       sandbox.stub(driver, 'resetAUT').onFirstCall();
-      await driver.installAUT({ ...opts, fastReset: true, fullReset: true } as any);
+      await driver.installAUT({...opts, fastReset: true, fullReset: true} as any);
     });
     it('should not run reset if the corresponding option is not set', async function () {
-      sandbox.stub(driver.adb, 'installOrUpgrade')
+      sandbox
+        .stub(driver.adb, 'installOrUpgrade')
         .withArgs(opts.app, opts.appPackage)
         .onFirstCall()
         .returns({wasUninstalled: true, appState: 'sameVersionInstalled'});
@@ -309,12 +328,13 @@ describe('App Management', function () {
       await driver.installAUT(opts as any);
     });
     it('should install/upgrade and skip fast resetting the app if this was the fresh install', async function () {
-      sandbox.stub(driver.adb, 'installOrUpgrade')
+      sandbox
+        .stub(driver.adb, 'installOrUpgrade')
         .withArgs(opts.app, opts.appPackage)
         .onFirstCall()
         .returns({wasUninstalled: false, appState: 'notInstalled'});
       sandbox.stub(driver, 'resetAUT').throws();
-      await driver.installAUT({ ...opts, fastReset: true } as any);
+      await driver.installAUT({...opts, fastReset: true} as any);
     });
   });
   describe('installOtherApks', function () {
@@ -342,7 +362,8 @@ describe('App Management', function () {
       await driver.installOtherApks([], opts as any);
     });
     it('should call adb.installOrUpgrade once if otherApps has one item', async function () {
-      sandbox.stub(driver.adb, 'installOrUpgrade')
+      sandbox
+        .stub(driver.adb, 'installOrUpgrade')
         .withArgs(fakeApk, undefined, expectedADBInstallOpts)
         .onFirstCall();
       await driver.installOtherApks([fakeApk], opts as any);
@@ -354,4 +375,3 @@ describe('App Management', function () {
     });
   });
 });
-

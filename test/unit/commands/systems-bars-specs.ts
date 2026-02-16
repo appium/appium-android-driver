@@ -1,6 +1,6 @@
 import {AndroidDriver} from '../../../lib/driver';
 import {parseWindowProperties, parseWindows} from '../../../lib/commands/system-bars';
-import { expect, use } from 'chai'; // expect is used
+import {expect, use} from 'chai'; // expect is used
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -14,9 +14,10 @@ describe('System Bars', function () {
 
   describe('parseWindowProperties', function () {
     it('should return visible true if the surface is visible', function () {
-      expect(parseWindowProperties.bind(driver)(
-        'yolo',
-        `
+      expect(
+        parseWindowProperties.bind(driver)(
+          'yolo',
+          `
       mDisplayId=0 rootTaskId=1 mSession=Session{6fdbba 684:u0a10144} mClient=android.os.BinderProxy@dbd59e0
       mOwnerUid=10144 showForAllUsers=true package=com.android.systemui appop=NONE
       mAttrs={(0,0)(fillxfill) sim={adjust=pan} ty=NAVIGATION_BAR fmt=TRANSLUCENT
@@ -52,8 +53,9 @@ describe('System Bars', function () {
       isOnScreen=true
       isVisible=true
       mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
-      `.split('\n')
-      )).to.eql({
+      `.split('\n'),
+        ),
+      ).to.eql({
         visible: true,
         x: 0,
         y: 1794,
@@ -62,9 +64,10 @@ describe('System Bars', function () {
       });
     });
     it('should return visible false if the surface is not visible', function () {
-      expect(parseWindowProperties.bind(driver)(
-        'foo',
-        `
+      expect(
+        parseWindowProperties.bind(driver)(
+          'foo',
+          `
       mDisplayId=0 rootTaskId=1 mSession=Session{6fdbba 684:u0a10144} mClient=android.os.BinderProxy@dbd59e0
       mOwnerUid=10144 showForAllUsers=true package=com.android.systemui appop=NONE
       mAttrs={(0,0)(fillxfill) sim={adjust=pan} ty=NAVIGATION_BAR fmt=TRANSLUCENT
@@ -100,8 +103,9 @@ describe('System Bars', function () {
       isOnScreen=true
       isVisible=true
       mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
-      `.split('\n')
-      )).to.eql({
+      `.split('\n'),
+        ),
+      ).to.eql({
         visible: false,
         x: 0,
         y: 1794,
@@ -1146,7 +1150,8 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
       }).to.throw(Error);
     });
     it('should return defaults if only non matching windows were found', function () {
-      expect(parseWindows.bind(driver)(`
+      expect(
+        parseWindows.bind(driver)(`
       WINDOW MANAGER WINDOWS (dumpsys window windows)
         Window #0 Window{d1b7133 u0 pip-dismiss-overlay}:
           mDisplayId=0 rootTaskId=1 mSession=Session{6fdbba 684:u0a10144} mClient=android.os.BinderProxy@a5e1e9f
@@ -1178,7 +1183,8 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
           isOnScreen=false
           isVisible=false
           mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
-      `)).to.eql({
+      `),
+      ).to.eql({
         statusBar: {visible: false, x: 0, y: 0, width: 0, height: 0},
         navigationBar: {visible: false, x: 0, y: 0, width: 0, height: 0},
       });

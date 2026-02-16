@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -23,12 +23,11 @@ describe('Emulator Actions', function () {
     });
     it('should be reject if arguments are missing', async function () {
       await expect(
-        driver.execute('mobile: sensorSet', [{sensor: 'light', value: 0}])
+        driver.execute('mobile: sensorSet', [{sensor: 'light', value: 0}]),
       ).to.eventually.be.rejectedWith(/sensorType/);
       await expect(
-        driver.execute('mobile:  sensorSet', [{sensorType: 'light', val: 0}])
+        driver.execute('mobile:  sensorSet', [{sensorType: 'light', val: 0}]),
       ).to.eventually.be.rejectedWith(/value/);
     });
   });
 });
-

@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
-import { AndroidDriver } from '../../../lib/driver';
-import { setMockLocationApp } from '../../../lib/commands/geolocation';
-import { use } from 'chai';
+import {AndroidDriver} from '../../../lib/driver';
+import {setMockLocationApp} from '../../../lib/commands/geolocation';
+import {use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -22,7 +22,8 @@ describe('Geolocation', function () {
 
   describe('setMockLocationApp', function () {
     it('should enable mock location', async function () {
-      sandbox.stub(driver.adb, 'shell')
+      sandbox
+        .stub(driver.adb, 'shell')
         .withArgs(['appops', 'set', 'io.appium.settings', 'android:mock_location', 'allow'])
         .onFirstCall()
         .returns('');
@@ -31,4 +32,3 @@ describe('Geolocation', function () {
     });
   });
 });
-
