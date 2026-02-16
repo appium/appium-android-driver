@@ -1,3 +1,9 @@
+## [12.6.7](https://github.com/appium/appium-android-driver/compare/v12.6.6...v12.6.7) (2026-02-16)
+
+### Bug Fixes
+
+* format ([#1057](https://github.com/appium/appium-android-driver/issues/1057)) ([6aed9af](https://github.com/appium/appium-android-driver/commit/6aed9afc98ad37e5914f3da78ea3aa22119d8a1a))
+
 ## [12.6.6](https://github.com/appium/appium-android-driver/compare/v12.6.5...v12.6.6) (2026-02-01)
 
 ### Miscellaneous Chores
