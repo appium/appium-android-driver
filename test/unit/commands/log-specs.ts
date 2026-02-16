@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import {ADB} from 'appium-adb';
 import os from 'node:os';
 import {AndroidDriver} from '../../../lib/driver';
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -36,7 +36,9 @@ describe('commands - logging', function () {
       getLogcatLogsStub.restore();
     });
     it('should get bugreport logs', async function () {
-      const bugreportStub = sinon.stub(driver.adb, 'bugreport').returns(Promise.resolve(`line1${os.EOL}line2`));
+      const bugreportStub = sinon
+        .stub(driver.adb, 'bugreport')
+        .returns(Promise.resolve(`line1${os.EOL}line2`));
       const [record1, record2] = await driver.getLog('bugreport');
       expect(record1.message).to.eql('line1');
       expect(record2.message).to.eql('line2');
@@ -45,4 +47,3 @@ describe('commands - logging', function () {
     });
   });
 });
-

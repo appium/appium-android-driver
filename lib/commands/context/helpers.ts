@@ -93,8 +93,9 @@ export function getChromePkg(
   browser: string,
 ): (typeof CHROME_BROWSER_PACKAGE_ACTIVITY)[keyof typeof CHROME_BROWSER_PACKAGE_ACTIVITY] {
   return (
-    CHROME_BROWSER_PACKAGE_ACTIVITY[browser.toLowerCase() as keyof typeof CHROME_BROWSER_PACKAGE_ACTIVITY] ||
-    CHROME_BROWSER_PACKAGE_ACTIVITY.default
+    CHROME_BROWSER_PACKAGE_ACTIVITY[
+      browser.toLowerCase() as keyof typeof CHROME_BROWSER_PACKAGE_ACTIVITY
+    ] || CHROME_BROWSER_PACKAGE_ACTIVITY.default
   );
 }
 
@@ -298,7 +299,9 @@ export async function setupNewChromedriver(
   // Strip the prefix and store it
   for (const opt of _.keys(opts)) {
     if (opt.endsWith(':loggingPrefs')) {
-      this.log.warn(`Merging '${opt}' into 'chromeLoggingPrefs'. This may cause unexpected behavior`);
+      this.log.warn(
+        `Merging '${opt}' into 'chromeLoggingPrefs'. This may cause unexpected behavior`,
+      );
       _.merge(opts.chromeLoggingPrefs, (opts as any)[opt]);
     }
   }
@@ -780,10 +783,7 @@ async function webviewsFromProcs(
  * Finds a free port for Chromedriver based on the provided port specification.
  * If no specification is provided, finds any available free port.
  */
-async function getChromedriverPort(
-  this: AndroidDriver,
-  portSpec?: PortSpec,
-): Promise<number> {
+async function getChromedriverPort(this: AndroidDriver, portSpec?: PortSpec): Promise<number> {
   // if the user didn't give us any specific information about chromedriver
   // port ranges, just find any free port
   if (!portSpec) {
@@ -868,4 +868,3 @@ function isCompatibleCdpHost(host: string): boolean {
 }
 
 // #endregion
-

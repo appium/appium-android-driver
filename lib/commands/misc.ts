@@ -9,9 +9,7 @@ import type {SmsListResult, ListSmsOpts} from './types';
  * @returns Promise that resolves to the window size (width, height).
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
-export async function getWindowSize(
-  this: AndroidDriver,
-): Promise<Size> {
+export async function getWindowSize(this: AndroidDriver): Promise<Size> {
   throw new errors.NotImplementedError('Not implemented');
 }
 
@@ -20,9 +18,7 @@ export async function getWindowSize(
  *
  * @returns Promise that resolves to the window rectangle.
  */
-export async function getWindowRect(
-  this: AndroidDriver,
-): Promise<Rect> {
+export async function getWindowRect(this: AndroidDriver): Promise<Rect> {
   const {width, height} = await this.getWindowSize();
   return {
     width,
@@ -41,10 +37,7 @@ export async function getWindowRect(
  * @param uri The Android URI to navigate to.
  * @returns Promise that resolves when the URI is opened.
  */
-export async function setUrl(
-  this: AndroidDriver,
-  uri: string,
-): Promise<void> {
+export async function setUrl(this: AndroidDriver, uri: string): Promise<void> {
   await this.adb.startUri(uri, this.opts.appPackage as string);
 }
 
@@ -54,9 +47,7 @@ export async function setUrl(
  * @returns Promise that resolves to the display density value.
  * @throws {Error} If the display density cannot be retrieved.
  */
-export async function getDisplayDensity(
-  this: AndroidDriver,
-): Promise<number> {
+export async function getDisplayDensity(this: AndroidDriver): Promise<number> {
   // first try the property for devices
   let out = await this.adb.shell(['getprop', 'ro.sf.lcd_density']);
   if (out) {
@@ -85,9 +76,7 @@ export async function getDisplayDensity(
  *
  * @returns Promise that resolves to an object containing notification information.
  */
-export async function mobileGetNotifications(
-  this: AndroidDriver,
-): Promise<StringRecord> {
+export async function mobileGetNotifications(this: AndroidDriver): Promise<StringRecord> {
   return await this.settingsApp.getNotifications();
 }
 
@@ -110,9 +99,6 @@ export async function mobileListSms(
  * @returns Promise that resolves when the notifications panel is opened.
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
-export async function openNotifications(
-  this: AndroidDriver,
-): Promise<void> {
+export async function openNotifications(this: AndroidDriver): Promise<void> {
   throw new errors.NotImplementedError('Not implemented');
 }
-

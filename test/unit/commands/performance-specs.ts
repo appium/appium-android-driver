@@ -14,7 +14,7 @@ import {
 import _ from 'lodash';
 import {ADB} from 'appium-adb';
 import * as asyncbox from 'asyncbox';
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -29,15 +29,16 @@ let driver: AndroidDriver;
 let retryIntervalStub: sinon.SinonStub<typeof asyncbox.retryInterval>;
 
 describe('performance data', function () {
-
   beforeEach(function () {
     const adbInstance = new ADB();
     driver = new AndroidDriver();
     driver.adb = adbInstance;
     adb = sandbox.stub(adbInstance);
-    retryIntervalStub = sandbox.stub(asyncbox, 'retryInterval').callsFake(async function (times, sleepMs, fn) {
-      return await fn();
-    });
+    retryIntervalStub = sandbox
+      .stub(asyncbox, 'retryInterval')
+      .callsFake(async function (times, sleepMs, fn) {
+        return await fn();
+      });
   });
   afterEach(function () {
     sandbox.restore();
@@ -50,7 +51,8 @@ describe('performance data', function () {
   });
   describe('getCPUInfo', function () {
     it('should return cpu data', async function () {
-      (adb.shell as sinon.SinonStub).withArgs(['dumpsys', 'cpuinfo']).returns(`Load: 8.85 / 8.85 / 7.96
+      (adb.shell as sinon.SinonStub).withArgs(['dumpsys', 'cpuinfo'])
+        .returns(`Load: 8.85 / 8.85 / 7.96
       CPU usage from 339020ms to 38831ms ago (2020-09-05 12:55:08.950 to 2020-09-05 13:00:09.140) with 99% awake:
         0.6% 811/com.android.systemui: 0.3% user + 0.3% kernel / faults: 564 minor 1 major
         0.6% 282/android.hardware.bluetooth@1.1-service.sim: 0% user + 0.6% kernel
@@ -104,13 +106,17 @@ describe('performance data', function () {
   });
   describe('getBatteryInfo', function () {
     it('should return battery info', async function () {
-      (adb.shell as sinon.SinonStub).withArgs(['dumpsys', 'battery', '|', 'grep', 'level']).returns('  level: 47');
+      (adb.shell as sinon.SinonStub)
+        .withArgs(['dumpsys', 'battery', '|', 'grep', 'level'])
+        .returns('  level: 47');
       await expect(getBatteryInfo.bind(driver)()).to.become([BATTERY_KEYS, ['47']]);
       expect(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE)).to.be.true;
     });
     it('should throw error if data is not valid', async function () {
       (adb.shell as sinon.SinonStub).returns('invalid data');
-      await expect(getBatteryInfo.bind(driver)(1)).to.be.rejectedWith(/Unable to parse battery data/);
+      await expect(getBatteryInfo.bind(driver)(1)).to.be.rejectedWith(
+        /Unable to parse battery data/,
+      );
     });
     it('should throw error if no data', async function () {
       (adb.shell as sinon.SinonStub).returns(null);
@@ -203,11 +209,15 @@ describe('performance data', function () {
     });
     it('should throw error if data is not valid', async function () {
       (adb.shell as sinon.SinonStub).returns('TOTAL nodex nodex nodex nodex nodex nodex nodex');
-      await expect(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1)).to.be.rejectedWith(/Unable to parse memory data/);
+      await expect(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1)).to.be.rejectedWith(
+        /Unable to parse memory data/,
+      );
     });
     it('should throw error if no data', async function () {
       (adb.shell as sinon.SinonStub).returns(null);
-      await expect(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1)).to.be.rejectedWith(/No data from dumpsys/);
+      await expect(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1)).to.be.rejectedWith(
+        /No data from dumpsys/,
+      );
     });
   });
   describe('getNetworkTrafficInfo', function () {
@@ -252,11 +262,15 @@ describe('performance data', function () {
     });
     it('should throw error if data is not valid', async function () {
       (adb.shell as sinon.SinonStub).returns('nodex');
-      await expect(getNetworkTrafficInfo.bind(driver)(1)).to.be.rejectedWith(/Unable to parse network traffic data/);
+      await expect(getNetworkTrafficInfo.bind(driver)(1)).to.be.rejectedWith(
+        /Unable to parse network traffic data/,
+      );
     });
     it('should throw error if no data', async function () {
       (adb.shell as sinon.SinonStub).returns(null);
-      await expect(getNetworkTrafficInfo.bind(driver)(1)).to.be.rejectedWith(/No data from dumpsys/);
+      await expect(getNetworkTrafficInfo.bind(driver)(1)).to.be.rejectedWith(
+        /No data from dumpsys/,
+      );
     });
   });
 });

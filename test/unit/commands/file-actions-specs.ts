@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver';
 import * as support from '@appium/support';
 import {ADB} from 'appium-adb';
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -51,16 +51,20 @@ describe('File Actions', function () {
       const unlinkStub3 = sandbox.stub(support.fs, 'unlink');
       await expect(driver.pullFile(`@${packageId}/${remotePath}`)).to.become('YXBwaXVt');
       expect(pullStub.calledWithExactly(tmpPath, localFile)).to.be.true;
-      expect(shellStub2.calledWithExactly([
-        'run-as',
-        packageId,
-        `chmod 777 '/data/data/${packageId}/${remotePath}'`,
-      ])).to.be.true;
-      expect(shellStub2.calledWithExactly([
-        'run-as',
-        packageId,
-        `cp -f '/data/data/${packageId}/${remotePath}' '${tmpPath}'`,
-      ])).to.be.true;
+      expect(
+        shellStub2.calledWithExactly([
+          'run-as',
+          packageId,
+          `chmod 777 '/data/data/${packageId}/${remotePath}'`,
+        ]),
+      ).to.be.true;
+      expect(
+        shellStub2.calledWithExactly([
+          'run-as',
+          packageId,
+          `cp -f '/data/data/${packageId}/${remotePath}' '${tmpPath}'`,
+        ]),
+      ).to.be.true;
       expect(unlinkStub3.calledWithExactly(localFile)).to.be.true;
       expect(shellStub2.calledWithExactly(['rm', '-f', tmpPath])).to.be.true;
     });
@@ -97,29 +101,36 @@ describe('File Actions', function () {
       await driver.pushFile(`@${packageId}/${remotePath}`, 'YXBwaXVt');
       expect(writeFileStub.calledWithExactly(localFile, content, 'binary')).to.be.true;
       expect(pushStub2.calledWithExactly(localFile, tmpPath)).to.be.true;
-      expect(shellStub.calledWithExactly([
-        'run-as',
-        packageId,
-        `mkdir -p '/data/data/${packageId}/path/in'`,
-      ])).to.be.true;
-      expect(shellStub.calledWithExactly([
-        'run-as',
-        packageId,
-        `touch '/data/data/${packageId}/${remotePath}'`,
-      ])).to.be.true;
-      expect(shellStub.calledWithExactly([
-        'run-as',
-        packageId,
-        `chmod 777 '/data/data/${packageId}/${remotePath}'`,
-      ])).to.be.true;
-      expect(shellStub.calledWithExactly([
-        'run-as',
-        packageId,
-        `cp -f '${tmpPath}' '/data/data/${packageId}/${remotePath}'`,
-      ])).to.be.true;
+      expect(
+        shellStub.calledWithExactly([
+          'run-as',
+          packageId,
+          `mkdir -p '/data/data/${packageId}/path/in'`,
+        ]),
+      ).to.be.true;
+      expect(
+        shellStub.calledWithExactly([
+          'run-as',
+          packageId,
+          `touch '/data/data/${packageId}/${remotePath}'`,
+        ]),
+      ).to.be.true;
+      expect(
+        shellStub.calledWithExactly([
+          'run-as',
+          packageId,
+          `chmod 777 '/data/data/${packageId}/${remotePath}'`,
+        ]),
+      ).to.be.true;
+      expect(
+        shellStub.calledWithExactly([
+          'run-as',
+          packageId,
+          `cp -f '${tmpPath}' '/data/data/${packageId}/${remotePath}'`,
+        ]),
+      ).to.be.true;
       expect(unlinkStub2.calledWithExactly(localFile)).to.be.true;
       expect(shellStub.calledWithExactly(['rm', '-f', tmpPath])).to.be.true;
     });
   });
 });
-

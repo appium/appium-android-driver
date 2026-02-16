@@ -99,8 +99,10 @@ export async function prepareEmulator(this: AndroidDriver, adb: ADB): Promise<vo
   }
   const args = prepareAvdArgs.bind(this)();
   if (isEmulatorRunning) {
-    if (await prepareEmulatorForImageInjection.bind(this)(adb.sdkRoot as string)
-      || args.includes('-wipe-data')) {
+    if (
+      (await prepareEmulatorForImageInjection.bind(this)(adb.sdkRoot as string)) ||
+      args.includes('-wipe-data')
+    ) {
       this.log.debug(`Killing '${avdName}'`);
       await adb.killEmulator(avdName);
     } else {
@@ -259,4 +261,3 @@ export async function hideKeyboardCompletely(this: AndroidDriver): Promise<void>
   await this.adb.enableIME(EMPTY_IME);
   await this.adb.setIME(EMPTY_IME);
 }
-

@@ -17,10 +17,7 @@ const SUPPORTED_ACTIONS = {
  * or there was a failure while performing the action.
  * @throws {errors.InvalidArgumentError} If the action is not one of the supported actions.
  */
-export async function mobileNfc(
-  this: AndroidDriver,
-  action: NfcAction,
-): Promise<void> {
+export async function mobileNfc(this: AndroidDriver, action: NfcAction): Promise<void> {
   switch (action) {
     case SUPPORTED_ACTIONS.ENABLE:
       await this.adb.setNfcOn(true);
@@ -30,8 +27,7 @@ export async function mobileNfc(
       break;
     default:
       throw new errors.InvalidArgumentError(
-        `You must provide a valid 'action' argument. Supported actions are: ${_.values(SUPPORTED_ACTIONS)}`
+        `You must provide a valid 'action' argument. Supported actions are: ${_.values(SUPPORTED_ACTIONS)}`,
       );
   }
 }
-

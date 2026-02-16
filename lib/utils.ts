@@ -17,7 +17,10 @@ const COLOR_CODE_PATTERN = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-
  * @param opts the object to check
  * @returns the same given object
  */
-export function requireArgs(argNames: string | string[], opts: Record<string, any>): Record<string, any> {
+export function requireArgs(
+  argNames: string | string[],
+  opts: Record<string, any>,
+): Record<string, any> {
   for (const argName of _.isArray(argNames) ? argNames : [argNames]) {
     if (!_.has(opts, argName)) {
       throw new errors.InvalidArgumentError(`'${argName}' argument must be provided`);
@@ -75,10 +78,7 @@ interface LogEntryWithPrefix {
  */
 export function nativeLogEntryToSeleniumEntry(x: LogEntryWithPrefix): LogEntry {
   const msg = _.isEmpty(x.prefix) ? x.message : `[${x.prefix}] ${x.message}`;
-  return toLogRecord(
-    x.timestamp ?? Date.now(),
-    _.replace(msg, COLOR_CODE_PATTERN, '')
-  );
+  return toLogRecord(x.timestamp ?? Date.now(), _.replace(msg, COLOR_CODE_PATTERN, ''));
 }
 
 /**
@@ -96,4 +96,3 @@ export function toLogRecord(timestamp: number, message: string, level: string = 
     message,
   };
 }
-

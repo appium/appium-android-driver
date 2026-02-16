@@ -25,10 +25,7 @@ const ANDROID_MEDIA_RESCAN_INTENT = 'android.intent.action.MEDIA_SCANNER_SCAN_FI
  * @returns Promise that resolves to the file content as a base64-encoded string.
  * @throws {errors.InvalidArgumentError} If the remote path points to a folder instead of a file.
  */
-export async function pullFile(
-  this: AndroidDriver,
-  remotePath: string,
-): Promise<string> {
+export async function pullFile(this: AndroidDriver, remotePath: string): Promise<string> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
       `It is expected that remote path points to a file and not to a folder. ` +
@@ -164,10 +161,7 @@ export async function pushFile(
  * @param remotePath The full path to the remote folder.
  * @returns Promise that resolves to the folder content as a base64-encoded zip file string.
  */
-export async function pullFolder(
-  this: AndroidDriver,
-  remotePath: string,
-): Promise<string> {
+export async function pullFolder(this: AndroidDriver, remotePath: string): Promise<string> {
   const tmpRoot = await tempDir.openDir();
   try {
     await this.adb.pull(remotePath, tmpRoot);
@@ -189,10 +183,7 @@ export async function pullFolder(
  * @returns Promise that resolves to `true` if the file was successfully deleted, `false` if it doesn't exist.
  * @throws {errors.InvalidArgumentError} If the remote path points to a folder instead of a file.
  */
-export async function mobileDeleteFile(
-  this: AndroidDriver,
-  remotePath: string,
-): Promise<boolean> {
+export async function mobileDeleteFile(this: AndroidDriver, remotePath: string): Promise<boolean> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
       `It is expected that remote path points to a folder and not to a file. ` +
@@ -288,10 +279,7 @@ function parseContainerPath(remotePath: string): [string, string] {
  * and adds matching items to the device's media library.
  * Exceptions are ignored and written into the log.
  */
-async function scanMedia(
-  this: AndroidDriver,
-  remotePath: string,
-): Promise<void> {
+async function scanMedia(this: AndroidDriver, remotePath: string): Promise<void> {
   this.log.debug(`Performing media scan of '${remotePath}'`);
   try {
     // https://github.com/appium/appium/issues/16184
@@ -356,4 +344,3 @@ function createFSTests(adb: ADB) {
 }
 
 // #endregion
-

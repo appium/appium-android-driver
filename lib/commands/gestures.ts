@@ -10,10 +10,6 @@ import type {AndroidDriver} from '../driver';
  * @returns Promise that resolves when all actions are performed.
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
-export async function performActions(
-  this: AndroidDriver,
-  actions: StringRecord[],
-): Promise<void> {
+export async function performActions(this: AndroidDriver, actions: StringRecord[]): Promise<void> {
   throw new errors.NotImplementedError('Not implemented');
 }
-

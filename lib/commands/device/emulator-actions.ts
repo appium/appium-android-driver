@@ -2,7 +2,13 @@ import {util} from '@appium/support';
 import {requireEmulator} from './utils';
 import {errors} from 'appium/driver';
 import type {AndroidDriver} from '../../driver';
-import type {GsmAction, GsmSignalStrength, GsmVoiceState, PowerACState, NetworkSpeed} from '../types';
+import type {
+  GsmAction,
+  GsmSignalStrength,
+  GsmVoiceState,
+  PowerACState,
+  NetworkSpeed,
+} from '../types';
 
 /**
  * @deprecated Use mobile: extension
@@ -109,10 +115,7 @@ export async function mobileGsmSignal(
 /**
  * @deprecated Use mobile: extension
  */
-export async function gsmVoice(
-  this: AndroidDriver,
-  state: GsmVoiceState,
-): Promise<void> {
+export async function gsmVoice(this: AndroidDriver, state: GsmVoiceState): Promise<void> {
   requireEmulator.bind(this)('gsmVoice is only available for emulators');
   await this.adb.gsmVoice(state);
 }
@@ -122,20 +125,14 @@ export async function gsmVoice(
  *
  * @param state - The voice state
  */
-export async function mobileGsmVoice(
-  this: AndroidDriver,
-  state: GsmVoiceState,
-): Promise<void> {
+export async function mobileGsmVoice(this: AndroidDriver, state: GsmVoiceState): Promise<void> {
   await this.gsmVoice(state);
 }
 
 /**
  * @deprecated Use mobile: extension
  */
-export async function powerAC(
-  this: AndroidDriver,
-  state: PowerACState,
-): Promise<void> {
+export async function powerAC(this: AndroidDriver, state: PowerACState): Promise<void> {
   requireEmulator.bind(this)('powerAC is only available for emulators');
   await this.adb.powerAC(state);
 }
@@ -145,20 +142,14 @@ export async function powerAC(
  *
  * @param state - The AC power state
  */
-export async function mobilePowerAc(
-  this: AndroidDriver,
-  state: PowerACState,
-): Promise<void> {
+export async function mobilePowerAc(this: AndroidDriver, state: PowerACState): Promise<void> {
   await this.powerAC(state);
 }
 
 /**
  * @deprecated Use mobile: extension
  */
-export async function powerCapacity(
-  this: AndroidDriver,
-  batteryPercent: number,
-): Promise<void> {
+export async function powerCapacity(this: AndroidDriver, batteryPercent: number): Promise<void> {
   requireEmulator.bind(this)('powerCapacity is only available for emulators');
   await this.adb.powerCapacity(batteryPercent);
 }
@@ -168,20 +159,14 @@ export async function powerCapacity(
  *
  * @param percent - Percentage value in range `[0, 100]`
  */
-export async function mobilePowerCapacity(
-  this: AndroidDriver,
-  percent: number,
-): Promise<void> {
+export async function mobilePowerCapacity(this: AndroidDriver, percent: number): Promise<void> {
   await this.powerCapacity(percent);
 }
 
 /**
  * @deprecated Use mobile: extension
  */
-export async function networkSpeed(
-  this: AndroidDriver,
-  networkSpeed: NetworkSpeed,
-): Promise<void> {
+export async function networkSpeed(this: AndroidDriver, networkSpeed: NetworkSpeed): Promise<void> {
   requireEmulator.bind(this)('networkSpeed is only available for emulators');
   await this.adb.networkSpeed(networkSpeed);
 }
@@ -191,10 +176,7 @@ export async function networkSpeed(
  *
  * @param speed - The network speed value
  */
-export async function mobileNetworkSpeed(
-  this: AndroidDriver,
-  speed: NetworkSpeed,
-): Promise<void> {
+export async function mobileNetworkSpeed(this: AndroidDriver, speed: NetworkSpeed): Promise<void> {
   await this.networkSpeed(speed);
 }
 
@@ -219,4 +201,3 @@ export async function sensorSet(
   }
   await this.adb.sensorSet(sensorType, value as any);
 }
-

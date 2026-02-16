@@ -21,17 +21,12 @@ const MOCK_APP_IDS_STORE = '/data/local/tmp/mock_apps.json';
  * @param location The geolocation object containing latitude, longitude, and altitude.
  * @returns Promise that resolves to the current geolocation after setting it.
  */
-export async function setGeoLocation(
-  this: AndroidDriver,
-  location: Location,
-): Promise<Location> {
+export async function setGeoLocation(this: AndroidDriver, location: Location): Promise<Location> {
   await this.settingsApp.setGeoLocation(location, this.isEmulator());
   try {
     return await this.getGeoLocation();
   } catch (e) {
-    this.log.warn(
-      `Could not get the current geolocation info: ${(e as Error).message}`,
-    );
+    this.log.warn(`Could not get the current geolocation info: ${(e as Error).message}`);
     this.log.warn(`Returning the default zero'ed values`);
     return {
       latitude: GEO_EPSILON,
@@ -66,15 +61,18 @@ export async function mobileSetGeolocation(
   bearing?: number,
   accuracy?: number,
 ): Promise<void> {
-  await this.settingsApp.setGeoLocation({
-    latitude,
-    longitude,
-    altitude,
-    satellites,
-    speed,
-    bearing,
-    accuracy,
-  }, this.isEmulator());
+  await this.settingsApp.setGeoLocation(
+    {
+      latitude,
+      longitude,
+      altitude,
+      satellites,
+      speed,
+      bearing,
+      accuracy,
+    },
+    this.isEmulator(),
+  );
 }
 
 /**
@@ -102,9 +100,7 @@ export async function mobileRefreshGpsCache(
  *
  * @returns Promise that resolves to the current geolocation object.
  */
-export async function getGeoLocation(
-  this: AndroidDriver,
-): Promise<Location> {
+export async function getGeoLocation(this: AndroidDriver): Promise<Location> {
   const {latitude, longitude, altitude} = await this.settingsApp.getGeoLocation();
   return {
     latitude: parseFloat(String(latitude)) || GEO_EPSILON,
@@ -118,9 +114,7 @@ export async function getGeoLocation(
  *
  * @returns Promise that resolves to the current geolocation object.
  */
-export async function mobileGetGeolocation(
-  this: AndroidDriver,
-): Promise<Location> {
+export async function mobileGetGeolocation(this: AndroidDriver): Promise<Location> {
   return await this.getGeoLocation();
 }
 
@@ -129,9 +123,7 @@ export async function mobileGetGeolocation(
  *
  * @returns Promise that resolves to `true` if location services are enabled, `false` otherwise.
  */
-export async function isLocationServicesEnabled(
-  this: AndroidDriver,
-): Promise<boolean> {
+export async function isLocationServicesEnabled(this: AndroidDriver): Promise<boolean> {
   return (await this.adb.getLocationProviders()).includes('gps');
 }
 
@@ -140,9 +132,7 @@ export async function isLocationServicesEnabled(
  *
  * @returns Promise that resolves when the location services state is toggled.
  */
-export async function toggleLocationServices(
-  this: AndroidDriver,
-): Promise<void> {
+export async function toggleLocationServices(this: AndroidDriver): Promise<void> {
   this.log.info('Toggling location services');
   const isGpsEnabled = await this.isLocationServicesEnabled();
   this.log.debug(
@@ -158,9 +148,7 @@ export async function toggleLocationServices(
  * @returns Promise that resolves when the geolocation is reset.
  * @throws {Error} If called on an emulator (geolocation reset does not work on emulators).
  */
-export async function mobileResetGeolocation(
-  this: AndroidDriver,
-): Promise<void> {
+export async function mobileResetGeolocation(this: AndroidDriver): Promise<void> {
   if (this.isEmulator()) {
     throw new Error('Geolocation reset does not work on emulators');
   }
@@ -175,10 +163,7 @@ export async function mobileResetGeolocation(
  * @param appId The application package identifier.
  * @returns Promise that resolves when the mock location permission is set.
  */
-export async function setMockLocationApp(
-  this: AndroidDriver,
-  appId: string,
-): Promise<void> {
+export async function setMockLocationApp(this: AndroidDriver, appId: string): Promise<void> {
   try {
     await this.adb.shell(['appops', 'set', appId, 'android:mock_location', 'allow']);
   } catch (err) {
@@ -214,9 +199,7 @@ export async function setMockLocationApp(
  *
  * @returns Promise that resolves when the mock location permissions are reset.
  */
-async function resetMockLocation(
-  this: AndroidDriver,
-): Promise<void> {
+async function resetMockLocation(this: AndroidDriver): Promise<void> {
   try {
     const thirdPartyPkgIdsPromise = getThirdPartyPackages.bind(this)();
     let pkgIds: string[] = [];
@@ -255,4 +238,3 @@ async function resetMockLocation(
 }
 
 // #endregion Internal helpers
-

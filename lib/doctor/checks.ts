@@ -256,4 +256,3 @@ export class OptionalFfmpegCheck implements IDoctorCheck {
   }
 }
 export const optionalFfmpegCheck = new OptionalFfmpegCheck();
-

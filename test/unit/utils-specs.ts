@@ -1,5 +1,5 @@
-import { parseArray } from '../../lib/utils';
-import { expect, use } from 'chai';
+import {parseArray} from '../../lib/utils';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -14,4 +14,3 @@ describe('Utils', function () {
     });
   });
 });
-

@@ -111,17 +111,16 @@ async function fetchLocaleSuggestions(
   country?: string,
 ): Promise<Locale[]> {
   const supportedLocales = await this.settingsApp.listSupportedLocales();
-  const suggestedLocales = supportedLocales
-    .filter((locale) =>
-      _.toLower(language) === _.toLower(locale.language)
-      || _.toLower(country) === _.toLower(locale.country)
-    );
+  const suggestedLocales = supportedLocales.filter(
+    (locale) =>
+      _.toLower(language) === _.toLower(locale.language) ||
+      _.toLower(country) === _.toLower(locale.country),
+  );
   return _.isEmpty(suggestedLocales) ? supportedLocales : suggestedLocales;
 }
 
 function toLocaleAbbr({language, country, script}: Locale): string {
-  return `${language}_${country}${script ? ('-' + script) : ''}`;
+  return `${language}_${country}${script ? '-' + script : ''}`;
 }
 
 // #endregion
-

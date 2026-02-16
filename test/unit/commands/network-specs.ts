@@ -2,9 +2,9 @@ import sinon from 'sinon';
 import {ADB} from 'appium-adb';
 import {AndroidDriver} from '../../../lib/driver';
 import B from 'bluebird';
-import { SettingsApp } from 'io.appium.settings';
-import { errors } from 'appium/driver';
-import { expect, use } from 'chai';
+import {SettingsApp} from 'io.appium.settings';
+import {errors} from 'appium/driver';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -15,7 +15,6 @@ let settingsApp: SettingsApp;
 const sandbox = sinon.createSandbox();
 
 describe('Network', function () {
-
   beforeEach(function () {
     driver = new AndroidDriver();
     const adbInstance = new ADB();
@@ -121,10 +120,14 @@ describe('Network', function () {
   });
   describe('mobileGetConnectivity', function () {
     it('should raise unsupported services in string', async function () {
-      await expect(driver.mobileGetConnectivity('bad' as any)).to.eventually.be.rejectedWith(errors.InvalidArgumentError);
+      await expect(driver.mobileGetConnectivity('bad' as any)).to.eventually.be.rejectedWith(
+        errors.InvalidArgumentError,
+      );
     });
     it('should raise unsupported services in array', async function () {
-      await expect(driver.mobileGetConnectivity(['bad', 'array'] as any)).to.eventually.be.rejectedWith(errors.InvalidArgumentError);
+      await expect(
+        driver.mobileGetConnectivity(['bad', 'array'] as any),
+      ).to.eventually.be.rejectedWith(errors.InvalidArgumentError);
     });
     it('should raise unsupported services with an empty array', async function () {
       await expect(driver.mobileGetConnectivity()).to.eventually.eql({});
@@ -133,25 +136,32 @@ describe('Network', function () {
       adb.isWifiOn.returns(true);
       adb.isDataOn.returns(true);
       adb.isAirplaneModeOn.returns(true);
-      await expect(driver.mobileGetConnectivity()).to.eventually.eql({ wifi: true, data: true, airplaneMode: true });
+      await expect(driver.mobileGetConnectivity()).to.eventually.eql({
+        wifi: true,
+        data: true,
+        airplaneMode: true,
+      });
     });
     it('should return only wifi', async function () {
       adb.isWifiOn.returns(true);
       adb.isDataOn.returns(true);
       adb.isAirplaneModeOn.returns(true);
-      await expect(driver.mobileGetConnectivity('wifi')).to.eventually.eql({ wifi: true });
+      await expect(driver.mobileGetConnectivity('wifi')).to.eventually.eql({wifi: true});
     });
     it('should return only data', async function () {
       adb.isWifiOn.returns(true);
       adb.isDataOn.returns(true);
       adb.isAirplaneModeOn.returns(true);
-      await expect(driver.mobileGetConnectivity(['data'])).to.eventually.eql({ data: true });
+      await expect(driver.mobileGetConnectivity(['data'])).to.eventually.eql({data: true});
     });
     it('should return only data and airplaneMode', async function () {
       adb.isWifiOn.returns(true);
       adb.isDataOn.returns(true);
       adb.isAirplaneModeOn.returns(false);
-      await expect(driver.mobileGetConnectivity(['data', 'airplaneMode'])).to.eventually.eql({ data: true, airplaneMode: false});
+      await expect(driver.mobileGetConnectivity(['data', 'airplaneMode'])).to.eventually.eql({
+        data: true,
+        airplaneMode: false,
+      });
     });
   });
   describe('toggleData', function () {
@@ -160,7 +170,8 @@ describe('Network', function () {
       (driver.isEmulator as sinon.SinonStub).returns('is_emu');
       (settingsApp.setDataState as sinon.SinonStub).returns('');
       await driver.toggleData();
-      expect((settingsApp.setDataState as sinon.SinonStub).calledWithExactly(true, 'is_emu')).to.be.true;
+      expect((settingsApp.setDataState as sinon.SinonStub).calledWithExactly(true, 'is_emu')).to.be
+        .true;
     });
   });
   describe('toggleWiFi', function () {
@@ -169,7 +180,8 @@ describe('Network', function () {
       (driver.isEmulator as sinon.SinonStub).returns('is_emu');
       (settingsApp.setWifiState as sinon.SinonStub).returns('');
       await driver.toggleWiFi();
-      expect((settingsApp.setWifiState as sinon.SinonStub).calledWithExactly(true, 'is_emu')).to.be.true;
+      expect((settingsApp.setWifiState as sinon.SinonStub).calledWithExactly(true, 'is_emu')).to.be
+        .true;
     });
   });
   describe('toggleFlightMode', function () {
@@ -192,14 +204,20 @@ describe('Network', function () {
   });
   describe('setGeoLocation', function () {
     it('should return location in use after setting', async function () {
-      (settingsApp.setGeoLocation as sinon.SinonStub).withArgs({latitude: 1.1, longitude: 2.2, altitude: 3.3} as any, 'is_emu').returns('res');
+      (settingsApp.setGeoLocation as sinon.SinonStub)
+        .withArgs({latitude: 1.1, longitude: 2.2, altitude: 3.3} as any, 'is_emu')
+        .returns('res');
       (settingsApp.getGeoLocation as sinon.SinonStub).returns({
         latitude: '1.1',
         longitude: '2.2',
         altitude: '3.3',
       });
       (driver.isEmulator as sinon.SinonStub).returns('is_emu');
-      const {latitude, longitude, altitude} = await driver.setGeoLocation({latitude: 1.1, longitude: 2.2, altitude: 3.3});
+      const {latitude, longitude, altitude} = await driver.setGeoLocation({
+        latitude: 1.1,
+        longitude: 2.2,
+        altitude: 3.3,
+      });
       expect(Number.isNaN(latitude)).to.be.false;
       expect(Number.isNaN(longitude)).to.be.false;
       expect(Number.isNaN(altitude)).to.be.false;

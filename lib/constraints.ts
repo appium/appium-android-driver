@@ -258,7 +258,7 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
     isBoolean: true,
   },
   adbListenAllNetwork: {
-    isBoolean: true
+    isBoolean: true,
   },
   ignoreUnimportantViews: {
     isBoolean: true,
@@ -274,7 +274,7 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   },
   injectedImageProperties: {
     isObject: true,
-  }
+  },
 } as const satisfies Constraints;
 
 export default ANDROID_DRIVER_CONSTRAINTS;

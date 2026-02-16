@@ -171,37 +171,40 @@ export async function terminateApp(
   if (timeout <= 0) {
     this.log.info(
       `'${appId}' has been terminated. Skipping checking of the application process state ` +
-      `since the timeout was set to ${timeout}ms`,
+        `since the timeout was set to ${timeout}ms`,
     );
     return true;
   }
 
   let currentPids: number[] = [];
   try {
-    await waitForCondition(async () => {
-      if (await this.queryAppState(appId) <= APP_STATE.NOT_RUNNING) {
-        return true;
-      }
-      currentPids = await this.adb.listAppProcessIds(appId);
-      if (_.isEmpty(currentPids) || _.isEmpty(_.intersection(pids, currentPids))) {
-        this.log.info(
-          `The application '${appId}' was reported running, ` +
-          `although all process ids belonging to it have been changed: ` +
-          `(${JSON.stringify(pids)} -> ${JSON.stringify(currentPids)}). ` +
-          `Assuming the termination was successful.`
-        );
-        return true;
-      }
-      return false;
-    }, {
-      waitMs: timeout,
-      intervalMs: 100,
-    });
+    await waitForCondition(
+      async () => {
+        if ((await this.queryAppState(appId)) <= APP_STATE.NOT_RUNNING) {
+          return true;
+        }
+        currentPids = await this.adb.listAppProcessIds(appId);
+        if (_.isEmpty(currentPids) || _.isEmpty(_.intersection(pids, currentPids))) {
+          this.log.info(
+            `The application '${appId}' was reported running, ` +
+              `although all process ids belonging to it have been changed: ` +
+              `(${JSON.stringify(pids)} -> ${JSON.stringify(currentPids)}). ` +
+              `Assuming the termination was successful.`,
+          );
+          return true;
+        }
+        return false;
+      },
+      {
+        waitMs: timeout,
+        intervalMs: 100,
+      },
+    );
   } catch {
     if (!_.isEmpty(currentPids) && !_.isEmpty(_.difference(pids, currentPids))) {
       this.log.warn(
         `Some of processes belonging to the '${appId}' applcation are still running ` +
-        `after ${timeout}ms (${JSON.stringify(pids)} -> ${JSON.stringify(currentPids)})`
+          `after ${timeout}ms (${JSON.stringify(pids)} -> ${JSON.stringify(currentPids)})`,
       );
     }
     throw this.log.errorWithException(`'${appId}' is still running after ${timeout}ms timeout`);
@@ -340,10 +343,7 @@ export async function getCurrentPackage(this: AndroidDriver): Promise<string> {
  * A negative value means to not restore the app after putting it to background.
  * @returns `true` if the app was successfully restored, or the result of `startApp` if restoration was attempted.
  */
-export async function background(
-  this: AndroidDriver,
-  seconds: number,
-): Promise<string | true> {
+export async function background(this: AndroidDriver, seconds: number): Promise<string | true> {
   if (seconds < 0) {
     // if user passes in a negative seconds value, interpret that as the instruction
     // to not bring the app back at all
@@ -636,4 +636,3 @@ export async function getThirdPartyPackages(
     return [];
   }
 }
-

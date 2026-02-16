@@ -404,9 +404,7 @@ async function initDeviceStreamingProc(
     });
   } catch (e) {
     throw log.errorWithException(
-      `Cannot start the screen streaming process. Original error: ${
-        (e as Error).message
-      }`,
+      `Cannot start the screen streaming process. Original error: ${(e as Error).message}`,
     );
   } finally {
     deviceStreaming.stderr.removeListener('data', errorsListener);
@@ -491,9 +489,7 @@ async function initGstreamerPipeline(
   } catch (e) {
     didFail = true;
     throw log.errorWithException(
-      `Cannot start the screen streaming pipeline. Original error: ${
-        (e as Error).message
-      }`,
+      `Cannot start the screen streaming pipeline. Original error: ${(e as Error).message}`,
     );
   } finally {
     if (!logPipelineDetails || didFail) {
@@ -517,4 +513,3 @@ function extractRemoteAddress(req: http.IncomingMessage): string {
 }
 
 // #endregion
-

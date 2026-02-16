@@ -1,12 +1,12 @@
-import type { MethodMap } from '@appium/types';
-import type { AndroidDriver } from './driver';
+import type {MethodMap} from '@appium/types';
+import type {AndroidDriver} from './driver';
 
 export const newMethodMap = {
   '/session/:sessionId/timeouts/implicit_wait': {
     POST: {
       command: 'implicitWait',
       payloadParams: {required: ['ms']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/ime/available_engines': {GET: {command: 'availableIMEEngines'}},
@@ -22,52 +22,52 @@ export const newMethodMap = {
   '/session/:sessionId/window/:windowhandle/size': {
     GET: {
       command: 'getWindowSize',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/keys': {
     POST: {
       command: 'keys',
       payloadParams: {required: ['value']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/element/:elementId/location': {
     GET: {
       command: 'getLocation',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/element/:elementId/location_in_view': {
     GET: {
       command: 'getLocationInView',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/element/:elementId/size': {
     GET: {
       command: 'getSize',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/device/lock': {
     POST: {
       command: 'lock',
       payloadParams: {optional: ['seconds']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/unlock': {
     POST: {
       command: 'unlock',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/device/is_locked': {
     POST: {
       command: 'isLocked',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/start_recording_screen': {
     POST: {
@@ -84,8 +84,8 @@ export const newMethodMap = {
   '/session/:sessionId/appium/performanceData/types': {
     POST: {
       command: 'getPerformanceDataTypes',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/getPerformanceData': {
     POST: {
@@ -94,134 +94,134 @@ export const newMethodMap = {
         required: ['packageName', 'dataType'],
         optional: ['dataReadTimeout'],
       },
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/press_keycode': {
     POST: {
       command: 'pressKeyCode',
       payloadParams: {required: ['keycode'], optional: ['metastate', 'flags']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/long_press_keycode': {
     POST: {
       command: 'longPressKeyCode',
       payloadParams: {required: ['keycode'], optional: ['metastate', 'flags']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/finger_print': {
     POST: {
       command: 'fingerprint',
       payloadParams: {required: ['fingerprintId']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/send_sms': {
     POST: {
       command: 'sendSMS',
       payloadParams: {required: ['phoneNumber', 'message']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/gsm_call': {
     POST: {
       command: 'gsmCall',
       payloadParams: {required: ['phoneNumber', 'action']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/gsm_signal': {
     POST: {
       command: 'gsmSignal',
       payloadParams: {required: ['signalStrength']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/gsm_voice': {
     POST: {
       command: 'gsmVoice',
       payloadParams: {required: ['state']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/power_capacity': {
     POST: {
       command: 'powerCapacity',
       payloadParams: {required: ['percent']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/power_ac': {
     POST: {
       command: 'powerAC',
       payloadParams: {required: ['state']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/network_speed': {
     POST: {
       command: 'networkSpeed',
       payloadParams: {required: ['netspeed']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/keyevent': {
     POST: {
       command: 'keyevent',
       payloadParams: {required: ['keycode'], optional: ['metastate']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/current_activity': {
     GET: {
       command: 'getCurrentActivity',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/device/current_package': {
     GET: {
       command: 'getCurrentPackage',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/device/app_state': {
     POST: {
       command: 'queryAppState',
       payloadParams: {required: [['appId'], ['bundleId']]},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/toggle_airplane_mode': {
     POST: {
       command: 'toggleFlightMode',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/device/toggle_data': {
     POST: {
       command: 'toggleData',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/device/toggle_wifi': {
     POST: {
       command: 'toggleWiFi',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/device/toggle_location_services': {
     POST: {
       command: 'toggleLocationServices',
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/open_notifications': {
     POST: {
       command: 'openNotifications',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/device/start_activity': {
     POST: {
@@ -238,58 +238,58 @@ export const newMethodMap = {
           'dontStopAppOnReset',
         ],
       },
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/system_bars': {
     GET: {
       command: 'getSystemBars',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/device/display_density': {
     GET: {
       command: 'getDisplayDensity',
-      deprecated: true
-    }
+      deprecated: true,
+    },
   },
   '/session/:sessionId/appium/app/background': {
     POST: {
       command: 'background',
       payloadParams: {required: ['seconds']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/app/strings': {
     POST: {
       command: 'getStrings',
       payloadParams: {optional: ['language', 'stringFile']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/element/:elementId/value': {
     POST: {
       command: 'setValueImmediate',
       payloadParams: {required: ['text']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/element/:elementId/replace_value': {
     POST: {
       command: 'replaceValue',
       payloadParams: {required: ['text']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/network_connection': {
     GET: {
       command: 'getNetworkConnection',
-      deprecated: true
+      deprecated: true,
     },
     POST: {
       command: 'setNetworkConnection',
       payloadParams: {unwrap: 'parameters', required: ['type']},
-      deprecated: true
+      deprecated: true,
     },
   },
   '/session/:sessionId/location': {
@@ -304,4 +304,3 @@ export const newMethodMap = {
     },
   },
 } as const satisfies MethodMap<AndroidDriver>;
-

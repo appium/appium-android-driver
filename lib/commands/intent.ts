@@ -125,10 +125,7 @@ export async function mobileStartActivity(
   extras?: string[][],
   flags?: string,
 ): Promise<string> {
-  const cmd = [
-    'am',
-    'start-activity',
-  ];
+  const cmd = ['am', 'start-activity'];
   if (!_.isNil(user)) {
     cmd.push('--user', String(user));
   }
@@ -147,18 +144,20 @@ export async function mobileStartActivity(
   if (!_.isNil(display)) {
     cmd.push('--display', String(display));
   }
-  cmd.push(...parseIntentSpec({
-    intent,
-    action,
-    package: pkg,
-    uri,
-    mimeType,
-    identifier,
-    component,
-    categories,
-    extras,
-    flags,
-  }));
+  cmd.push(
+    ...parseIntentSpec({
+      intent,
+      action,
+      package: pkg,
+      uri,
+      mimeType,
+      identifier,
+      component,
+      categories,
+      extras,
+      flags,
+    }),
+  );
   return await this.adb.shell(cmd);
 }
 
@@ -210,18 +209,20 @@ export async function mobileBroadcast(
   if (allowBackgroundActivityStarts) {
     cmd.push('--allow-background-activity-starts');
   }
-  cmd.push(...parseIntentSpec({
-    intent,
-    action,
-    package: pkg,
-    uri,
-    mimeType,
-    identifier,
-    component,
-    categories,
-    extras,
-    flags,
-  }));
+  cmd.push(
+    ...parseIntentSpec({
+      intent,
+      action,
+      package: pkg,
+      uri,
+      mimeType,
+      identifier,
+      component,
+      categories,
+      extras,
+      flags,
+    }),
+  );
   return await this.adb.shell(cmd);
 }
 
@@ -267,18 +268,20 @@ export async function mobileStartService(
   if (!_.isNil(user)) {
     cmd.push('--user', String(user));
   }
-  cmd.push(...parseIntentSpec({
-    intent,
-    action,
-    package: pkg,
-    uri,
-    mimeType,
-    identifier,
-    component,
-    categories,
-    extras,
-    flags,
-  }));
+  cmd.push(
+    ...parseIntentSpec({
+      intent,
+      action,
+      package: pkg,
+      uri,
+      mimeType,
+      identifier,
+      component,
+      categories,
+      extras,
+      flags,
+    }),
+  );
   return await this.adb.shell(cmd);
 }
 
@@ -316,25 +319,24 @@ export async function mobileStopService(
   extras?: string[][],
   flags?: string,
 ): Promise<string> {
-  const cmd = [
-    'am',
-    'stop-service',
-  ];
+  const cmd = ['am', 'stop-service'];
   if (!_.isNil(user)) {
     cmd.push('--user', String(user));
   }
-  cmd.push(...parseIntentSpec({
-    intent,
-    action,
-    package: pkg,
-    uri,
-    mimeType,
-    identifier,
-    component,
-    categories,
-    extras,
-    flags,
-  }));
+  cmd.push(
+    ...parseIntentSpec({
+      intent,
+      action,
+      package: pkg,
+      uri,
+      mimeType,
+      identifier,
+      component,
+      categories,
+      extras,
+      flags,
+    }),
+  );
   try {
     return await this.adb.shell(cmd);
   } catch (e) {
@@ -419,4 +421,3 @@ function parseIntentSpec(opts: IntentOpts = {}): string[] {
 }
 
 // #endregion
-

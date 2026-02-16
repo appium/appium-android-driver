@@ -6,7 +6,11 @@ import path from 'node:path';
 import {exec} from 'teen_process';
 import type {AndroidDriver} from '../driver';
 import type {ADB} from 'appium-adb';
-import type {StartScreenRecordingOpts, StopScreenRecordingOpts, ScreenRecordingProperties} from './types';
+import type {
+  StartScreenRecordingOpts,
+  StopScreenRecordingOpts,
+  ScreenRecordingProperties,
+} from './types';
 
 const RETRY_PAUSE = 300;
 const RETRY_TIMEOUT = 5000;
@@ -135,10 +139,7 @@ export async function stopRecordingScreen(
 
   if (props.recordingProcess?.isRunning) {
     try {
-      await props.recordingProcess.stop(
-        'SIGINT',
-        PROCESS_SHUTDOWN_TIMEOUT,
-      );
+      await props.recordingProcess.stop('SIGINT', PROCESS_SHUTDOWN_TIMEOUT);
     } catch {
       throw this.log.errorWithException(
         `Unable to stop screen recording within ${PROCESS_SHUTDOWN_TIMEOUT}ms`,
@@ -160,7 +161,7 @@ export async function stopRecordingScreen(
     for (const pathOnDevice of props.records) {
       const relativePath = path.resolve(tmpRoot, path.posix.basename(pathOnDevice));
       localRecords.push(relativePath);
-      await this.adb.pull(pathOnDevice, relativePath, { timeout: ADB_PULL_TIMEOUT });
+      await this.adb.pull(pathOnDevice, relativePath, {timeout: ADB_PULL_TIMEOUT});
       await this.adb.rimraf(pathOnDevice);
     }
     let resultFilePath = _.last(localRecords) as string;
@@ -295,10 +296,7 @@ async function scheduleScreenRecord(
   recordingProperties.recordingProcess = recordingProc;
 }
 
-async function mergeScreenRecords(
-  this: AndroidDriver,
-  mediaFiles: string[],
-): Promise<string> {
+async function mergeScreenRecords(this: AndroidDriver, mediaFiles: string[]): Promise<string> {
   try {
     await fs.which(FFMPEG_BINARY);
   } catch {
@@ -330,17 +328,17 @@ async function terminateBackgroundScreenRecording(adb: ADB, force = true): Promi
 
   try {
     await adb.shell(['kill', force ? '-15' : '-2', ...screenrecordPids.map(String)]);
-    await waitForCondition(async () => _.isEmpty(await adb.getProcessIdsByName(SCREENRECORD_BINARY)), {
-      waitMs: PROCESS_SHUTDOWN_TIMEOUT,
-      intervalMs: 500,
-    });
+    await waitForCondition(
+      async () => _.isEmpty(await adb.getProcessIdsByName(SCREENRECORD_BINARY)),
+      {
+        waitMs: PROCESS_SHUTDOWN_TIMEOUT,
+        intervalMs: 500,
+      },
+    );
     return true;
   } catch (err) {
-    throw new Error(
-      `Unable to stop the background screen recording: ${(err as Error).message}`,
-    );
+    throw new Error(`Unable to stop the background screen recording: ${(err as Error).message}`);
   }
 }
 
 // #endregion
-

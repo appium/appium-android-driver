@@ -28,10 +28,7 @@ export async function getAttribute(
  * @returns Promise that resolves when the click is performed.
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
-export async function click(
-  this: AndroidDriver,
-  elementId: string,
-): Promise<void> {
+export async function click(this: AndroidDriver, elementId: string): Promise<void> {
   throw new errors.NotImplementedError('Not implemented');
 }
 
@@ -42,10 +39,7 @@ export async function click(
  * @returns Promise that resolves to the element's text content.
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
-export async function getText(
-  this: AndroidDriver,
-  elementId: string,
-): Promise<string> {
+export async function getText(this: AndroidDriver, elementId: string): Promise<string> {
   throw new errors.NotImplementedError('Not implemented');
 }
 
@@ -56,10 +50,7 @@ export async function getText(
  * @returns Promise that resolves to the element's position (x, y coordinates).
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
-export async function getLocation(
-  this: AndroidDriver,
-  elementId: string,
-): Promise<Position> {
+export async function getLocation(this: AndroidDriver, elementId: string): Promise<Position> {
   throw new errors.NotImplementedError('Not implemented');
 }
 
@@ -70,10 +61,7 @@ export async function getLocation(
  * @returns Promise that resolves to the element's size (width, height).
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
-export async function getSize(
-  this: AndroidDriver,
-  elementId: string,
-): Promise<Size> {
+export async function getSize(this: AndroidDriver, elementId: string): Promise<Size> {
   throw new errors.NotImplementedError('Not implemented');
 }
 
@@ -83,11 +71,8 @@ export async function getSize(
  * @param elementId The element identifier.
  * @returns Promise that resolves to the element's class name.
  */
-export async function getName(
-  this: AndroidDriver,
-  elementId: string,
-): Promise<string> {
-  return await this.getAttribute('className', elementId) as string;
+export async function getName(this: AndroidDriver, elementId: string): Promise<string> {
+  return (await this.getAttribute('className', elementId)) as string;
 }
 
 /**
@@ -96,10 +81,7 @@ export async function getName(
  * @param elementId The element identifier.
  * @returns Promise that resolves to `true` if the element is displayed, `false` otherwise.
  */
-export async function elementDisplayed(
-  this: AndroidDriver,
-  elementId: string,
-): Promise<boolean> {
+export async function elementDisplayed(this: AndroidDriver, elementId: string): Promise<boolean> {
   return (await this.getAttribute('displayed', elementId)) === 'true';
 }
 
@@ -109,10 +91,7 @@ export async function elementDisplayed(
  * @param elementId The element identifier.
  * @returns Promise that resolves to `true` if the element is enabled, `false` otherwise.
  */
-export async function elementEnabled(
-  this: AndroidDriver,
-  elementId: string,
-): Promise<boolean> {
+export async function elementEnabled(this: AndroidDriver, elementId: string): Promise<boolean> {
   return (await this.getAttribute('enabled', elementId)) === 'true';
 }
 
@@ -122,10 +101,7 @@ export async function elementEnabled(
  * @param elementId The element identifier.
  * @returns Promise that resolves to `true` if the element is selected, `false` otherwise.
  */
-export async function elementSelected(
-  this: AndroidDriver,
-  elementId: string,
-): Promise<boolean> {
+export async function elementSelected(this: AndroidDriver, elementId: string): Promise<boolean> {
   return (await this.getAttribute('selected', elementId)) === 'true';
 }
 
@@ -225,10 +201,6 @@ export async function setValueImmediate(
  * @param elementId The element identifier.
  * @returns Promise that resolves to the element's position (x, y coordinates).
  */
-export async function getLocationInView(
-  this: AndroidDriver,
-  elementId: string,
-): Promise<Position> {
+export async function getLocationInView(this: AndroidDriver, elementId: string): Promise<Position> {
   return await this.getLocation(elementId);
 }
-

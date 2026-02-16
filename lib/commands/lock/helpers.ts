@@ -331,7 +331,10 @@ export function getPatternActions(
  * @param timeoutMs - Optional timeout in milliseconds (default: 2000)
  * @throws {Error} If the device fails to unlock within the timeout
  */
-export async function verifyUnlock(this: AndroidDriver, timeoutMs: number | null = null): Promise<void> {
+export async function verifyUnlock(
+  this: AndroidDriver,
+  timeoutMs: number | null = null,
+): Promise<void> {
   try {
     await waitForCondition(async () => !(await this.adb.isScreenLocked()), {
       waitMs: timeoutMs ?? 2000,

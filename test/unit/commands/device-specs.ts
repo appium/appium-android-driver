@@ -6,7 +6,7 @@ import {prepareAvdArgs, prepareEmulator} from '../../../lib/commands/device/util
 import * as deviceUtils from '../../../lib/commands/device/utils';
 import * as geolocationHelpers from '../../../lib/commands/geolocation';
 import * as keyboardHelpers from '../../../lib/commands/keyboard';
-import { expect, use } from 'chai';
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -250,7 +250,9 @@ describe('Device Helpers', function () {
         platformVersion: '1234567890',
       } as any;
       driver.adb = await ADB.createADB();
-      await expect(driver.getDeviceInfoFromCaps()).to.be.rejectedWith('Unable to find an active device or emulator with OS 1234567890');
+      await expect(driver.getDeviceInfoFromCaps()).to.be.rejectedWith(
+        'Unable to find an active device or emulator with OS 1234567890',
+      );
     });
     it('should get deviceId and emPort if platformVersion is found and unique', async function () {
       const driver = new AndroidDriver();
@@ -308,7 +310,6 @@ describe('Device Helpers', function () {
       driver.opts = {
         udid: 'foomulator',
         adbListenAllNetwork: true,
-
       } as any;
       driver.adb = await ADB.createADB();
       await expect(driver.getDeviceInfoFromCaps()).to.be.rejected;
@@ -364,23 +365,25 @@ describe('Device Helpers', function () {
         allowOfflineDevices: true,
       } as any;
       await driver.createADB();
-      expect((ADB.createADB as sinon.SinonStub).calledWithExactly({
-        adbPort: '222',
-        suppressKillServer: true,
-        remoteAdbHost: 'remote_host',
-        clearDeviceLogsOnStart: true,
-        adbExecTimeout: 50,
-        useKeystore: true,
-        keystorePath: '/some/path',
-        keystorePassword: '123456',
-        keyAlias: 'keyAlias',
-        keyPassword: 'keyPassword',
-        remoteAppsCacheLimit: 5,
-        buildToolsVersion: '1.2.3',
-        allowOfflineDevices: true,
-        allowDelayAdb: undefined,
-        listenAllNetwork: undefined,
-      })).to.be.true;
+      expect(
+        (ADB.createADB as sinon.SinonStub).calledWithExactly({
+          adbPort: '222',
+          suppressKillServer: true,
+          remoteAdbHost: 'remote_host',
+          clearDeviceLogsOnStart: true,
+          adbExecTimeout: 50,
+          useKeystore: true,
+          keystorePath: '/some/path',
+          keystorePassword: '123456',
+          keyAlias: 'keyAlias',
+          keyPassword: 'keyPassword',
+          remoteAppsCacheLimit: 5,
+          buildToolsVersion: '1.2.3',
+          allowOfflineDevices: true,
+          allowDelayAdb: undefined,
+          listenAllNetwork: undefined,
+        }),
+      ).to.be.true;
       expect(curDeviceId).to.equal('111222');
       expect(emulatorPort).to.equal(111);
     });
@@ -401,7 +404,10 @@ describe('Device Helpers', function () {
         driver.opts = {
           adbListenAllNetwork: true,
         } as any;
-        sandbox.stub(driver, 'assertFeatureEnabled').withArgs('adb_listen_all_network').onFirstCall();
+        sandbox
+          .stub(driver, 'assertFeatureEnabled')
+          .withArgs('adb_listen_all_network')
+          .onFirstCall();
         await driver.createADB();
       });
     });

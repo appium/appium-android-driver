@@ -57,9 +57,7 @@ export async function mobileChangePermissions(
   target: PermissionTarget = PERMISSION_TARGET.PM,
 ): Promise<void> {
   appPackage ??= this.opts.appPackage;
-  action ??= _.toLower(target) === PERMISSION_TARGET.APPOPS
-    ? APPOPS_ACTION.ALLOW
-    : PM_ACTION.GRANT;
+  action ??= _.toLower(target) === PERMISSION_TARGET.APPOPS ? APPOPS_ACTION.ALLOW : PM_ACTION.GRANT;
   if (_.isNil(permissions)) {
     throw new errors.InvalidArgumentError(`'permissions' argument is required`);
   }
@@ -69,7 +67,11 @@ export async function mobileChangePermissions(
 
   switch (_.toLower(target)) {
     case PERMISSION_TARGET.PM:
-      return await changePermissionsViaPm.bind(this)(permissions, appPackage, _.toLower(action) as PMAction);
+      return await changePermissionsViaPm.bind(this)(
+        permissions,
+        appPackage,
+        _.toLower(action) as PMAction,
+      );
     case PERMISSION_TARGET.APPOPS:
       this.assertFeatureEnabled(ADB_SHELL_FEATURE);
       return await changePermissionsViaAppops.bind(this)(
@@ -185,8 +187,7 @@ async function changePermissionsViaAppops(
 
 // #endregion
 
-type PMAction = typeof PM_ACTION[keyof typeof PM_ACTION];
-type AppOpsAction = typeof APPOPS_ACTION[keyof typeof APPOPS_ACTION];
-type PermissionTarget = typeof PERMISSION_TARGET[keyof typeof PERMISSION_TARGET];
-type PermissionsType = typeof PERMISSIONS_TYPE[keyof typeof PERMISSIONS_TYPE];
-
+type PMAction = (typeof PM_ACTION)[keyof typeof PM_ACTION];
+type AppOpsAction = (typeof APPOPS_ACTION)[keyof typeof APPOPS_ACTION];
+type PermissionTarget = (typeof PERMISSION_TARGET)[keyof typeof PERMISSION_TARGET];
+type PermissionsType = (typeof PERMISSIONS_TYPE)[keyof typeof PERMISSIONS_TYPE];

@@ -127,7 +127,10 @@ export async function unlockWithOptions(
       credentialType: toCredentialType(unlockType as UnlockType),
     });
   } else {
-    const unlockMethodMap: Record<string, (this: AndroidDriver, caps: AndroidDriverCaps) => Promise<void>> = {
+    const unlockMethodMap: Record<
+      string,
+      (this: AndroidDriver, caps: AndroidDriverCaps) => Promise<void>
+    > = {
       [PIN_UNLOCK]: pinUnlock,
       [PIN_UNLOCK_KEY_EVENT]: pinUnlockWithKeyEvent,
       [PASSWORD_UNLOCK]: passwordUnlock,
@@ -144,4 +147,3 @@ export async function unlockWithOptions(
 }
 
 // #endregion
-

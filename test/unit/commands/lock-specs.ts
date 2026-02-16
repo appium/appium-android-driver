@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
-import { AndroidDriver } from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver';
 import {
   validateUnlockCapabilities,
   encodePassword,
@@ -17,7 +17,7 @@ import {
 import {unlockWithOptions} from '../../../lib/commands/lock/exports';
 import * as unlockHelpers from '../../../lib/commands/lock/helpers';
 import * as asyncboxHelpers from 'asyncbox';
-import { expect, use } from 'chai'; // expect is used
+import {expect, use} from 'chai'; // expect is used
 import chaiAsPromised from 'chai-as-promised';
 
 use(chaiAsPromised);
@@ -166,7 +166,7 @@ describe('Lock', function () {
       await expect(fingerprintUnlock.bind(driver)(caps)).to.be.fulfilled;
     });
   });
-  describe('pinUnlock', function() {
+  describe('pinUnlock', function () {
     const caps = {unlockKey: '13579'};
     const keys = ['1', '3', '5', '7', '9'];
     const els = [
@@ -187,16 +187,15 @@ describe('Lock', function () {
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(unlockHelpers, 'stringKeyToArr').returns(keys);
       sandbox.stub(driver.adb, 'getApiLevel').returns(21);
-      sandbox.stub(driver, 'findElOrEls')
+      sandbox
+        .stub(driver, 'findElOrEls')
         .withArgs('id', 'com.android.systemui:id/digit_text', true)
         .returns(els);
       sandbox.stub(driver.adb, 'isScreenLocked').returns(true);
       sandbox.stub(driver.adb, 'keyevent').withArgs(66).onFirstCall();
       const getAttributeStub = sandbox.stub(driver, 'getAttribute');
       for (const e of els) {
-        getAttributeStub
-          .withArgs('text', e.ELEMENT)
-          .returns(e.ELEMENT.toString());
+        getAttributeStub.withArgs('text', e.ELEMENT).returns(e.ELEMENT.toString());
       }
       sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME);
       const clickStub = sandbox.stub(driver, 'click');
@@ -210,14 +209,16 @@ describe('Lock', function () {
       expect(clickStub.getCall(4).args[0]).to.equal(9);
     });
   });
-  describe('passwordUnlock', function() {
+  describe('passwordUnlock', function () {
     it('should be able to unlock device using password', async function () {
       const caps = {unlockKey: 'psswrd'} as any;
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
-      sandbox.stub(unlockHelpers, 'encodePassword')
+      sandbox
+        .stub(unlockHelpers, 'encodePassword')
         .withArgs(caps.unlockKey)
         .returns(caps.unlockKey);
-      sandbox.stub(driver.adb, 'shell')
+      sandbox
+        .stub(driver.adb, 'shell')
         .withArgs(['input', 'text', caps.unlockKey])
         .withArgs(['input', 'keyevent', String(KEYCODE_NUMPAD_ENTER)]);
       sandbox.stub(asyncboxHelpers, 'sleep');
@@ -262,7 +263,7 @@ describe('Lock', function () {
           type: 'pointer',
           id: 'patternUnlock',
           parameters: {
-            pointerType: 'touch'
+            pointerType: 'touch',
           },
           actions: [
             {type: 'pointerMove', duration: 1000, x: 1, y: 1},
@@ -275,9 +276,9 @@ describe('Lock', function () {
             {type: 'pointerMove', duration: 1000, x: 1, y: 3},
             {type: 'pointerMove', duration: 1000, x: 2, y: 3},
             {type: 'pointerMove', duration: 1000, x: 3, y: 3},
-            {type: 'pointerUp', button: 0}
-          ]
-        }
+            {type: 'pointerUp', button: 0},
+          ],
+        },
       ]);
     });
     it('should verify pattern gestures moves to non consecutives pins', function () {
@@ -288,7 +289,7 @@ describe('Lock', function () {
           type: 'pointer',
           id: 'patternUnlock',
           parameters: {
-            pointerType: 'touch'
+            pointerType: 'touch',
           },
           actions: [
             {type: 'pointerMove', duration: 1000, x: 1, y: 3},
@@ -301,9 +302,9 @@ describe('Lock', function () {
             {type: 'pointerMove', duration: 1000, x: 1, y: 1},
             {type: 'pointerMove', duration: 1000, x: 1, y: 2},
             {type: 'pointerMove', duration: 1000, x: 3, y: 1},
-            {type: 'pointerUp', button: 0}
-          ]
-        }
+            {type: 'pointerUp', button: 0},
+          ],
+        },
       ]);
     });
   });
@@ -324,14 +325,16 @@ describe('Lock', function () {
     });
     it('should be able to unlock device using pattern (API level >= 21)', async function () {
       sandbox.stub(driver.adb, 'getApiLevel').returns(21);
-      sandbox.stub(driver, 'findElOrEls')
+      sandbox
+        .stub(driver, 'findElOrEls')
         .withArgs('id', 'com.android.systemui:id/lockPatternView', false)
         .returns(el);
       await patternUnlock.bind(driver)(caps);
     });
     it('should be able to unlock device using pattern (API level < 21)', async function () {
       sandbox.stub(driver.adb, 'getApiLevel').returns(20);
-      sandbox.stub(driver, 'findElOrEls')
+      sandbox
+        .stub(driver, 'findElOrEls')
         .withArgs('id', 'com.android.keyguard:id/lockPatternView', false)
         .returns(el);
       await patternUnlock.bind(driver)(caps);
