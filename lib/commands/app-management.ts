@@ -5,7 +5,12 @@ import {EOL} from 'node:os';
 import B from 'bluebird';
 import type {AndroidDriver, AndroidDriverOpts} from '../driver';
 import type {AppState, TerminateAppOpts} from './types';
-import type {UninstallOptions, InstallOptions, StartAppOptions} from 'appium-adb';
+import type {
+  UninstallOptions,
+  InstallOptions,
+  StartAppOptions,
+  ListInstalledPackagesOptions,
+} from 'appium-adb';
 
 const APP_EXTENSIONS = ['.apk', '.apks'] as const;
 const PACKAGE_INSTALL_TIMEOUT_MS = 90000;
@@ -59,6 +64,26 @@ export async function mobileIsAppInstalled(
     _opts.user = `${user}`;
   }
   return await this.isAppInstalled(appId, _opts);
+}
+
+/**
+ * Lists all installed packages on the Android device, optionally filtered by user.
+ *
+ * @param user - Optional user ID or user index to filter packages for a specific user
+ * @returns A promise that resolves to an array of package names (strings) of installed applications
+ * @throws {Error} If there is an error while retrieving the package list
+ *
+ */
+export async function mobileListApps(
+  this: AndroidDriver,
+  user?: string | number,
+): Promise<string[]> {
+  const _opts: ListInstalledPackagesOptions = {};
+  if (util.hasValue(user)) {
+    _opts.user = `${user}`;
+  }
+  const _packages = await this.adb.listInstalledPackages(_opts);
+  return _packages.map((pkg) => pkg.appPackage);
 }
 
 /**

@@ -127,6 +127,12 @@ export const executeMethodMap = {
       optional: ['user'],
     },
   },
+  'mobile: listApps': {
+    command: 'mobileListApps',
+    params: {
+      optional: ['user'],
+    },
+  },
   'mobile: queryAppState': {
     command: 'queryAppState',
     params: {
