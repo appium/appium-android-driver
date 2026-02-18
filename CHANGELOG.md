@@ -1,3 +1,9 @@
+## [12.7.0](https://github.com/appium/appium-android-driver/compare/v12.6.7...v12.7.0) (2026-02-18)
+
+### Features
+
+* add mobile:listApps ([#1058](https://github.com/appium/appium-android-driver/issues/1058)) ([76ddea5](https://github.com/appium/appium-android-driver/commit/76ddea517f21cbe887c73868cd6afe87214261db))
+
 ## [12.6.7](https://github.com/appium/appium-android-driver/compare/v12.6.6...v12.6.7) (2026-02-16)
 
 ### Bug Fixes
