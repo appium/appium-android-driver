@@ -59,11 +59,11 @@ export async function mobileIsAppInstalled(
   appId: string,
   user?: string | number,
 ): Promise<boolean> {
-  const _opts: IsAppInstalledOptions = {};
+  const opts: IsAppInstalledOptions = {};
   if (util.hasValue(user)) {
-    _opts.user = `${user}`;
+    opts.user = `${user}`;
   }
-  return await this.isAppInstalled(appId, _opts);
+  return await this.isAppInstalled(appId, opts);
 }
 
 /**
@@ -79,11 +79,11 @@ export async function mobileListApps(
   this: AndroidDriver,
   user?: string | number,
 ): Promise<string[]> {
-  const _opts: ListInstalledPackagesOptions = {};
+  const opts: ListInstalledPackagesOptions = {};
   if (util.hasValue(user)) {
-    _opts.user = `${user}`;
+    opts.user = `${user}`;
   }
-  return (await this.adb.listInstalledPackages(_opts)).map((pkg) => pkg.appPackage);
+  return (await this.adb.listInstalledPackages(opts)).map((pkg) => pkg.appPackage);
 }
 
 /**
