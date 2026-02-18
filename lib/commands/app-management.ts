@@ -83,8 +83,7 @@ export async function mobileListApps(
   if (util.hasValue(user)) {
     _opts.user = `${user}`;
   }
-  const _packages = await this.adb.listInstalledPackages(_opts);
-  return _packages.map((pkg) => pkg.appPackage);
+  return (await this.adb.listInstalledPackages(_opts)).map((pkg) => pkg.appPackage);
 }
 
 /**
