@@ -81,6 +81,7 @@ import {
   mobileIsAppInstalled,
   mobileRemoveApp,
   mobileTerminateApp,
+  mobileListApps,
   terminateApp,
   removeApp,
   activateApp,
@@ -389,6 +390,7 @@ class AndroidDriver
   mobileIsAppInstalled = mobileIsAppInstalled;
   mobileRemoveApp = mobileRemoveApp;
   mobileTerminateApp = mobileTerminateApp;
+  mobileListApps = mobileListApps;
   terminateApp = terminateApp;
   removeApp = removeApp;
   activateApp = activateApp;
