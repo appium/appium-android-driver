@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {EOL} from 'node:os';
 import B from 'bluebird';
 import type {AndroidDriver, AndroidDriverOpts} from '../driver';
-import type {AppState, TerminateAppOpts} from './types';
+import type {AppState, IsAppInstalledOptions, ListedAppMap, TerminateAppOpts} from './types';
 import type {
   UninstallOptions,
   InstallOptions,
@@ -22,19 +22,6 @@ export const APP_STATE = {
   RUNNING_IN_BACKGROUND: 3,
   RUNNING_IN_FOREGROUND: 4,
 } as const;
-
-export interface IsAppInstalledOptions {
-  /**
-   * The user ID for which to check the package installation.
-   * The `current` user id is used by default.
-   */
-  user?: string;
-}
-
-interface ListedAppInfo {
-  packageName: string;
-  versionCode: string;
-}
 
 /**
  * Checks whether the specified application is installed on the device.
@@ -83,7 +70,7 @@ export async function mobileIsAppInstalled(
 export async function mobileListApps(
   this: AndroidDriver,
   user?: string | number,
-): Promise<Record<string, ListedAppInfo>> {
+): Promise<ListedAppMap[]> {
   const opts: ListInstalledPackagesOptions = {};
   if (util.hasValue(user)) {
     opts.user = `${user}`;
