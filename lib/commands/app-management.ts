@@ -61,6 +61,7 @@ export async function mobileIsAppInstalled(
 /**
  * Lists all installed packages on the Android device, optionally filtered by user.
  * Lower than API Level 26 would raise an exception.
+ * API Level 26 and 27 will return empty versionCode.
  *
  * @param user - Optional user ID or user index to filter packages for a specific user
  * @returns A promise that resolves to a list of mapped package details
