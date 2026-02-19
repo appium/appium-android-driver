@@ -92,7 +92,7 @@ export async function mobileListApps(
   }
   return (await this.adb.listInstalledPackages(opts)).map((pkg) => {
     const packageName = pkg.appPackage;
-    const versionCode = util.hasValue(pkg.versionCode) ? `${pkg.versionCode}` : '';
+    const versionCode = pkg.versionCode ? pkg.versionCode : '';
     return {
       [packageName]: {
         packageName,
