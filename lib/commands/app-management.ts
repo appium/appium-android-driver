@@ -31,12 +31,10 @@ export interface IsAppInstalledOptions {
   user?: string;
 }
 
-export interface ListedAppInfo {
+interface ListedAppInfo {
   packageName: string;
   versionCode: string;
 }
-
-export type ListedAppMap = Record<string, ListedAppInfo>;
 
 /**
  * Checks whether the specified application is installed on the device.
@@ -85,7 +83,7 @@ export async function mobileIsAppInstalled(
 export async function mobileListApps(
   this: AndroidDriver,
   user?: string | number,
-): Promise<ListedAppMap[]> {
+): Promise<Record<string, ListedAppInfo>> {
   const opts: ListInstalledPackagesOptions = {};
   if (util.hasValue(user)) {
     opts.user = `${user}`;
