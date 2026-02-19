@@ -31,6 +31,13 @@ export interface IsAppInstalledOptions {
   user?: string;
 }
 
+export interface ListedAppInfo {
+  packageName: string;
+  versionCode: string;
+}
+
+export type ListedAppMap = Record<string, ListedAppInfo>;
+
 /**
  * Checks whether the specified application is installed on the device.
  *
@@ -71,19 +78,28 @@ export async function mobileIsAppInstalled(
  * Lower than API Level 26 would raise an exception.
  *
  * @param user - Optional user ID or user index to filter packages for a specific user
- * @returns A promise that resolves to an array of package names (strings) of installed applications
+ * @returns A promise that resolves to a list of mapped package details
  * @throws {Error} If there is an error while retrieving the package list
  *
  */
 export async function mobileListApps(
   this: AndroidDriver,
   user?: string | number,
-): Promise<string[]> {
+): Promise<ListedAppMap[]> {
   const opts: ListInstalledPackagesOptions = {};
   if (util.hasValue(user)) {
     opts.user = `${user}`;
   }
-  return (await this.adb.listInstalledPackages(opts)).map((pkg) => pkg.appPackage);
+  return (await this.adb.listInstalledPackages(opts)).map((pkg) => {
+    const packageName = pkg.appPackage;
+    const versionCode = util.hasValue(pkg.versionCode) ? `${pkg.versionCode}` : '';
+    return {
+      [packageName]: {
+        packageName,
+        versionCode,
+      },
+    };
+  });
 }
 
 /**

@@ -79,22 +79,35 @@ describe('App Management', function () {
         {appPackage: 'pkg2', versionCode: '10'},
       ];
       sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({}).returns(packages);
-      expect(await driver.mobileListApps()).to.deep.equal(['pkg1', 'pkg2']);
+      expect(await driver.mobileListApps()).to.deep.equal([
+        {pkg1: {packageName: 'pkg1', versionCode: '10'}},
+        {pkg2: {packageName: 'pkg2', versionCode: '10'}},
+      ]);
     });
     it('should return list of installed packages for specific user', async function () {
-      const packages = [{appPackage: 'pkg1'}, {appPackage: 'pkg2'}];
+      const packages = [
+        {appPackage: 'pkg1', versionCode: '11'},
+        {appPackage: 'pkg2', versionCode: '12'},
+      ];
       sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).returns(packages);
-      expect(await driver.mobileListApps('1')).to.deep.equal(['pkg1', 'pkg2']);
+      expect(await driver.mobileListApps('1')).to.deep.equal([
+        {pkg1: {packageName: 'pkg1', versionCode: '11'}},
+        {pkg2: {packageName: 'pkg2', versionCode: '12'}},
+      ]);
     });
     it('should return list of installed packages with user string', async function () {
       const packages = [{appPackage: 'pkg1', versionCode: '10'}];
       sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).returns(packages);
-      expect(await driver.mobileListApps('1')).to.deep.equal(['pkg1']);
+      expect(await driver.mobileListApps('1')).to.deep.equal([
+        {pkg1: {packageName: 'pkg1', versionCode: '10'}},
+      ]);
     });
     it('should return list of installed packages with user number', async function () {
-      const packages = [{appPackage: 'pkg1'}];
+      const packages = [{appPackage: 'pkg1', versionCode: '10'}];
       sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).returns(packages);
-      expect(await driver.mobileListApps(1)).to.deep.equal(['pkg1']);
+      expect(await driver.mobileListApps(1)).to.deep.equal([
+        {pkg1: {packageName: 'pkg1', versionCode: '10'}},
+      ]);
     });
   });
   describe('removeApp', function () {
