@@ -78,7 +78,8 @@ export async function mobileListApps(
   }
   return (await this.adb.listInstalledPackages(opts)).reduce<AppInfoMap>((acc, pkg) => {
     const packageName = pkg.appPackage;
-    const versionCode = pkg.versionCode ? pkg.versionCode : '';
+    const versionCode =
+      pkg.versionCode && !Number.isNaN(+pkg.versionCode) ? +pkg.versionCode : null;
     acc[packageName] = {
       packageName,
       versionCode,

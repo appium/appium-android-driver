@@ -57,7 +57,7 @@ export type AppInfoMap = Record<
     /**
      * The version code
      */
-    versionCode: string;
+    versionCode: number | null;
   }
 >;
 

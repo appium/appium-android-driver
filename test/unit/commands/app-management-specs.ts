@@ -80,30 +80,30 @@ describe('App Management', function () {
       ];
       sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({}).returns(packages);
       expect(await driver.mobileListApps()).to.deep.equal({
-        pkg1: {packageName: 'pkg1', versionCode: '10'},
-        pkg2: {packageName: 'pkg2', versionCode: '10'},
+        pkg1: {packageName: 'pkg1', versionCode: 10},
+        pkg2: {packageName: 'pkg2', versionCode: 10},
       });
     });
     it('should return list of installed packages for specific user', async function () {
       const packages = [{appPackage: 'pkg1'}, {appPackage: 'pkg2'}];
       sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).returns(packages);
       expect(await driver.mobileListApps('1')).to.deep.equal({
-        pkg1: {packageName: 'pkg1', versionCode: ''},
-        pkg2: {packageName: 'pkg2', versionCode: ''},
+        pkg1: {packageName: 'pkg1', versionCode: null},
+        pkg2: {packageName: 'pkg2', versionCode: null},
       });
     });
     it('should return list of installed packages with user string', async function () {
       const packages = [{appPackage: 'pkg1', versionCode: '10'}];
       sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).returns(packages);
       expect(await driver.mobileListApps('1')).to.deep.equal({
-        pkg1: {packageName: 'pkg1', versionCode: '10'},
+        pkg1: {packageName: 'pkg1', versionCode: 10},
       });
     });
     it('should return list of installed packages with user number', async function () {
       const packages = [{appPackage: 'pkg1', versionCode: '10'}];
       sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).returns(packages);
       expect(await driver.mobileListApps(1)).to.deep.equal({
-        pkg1: {packageName: 'pkg1', versionCode: '10'},
+        pkg1: {packageName: 'pkg1', versionCode: 10},
       });
     });
   });
