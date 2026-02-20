@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {EOL} from 'node:os';
 import B from 'bluebird';
 import type {AndroidDriver, AndroidDriverOpts} from '../driver';
-import type {AppState, IsAppInstalledOptions, ListedAppMap, TerminateAppOpts} from './types';
+import type {AppInfoMap, AppState, IsAppInstalledOptions, TerminateAppOpts} from './types';
 import type {
   UninstallOptions,
   InstallOptions,
@@ -64,28 +64,27 @@ export async function mobileIsAppInstalled(
  * API Level 26 and 27 will return empty versionCode.
  *
  * @param user - Optional user ID or user index to filter packages for a specific user
- * @returns A promise that resolves to a list of mapped package details
+ * @returns A promise that resolves to an object keyed by package name, where each value contains package details.
  * @throws {Error} If there is an error while retrieving the package list
  *
  */
 export async function mobileListApps(
   this: AndroidDriver,
   user?: string | number,
-): Promise<ListedAppMap[]> {
+): Promise<AppInfoMap> {
   const opts: ListInstalledPackagesOptions = {};
   if (util.hasValue(user)) {
     opts.user = `${user}`;
   }
-  return (await this.adb.listInstalledPackages(opts)).map((pkg) => {
+  return (await this.adb.listInstalledPackages(opts)).reduce<AppInfoMap>((acc, pkg) => {
     const packageName = pkg.appPackage;
     const versionCode = pkg.versionCode ? pkg.versionCode : '';
-    return {
-      [packageName]: {
-        packageName,
-        versionCode,
-      },
+    acc[packageName] = {
+      packageName,
+      versionCode,
     };
-  });
+    return acc;
+  }, {});
 }
 
 /**
