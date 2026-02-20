@@ -46,19 +46,20 @@ export interface IsAppInstalledOptions {
   user?: string;
 }
 
-export interface AppInfo {
-  /**
-   * The package name
-   */
-  packageName: string;
+export type AppInfoMap = Record<
+  string,
+  {
+    /**
+     * The package name
+     */
+    packageName: string;
 
-  /**
-   * The version code
-   */
-  versionCode: string;
-}
-
-export type AppInfoMap = Record<string, AppInfo>;
+    /**
+     * The version code
+     */
+    versionCode: string;
+  }
+>;
 
 export interface TerminateAppOpts {
   /**
