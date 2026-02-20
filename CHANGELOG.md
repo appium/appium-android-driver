@@ -1,3 +1,13 @@
+## [13.0.0](https://github.com/appium/appium-android-driver/compare/v12.7.0...v13.0.0) (2026-02-20)
+
+### ⚠ BREAKING CHANGES
+
+* modify the mobile:listApps style to follow XCUITest driver format
+
+### Bug Fixes
+
+* modify the format of listApps to follow xcuitest's format ([#1059](https://github.com/appium/appium-android-driver/issues/1059)) ([0a683f9](https://github.com/appium/appium-android-driver/commit/0a683f95bbf4aeaf5ccc16dd231417b29f55bb51))
+
 ## [12.7.0](https://github.com/appium/appium-android-driver/compare/v12.6.7...v12.7.0) (2026-02-18)
 
 ### Features
