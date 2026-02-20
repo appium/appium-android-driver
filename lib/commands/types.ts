@@ -38,6 +38,29 @@ export type NetworkSpeed =
  */
 export type AppState = 0 | 1 | 3 | 4;
 
+export interface IsAppInstalledOptions {
+  /**
+   * The user ID for which to check the package installation.
+   * The `current` user id is used by default.
+   */
+  user?: string;
+}
+
+export type AppInfoMap = Record<
+  string,
+  {
+    /**
+     * The package name
+     */
+    packageName: string;
+
+    /**
+     * The version code
+     */
+    versionCode: number | null;
+  }
+>;
+
 export interface TerminateAppOpts {
   /**
    * The count of milliseconds to wait until the app is terminated.

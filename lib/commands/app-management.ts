@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {EOL} from 'node:os';
 import B from 'bluebird';
 import type {AndroidDriver, AndroidDriverOpts} from '../driver';
-import type {AppState, TerminateAppOpts} from './types';
+import type {AppInfoMap, AppState, IsAppInstalledOptions, TerminateAppOpts} from './types';
 import type {
   UninstallOptions,
   InstallOptions,
@@ -22,14 +22,6 @@ export const APP_STATE = {
   RUNNING_IN_BACKGROUND: 3,
   RUNNING_IN_FOREGROUND: 4,
 } as const;
-
-export interface IsAppInstalledOptions {
-  /**
-   * The user ID for which to check the package installation.
-   * The `current` user id is used by default.
-   */
-  user?: string;
-}
 
 /**
  * Checks whether the specified application is installed on the device.
@@ -69,21 +61,31 @@ export async function mobileIsAppInstalled(
 /**
  * Lists all installed packages on the Android device, optionally filtered by user.
  * Lower than API Level 26 would raise an exception.
+ * API Level 26 and 27 will return empty versionCode.
  *
  * @param user - Optional user ID or user index to filter packages for a specific user
- * @returns A promise that resolves to an array of package names (strings) of installed applications
+ * @returns A promise that resolves to an object keyed by package name, where each value contains package details.
  * @throws {Error} If there is an error while retrieving the package list
  *
  */
 export async function mobileListApps(
   this: AndroidDriver,
   user?: string | number,
-): Promise<string[]> {
+): Promise<AppInfoMap> {
   const opts: ListInstalledPackagesOptions = {};
   if (util.hasValue(user)) {
     opts.user = `${user}`;
   }
-  return (await this.adb.listInstalledPackages(opts)).map((pkg) => pkg.appPackage);
+  return (await this.adb.listInstalledPackages(opts)).reduce<AppInfoMap>((acc, pkg) => {
+    const packageName = pkg.appPackage;
+    const versionCode =
+      pkg.versionCode && !Number.isNaN(+pkg.versionCode) ? +pkg.versionCode : null;
+    acc[packageName] = {
+      packageName,
+      versionCode,
+    };
+    return acc;
+  }, {});
 }
 
 /**
