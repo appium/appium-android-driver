@@ -72,5 +72,11 @@ export async function deactivateIMEEngine(this: AndroidDriver): Promise<void> {
  * @param enabled Whether to enable or disable stylus handwriting input method.
  */
 export async function setStylusHandwriting(this: AndroidDriver, enabled: boolean): Promise<void> {
-  await this.adb.shell(['settings', 'put', 'secure', 'stylus_handwriting_enabled', enabled ? '1' : '0']);
+  await this.adb.shell([
+    'settings',
+    'put',
+    'secure',
+    'stylus_handwriting_enabled',
+    enabled ? '1' : '0',
+  ]);
 }
