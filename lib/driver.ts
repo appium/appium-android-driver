@@ -128,6 +128,7 @@ import {
   getActiveIMEEngine,
   activateIMEEngine,
   deactivateIMEEngine,
+  setStylusHandwriting,
 } from './commands/ime';
 import {
   startActivity,
@@ -447,6 +448,7 @@ class AndroidDriver
   getActiveIMEEngine = getActiveIMEEngine;
   activateIMEEngine = activateIMEEngine;
   deactivateIMEEngine = deactivateIMEEngine;
+  setStylusHandwriting = setStylusHandwriting;
 
   startActivity = startActivity as unknown as (
     appPackage: string,
