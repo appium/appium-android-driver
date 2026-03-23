@@ -1,6 +1,6 @@
 import {errors} from 'appium/driver';
 import type {AndroidDriver} from '../driver';
-import { SET_STYLUS_HANDWRITING_FEATURE } from '../utils';
+import {SET_STYLUS_HANDWRITING_FEATURE} from '../utils';
 
 /**
  * Checks if an IME (Input Method Editor) is activated.
