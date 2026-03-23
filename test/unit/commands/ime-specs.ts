@@ -62,4 +62,21 @@ describe('IME', function () {
       expect(disableIMEStub.calledWithExactly('active_ime_engine')).to.be.true;
     });
   });
+  describe('setStylusHandwriting', function () {
+    const cases = [[true, '1'], [false, '0']] as const;
+    cases.forEach(([enabled, expectedValue]) => {
+      it(`should set stylus handwriting input method to ${enabled}`, async function () {
+        sandbox.stub(driver, 'assertFeatureEnabled').withArgs('set_stylus_handwriting').onFirstCall();
+        const shellStub = sandbox.stub(driver.adb, 'shell');
+        await expect(driver.setStylusHandwriting(enabled)).to.be.fulfilled;
+        expect(shellStub.calledWithExactly([
+          'settings',
+          'put',
+          'secure',
+          'stylus_handwriting_enabled',
+          expectedValue,
+        ])).to.be.true;
+      });
+    });
+  });
 });

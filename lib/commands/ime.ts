@@ -1,5 +1,6 @@
 import {errors} from 'appium/driver';
 import type {AndroidDriver} from '../driver';
+import { SET_STYLUS_HANDWRITING_FEATURE } from '../utils';
 
 /**
  * Checks if an IME (Input Method Editor) is activated.
@@ -69,9 +70,11 @@ export async function deactivateIMEEngine(this: AndroidDriver): Promise<void> {
 /**
  * Enables or disables stylus handwriting input method.
  * The default value depends on the device.
+ * It requires set_stylus_handwriting secure setting to be supported by the device.
  * @param enabled Whether to enable or disable stylus handwriting input method.
  */
 export async function setStylusHandwriting(this: AndroidDriver, enabled: boolean): Promise<void> {
+  this.assertFeatureEnabled(SET_STYLUS_HANDWRITING_FEATURE);
   await this.adb.shell([
     'settings',
     'put',
