@@ -445,6 +445,13 @@ export const executeMethodMap = {
     command: 'mobileResetGeolocation',
   },
 
+  'mobile: setStylusHandwriting': {
+    command: 'setStylusHandwriting',
+    params: {
+      required: ['enabled'],
+    },
+  },
+
   'mobile: getAppStrings': {
     command: 'getStrings',
     params: {

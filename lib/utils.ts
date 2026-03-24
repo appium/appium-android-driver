@@ -8,6 +8,7 @@ export type {LogEntry};
 export const ADB_SHELL_FEATURE = 'adb_shell';
 export const ADB_LISTEN_ALL_NETWORK_FEATURE = 'adb_listen_all_network';
 export const GET_SERVER_LOGS_FEATURE = 'get_server_logs';
+export const SET_STYLUS_HANDWRITING_FEATURE = 'set_stylus_handwriting';
 const COLOR_CODE_PATTERN = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
 
 /**
