@@ -1,3 +1,9 @@
+## [13.1.0](https://github.com/appium/appium-android-driver/compare/v13.0.0...v13.1.0) (2026-03-24)
+
+### Features
+
+* add mobile: setStylusHandwriting ([#1060](https://github.com/appium/appium-android-driver/issues/1060)) ([220d0ad](https://github.com/appium/appium-android-driver/commit/220d0ad2ac04937d3fda6dd1fef915d71bbad92a))
+
 ## [13.0.0](https://github.com/appium/appium-android-driver/compare/v12.7.0...v13.0.0) (2026-02-20)
 
 ### ⚠ BREAKING CHANGES
