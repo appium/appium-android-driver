@@ -52,7 +52,7 @@
     "@appium/support": "^7.0.0-rc.1",
     "@colors/colors": "^1.6.0",
     "appium-adb": "^14.3.0",
-    "appium-chromedriver": "^8.0.18",
+    "appium-chromedriver": "^8.2.25",
     "asyncbox": "^6.1.0",
     "axios": "^1.x",
     "bluebird": "^3.4.7",
