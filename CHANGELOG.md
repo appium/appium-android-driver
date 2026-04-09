@@ -1,3 +1,9 @@
+## [13.1.1](https://github.com/appium/appium-android-driver/compare/v13.1.0...v13.1.1) (2026-04-09)
+
+### Miscellaneous Chores
+
+* Bump chromedriver ([7508936](https://github.com/appium/appium-android-driver/commit/7508936f99de3e180c6d33fd87339733ac172ece))
+
 ## [13.1.0](https://github.com/appium/appium-android-driver/compare/v13.0.0...v13.1.0) (2026-03-24)
 
 ### Features
