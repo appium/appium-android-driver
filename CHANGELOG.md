@@ -1,3 +1,9 @@
+## [13.1.2](https://github.com/appium/appium-android-driver/compare/v13.1.1...v13.1.2) (2026-04-10)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump typescript from 5.9.3 to 6.0.2 ([#1061](https://github.com/appium/appium-android-driver/issues/1061)) ([c7f3d76](https://github.com/appium/appium-android-driver/commit/c7f3d76822ce91a97d09d29c8847453490ecd8a0))
+
 ## [13.1.1](https://github.com/appium/appium-android-driver/compare/v13.1.0...v13.1.1) (2026-04-09)
 
 ### Miscellaneous Chores
