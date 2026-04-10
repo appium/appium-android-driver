@@ -26,10 +26,8 @@
   },
   "files": [
     "lib",
-    "build",
-    "CHANGELOG.md",
-    "!build/test",
-    "!build/tsconfig.tsbuildinfo"
+    "build/lib",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsc -b",
