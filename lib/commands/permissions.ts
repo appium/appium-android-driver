@@ -162,7 +162,9 @@ async function changePermissionsViaPm(
   if (action === PM_ACTION.GRANT) {
     await this.adb.grantPermissions(appPackage, affectedPermissions);
   } else {
-    await Promise.all(affectedPermissions.map((name) => this.adb.revokePermission(appPackage, name)));
+    await Promise.all(
+      affectedPermissions.map((name) => this.adb.revokePermission(appPackage, name)),
+    );
   }
 }
 async function changePermissionsViaAppops(

@@ -138,7 +138,9 @@ export async function mobileGetConnectivity(
   const [wifi, data, airplaneMode] = await Promise.all([
     svcs.includes(WIFI_KEY_NAME) ? this.adb.isWifiOn() : Promise.resolve(undefined),
     svcs.includes(DATA_KEY_NAME) ? this.adb.isDataOn() : Promise.resolve(undefined),
-    svcs.includes(AIRPLANE_MODE_KEY_NAME) ? this.adb.isAirplaneModeOn() : Promise.resolve(undefined),
+    svcs.includes(AIRPLANE_MODE_KEY_NAME)
+      ? this.adb.isAirplaneModeOn()
+      : Promise.resolve(undefined),
   ]);
   const result: GetConnectivityResult = {};
   if (!_.isUndefined(wifi)) {
