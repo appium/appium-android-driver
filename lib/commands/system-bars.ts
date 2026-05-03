@@ -22,6 +22,11 @@ const DEFAULT_WINDOW_PROPERTIES: WindowProperties = {
   height: 0,
 };
 
+interface SystemBarsResult {
+  statusBar?: WindowProperties;
+  navigationBar?: WindowProperties;
+}
+
 /**
  * Gets the system bars (status bar and navigation bar) properties.
  *
@@ -37,6 +42,8 @@ export async function getSystemBars(this: AndroidDriver): Promise<StringRecord> 
   }
   return parseWindows.bind(this)(stdout);
 }
+
+// #region Internal helpers
 
 /**
  * Performs a status bar command.
@@ -86,8 +93,6 @@ export async function mobilePerformStatusBarCommand(
   return await action();
 }
 
-// #region Internal helpers
-
 /**
  * Parses window properties from adb dumpsys output
  *
@@ -121,6 +126,8 @@ export function parseWindowProperties(
   result.visible = parseInt(visibilityMatch[1], 16) === VIEW_VISIBLE;
   return result;
 }
+
+// #endregion
 
 /**
  * Extracts status and navigation bar information from the window manager output.
@@ -184,11 +191,4 @@ export function parseWindows(this: AndroidDriver, lines: string): SystemBarsResu
     result[window as keyof SystemBarsResult] = _.cloneDeep(DEFAULT_WINDOW_PROPERTIES);
   }
   return result;
-}
-
-// #endregion
-
-interface SystemBarsResult {
-  statusBar?: WindowProperties;
-  navigationBar?: WindowProperties;
 }

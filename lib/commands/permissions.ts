@@ -1,5 +1,4 @@
 import {errors} from 'appium/driver';
-import B from 'bluebird';
 import _ from 'lodash';
 import {ADB_SHELL_FEATURE} from '../utils';
 import type {AndroidDriver} from '../driver';
@@ -24,6 +23,18 @@ const PERMISSIONS_TYPE = Object.freeze({
   GRANTED: 'granted',
   REQUESTED: 'requested',
 } as const);
+
+type PMAction = (typeof PM_ACTION)[keyof typeof PM_ACTION];
+
+type AppOpsAction = (typeof APPOPS_ACTION)[keyof typeof APPOPS_ACTION];
+
+// #region Internal helpers
+
+type PermissionTarget = (typeof PERMISSION_TARGET)[keyof typeof PERMISSION_TARGET];
+
+type PermissionsType = (typeof PERMISSIONS_TYPE)[keyof typeof PERMISSIONS_TYPE];
+
+// #endregion
 
 /**
  * Changes permissions for an Android application.
@@ -85,7 +96,6 @@ export async function mobileChangePermissions(
       );
   }
 }
-
 /**
  * Gets permissions for an Android application.
  *
@@ -120,9 +130,6 @@ export async function mobileGetPermissions(
   }
   return await actionFunc(appPackage as string);
 }
-
-// #region Internal helpers
-
 async function changePermissionsViaPm(
   this: AndroidDriver,
   permissions: string | string[],
@@ -155,10 +162,9 @@ async function changePermissionsViaPm(
   if (action === PM_ACTION.GRANT) {
     await this.adb.grantPermissions(appPackage, affectedPermissions);
   } else {
-    await B.all(affectedPermissions.map((name) => this.adb.revokePermission(appPackage, name)));
+    await Promise.all(affectedPermissions.map((name) => this.adb.revokePermission(appPackage, name)));
   }
 }
-
 async function changePermissionsViaAppops(
   this: AndroidDriver,
   permissions: string | string[],
@@ -182,12 +188,5 @@ async function changePermissionsViaAppops(
   const promises = (_.isArray(permissions) ? permissions : [permissions]).map((permission) =>
     this.adb.shell(['appops', 'set', appPackage, permission, action]),
   );
-  await B.all(promises);
+  await Promise.all(promises);
 }
-
-// #endregion
-
-type PMAction = (typeof PM_ACTION)[keyof typeof PM_ACTION];
-type AppOpsAction = (typeof APPOPS_ACTION)[keyof typeof APPOPS_ACTION];
-type PermissionTarget = (typeof PERMISSION_TARGET)[keyof typeof PERMISSION_TARGET];
-type PermissionsType = (typeof PERMISSIONS_TYPE)[keyof typeof PERMISSIONS_TYPE];

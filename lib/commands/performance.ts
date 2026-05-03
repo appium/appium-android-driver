@@ -140,74 +140,6 @@ export async function mobileGetPerformanceData(
 // #region Internal helpers
 
 /**
- * API level between 18 and 30
- * ['<System Type>', '<Memory Type>', <pss total>, <private dirty>, <private clean>, <swapPss dirty>, <heap size>, <heap alloc>, <heap free>]
- * except 'TOTAL', which skips the second type name
- * !!! valDict gets mutated
- */
-function parseMeminfoForApi19To29(
-  entries: string[],
-  valDict: Record<string, string | number>,
-): void {
-  const [type, subType] = entries;
-  if (type === MEMINFO_TITLES.NATIVE && subType === MEMINFO_TITLES.HEAP) {
-    [
-      ,
-      ,
-      valDict.nativePss,
-      valDict.nativePrivateDirty,
-      ,
-      ,
-      valDict.nativeHeapSize,
-      valDict.nativeHeapAllocatedSize,
-    ] = entries;
-  } else if (type === MEMINFO_TITLES.DALVIK && subType === MEMINFO_TITLES.HEAP) {
-    [, , valDict.dalvikPss, valDict.dalvikPrivateDirty] = entries;
-  } else if (type === MEMINFO_TITLES.EGL && subType === MEMINFO_TITLES.MTRACK) {
-    [, , valDict.eglPss, valDict.eglPrivateDirty] = entries;
-  } else if (type === MEMINFO_TITLES.GL && subType === MEMINFO_TITLES.MTRACK) {
-    [, , valDict.glPss, valDict.glPrivateDirty] = entries;
-  } else if (type === MEMINFO_TITLES.TOTAL && entries.length === 8) {
-    // there are two totals, and we only want the full listing, which has 8 entries
-    [, valDict.totalPss, valDict.totalPrivateDirty] = entries;
-  }
-}
-
-/**
- * API level 30 and above
- * ['<System Type>', '<Memory Type>', <pss total>, <private dirty>, <private clean>, <swapPss dirty>, <rss total>, <heap size>, <heap alloc>, <heap free>]
- * !!! valDict gets mutated
- */
-function parseMeminfoForApiAbove29(
-  entries: string[],
-  valDict: Record<string, string | number>,
-): void {
-  const [type, subType] = entries;
-  if (type === MEMINFO_TITLES.NATIVE && subType === MEMINFO_TITLES.HEAP) {
-    [
-      ,
-      ,
-      valDict.nativePss,
-      valDict.nativePrivateDirty,
-      ,
-      ,
-      valDict.nativeRss,
-      valDict.nativeHeapSize,
-      valDict.nativeHeapAllocatedSize,
-    ] = entries;
-  } else if (type === MEMINFO_TITLES.DALVIK && subType === MEMINFO_TITLES.HEAP) {
-    [, , valDict.dalvikPss, valDict.dalvikPrivateDirty, , , valDict.dalvikRss] = entries;
-  } else if (type === MEMINFO_TITLES.EGL && subType === MEMINFO_TITLES.MTRACK) {
-    [, , valDict.eglPss, valDict.eglPrivateDirty] = entries;
-  } else if (type === MEMINFO_TITLES.GL && subType === MEMINFO_TITLES.MTRACK) {
-    [, , valDict.glPss, valDict.glPrivateDirty] = entries;
-  } else if (type === MEMINFO_TITLES.TOTAL && entries.length === 9) {
-    // has 9 entries
-    [, valDict.totalPss, valDict.totalPrivateDirty, , , valDict.totalRss] = entries;
-  }
-}
-
-/**
  * Retrieves memory information for the specified application package.
  *
  * The data is parsed from the output of `dumpsys meminfo` command.
@@ -537,6 +469,74 @@ export async function getBatteryInfo(this: AndroidDriver, retries: number = 2): 
       throw new Error(`Unable to parse battery data: '${data}'`);
     }
   })) as any[][];
+}
+
+/**
+ * API level between 18 and 30
+ * ['<System Type>', '<Memory Type>', <pss total>, <private dirty>, <private clean>, <swapPss dirty>, <heap size>, <heap alloc>, <heap free>]
+ * except 'TOTAL', which skips the second type name
+ * !!! valDict gets mutated
+ */
+function parseMeminfoForApi19To29(
+  entries: string[],
+  valDict: Record<string, string | number>,
+): void {
+  const [type, subType] = entries;
+  if (type === MEMINFO_TITLES.NATIVE && subType === MEMINFO_TITLES.HEAP) {
+    [
+      ,
+      ,
+      valDict.nativePss,
+      valDict.nativePrivateDirty,
+      ,
+      ,
+      valDict.nativeHeapSize,
+      valDict.nativeHeapAllocatedSize,
+    ] = entries;
+  } else if (type === MEMINFO_TITLES.DALVIK && subType === MEMINFO_TITLES.HEAP) {
+    [, , valDict.dalvikPss, valDict.dalvikPrivateDirty] = entries;
+  } else if (type === MEMINFO_TITLES.EGL && subType === MEMINFO_TITLES.MTRACK) {
+    [, , valDict.eglPss, valDict.eglPrivateDirty] = entries;
+  } else if (type === MEMINFO_TITLES.GL && subType === MEMINFO_TITLES.MTRACK) {
+    [, , valDict.glPss, valDict.glPrivateDirty] = entries;
+  } else if (type === MEMINFO_TITLES.TOTAL && entries.length === 8) {
+    // there are two totals, and we only want the full listing, which has 8 entries
+    [, valDict.totalPss, valDict.totalPrivateDirty] = entries;
+  }
+}
+
+/**
+ * API level 30 and above
+ * ['<System Type>', '<Memory Type>', <pss total>, <private dirty>, <private clean>, <swapPss dirty>, <rss total>, <heap size>, <heap alloc>, <heap free>]
+ * !!! valDict gets mutated
+ */
+function parseMeminfoForApiAbove29(
+  entries: string[],
+  valDict: Record<string, string | number>,
+): void {
+  const [type, subType] = entries;
+  if (type === MEMINFO_TITLES.NATIVE && subType === MEMINFO_TITLES.HEAP) {
+    [
+      ,
+      ,
+      valDict.nativePss,
+      valDict.nativePrivateDirty,
+      ,
+      ,
+      valDict.nativeRss,
+      valDict.nativeHeapSize,
+      valDict.nativeHeapAllocatedSize,
+    ] = entries;
+  } else if (type === MEMINFO_TITLES.DALVIK && subType === MEMINFO_TITLES.HEAP) {
+    [, , valDict.dalvikPss, valDict.dalvikPrivateDirty, , , valDict.dalvikRss] = entries;
+  } else if (type === MEMINFO_TITLES.EGL && subType === MEMINFO_TITLES.MTRACK) {
+    [, , valDict.eglPss, valDict.eglPrivateDirty] = entries;
+  } else if (type === MEMINFO_TITLES.GL && subType === MEMINFO_TITLES.MTRACK) {
+    [, , valDict.glPss, valDict.glPrivateDirty] = entries;
+  } else if (type === MEMINFO_TITLES.TOTAL && entries.length === 9) {
+    // has 9 entries
+    [, valDict.totalPss, valDict.totalPrivateDirty, , , valDict.totalRss] = entries;
+  }
 }
 
 // #endregion

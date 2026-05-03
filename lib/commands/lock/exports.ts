@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {sleep} from 'asyncbox';
 import {
   validateUnlockCapabilities,
   FINGERPRINT_UNLOCK,
@@ -34,7 +34,7 @@ export async function lock(this: AndroidDriver, seconds?: number): Promise<void>
   if (floatSeconds <= 0) {
     return;
   }
-  await B.delay(1000 * floatSeconds);
+  await sleep(1000 * floatSeconds);
   await this.unlock();
 }
 

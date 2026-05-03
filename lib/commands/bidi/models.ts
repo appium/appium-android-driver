@@ -27,6 +27,13 @@ export const makeContextUpdatedEvent = (contextName: string, domain: string) =>
 export const makeObsoleteContextUpdatedEvent = (contextName: string) =>
   toContextUpdatedEvent(CONTEXT_UPDATED_EVENT_OBSOLETE, contextName);
 
+/**
+ * Builds a BiDi `log.entryAdded` event from a logcat entry.
+ *
+ * @param entry - Raw log line from the device
+ * @param context - Active session context name
+ * @param type - Log entry classification passed through to the event
+ */
 export function makeLogEntryAddedEvent(
   entry: LogEntry,
   context: string,

@@ -2,7 +2,6 @@ import {util} from '@appium/support';
 import {waitForCondition, longSleep} from 'asyncbox';
 import _ from 'lodash';
 import {EOL} from 'node:os';
-import B from 'bluebird';
 import type {AndroidDriver, AndroidDriverOpts} from '../driver';
 import type {AppInfoMap, AppState, IsAppInstalledOptions, TerminateAppOpts} from './types';
 import type {
@@ -599,7 +598,7 @@ export async function installOtherApks(
   } = opts ?? this.opts;
 
   // Install all of the APK's asynchronously
-  await B.all(
+  await Promise.all(
     otherApps.map((otherApp) => {
       this.log.debug(`Installing app: ${otherApp}`);
       return this.adb.installOrUpgrade(otherApp, undefined, {
@@ -632,7 +631,7 @@ export async function uninstallOtherPackages(
   }
 
   this.log.debug(`Uninstalling packages: ${appPackages}`);
-  await B.all(appPackages.map((appPackage) => this.adb.uninstallApk(appPackage)));
+  await Promise.all(appPackages.map((appPackage) => this.adb.uninstallApk(appPackage)));
 }
 
 /**

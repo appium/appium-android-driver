@@ -8,7 +8,6 @@ import {
   UNICODE_IME,
   EMPTY_IME,
 } from 'io.appium.settings';
-import B from 'bluebird';
 import {prepareEmulatorForImageInjection} from '../image-injection';
 import {ADB_LISTEN_ALL_NETWORK_FEATURE} from '../../utils';
 import type {AndroidDriver} from '../../driver';
@@ -212,7 +211,7 @@ export async function pushSettingsApp(this: AndroidDriver, throwIfError: boolean
   }
 
   try {
-    await B.all([
+    await Promise.all([
       this.settingsApp.adjustNotificationsPermissions(),
       this.settingsApp.adjustMediaProjectionServicePermissions(),
     ]);

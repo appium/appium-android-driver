@@ -11,6 +11,13 @@ export const GET_SERVER_LOGS_FEATURE = 'get_server_logs';
 export const SET_STYLUS_HANDWRITING_FEATURE = 'set_stylus_handwriting';
 const COLOR_CODE_PATTERN = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
 
+interface LogEntryWithPrefix {
+  message: string;
+  prefix?: string;
+  timestamp?: number;
+  level?: string;
+}
+
 /**
  * Assert the presence of particular keys in the given object
  *
@@ -63,13 +70,6 @@ export async function removeAllSessionWebSocketHandlers(this: AndroidDriver): Pr
   for (const pathname of _.keys(activeHandlers)) {
     await this.server.removeWebSocketHandler(pathname);
   }
-}
-
-interface LogEntryWithPrefix {
-  message: string;
-  prefix?: string;
-  timestamp?: number;
-  level?: string;
 }
 
 /**

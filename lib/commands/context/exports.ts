@@ -305,9 +305,9 @@ export async function startChromedriverProxy(
     cd = await setupNewChromedriver.bind(this)(opts, this.adb.curDeviceId as string, context);
     // bind our stop/exit handler, passing in context so we know which
     // one stopped unexpectedly
-    cd.on(Chromedriver.EVENT_CHANGED, (msg) => {
+    cd.on(Chromedriver.EVENT_CHANGED, async (msg) => {
       if (msg.state === Chromedriver.STATE_STOPPED) {
-        this.onChromedriverStop(context);
+        await this.onChromedriverStop(context);
       }
     });
     // save the chromedriver object under the context
@@ -446,9 +446,9 @@ export async function startChromeSession(this: AndroidDriver): Promise<void> {
   }
   const chromedriver = await setupNewChromedriver.bind(this)(opts, this.adb.curDeviceId as string);
   this.chromedriver = chromedriver;
-  chromedriver.on(Chromedriver.EVENT_CHANGED, (msg) => {
+  chromedriver.on(Chromedriver.EVENT_CHANGED, async (msg) => {
     if (msg.state === Chromedriver.STATE_STOPPED) {
-      this.onChromedriverStop(CHROMIUM_WIN);
+      await this.onChromedriverStop(CHROMIUM_WIN);
     }
   });
 

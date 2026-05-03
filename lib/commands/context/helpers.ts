@@ -4,7 +4,6 @@ import axios from 'axios';
 import net from 'node:net';
 import {findAPortNotInUse} from 'portscanner';
 import {sleep} from 'asyncbox';
-import B from 'bluebird';
 import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
@@ -668,7 +667,7 @@ async function collectWebviewsDetails(
       })(),
     );
   }
-  await B.all(detailCollectors);
+  await Promise.all(detailCollectors);
   this.log.debug(`CDP data collection completed`);
 }
 

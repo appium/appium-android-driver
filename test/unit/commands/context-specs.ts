@@ -213,7 +213,7 @@ describe('Context', function () {
     });
     it('should handle chromedriver event with STATE_STOPPED state', async function () {
       await driver.startChromedriverProxy('WEBVIEW_1', []);
-      await driver.chromedriver!.emit(Chromedriver.EVENT_CHANGED, {
+      driver.chromedriver!.emit(Chromedriver.EVENT_CHANGED, {
         state: Chromedriver.STATE_STOPPED,
       });
       expect((driver.onChromedriverStop as sinon.SinonStub).calledWithExactly('WEBVIEW_1')).to.be
@@ -221,7 +221,9 @@ describe('Context', function () {
     });
     it('should ignore events if status is not STATE_STOPPED', async function () {
       await driver.startChromedriverProxy('WEBVIEW_1', []);
-      await driver.chromedriver!.emit(Chromedriver.EVENT_CHANGED, {state: 'unhandled_state'});
+      driver.chromedriver!.emit(Chromedriver.EVENT_CHANGED, {
+        state: 'unhandled_state',
+      } as Parameters<Chromedriver['emit']>[1]);
       expect((driver.onChromedriverStop as sinon.SinonStub).notCalled).to.be.true;
     });
     it('should reconnect if session already exists', async function () {

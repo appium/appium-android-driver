@@ -7,6 +7,10 @@ import type {Chromedriver} from 'appium-chromedriver';
 
 const EXECUTE_SCRIPT_PREFIX = 'mobile:';
 
+type ExecuteMethodArgs = readonly any[] | readonly [StringRecord] | Readonly<StringRecord>;
+
+// #region Internal Helpers
+
 /**
  * Executes a script on the device or in a web context.
  *
@@ -39,7 +43,7 @@ export async function execute(
   });
 }
 
-// #region Internal Helpers
+// #endregion
 
 /**
  * Massages the arguments going into an execute method.
@@ -70,7 +74,3 @@ function preprocessExecuteMethodArgs(args?: ExecuteMethodArgs): StringRecord {
 
   return executeMethodArgs;
 }
-
-// #endregion
-
-type ExecuteMethodArgs = readonly any[] | readonly [StringRecord] | Readonly<StringRecord>;
