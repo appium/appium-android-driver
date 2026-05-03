@@ -82,8 +82,6 @@ export async function mobileIsMediaProjectionRecordingRunning(
   return await recorder.isRunning();
 }
 
-// #region Internal helpers
-
 /**
  * Stops the media projection recording and returns the recorded video.
  *
@@ -186,8 +184,6 @@ async function uploadRecordedMedia(
 function adjustMediaExtension(name: string): string {
   return _.toLower(name).endsWith(DEFAULT_EXT) ? name : `${name}${DEFAULT_EXT}`;
 }
-
-// #endregion
 
 async function verifyMediaProjectionRecordingIsSupported(adb: ADB): Promise<void> {
   const apiLevel = await adb.getApiLevel();

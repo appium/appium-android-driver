@@ -155,7 +155,7 @@ export async function mobileStartScreenStreaming(
       this.log.info(`Successfully connected to MJPEG stream at tcp://${TCP_HOST}:${tcpPort}`);
       mjpegServer = http.createServer((req, res) => {
         const remoteAddress = extractRemoteAddress(req);
-        const currentPathname = new url.URL(String(req.url ?? '/'), 'http://127.0.0.1').pathname;
+        const currentPathname = extractSafePathnameFromUrl(req.url);
         this.log.info(
           `Got an incoming screen broadcasting request from ${remoteAddress} ` +
             `(${req.headers['user-agent'] || 'User Agent unknown'}) at ${currentPathname}`,
@@ -510,6 +510,17 @@ async function initGstreamerPipeline(
     }
   }
   return gstreamerPipeline;
+}
+
+/**
+ * WHATWG URL parsing can throw on malformed input; HTTP servers must not throw synchronously in request handlers.
+ */
+function extractSafePathnameFromUrl(requestUrl: string | undefined): string {
+  try {
+    return new url.URL(String(requestUrl ?? '/'), 'http://127.0.0.1').pathname;
+  } catch {
+    return '/';
+  }
 }
 
 /**

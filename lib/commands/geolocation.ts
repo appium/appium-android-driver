@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import {asyncmap} from 'asyncbox';
 import {fs, tempDir} from '@appium/support';
 import path from 'node:path';
 import type {Location} from '@appium/types';
@@ -222,13 +223,11 @@ async function resetMockLocation(this: AndroidDriver): Promise<void> {
     }
 
     this.log.debug(`Resetting mock_location permission for the following apps: ${resultPkgs}`);
-    await Promise.all(
-      resultPkgs.map(async (pkgId) => {
-        try {
-          await this.adb.shell(['appops', 'set', pkgId, 'android:mock_location', 'deny']);
-        } catch {}
-      }),
-    );
+    await asyncmap(resultPkgs, async (pkgId) => {
+      try {
+        await this.adb.shell(['appops', 'set', pkgId, 'android:mock_location', 'deny']);
+      } catch {}
+    });
   } catch (err) {
     this.log.warn(`Unable to reset mock location: ${(err as Error).message}`);
   }

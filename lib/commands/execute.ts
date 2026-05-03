@@ -9,8 +9,6 @@ const EXECUTE_SCRIPT_PREFIX = 'mobile:';
 
 type ExecuteMethodArgs = readonly any[] | readonly [StringRecord] | Readonly<StringRecord>;
 
-// #region Internal Helpers
-
 /**
  * Executes a script on the device or in a web context.
  *
@@ -42,8 +40,6 @@ export async function execute(
     args,
   });
 }
-
-// #endregion
 
 /**
  * Massages the arguments going into an execute method.

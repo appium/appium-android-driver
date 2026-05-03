@@ -43,8 +43,6 @@ export async function getSystemBars(this: AndroidDriver): Promise<StringRecord> 
   return parseWindows.bind(this)(stdout);
 }
 
-// #region Internal helpers
-
 /**
  * Performs a status bar command.
  *
@@ -126,8 +124,6 @@ export function parseWindowProperties(
   result.visible = parseInt(visibilityMatch[1], 16) === VIEW_VISIBLE;
   return result;
 }
-
-// #endregion
 
 /**
  * Extracts status and navigation bar information from the window manager output.

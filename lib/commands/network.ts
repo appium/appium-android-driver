@@ -86,7 +86,7 @@ export async function mobileSetConnectivity(
     return acc;
   }, []);
   const currentState = await this.mobileGetConnectivity(services);
-  const setters: Array<Promise<any> | (() => Promise<any>)> = [];
+  const setters: Promise<any>[] = [];
   if (!_.isUndefined(wifi) && currentState.wifi !== Boolean(wifi)) {
     setters.push(this.setWifiState(wifi));
   }
@@ -94,17 +94,17 @@ export async function mobileSetConnectivity(
     setters.push(this.setDataState(data));
   }
   if (!_.isUndefined(airplaneMode) && currentState.airplaneMode !== Boolean(airplaneMode)) {
-    setters.push(async () => {
-      await this.adb.setAirplaneMode(airplaneMode);
-      if ((await this.adb.getApiLevel()) < 30) {
-        await this.adb.broadcastAirplaneMode(airplaneMode);
-      }
-    });
+    setters.push(
+      (async () => {
+        await this.adb.setAirplaneMode(airplaneMode);
+        if ((await this.adb.getApiLevel()) < 30) {
+          await this.adb.broadcastAirplaneMode(airplaneMode);
+        }
+      })(),
+    );
   }
   if (!_.isEmpty(setters)) {
-    await Promise.all(
-      setters.map((s) => (typeof s === 'function' ? (s as () => Promise<unknown>)() : s)),
-    );
+    await Promise.all(setters);
   }
 }
 

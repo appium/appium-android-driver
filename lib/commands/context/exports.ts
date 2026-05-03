@@ -307,7 +307,13 @@ export async function startChromedriverProxy(
     // one stopped unexpectedly
     cd.on(Chromedriver.EVENT_CHANGED, async (msg) => {
       if (msg.state === Chromedriver.STATE_STOPPED) {
-        await this.onChromedriverStop(context);
+        try {
+          await this.onChromedriverStop(context);
+        } catch (err) {
+          this.log.warn(
+            `Error handling chromedriver stop event for context ${context}: ${(err as Error).message}`,
+          );
+        }
       }
     });
     // save the chromedriver object under the context
@@ -448,7 +454,13 @@ export async function startChromeSession(this: AndroidDriver): Promise<void> {
   this.chromedriver = chromedriver;
   chromedriver.on(Chromedriver.EVENT_CHANGED, async (msg) => {
     if (msg.state === Chromedriver.STATE_STOPPED) {
-      await this.onChromedriverStop(CHROMIUM_WIN);
+      try {
+        await this.onChromedriverStop(CHROMIUM_WIN);
+      } catch (err) {
+        this.log.warn(
+          `Error handling chromedriver stop event for context ${CHROMIUM_WIN}: ${(err as Error).message}`,
+        );
+      }
     }
   });
 

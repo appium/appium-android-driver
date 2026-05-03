@@ -28,13 +28,9 @@ type PMAction = (typeof PM_ACTION)[keyof typeof PM_ACTION];
 
 type AppOpsAction = (typeof APPOPS_ACTION)[keyof typeof APPOPS_ACTION];
 
-// #region Internal helpers
-
 type PermissionTarget = (typeof PERMISSION_TARGET)[keyof typeof PERMISSION_TARGET];
 
 type PermissionsType = (typeof PERMISSIONS_TYPE)[keyof typeof PERMISSIONS_TYPE];
-
-// #endregion
 
 /**
  * Changes permissions for an Android application.
