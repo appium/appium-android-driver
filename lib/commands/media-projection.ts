@@ -13,6 +13,16 @@ const DEFAULT_EXT = '.mp4';
 const MIN_API_LEVEL = 29;
 const DEFAULT_FILENAME_FORMAT = 'YYYY-MM-DDTHH-mm-ss';
 
+interface UploadOptions {
+  user?: string;
+  pass?: string;
+  method?: HTTPMethod;
+  headers?: StringRecord;
+  fileFieldName?: string;
+  formFields?: FormFields;
+  uploadTimeout?: number;
+}
+
 /**
  * Starts media projection-based screen recording on the Android device.
  *
@@ -139,8 +149,6 @@ export async function mobileStopMediaProjectionRecording(
   }
 }
 
-// #region Internal helpers
-
 async function uploadRecordedMedia(
   localFile: string,
   remotePath?: string,
@@ -185,16 +193,4 @@ async function verifyMediaProjectionRecordingIsSupported(adb: ADB): Promise<void
         `Minimum required API Level is ${MIN_API_LEVEL}.`,
     );
   }
-}
-
-// #endregion
-
-interface UploadOptions {
-  user?: string;
-  pass?: string;
-  method?: HTTPMethod;
-  headers?: StringRecord;
-  fileFieldName?: string;
-  formFields?: FormFields;
-  uploadTimeout?: number;
 }

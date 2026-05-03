@@ -1,6 +1,5 @@
 import {fs, logger, system, util} from '@appium/support';
 import {waitForCondition} from 'asyncbox';
-import B from 'bluebird';
 import _ from 'lodash';
 import {spawn} from 'node:child_process';
 import http from 'node:http';
@@ -139,65 +138,75 @@ export async function mobileStartScreenStreaming(
 
   let mjpegSocket: net.Socket | undefined;
   let mjpegServer: http.Server | undefined;
-  try {
-    await new B<void>((resolve, reject) => {
-      mjpegSocket = net.createConnection(tcpPort, TCP_HOST, () => {
-        this.log.info(`Successfully connected to MJPEG stream at tcp://${TCP_HOST}:${tcpPort}`);
-        mjpegServer = http.createServer((req, res) => {
-          const remoteAddress = extractRemoteAddress(req);
-          const currentPathname = url.parse(String(req.url)).pathname;
+  let mjpegConnectTimeoutId: ReturnType<typeof setTimeout> | undefined;
+  const mjpegConnectTimeoutPromise = new Promise<never>((_resolve, reject) => {
+    mjpegConnectTimeoutId = setTimeout(
+      () =>
+        reject(
+          new Error(
+            `Cannot connect to the streaming server within ${STREAMING_STARTUP_TIMEOUT_MS}ms`,
+          ),
+        ),
+      STREAMING_STARTUP_TIMEOUT_MS,
+    );
+  });
+  const mjpegServerReadyPromise = new Promise<void>((resolve, reject) => {
+    mjpegSocket = net.createConnection(tcpPort, TCP_HOST, () => {
+      this.log.info(`Successfully connected to MJPEG stream at tcp://${TCP_HOST}:${tcpPort}`);
+      mjpegServer = http.createServer((req, res) => {
+        const remoteAddress = extractRemoteAddress(req);
+        const currentPathname = extractSafePathnameFromUrl(req.url);
+        this.log.info(
+          `Got an incoming screen broadcasting request from ${remoteAddress} ` +
+            `(${req.headers['user-agent'] || 'User Agent unknown'}) at ${currentPathname}`,
+        );
+
+        if (pathname && currentPathname !== pathname) {
           this.log.info(
-            `Got an incoming screen broadcasting request from ${remoteAddress} ` +
-              `(${req.headers['user-agent'] || 'User Agent unknown'}) at ${currentPathname}`,
+            'Rejecting the broadcast request since it does not match the given pathname',
           );
-
-          if (pathname && currentPathname !== pathname) {
-            this.log.info(
-              'Rejecting the broadcast request since it does not match the given pathname',
-            );
-            res.writeHead(404, {
-              Connection: 'close',
-              'Content-Type': 'text/plain; charset=utf-8',
-            });
-            res.write(`'${currentPathname}' did not match any known endpoints`);
-            res.end();
-            return;
-          }
-
-          this.log.info('Starting MJPEG broadcast');
-          res.writeHead(200, {
-            'Cache-Control':
-              'no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0',
-            Pragma: 'no-cache',
+          res.writeHead(404, {
             Connection: 'close',
-            'Content-Type': `multipart/x-mixed-replace; boundary=${BOUNDARY_STRING}`,
+            'Content-Type': 'text/plain; charset=utf-8',
           });
+          res.write(`'${currentPathname}' did not match any known endpoints`);
+          res.end();
+          return;
+        }
 
-          if (mjpegSocket) {
-            mjpegSocket.pipe(res);
-          }
+        this.log.info('Starting MJPEG broadcast');
+        res.writeHead(200, {
+          'Cache-Control':
+            'no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0',
+          Pragma: 'no-cache',
+          Connection: 'close',
+          'Content-Type': `multipart/x-mixed-replace; boundary=${BOUNDARY_STRING}`,
         });
-        mjpegServer.on('error', (e) => {
-          this.log.warn(e);
-          reject(e);
-        });
-        mjpegServer.on('close', () => {
-          this.log.debug(`MJPEG server at http://${host}:${port} has been closed`);
-        });
-        mjpegServer.on('listening', () => {
-          this.log.info(`Successfully started MJPEG server at http://${host}:${port}`);
-          resolve();
-        });
-        mjpegServer.listen(port, host);
+
+        if (mjpegSocket) {
+          mjpegSocket.pipe(res);
+        }
       });
-      mjpegSocket.on('error', (e) => {
-        this.log.error(e);
+      mjpegServer.on('error', (e) => {
+        this.log.warn(e);
         reject(e);
       });
-    }).timeout(
-      STREAMING_STARTUP_TIMEOUT_MS,
-      `Cannot connect to the streaming server within ${STREAMING_STARTUP_TIMEOUT_MS}ms`,
-    );
+      mjpegServer.on('close', () => {
+        this.log.debug(`MJPEG server at http://${host}:${port} has been closed`);
+      });
+      mjpegServer.on('listening', () => {
+        this.log.info(`Successfully started MJPEG server at http://${host}:${port}`);
+        resolve();
+      });
+      mjpegServer.listen(port, host);
+    });
+    mjpegSocket.on('error', (e) => {
+      this.log.error(e);
+      reject(e);
+    });
+  });
+  try {
+    await Promise.race([mjpegServerReadyPromise, mjpegConnectTimeoutPromise]);
   } catch (e) {
     if (deviceStreamingProc.kill(0)) {
       deviceStreamingProc.kill();
@@ -212,6 +221,10 @@ export async function mobileStartScreenStreaming(
       mjpegServer.close();
     }
     throw e;
+  } finally {
+    if (mjpegConnectTimeoutId !== undefined) {
+      clearTimeout(mjpegConnectTimeoutId);
+    }
   }
 
   this._screenStreamingProps = {
@@ -303,7 +316,7 @@ async function verifyStreamingRequirements(adb: ADB): Promise<void> {
       })(),
     );
   }
-  await B.all(gstreamerCheckPromises);
+  await Promise.all(gstreamerCheckPromises);
 
   const moduleCheckPromises: Promise<void>[] = [];
   for (const [name, modName] of _.toPairs(REQUIRED_GST_PLUGINS)) {
@@ -319,7 +332,7 @@ async function verifyStreamingRequirements(adb: ADB): Promise<void> {
       })(),
     );
   }
-  await B.all(moduleCheckPromises);
+  await Promise.all(moduleCheckPromises);
 }
 
 const deviceInfoRegexes = [
@@ -497,6 +510,17 @@ async function initGstreamerPipeline(
     }
   }
   return gstreamerPipeline;
+}
+
+/**
+ * WHATWG URL parsing can throw on malformed input; HTTP servers must not throw synchronously in request handlers.
+ */
+function extractSafePathnameFromUrl(requestUrl: string | undefined): string {
+  try {
+    return new url.URL(String(requestUrl ?? '/'), 'http://127.0.0.1').pathname;
+  } catch {
+    return '/';
+  }
 }
 
 /**

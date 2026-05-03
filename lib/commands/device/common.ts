@@ -1,6 +1,5 @@
 import * as semver from 'semver';
 import _ from 'lodash';
-import B from 'bluebird';
 import path from 'node:path';
 import {setMockLocationApp} from '../geolocation';
 import {SETTINGS_HELPER_ID} from 'io.appium.settings';
@@ -304,5 +303,5 @@ export async function initDevice(this: AndroidDriver): Promise<void> {
     });
   }
 
-  await B.all(setupPromises);
+  await Promise.all(setupPromises);
 }

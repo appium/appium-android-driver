@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {util} from '@appium/support';
-import B from 'bluebird';
 import type {AndroidDriver} from '../driver';
 import type {ServiceType, GetConnectivityResult} from './types';
 
@@ -87,7 +86,7 @@ export async function mobileSetConnectivity(
     return acc;
   }, []);
   const currentState = await this.mobileGetConnectivity(services);
-  const setters: Array<Promise<any> | (() => Promise<any>)> = [];
+  const setters: Promise<any>[] = [];
   if (!_.isUndefined(wifi) && currentState.wifi !== Boolean(wifi)) {
     setters.push(this.setWifiState(wifi));
   }
@@ -95,15 +94,17 @@ export async function mobileSetConnectivity(
     setters.push(this.setDataState(data));
   }
   if (!_.isUndefined(airplaneMode) && currentState.airplaneMode !== Boolean(airplaneMode)) {
-    setters.push(async () => {
-      await this.adb.setAirplaneMode(airplaneMode);
-      if ((await this.adb.getApiLevel()) < 30) {
-        await this.adb.broadcastAirplaneMode(airplaneMode);
-      }
-    });
+    setters.push(
+      (async () => {
+        await this.adb.setAirplaneMode(airplaneMode);
+        if ((await this.adb.getApiLevel()) < 30) {
+          await this.adb.broadcastAirplaneMode(airplaneMode);
+        }
+      })(),
+    );
   }
   if (!_.isEmpty(setters)) {
-    await B.all(setters);
+    await Promise.all(setters);
   }
 }
 
@@ -134,19 +135,24 @@ export async function mobileGetConnectivity(
     );
   }
 
-  const statePromises = {
-    wifi: B.resolve(svcs.includes(WIFI_KEY_NAME) ? this.adb.isWifiOn() : undefined),
-    data: B.resolve(svcs.includes(DATA_KEY_NAME) ? this.adb.isDataOn() : undefined),
-    airplaneMode: B.resolve(
-      svcs.includes(AIRPLANE_MODE_KEY_NAME) ? this.adb.isAirplaneModeOn() : undefined,
-    ),
-  };
-  await B.all(_.values(statePromises));
-  return _.reduce(
-    statePromises,
-    (state, v, k) => (_.isUndefined(v.value()) ? state : {...state, [k]: Boolean(v.value())}),
-    {} as GetConnectivityResult,
-  );
+  const [wifi, data, airplaneMode] = await Promise.all([
+    svcs.includes(WIFI_KEY_NAME) ? this.adb.isWifiOn() : Promise.resolve(undefined),
+    svcs.includes(DATA_KEY_NAME) ? this.adb.isDataOn() : Promise.resolve(undefined),
+    svcs.includes(AIRPLANE_MODE_KEY_NAME)
+      ? this.adb.isAirplaneModeOn()
+      : Promise.resolve(undefined),
+  ]);
+  const result: GetConnectivityResult = {};
+  if (!_.isUndefined(wifi)) {
+    result.wifi = Boolean(wifi);
+  }
+  if (!_.isUndefined(data)) {
+    result.data = Boolean(data);
+  }
+  if (!_.isUndefined(airplaneMode)) {
+    result.airplaneMode = Boolean(airplaneMode);
+  }
+  return result;
 }
 
 /**

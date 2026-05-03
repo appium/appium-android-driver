@@ -240,97 +240,6 @@ class AndroidDriver
   });
   opts: AndroidDriverOpts;
 
-  constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
-    super(opts, shouldValidateCaps);
-
-    this.locatorStrategies = [
-      'xpath',
-      'id',
-      'class name',
-      'accessibility id',
-      '-android uiautomator',
-    ];
-    this.desiredCapConstraints = _.cloneDeep(ANDROID_DRIVER_CONSTRAINTS);
-    this.sessionChromedrivers = {};
-    this.jwpProxyActive = false;
-
-    this.curContext = this.defaultContextName();
-    this.opts = opts as AndroidDriverOpts;
-    this._cachedActivityArgs = {};
-  }
-
-  get bidiProxyUrl(): string | null {
-    return this.opts.chromedriverForwardBiDi ? this._bidiProxyUrl : null;
-  }
-
-  get settingsApp(): SettingsApp {
-    if (!this._settingsApp || this._settingsApp.adb !== this.adb) {
-      this._settingsApp = new SettingsApp({adb: this.adb});
-    }
-    return this._settingsApp;
-  }
-
-  isEmulator(): boolean {
-    const possibleNames = [this.opts?.udid, this.adb?.curDeviceId];
-    return !!this.opts?.avd || possibleNames.some((x) => EMULATOR_PATTERN.test(String(x)));
-  }
-
-  get isChromeSession(): boolean {
-    return _.includes(
-      Object.keys(CHROME_BROWSER_PACKAGE_ACTIVITY),
-      (this.opts.browserName || '').toLowerCase(),
-    );
-  }
-
-  override validateDesiredCaps(caps: any): caps is AndroidDriverCaps {
-    if (!super.validateDesiredCaps(caps)) {
-      return false;
-    }
-
-    if (caps.browserName) {
-      if (caps.app) {
-        // warn if the capabilities have both `app` and `browser, although this is common with selenium grid
-        this.log.warn(
-          `The desired capabilities should generally not include both an 'app' and a 'browserName'`,
-        );
-      }
-      if (caps.appPackage) {
-        throw this.log.errorWithException(
-          `The desired should not include both of an 'appPackage' and a 'browserName'`,
-        );
-      }
-    }
-
-    if (caps.uninstallOtherPackages) {
-      try {
-        parseArray(caps.uninstallOtherPackages);
-      } catch (e) {
-        throw this.log.errorWithException(
-          `Could not parse "uninstallOtherPackages" capability: ${(e as Error).message}`,
-        );
-      }
-    }
-
-    return true;
-  }
-
-  override async deleteSession(sessionId?: string | null) {
-    await removeAllSessionWebSocketHandlers.bind(this)();
-
-    try {
-      this.adb?.logcat?.removeAllListeners();
-      await this.adb?.stopLogcat();
-    } catch (e) {
-      this.log.warn(`Cannot stop the logcat process. Original error: ${e.message}`);
-    }
-
-    if (this._bidiServerLogListener) {
-      this.log.unwrap().off('log', this._bidiServerLogListener);
-    }
-
-    await super.deleteSession(sessionId);
-  }
-
   getContexts = getContexts;
   getCurrentContext = getCurrentContext;
   defaultContextName = defaultContextName;
@@ -542,6 +451,97 @@ class AndroidDriver
   reset = reset;
   closeApp = closeApp;
   launchApp = launchApp;
+
+  constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
+    super(opts, shouldValidateCaps);
+
+    this.locatorStrategies = [
+      'xpath',
+      'id',
+      'class name',
+      'accessibility id',
+      '-android uiautomator',
+    ];
+    this.desiredCapConstraints = _.cloneDeep(ANDROID_DRIVER_CONSTRAINTS);
+    this.sessionChromedrivers = {};
+    this.jwpProxyActive = false;
+
+    this.curContext = this.defaultContextName();
+    this.opts = opts as AndroidDriverOpts;
+    this._cachedActivityArgs = {};
+  }
+
+  get bidiProxyUrl(): string | null {
+    return this.opts.chromedriverForwardBiDi ? this._bidiProxyUrl : null;
+  }
+
+  get settingsApp(): SettingsApp {
+    if (!this._settingsApp || this._settingsApp.adb !== this.adb) {
+      this._settingsApp = new SettingsApp({adb: this.adb});
+    }
+    return this._settingsApp;
+  }
+
+  get isChromeSession(): boolean {
+    return _.includes(
+      Object.keys(CHROME_BROWSER_PACKAGE_ACTIVITY),
+      (this.opts.browserName || '').toLowerCase(),
+    );
+  }
+
+  isEmulator(): boolean {
+    const possibleNames = [this.opts?.udid, this.adb?.curDeviceId];
+    return !!this.opts?.avd || possibleNames.some((x) => EMULATOR_PATTERN.test(String(x)));
+  }
+
+  override validateDesiredCaps(caps: any): caps is AndroidDriverCaps {
+    if (!super.validateDesiredCaps(caps)) {
+      return false;
+    }
+
+    if (caps.browserName) {
+      if (caps.app) {
+        // warn if the capabilities have both `app` and `browser, although this is common with selenium grid
+        this.log.warn(
+          `The desired capabilities should generally not include both an 'app' and a 'browserName'`,
+        );
+      }
+      if (caps.appPackage) {
+        throw this.log.errorWithException(
+          `The desired should not include both of an 'appPackage' and a 'browserName'`,
+        );
+      }
+    }
+
+    if (caps.uninstallOtherPackages) {
+      try {
+        parseArray(caps.uninstallOtherPackages);
+      } catch (e) {
+        throw this.log.errorWithException(
+          `Could not parse "uninstallOtherPackages" capability: ${(e as Error).message}`,
+        );
+      }
+    }
+
+    return true;
+  }
+
+  override async deleteSession(sessionId?: string | null) {
+    await removeAllSessionWebSocketHandlers.bind(this)();
+
+    try {
+      this.adb?.logcat?.removeAllListeners();
+      await this.adb?.stopLogcat();
+    } catch (e) {
+      this.log.warn(`Cannot stop the logcat process. Original error: ${e.message}`);
+    }
+
+    if (this._bidiServerLogListener) {
+      this.log.unwrap().off('log', this._bidiServerLogListener);
+    }
+
+    await super.deleteSession(sessionId);
+  }
 }
 
 export {AndroidDriver};

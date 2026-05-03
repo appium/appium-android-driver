@@ -1,7 +1,6 @@
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
 import {AndroidDriver} from '../../../lib/driver';
-import B from 'bluebird';
 import {SettingsApp} from 'io.appium.settings';
 import {errors} from 'appium/driver';
 import {expect, use} from 'chai';
@@ -24,7 +23,6 @@ describe('Network', function () {
     driver._settingsApp = settingsApp;
     sandbox.stub(settingsApp);
     sandbox.stub(driver, 'isEmulator');
-    sandbox.stub(B, 'delay');
   });
   afterEach(function () {
     sandbox.restore();

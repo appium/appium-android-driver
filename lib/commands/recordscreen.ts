@@ -269,7 +269,7 @@ async function scheduleScreenRecord(
       `Starting the next ${chunkDuration}s-chunk ` +
         `of screen recording in order to achieve ${timeLimitInt}s total duration`,
     );
-    (async () => {
+    void (async () => {
       try {
         await scheduleScreenRecord.bind(this)(recordingProperties);
       } catch (e) {

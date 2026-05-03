@@ -8,6 +8,8 @@ const SUPPORTED_ACTIONS = {
   UNPAIR_ALL: 'unpairAll',
 } as const;
 
+type BluetoothAction = (typeof SUPPORTED_ACTIONS)[keyof typeof SUPPORTED_ACTIONS];
+
 /**
  * Performs the requested action on the default bluetooth adapter
  *
@@ -34,5 +36,3 @@ export async function mobileBluetooth(this: AndroidDriver, action: BluetoothActi
       );
   }
 }
-
-type BluetoothAction = (typeof SUPPORTED_ACTIONS)[keyof typeof SUPPORTED_ACTIONS];
