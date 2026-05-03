@@ -1,3 +1,9 @@
+## [13.2.0](https://github.com/appium/appium-android-driver/compare/v13.1.2...v13.2.0) (2026-05-03)
+
+### Features
+
+* Ditch bluebird ([#1062](https://github.com/appium/appium-android-driver/issues/1062)) ([6b42f7b](https://github.com/appium/appium-android-driver/commit/6b42f7b5c60ae5476b60ae54a9f4340ee7e5df79))
+
 ## [13.1.2](https://github.com/appium/appium-android-driver/compare/v13.1.1...v13.1.2) (2026-04-10)
 
 ### Miscellaneous Chores
