@@ -1,3 +1,9 @@
+## [13.2.1](https://github.com/appium/appium-android-driver/compare/v13.2.0...v13.2.1) (2026-05-06)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 21.1.2 to 22.0.0 ([#1063](https://github.com/appium/appium-android-driver/issues/1063)) ([7c5ea41](https://github.com/appium/appium-android-driver/commit/7c5ea412f261d01036e0dedc101181f7ee80dc91))
+
 ## [13.2.0](https://github.com/appium/appium-android-driver/compare/v13.1.2...v13.2.0) (2026-05-03)
 
 ### Features
