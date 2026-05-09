@@ -86,7 +86,10 @@ describe('App Management', function () {
     });
     it('should return list of installed packages for specific user', async function () {
       const packages = [{appPackage: 'pkg1'}, {appPackage: 'pkg2'}];
-      sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).resolves(packages as any);
+      sandbox
+        .stub(driver.adb, 'listInstalledPackages')
+        .withArgs({user: '1'})
+        .resolves(packages as any);
       expect(await driver.mobileListApps('1')).to.deep.equal({
         pkg1: {packageName: 'pkg1', versionCode: null},
         pkg2: {packageName: 'pkg2', versionCode: null},

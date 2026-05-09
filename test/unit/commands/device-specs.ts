@@ -61,7 +61,10 @@ describe('Device Helpers', function () {
     });
 
     it('should not launch avd if one is already running', async function () {
-      sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').resolves({} as any);
+      sandbox
+        .stub(adb, 'getRunningAVDWithRetry')
+        .withArgs('foobar')
+        .resolves({} as any);
       sandbox.stub(adb, 'launchAVD').throws();
       sandbox.stub(adb, 'killEmulator').throws();
       await prepareEmulator.bind(driver)(adb);
@@ -128,7 +131,10 @@ describe('Device Helpers', function () {
     });
     it('should kill emulator if avdArgs contains -wipe-data', async function () {
       driver.opts = {avd: 'foo@bar', avdArgs: '-wipe-data'} as any;
-      sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').resolves({} as any);
+      sandbox
+        .stub(adb, 'getRunningAVDWithRetry')
+        .withArgs('foobar')
+        .resolves({} as any);
       sandbox.stub(adb, 'killEmulator').withArgs('foobar').onFirstCall();
       sandbox.stub(adb, 'launchAVD').onFirstCall();
       await prepareEmulator.bind(driver)(adb);

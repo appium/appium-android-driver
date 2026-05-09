@@ -34,11 +34,13 @@ describe('performance data', function () {
     driver = new AndroidDriver();
     driver.adb = adbInstance;
     adb = sandbox.stub(adbInstance);
-    retryIntervalStub = sandbox
-      .stub(asyncbox, 'retryInterval')
-      .callsFake(async function (times: number, sleepMs: number, fn: () => Promise<unknown>) {
-        return await fn();
-      });
+    retryIntervalStub = sandbox.stub(asyncbox, 'retryInterval').callsFake(async function (
+      times: number,
+      sleepMs: number,
+      fn: () => Promise<unknown>,
+    ) {
+      return await fn();
+    });
   });
   afterEach(function () {
     sandbox.restore();

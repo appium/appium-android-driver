@@ -31,7 +31,9 @@ describe('commands - logging', function () {
       expect(driver.getLog).to.be.an.instanceof(Function);
     });
     it('should get logcat logs', async function () {
-      const logEntries: LogEntry[] = [{timestamp: Date.now(), level: 'ALL', message: 'logs'} as LogEntry];
+      const logEntries: LogEntry[] = [
+        {timestamp: Date.now(), level: 'ALL', message: 'logs'} as LogEntry,
+      ];
       const getLogcatLogsStub = sinon.stub(driver.adb, 'getLogcatLogs').resolves(logEntries);
       expect(await driver.getLog('logcat')).to.deep.equal(logEntries);
       expect(getLogcatLogsStub.called).to.be.true;

@@ -61,7 +61,10 @@ describe('Lock', function () {
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
       sandbox.stub(unlockHelpers, 'pinUnlock');
-      await unlockWithOptions.bind(driver)({unlockType: 'pin', unlockKey: '1111'} as AndroidDriverCaps);
+      await unlockWithOptions.bind(driver)({
+        unlockType: 'pin',
+        unlockKey: '1111',
+      } as AndroidDriverCaps);
     });
     it('should call pinUnlock if unlockType is pinWithKeyEvent', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
@@ -337,9 +340,18 @@ describe('Lock', function () {
     beforeEach(function () {
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(unlockHelpers, 'stringKeyToArr').returns(keys);
-      sandbox.stub(driver, 'getLocation').withArgs(el.ELEMENT as any).resolves(pos);
-      sandbox.stub(driver, 'getSize').withArgs(el.ELEMENT as any).resolves(size);
-      sandbox.stub(unlockHelpers, 'getPatternActions').withArgs(keys, pos, 100).returns(patternActions);
+      sandbox
+        .stub(driver, 'getLocation')
+        .withArgs(el.ELEMENT as any)
+        .resolves(pos);
+      sandbox
+        .stub(driver, 'getSize')
+        .withArgs(el.ELEMENT as any)
+        .resolves(size);
+      sandbox
+        .stub(unlockHelpers, 'getPatternActions')
+        .withArgs(keys, pos, 100)
+        .returns(patternActions);
       sandbox.stub(driver, 'performActions').withArgs(patternActions).resolves();
       sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME).onFirstCall();
     });

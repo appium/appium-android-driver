@@ -78,10 +78,10 @@ describe('Webview Helpers', function () {
         stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
           return Promise.resolve(
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @chrome_devtools_remote\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n'
+              '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @chrome_devtools_remote\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n',
           );
         });
 
@@ -113,9 +113,9 @@ describe('Webview Helpers', function () {
         stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
           return Promise.resolve(
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n'
+              '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n',
           );
         });
 
@@ -143,10 +143,10 @@ describe('Webview Helpers', function () {
         stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
           return Promise.resolve(
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @com.application.myapp_devtools_remote\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n'
+              '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @com.application.myapp_devtools_remote\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n',
           );
         });
       });
@@ -222,10 +222,10 @@ describe('Webview Helpers', function () {
         stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
           return Promise.resolve(
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @stetho_com.google.android.apps.messaging_devtools_remote\n' +
-            '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n'
+              '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01 245445 @stetho_com.google.android.apps.messaging_devtools_remote\n' +
+              '0000000000000000: 00000002 00000000 00010000 0001 01  2826 /dev/socket/installd\n',
           );
         });
       });
