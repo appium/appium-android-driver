@@ -38,7 +38,9 @@ export async function getSystemBars(this: AndroidDriver): Promise<StringRecord> 
   try {
     stdout = await this.adb.shell(['dumpsys', 'window', 'windows']);
   } catch (e) {
-    throw new Error(`Cannot retrieve system bars details. Original error: ${(e as Error).message}`);
+    throw new Error(`Cannot retrieve system bars details. Original error: ${(e as Error).message}`, {
+      cause: e,
+    });
   }
   return parseWindows.bind(this)(stdout);
 }

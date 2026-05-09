@@ -61,7 +61,9 @@
     "portscanner": "^2.2.0",
     "semver": "^7.0.0",
     "teen_process": "^4.0.7",
-    "ws": "^8.0.0"
+    "ws": "^8.0.0",
+    "@types/chai": "^5.2.3",
+    "@types/chai-as-promised": "^8.0.2"
   },
   "devDependencies": {
     "@appium/eslint-config-appium-ts": "^3.0.0",
@@ -69,11 +71,14 @@
     "@appium/types": "^1.0.0-rc.1",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
+    "@types/chai": "^5.2.3",
+    "@types/chai-as-promised": "^8.0.2",
     "@types/lodash": "^4.14.194",
     "@types/mocha": "^10.0.1",
     "@types/node": "^25.0.0",
     "@types/portscanner": "^2.1.1",
     "@types/semver": "^7.5.0",
+    "@types/sinon": "^21.0.1",
     "@types/ws": "^8.5.4",
     "@xmldom/xmldom": "^0.x",
     "chai": "^6.0.0",

@@ -64,6 +64,9 @@ export async function mobileChangePermissions(
   target: PermissionTarget = PERMISSION_TARGET.PM,
 ): Promise<void> {
   appPackage ??= this.opts.appPackage;
+  if (!appPackage) {
+    throw new errors.InvalidArgumentError(`A valid appPackage must be provided`);
+  }
   action ??= _.toLower(target) === PERMISSION_TARGET.APPOPS ? APPOPS_ACTION.ALLOW : PM_ACTION.GRANT;
   if (_.isNil(permissions)) {
     throw new errors.InvalidArgumentError(`'permissions' argument is required`);

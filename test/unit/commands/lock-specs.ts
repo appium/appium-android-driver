@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
 import {AndroidDriver} from '../../../lib/driver';
+import type {AndroidDriverCaps} from '../../../lib/driver';
 import {
   validateUnlockCapabilities,
   encodePassword,
@@ -37,65 +38,81 @@ describe('Lock', function () {
 
   describe('unlockWithOptions', function () {
     it('should return if screen is already unlocked', async function () {
-      sandbox.stub(driver.adb, 'isScreenLocked').withArgs().onFirstCall().returns(false);
+      sandbox.stub(driver.adb, 'isScreenLocked').withArgs().onFirstCall().resolves(false);
       sandbox.stub(driver.adb, 'getApiLevel').throws();
       sandbox.stub(driver.adb, 'startApp').throws();
       sandbox.stub(driver.adb, 'isLockManagementSupported').throws();
-      await unlockWithOptions.bind(driver)({});
+      await unlockWithOptions.bind(driver)({} as AndroidDriverCaps);
     });
     it('should start unlock app', async function () {
-      sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().returns(true);
+      sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().resolves(true);
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(driver.adb, 'isLockManagementSupported').throws();
-      await unlockWithOptions.bind(driver)({});
+      await unlockWithOptions.bind(driver)({} as AndroidDriverCaps);
     });
     it('should raise an error on undefined unlockKey when unlockType is defined', async function () {
-      sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().returns(true);
+      sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').throws();
-      await expect(unlockWithOptions.bind(driver)({unlockType: 'pin'})).to.be.rejected;
+      await expect(unlockWithOptions.bind(driver)({unlockType: 'pin'} as AndroidDriverCaps)).to.be
+        .rejected;
     });
     it('should call pinUnlock if unlockType is pin', async function () {
-      sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().returns(true);
+      sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().resolves(true);
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
-      sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).returns(false);
+      sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
       sandbox.stub(unlockHelpers, 'pinUnlock');
-      await unlockWithOptions.bind(driver)({unlockType: 'pin', unlockKey: '1111'});
+      await unlockWithOptions.bind(driver)({unlockType: 'pin', unlockKey: '1111'} as AndroidDriverCaps);
     });
     it('should call pinUnlock if unlockType is pinWithKeyEvent', async function () {
-      sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).returns(true);
+      sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
-      sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).returns(false);
+      sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
       sandbox.stub(unlockHelpers, 'pinUnlockWithKeyEvent').onFirstCall();
-      await unlockWithOptions.bind(driver)({unlockType: 'pinWithKeyEvent', unlockKey: '1111'});
+      await unlockWithOptions.bind(driver)({
+        unlockType: 'pinWithKeyEvent',
+        unlockKey: '1111',
+      } as AndroidDriverCaps);
     });
     it('should call fastUnlock if unlockKey is provided', async function () {
-      sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).returns(true);
-      sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).returns(true);
+      sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
+      sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(true);
       sandbox.stub(unlockHelpers, 'verifyUnlock').onFirstCall();
       sandbox.stub(unlockHelpers, 'fastUnlock').onFirstCall();
-      await unlockWithOptions.bind(driver)({unlockKey: 'appium', unlockType: 'password'});
+      await unlockWithOptions.bind(driver)({
+        unlockKey: 'appium',
+        unlockType: 'password',
+      } as AndroidDriverCaps);
     });
     it('should call passwordUnlock if unlockType is password', async function () {
-      sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).returns(true);
-      sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).returns(false);
+      sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
+      sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
       sandbox.stub(unlockHelpers, 'passwordUnlock').onFirstCall();
-      await unlockWithOptions.bind(driver)({unlockType: 'password', unlockKey: 'appium'});
+      await unlockWithOptions.bind(driver)({
+        unlockType: 'password',
+        unlockKey: 'appium',
+      } as AndroidDriverCaps);
     });
     it('should call patternUnlock if unlockType is pattern', async function () {
-      sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).returns(true);
-      sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).returns(false);
+      sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
+      sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
       sandbox.stub(unlockHelpers, 'patternUnlock').onFirstCall();
-      await unlockWithOptions.bind(driver)({unlockType: 'pattern', unlockKey: '123456789'});
+      await unlockWithOptions.bind(driver)({
+        unlockType: 'pattern',
+        unlockKey: '123456789',
+      } as AndroidDriverCaps);
     });
     it('should call fingerprintUnlock if unlockType is fingerprint', async function () {
-      sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).returns(true);
+      sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').throws();
       sandbox.stub(unlockHelpers, 'fingerprintUnlock').onFirstCall();
-      await unlockWithOptions.bind(driver)({unlockType: 'fingerprint', unlockKey: '1111'});
+      await unlockWithOptions.bind(driver)({
+        unlockType: 'fingerprint',
+        unlockKey: '1111',
+      } as AndroidDriverCaps);
     });
   });
   describe('validateUnlockCapabilities', function () {
-    function toCaps(unlockType, unlockKey) {
+    function toCaps(unlockType: string, unlockKey: string | undefined) {
       return {
         unlockType,
         unlockKey,
@@ -159,15 +176,15 @@ describe('Lock', function () {
   });
   describe('fingerprintUnlock', function () {
     it('should be able to unlock device via fingerprint if API level >= 23', async function () {
-      const caps = {unlockKey: '123'};
-      sandbox.stub(driver.adb, 'getApiLevel').returns(23);
+      const caps = {unlockKey: '123'} as AndroidDriverCaps;
+      sandbox.stub(driver.adb, 'getApiLevel').resolves(23);
       sandbox.stub(driver.adb, 'fingerprint').withArgs(caps.unlockKey).onFirstCall();
       sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME).onFirstCall();
       await expect(fingerprintUnlock.bind(driver)(caps)).to.be.fulfilled;
     });
   });
   describe('pinUnlock', function () {
-    const caps = {unlockKey: '13579'};
+    const caps = {unlockKey: '13579'} as AndroidDriverCaps;
     const keys = ['1', '3', '5', '7', '9'];
     const els = [
       {ELEMENT: 1},
@@ -186,16 +203,16 @@ describe('Lock', function () {
     it('should be able to unlock device using pin (API level >= 21)', async function () {
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(unlockHelpers, 'stringKeyToArr').returns(keys);
-      sandbox.stub(driver.adb, 'getApiLevel').returns(21);
+      sandbox.stub(driver.adb, 'getApiLevel').resolves(21);
       sandbox
         .stub(driver, 'findElOrEls')
-        .withArgs('id', 'com.android.systemui:id/digit_text', true)
-        .returns(els);
-      sandbox.stub(driver.adb, 'isScreenLocked').returns(true);
+        .withArgs('id', 'com.android.systemui:id/digit_text', true as any)
+        .resolves(els as any);
+      sandbox.stub(driver.adb, 'isScreenLocked').resolves(true);
       sandbox.stub(driver.adb, 'keyevent').withArgs(66).onFirstCall();
       const getAttributeStub = sandbox.stub(driver, 'getAttribute');
       for (const e of els) {
-        getAttributeStub.withArgs('text', e.ELEMENT).returns(e.ELEMENT.toString());
+        getAttributeStub.withArgs('text', e.ELEMENT as any).resolves(e.ELEMENT.toString());
       }
       sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME);
       const clickStub = sandbox.stub(driver, 'click');
@@ -222,7 +239,7 @@ describe('Lock', function () {
         .withArgs(['input', 'text', caps.unlockKey])
         .withArgs(['input', 'keyevent', String(KEYCODE_NUMPAD_ENTER)]);
       sandbox.stub(asyncboxHelpers, 'sleep');
-      sandbox.stub(driver.adb, 'isScreenLocked').returns(true);
+      sandbox.stub(driver.adb, 'isScreenLocked').resolves(true);
       sandbox.stub(driver.adb, 'keyevent').withArgs(66).onFirstCall();
       await passwordUnlock.bind(driver)(caps);
     });
@@ -311,32 +328,35 @@ describe('Lock', function () {
   describe('patternUnlock', function () {
     const el = {ELEMENT: 1};
     const pos = {x: 10, y: 20};
-    const size = {width: 300};
+    const size = {width: 300, height: 400};
     const keys = ['1', '3', '5', '7', '9'];
-    const caps = {unlockKey: '13579'};
+    const caps = {unlockKey: '13579'} as AndroidDriverCaps;
+    const patternActions = [
+      {type: 'pointer', id: 'patternUnlock', parameters: {pointerType: 'touch'}, actions: []},
+    ] as any;
     beforeEach(function () {
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(unlockHelpers, 'stringKeyToArr').returns(keys);
-      sandbox.stub(driver, 'getLocation').withArgs(el.ELEMENT).returns(pos);
-      sandbox.stub(driver, 'getSize').withArgs(el.ELEMENT).returns(size);
-      sandbox.stub(unlockHelpers, 'getPatternActions').withArgs(keys, pos, 100).returns('actions');
-      sandbox.stub(driver, 'performActions').withArgs('actions').onFirstCall();
+      sandbox.stub(driver, 'getLocation').withArgs(el.ELEMENT as any).resolves(pos);
+      sandbox.stub(driver, 'getSize').withArgs(el.ELEMENT as any).resolves(size);
+      sandbox.stub(unlockHelpers, 'getPatternActions').withArgs(keys, pos, 100).returns(patternActions);
+      sandbox.stub(driver, 'performActions').withArgs(patternActions).resolves();
       sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME).onFirstCall();
     });
     it('should be able to unlock device using pattern (API level >= 21)', async function () {
-      sandbox.stub(driver.adb, 'getApiLevel').returns(21);
+      sandbox.stub(driver.adb, 'getApiLevel').resolves(21);
       sandbox
         .stub(driver, 'findElOrEls')
         .withArgs('id', 'com.android.systemui:id/lockPatternView', false)
-        .returns(el);
+        .resolves(el as any);
       await patternUnlock.bind(driver)(caps);
     });
     it('should be able to unlock device using pattern (API level < 21)', async function () {
-      sandbox.stub(driver.adb, 'getApiLevel').returns(20);
+      sandbox.stub(driver.adb, 'getApiLevel').resolves(20);
       sandbox
         .stub(driver, 'findElOrEls')
         .withArgs('id', 'com.android.keyguard:id/lockPatternView', false)
-        .returns(el);
+        .resolves(el as any);
       await patternUnlock.bind(driver)(caps);
     });
   });

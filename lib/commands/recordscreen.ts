@@ -337,7 +337,9 @@ async function terminateBackgroundScreenRecording(adb: ADB, force = true): Promi
     );
     return true;
   } catch (err) {
-    throw new Error(`Unable to stop the background screen recording: ${(err as Error).message}`);
+    throw new Error(`Unable to stop the background screen recording: ${(err as Error).message}`, {
+      cause: err,
+    });
   }
 }
 

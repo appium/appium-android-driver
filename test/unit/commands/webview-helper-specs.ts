@@ -38,7 +38,7 @@ describe('Webview Helpers', function () {
 
   describe('When the webviews are obtained', function () {
     describe('for an app that embeds Chromium', function () {
-      let webViews;
+      let webViews: string[];
 
       beforeEach(async function () {
         stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
@@ -72,11 +72,11 @@ describe('Webview Helpers', function () {
     });
 
     describe('for a Chromium webview', function () {
-      let webViews;
+      let webViews: string[];
 
       beforeEach(async function () {
         stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
-          return (
+          return Promise.resolve(
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
@@ -107,11 +107,11 @@ describe('Webview Helpers', function () {
     });
 
     describe('and no webviews exist', function () {
-      let webViews;
+      let webViews: string[];
 
       beforeEach(async function () {
         stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
-          return (
+          return Promise.resolve(
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
@@ -137,11 +137,11 @@ describe('Webview Helpers', function () {
     });
 
     describe('and crosswalk webviews exist', function () {
-      let webViews;
+      let webViews: string[];
 
       beforeEach(function () {
         stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
-          return (
+          return Promise.resolve(
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +
@@ -216,11 +216,11 @@ describe('Webview Helpers', function () {
     });
 
     describe('and stetho socket exists', function () {
-      let webViews;
+      let webViews: string[];
 
       beforeEach(function () {
         stubbedShell = sandbox.stub(adb, 'shell').callsFake(function () {
-          return (
+          return Promise.resolve(
             'Num       RefCount Protocol Flags    Type St Inode Path\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  2818 /dev/socket/ss_conn_daemon\n' +
             '0000000000000000: 00000002 00000000 00010000 0001 01  9231 @mcdaemon\n' +

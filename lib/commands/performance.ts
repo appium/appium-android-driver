@@ -93,7 +93,7 @@ export async function getPerformanceData(
     case 'batteryinfo':
       return await getBatteryInfo.call(this, retries);
     case 'cpuinfo':
-      return await getCPUInfo.call(this, packageName, retries);
+      return (await getCPUInfo.call(this, packageName, retries)) as any[][];
     case 'memoryinfo':
       return await getMemoryInfo.call(this, packageName, retries);
     case 'networkinfo':
@@ -280,8 +280,6 @@ export async function getNetworkTrafficInfo(
       const arrayList = data.split('\n');
 
       if (arrayList.length > 0) {
-        start = -1;
-
         for (let j = 0; j < NETWORK_KEYS.length; ++j) {
           start = arrayList[0].indexOf(NETWORK_KEYS[j][0]);
 

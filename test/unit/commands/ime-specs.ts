@@ -25,7 +25,7 @@ describe('IME', function () {
   });
   describe('availableIMEEngines', function () {
     it('should return available IMEEngines', async function () {
-      sandbox.stub(driver.adb, 'availableIMEs').returns(['IME1', 'IME2']);
+      sandbox.stub(driver.adb, 'availableIMEs').resolves(['IME1', 'IME2']);
       await await expect(driver.availableIMEEngines()).to.eventually.be.deep.equal([
         'IME1',
         'IME2',
@@ -34,13 +34,13 @@ describe('IME', function () {
   });
   describe('getActiveIMEEngine', function () {
     it('should return active IME engine', async function () {
-      sandbox.stub(driver.adb, 'defaultIME').returns('default_ime_engine');
+      sandbox.stub(driver.adb, 'defaultIME').resolves('default_ime_engine');
       await expect(driver.getActiveIMEEngine()).to.become('default_ime_engine');
     });
   });
   describe('activateIMEEngine', function () {
     it('should activate IME engine', async function () {
-      sandbox.stub(driver.adb, 'availableIMEs').returns(['IME1', 'IME2']);
+      sandbox.stub(driver.adb, 'availableIMEs').resolves(['IME1', 'IME2']);
       const enableIMEStub = sandbox.stub(driver.adb, 'enableIME');
       const setIMEStub = sandbox.stub(driver.adb, 'setIME');
       await expect(driver.activateIMEEngine('IME2')).to.be.fulfilled;
@@ -48,7 +48,7 @@ describe('IME', function () {
       expect(setIMEStub.calledWithExactly('IME2')).to.be.true;
     });
     it('should throws error if IME not found', async function () {
-      sandbox.stub(driver.adb, 'availableIMEs').returns(['IME1', 'IME2']);
+      sandbox.stub(driver.adb, 'availableIMEs').resolves(['IME1', 'IME2']);
       await expect(driver.activateIMEEngine('IME3')).to.be.rejectedWith(
         errors.IMENotAvailableError,
       );
@@ -56,7 +56,7 @@ describe('IME', function () {
   });
   describe('deactivateIMEEngine', function () {
     it('should deactivate IME engine', async function () {
-      sandbox.stub(driver, 'getActiveIMEEngine').returns('active_ime_engine');
+      sandbox.stub(driver, 'getActiveIMEEngine').resolves('active_ime_engine');
       const disableIMEStub = sandbox.stub(driver.adb, 'disableIME');
       await expect(driver.deactivateIMEEngine()).to.be.fulfilled;
       expect(disableIMEStub.calledWithExactly('active_ime_engine')).to.be.true;

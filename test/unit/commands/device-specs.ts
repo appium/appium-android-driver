@@ -61,7 +61,7 @@ describe('Device Helpers', function () {
     });
 
     it('should not launch avd if one is already running', async function () {
-      sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').returns('foo');
+      sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').resolves({} as any);
       sandbox.stub(adb, 'launchAVD').throws();
       sandbox.stub(adb, 'killEmulator').throws();
       await prepareEmulator.bind(driver)(adb);
@@ -78,7 +78,7 @@ describe('Device Helpers', function () {
           launchTimeout: undefined,
           readyTimeout: undefined,
         })
-        .returns('');
+        .resolves({} as any);
       await prepareEmulator.bind(driver)(adb);
     });
     it('should parse avd string command line args', async function () {
@@ -104,7 +104,7 @@ describe('Device Helpers', function () {
           launchTimeout: undefined,
           readyTimeout: undefined,
         })
-        .returns('');
+        .resolves({} as any);
       await prepareEmulator.bind(driver)(adb);
     });
     it('should parse avd array command line args', async function () {
@@ -123,12 +123,12 @@ describe('Device Helpers', function () {
           launchTimeout: undefined,
           readyTimeout: undefined,
         })
-        .returns('');
+        .resolves({} as any);
       await prepareEmulator.bind(driver)(adb);
     });
     it('should kill emulator if avdArgs contains -wipe-data', async function () {
       driver.opts = {avd: 'foo@bar', avdArgs: '-wipe-data'} as any;
-      sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').returns('foo');
+      sandbox.stub(adb, 'getRunningAVDWithRetry').withArgs('foobar').resolves({} as any);
       sandbox.stub(adb, 'killEmulator').withArgs('foobar').onFirstCall();
       sandbox.stub(adb, 'launchAVD').onFirstCall();
       await prepareEmulator.bind(driver)(adb);
@@ -176,7 +176,7 @@ describe('Device Helpers', function () {
     let curDeviceId = '';
 
     before(function () {
-      sinon.stub(ADB, 'createADB').callsFake(function () {
+      sinon.stub(ADB, 'createADB').callsFake(async function () {
         return {
           getDevicesWithRetry() {
             return _.map(devices, function getDevice(device) {
@@ -192,7 +192,7 @@ describe('Device Helpers', function () {
             return {udid: 'emulator-1234', port: 1234};
           },
 
-          setDeviceId(udid) {
+          setDeviceId(udid: string) {
             curDeviceId = udid;
           },
 
@@ -201,7 +201,7 @@ describe('Device Helpers', function () {
           },
           curDeviceId: 'emulator-1234',
           emulatorPort: 1234,
-        };
+        } as any;
       });
     });
 
@@ -331,16 +331,16 @@ describe('Device Helpers', function () {
     let curDeviceId = '';
     let emulatorPort = -1;
     before(function () {
-      sinon.stub(ADB, 'createADB').callsFake(function () {
+      sinon.stub(ADB, 'createADB').callsFake(async function () {
         return {
-          setDeviceId: (udid) => {
+          setDeviceId: (udid: string) => {
             curDeviceId = udid;
           },
 
-          setEmulatorPort: (emPort) => {
+          setEmulatorPort: (emPort: number) => {
             emulatorPort = emPort;
           },
-        };
+        } as any;
       });
     });
     after(function () {

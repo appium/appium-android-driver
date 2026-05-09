@@ -22,13 +22,13 @@ describe('File Actions', function () {
   describe('pullFile', function () {
     it('should be able to pull file from device', async function () {
       const localFile = 'local/tmp_file';
-      sandbox.stub(support.tempDir, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').resolves(localFile);
       const pullStub1 = sandbox.stub(driver.adb, 'pull');
       sandbox
         .stub(support.util, 'toInMemoryBase64')
         .withArgs(localFile)
-        .returns(Buffer.from('YXBwaXVt', 'utf8'));
-      sandbox.stub(support.fs, 'exists').withArgs(localFile).returns(true);
+        .resolves(Buffer.from('YXBwaXVt', 'utf8'));
+      sandbox.stub(support.fs, 'exists').withArgs(localFile).resolves(true);
       const unlinkStub4 = sandbox.stub(support.fs, 'unlink');
       await expect(driver.pullFile('remote_path')).to.become('YXBwaXVt');
       expect(pullStub1.calledWithExactly('remote_path', localFile)).to.be.true;
@@ -40,14 +40,14 @@ describe('File Actions', function () {
       const packageId = 'com.myapp';
       const remotePath = 'path/in/container';
       const tmpPath = '/data/local/tmp/container';
-      sandbox.stub(support.tempDir, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').resolves(localFile);
       const pullStub = sandbox.stub(driver.adb, 'pull');
       const shellStub2 = sandbox.stub(driver.adb, 'shell');
       sandbox
         .stub(support.util, 'toInMemoryBase64')
         .withArgs(localFile)
-        .returns(Buffer.from('YXBwaXVt', 'utf8'));
-      sandbox.stub(support.fs, 'exists').withArgs(localFile).returns(true);
+        .resolves(Buffer.from('YXBwaXVt', 'utf8'));
+      sandbox.stub(support.fs, 'exists').withArgs(localFile).resolves(true);
       const unlinkStub3 = sandbox.stub(support.fs, 'unlink');
       await expect(driver.pullFile(`@${packageId}/${remotePath}`)).to.become('YXBwaXVt');
       expect(pullStub.calledWithExactly(tmpPath, localFile)).to.be.true;
@@ -74,11 +74,11 @@ describe('File Actions', function () {
     it('should be able to push file to device', async function () {
       const localFile = 'local/tmp_file';
       const content = 'appium';
-      sandbox.stub(support.tempDir, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').resolves(localFile);
       const pushStub1 = sandbox.stub(driver.adb, 'push');
       sandbox.stub(driver.adb, 'shell');
       const writeFileStub1 = sandbox.stub(support.fs, 'writeFile');
-      sandbox.stub(support.fs, 'exists').withArgs(localFile).returns(true);
+      sandbox.stub(support.fs, 'exists').withArgs(localFile).resolves(true);
       const unlinkStub1 = sandbox.stub(support.fs, 'unlink');
       await driver.pushFile('remote_path', 'YXBwaXVt');
       expect(writeFileStub1.calledWithExactly(localFile, content, 'binary')).to.be.true;
@@ -92,10 +92,10 @@ describe('File Actions', function () {
       const packageId = 'com.myapp';
       const remotePath = 'path/in/container';
       const tmpPath = '/data/local/tmp/container';
-      sandbox.stub(support.tempDir, 'path').returns(localFile);
+      sandbox.stub(support.tempDir, 'path').resolves(localFile);
       const pushStub2 = sandbox.stub(driver.adb, 'push');
       const writeFileStub = sandbox.stub(support.fs, 'writeFile');
-      sandbox.stub(support.fs, 'exists').withArgs(localFile).returns(true);
+      sandbox.stub(support.fs, 'exists').withArgs(localFile).resolves(true);
       const unlinkStub2 = sandbox.stub(support.fs, 'unlink');
       const shellStub = sandbox.stub(driver.adb, 'shell');
       await driver.pushFile(`@${packageId}/${remotePath}`, 'YXBwaXVt');

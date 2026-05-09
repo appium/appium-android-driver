@@ -4,6 +4,7 @@ import _ from 'lodash';
 import {exec} from 'teen_process';
 import type {ExecError} from 'teen_process';
 import {ADB_SHELL_FEATURE} from '../utils';
+import type {AndroidDriver} from '../driver';
 
 /**
  * Executes a shell command on the device via ADB.
@@ -27,6 +28,7 @@ import {ADB_SHELL_FEATURE} from '../utils';
  * @throws {Error} If the command execution fails or times out.
  */
 export async function mobileShell<T extends boolean>(
+  this: AndroidDriver,
   command: string,
   args: string[] = [],
   timeout: number = 20000,
