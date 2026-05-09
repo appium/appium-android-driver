@@ -66,7 +66,7 @@ export async function ensureDeviceLocale(
     if (!_.isEmpty(suggestions)) {
       errMsg += ` You may want to apply one of the following locales instead: ${suggestions}`;
     }
-    throw new Error(errMsg);
+    throw new Error(errMsg, {cause: e});
   }
 }
 
@@ -89,6 +89,7 @@ async function extractStringsFromResources(
       } catch (e) {
         throw new Error(
           `Could not extract app strings, failed to pull an apk from '${caps.appPackage}'. Original error: ${(e as Error).message}`,
+          {cause: e},
         );
       }
     }

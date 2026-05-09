@@ -24,51 +24,51 @@ describe('App Management', function () {
   });
   describe('getCurrentActivity', function () {
     it('should get current activity', async function () {
-      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appActivity: 'act'});
+      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').resolves({appActivity: 'act'});
       await expect(driver.getCurrentActivity()).to.eventually.equal('act');
     });
   });
   describe('getCurrentPackage', function () {
     it('should get current activity', async function () {
-      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').returns({appPackage: 'pkg'});
+      sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').resolves({appPackage: 'pkg'});
       await expect(driver.getCurrentPackage()).to.eventually.equal('pkg');
     });
   });
   describe('isAppInstalled', function () {
     it('should return true if app is installed', async function () {
-      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').returns(true);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').resolves(true);
       expect(await driver.isAppInstalled('pkg')).to.be.true;
     });
     it('should return true if app is installed with undefined user', async function () {
-      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').returns(true);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').resolves(true);
       expect(await driver.isAppInstalled('pkg', {})).to.be.true;
     });
     it('should return true if app is installed with user string', async function () {
-      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg', {user: '1'}).returns(true);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg', {user: '1'}).resolves(true);
       expect(await driver.isAppInstalled('pkg', {user: '1'})).to.be.true;
     });
     it('should return true if app is installed with user number', async function () {
       const stub = sandbox.stub(driver.adb, 'isAppInstalled');
-      stub.withArgs('pkg', sinon.match({user: '1'})).returns(true);
-      stub.withArgs('pkg', sinon.match({user: sinon.match.any})).returns(true);
+      stub.withArgs('pkg', sinon.match({user: '1'})).resolves(true);
+      stub.withArgs('pkg', sinon.match({user: sinon.match.any})).resolves(true);
       expect(await driver.isAppInstalled('pkg', {user: 1} as any)).to.be.true;
     });
   });
   describe('mobileIsAppInstalled', function () {
     it('should return true if app is installed', async function () {
-      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').returns(true);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').resolves(true);
       expect(await driver.mobileIsAppInstalled('pkg')).to.be.true;
     });
     it('should return true if app is installed with undefined user', async function () {
-      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').returns(true);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').resolves(true);
       expect(await driver.mobileIsAppInstalled('pkg')).to.be.true;
     });
     it('should return true if app is installed with user string', async function () {
-      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg', {user: '1'}).returns(true);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg', {user: '1'}).resolves(true);
       expect(await driver.mobileIsAppInstalled('pkg', '1')).to.be.true;
     });
     it('should return true if app is installed with user number', async function () {
-      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg', {user: '1'}).returns(true);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg', {user: '1'}).resolves(true);
       expect(await driver.mobileIsAppInstalled('pkg', 1)).to.be.true;
     });
   });
@@ -78,7 +78,7 @@ describe('App Management', function () {
         {appPackage: 'pkg1', versionCode: '10'},
         {appPackage: 'pkg2', versionCode: '10'},
       ];
-      sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({}).returns(packages);
+      sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({}).resolves(packages);
       expect(await driver.mobileListApps()).to.deep.equal({
         pkg1: {packageName: 'pkg1', versionCode: 10},
         pkg2: {packageName: 'pkg2', versionCode: 10},
@@ -86,7 +86,10 @@ describe('App Management', function () {
     });
     it('should return list of installed packages for specific user', async function () {
       const packages = [{appPackage: 'pkg1'}, {appPackage: 'pkg2'}];
-      sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).returns(packages);
+      sandbox
+        .stub(driver.adb, 'listInstalledPackages')
+        .withArgs({user: '1'})
+        .resolves(packages as any);
       expect(await driver.mobileListApps('1')).to.deep.equal({
         pkg1: {packageName: 'pkg1', versionCode: null},
         pkg2: {packageName: 'pkg2', versionCode: null},
@@ -94,14 +97,14 @@ describe('App Management', function () {
     });
     it('should return list of installed packages with user string', async function () {
       const packages = [{appPackage: 'pkg1', versionCode: '10'}];
-      sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).returns(packages);
+      sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).resolves(packages);
       expect(await driver.mobileListApps('1')).to.deep.equal({
         pkg1: {packageName: 'pkg1', versionCode: 10},
       });
     });
     it('should return list of installed packages with user number', async function () {
       const packages = [{appPackage: 'pkg1', versionCode: '10'}];
-      sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).returns(packages);
+      sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).resolves(packages);
       expect(await driver.mobileListApps(1)).to.deep.equal({
         pkg1: {packageName: 'pkg1', versionCode: 10},
       });
@@ -109,7 +112,7 @@ describe('App Management', function () {
   });
   describe('removeApp', function () {
     it('should remove app', async function () {
-      sandbox.stub(driver.adb, 'uninstallApk').withArgs('pkg').returns(true);
+      sandbox.stub(driver.adb, 'uninstallApk').withArgs('pkg').resolves(true);
       expect(await driver.removeApp('pkg')).to.be.true;
     });
   });
@@ -118,7 +121,7 @@ describe('App Management', function () {
       const app = 'app.apk';
       driver.helpers = {configureApp: sandbox.stub().withArgs(app, '.apk').resolves(app)} as any;
       const configureAppStub = driver.helpers.configureApp as sinon.SinonStub;
-      const rimrafStub = sandbox.stub(fs, 'rimraf').returns();
+      const rimrafStub = sandbox.stub(fs, 'rimraf').resolves();
       const installStub = sandbox.stub(driver.adb, 'install').resolves();
       await driver.installApp(app, {});
       expect(configureAppStub.calledOnce).to.be.true;
@@ -148,7 +151,7 @@ describe('App Management', function () {
       } as any;
       const getFocusedStub = sandbox
         .stub(driver.adb, 'getFocusedPackageAndActivity')
-        .returns({appPackage, appActivity});
+        .resolves({appPackage, appActivity});
       const goToHomeStub = sandbox.stub(driver.adb, 'goToHome');
       const sleepStub = sandbox.stub(asyncbox, 'longSleep');
       const startAppStub = sandbox.stub(driver.adb, 'startApp');
@@ -186,7 +189,7 @@ describe('App Management', function () {
       driver._cachedActivityArgs = {[`${appPackage}/${appActivity}`]: params};
       const getFocusedStub2 = sandbox
         .stub(driver.adb, 'getFocusedPackageAndActivity')
-        .returns({appPackage, appActivity});
+        .resolves({appPackage, appActivity});
       const goToHomeStub2 = sandbox.stub(driver.adb, 'goToHome');
       const sleepStub = sandbox.stub(asyncbox, 'longSleep');
       const startAppStub2 = sandbox.stub(driver.adb, 'startApp');
@@ -216,7 +219,7 @@ describe('App Management', function () {
       } as any;
       const getFocusedStub3 = sandbox
         .stub(driver.adb, 'getFocusedPackageAndActivity')
-        .returns({appPackage: appWaitPackage, appActivity: appWaitActivity});
+        .resolves({appPackage: appWaitPackage, appActivity: appWaitActivity});
       const goToHomeStub3 = sandbox.stub(driver.adb, 'goToHome');
       const sleepStub = sandbox.stub(asyncbox, 'longSleep');
       const startAppStub3 = sandbox.stub(driver.adb, 'startApp');
@@ -298,14 +301,14 @@ describe('App Management', function () {
     it('should be able to do full reset', async function () {
       sandbox.stub(driver.adb, 'install').withArgs(localApkPath).onFirstCall();
       sandbox.stub(driver.adb, 'forceStop').withArgs(pkg).onFirstCall();
-      sandbox.stub(driver.adb, 'isAppInstalled').withArgs(pkg).onFirstCall().returns(true);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs(pkg).onFirstCall().resolves(true);
       sandbox.stub(driver.adb, 'uninstallApk').withArgs(pkg).onFirstCall();
       await driver.resetAUT({app: localApkPath, appPackage: pkg} as any);
     });
     it('should be able to do fast reset', async function () {
-      sandbox.stub(driver.adb, 'isAppInstalled').withArgs(pkg).onFirstCall().returns(true);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs(pkg).onFirstCall().resolves(true);
       sandbox.stub(driver.adb, 'forceStop').withArgs(pkg).onFirstCall();
-      sandbox.stub(driver.adb, 'clear').withArgs(pkg).onFirstCall().returns('Success');
+      sandbox.stub(driver.adb, 'clear').withArgs(pkg).onFirstCall().resolves('Success');
       sandbox.stub(driver.adb, 'grantAllPermissions').withArgs(pkg).onFirstCall();
       await driver.resetAUT({
         app: localApkPath,
@@ -315,7 +318,7 @@ describe('App Management', function () {
       } as any);
     });
     it('should perform reinstall if app is not installed and fast reset is requested', async function () {
-      sandbox.stub(driver.adb, 'isAppInstalled').withArgs(pkg).onFirstCall().returns(false);
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs(pkg).onFirstCall().resolves(false);
       sandbox.stub(driver.adb, 'forceStop').throws();
       sandbox.stub(driver.adb, 'clear').throws();
       sandbox.stub(driver.adb, 'uninstallApk').throws();
@@ -344,7 +347,7 @@ describe('App Management', function () {
         .stub(driver.adb, 'installOrUpgrade')
         .withArgs(opts.app, opts.appPackage)
         .onFirstCall()
-        .returns({wasUninstalled: false, appState: 'sameVersionInstalled'});
+        .resolves({wasUninstalled: false, appState: 'sameVersionInstalled'});
       sandbox.stub(driver, 'resetAUT').onFirstCall();
       await driver.installAUT({...opts, fastReset: true} as any);
     });
@@ -358,7 +361,7 @@ describe('App Management', function () {
         .stub(driver.adb, 'installOrUpgrade')
         .withArgs(opts.app, opts.appPackage)
         .onFirstCall()
-        .returns({wasUninstalled: true, appState: 'sameVersionInstalled'});
+        .resolves({wasUninstalled: true, appState: 'sameVersionInstalled'});
       sandbox.stub(driver, 'resetAUT').throws();
       await driver.installAUT(opts as any);
     });
@@ -367,7 +370,7 @@ describe('App Management', function () {
         .stub(driver.adb, 'installOrUpgrade')
         .withArgs(opts.app, opts.appPackage)
         .onFirstCall()
-        .returns({wasUninstalled: false, appState: 'notInstalled'});
+        .resolves({wasUninstalled: false, appState: 'notInstalled'});
       sandbox.stub(driver, 'resetAUT').throws();
       await driver.installAUT({...opts, fastReset: true} as any);
     });

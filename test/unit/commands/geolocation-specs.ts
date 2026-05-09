@@ -26,7 +26,7 @@ describe('Geolocation', function () {
         .stub(driver.adb, 'shell')
         .withArgs(['appops', 'set', 'io.appium.settings', 'android:mock_location', 'allow'])
         .onFirstCall()
-        .returns('');
+        .resolves('');
       sandbox.stub(driver.adb, 'fileExists').throws();
       await setMockLocationApp.bind(driver)('io.appium.settings');
     });

@@ -26,7 +26,7 @@ describe('recording the screen', function () {
   describe('basic', function () {
     it('should fail to recording the screen on an older emulator', async function () {
       sandbox.stub(driver, 'isEmulator').returns(true);
-      sandbox.stub(adb, 'getApiLevel').returns(26);
+      sandbox.stub(adb, 'getApiLevel').resolves(26);
 
       await expect(driver.startRecordingScreen()).to.be.rejectedWith(
         /Screen recording does not work on emulators/,

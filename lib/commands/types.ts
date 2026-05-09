@@ -1,7 +1,7 @@
 import type {HTTPMethod, StringRecord} from '@appium/types';
 import type {AndroidDriverCaps} from '../driver';
 import type {SubProcess} from 'teen_process';
-import {timing} from '@appium/support';
+import type {timing} from '@appium/support';
 
 /**
  * @privateRemarks probably better defined in `appium-adb`

@@ -75,11 +75,12 @@ export async function mobileSetConnectivity(
     );
   }
 
-  const services: ServiceType[] = [
+  const connectivityPairs: [boolean | undefined, ServiceType][] = [
     [wifi, WIFI_KEY_NAME],
     [data, DATA_KEY_NAME],
     [airplaneMode, AIRPLANE_MODE_KEY_NAME],
-  ].reduce<ServiceType[]>((acc, [value, key]: [boolean | undefined, ServiceType]) => {
+  ];
+  const services = connectivityPairs.reduce<ServiceType[]>((acc, [value, key]) => {
     if (!_.isUndefined(value)) {
       acc.push(key);
     }

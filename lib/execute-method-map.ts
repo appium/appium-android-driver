@@ -1,4 +1,4 @@
-import {ExecuteMethodMap} from '@appium/types';
+import type {ExecuteMethodMap} from '@appium/types';
 
 const INTENT_PARAMS = [
   'user',

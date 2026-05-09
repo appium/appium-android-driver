@@ -8,11 +8,11 @@ import type {
   W3CDriverCaps,
 } from '@appium/types';
 import _ from 'lodash';
-import {ADB} from 'appium-adb';
-import type {LogcatListener} from 'appium-adb';
+import type {ADB, LogcatListener} from 'appium-adb';
 import type {default as AppiumChromedriver} from 'appium-chromedriver';
 import {BaseDriver} from 'appium/driver';
-import {ANDROID_DRIVER_CONSTRAINTS, AndroidDriverConstraints} from './constraints';
+import {ANDROID_DRIVER_CONSTRAINTS} from './constraints';
+import type {AndroidDriverConstraints} from './constraints';
 import {newMethodMap} from './method-map';
 import {SettingsApp} from 'io.appium.settings';
 import {parseArray, removeAllSessionWebSocketHandlers} from './utils';
@@ -215,9 +215,9 @@ class AndroidDriver
   static newMethodMap = newMethodMap;
   static executeMethodMap = executeMethodMap;
 
-  jwpProxyAvoid: RouteMatcher[];
-  adb: ADB;
-  _settingsApp: SettingsApp;
+  jwpProxyAvoid!: RouteMatcher[];
+  adb!: ADB;
+  _settingsApp!: SettingsApp;
   proxyReqRes?: (...args: any) => any;
   contexts?: string[];
   sessionChromedrivers: StringRecord<AppiumChromedriver>;
@@ -533,7 +533,9 @@ class AndroidDriver
       this.adb?.logcat?.removeAllListeners();
       await this.adb?.stopLogcat();
     } catch (e) {
-      this.log.warn(`Cannot stop the logcat process. Original error: ${e.message}`);
+      this.log.warn(
+        `Cannot stop the logcat process. Original error: ${e instanceof Error ? e.message : String(e)}`,
+      );
     }
 
     if (this._bidiServerLogListener) {
