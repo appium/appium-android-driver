@@ -1,3 +1,9 @@
+## [13.2.2](https://github.com/appium/appium-android-driver/compare/v13.2.1...v13.2.2) (2026-05-09)
+
+### Miscellaneous Chores
+
+* Enable strict TS mode ([#1064](https://github.com/appium/appium-android-driver/issues/1064)) ([f51578d](https://github.com/appium/appium-android-driver/commit/f51578dfe40dfa52be8078019618f055a8b82be0))
+
 ## [13.2.1](https://github.com/appium/appium-android-driver/compare/v13.2.0...v13.2.1) (2026-05-06)
 
 ### Miscellaneous Chores
