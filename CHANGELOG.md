@@ -1,3 +1,9 @@
+## [13.2.3](https://github.com/appium/appium-android-driver/compare/v13.2.2...v13.2.3) (2026-05-21)
+
+### Miscellaneous Chores
+
+* Bump appium-adb ([#1065](https://github.com/appium/appium-android-driver/issues/1065)) ([6a9f045](https://github.com/appium/appium-android-driver/commit/6a9f0451d451ee6ef2be55605f2fadb555f53d33))
+
 ## [13.2.2](https://github.com/appium/appium-android-driver/compare/v13.2.1...v13.2.2) (2026-05-09)
 
 ### Miscellaneous Chores
