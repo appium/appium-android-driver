@@ -25,7 +25,6 @@ describe('Context', function () {
     driver = new AndroidDriver();
     driver.adb = new ADB();
     driver.adb.curDeviceId = 'device_id';
-    sandbox.stub(driver.adb, 'getAdbServerPort').returns(5555);
     sandbox.stub(Chromedriver.prototype, 'restart');
     sandbox.stub(Chromedriver.prototype, 'start');
     sandbox.stub(Chromedriver.prototype.proxyReq as any, 'bind').returns('proxy');

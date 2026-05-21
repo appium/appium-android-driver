@@ -182,7 +182,7 @@ describe('Lock', function () {
       const caps = {unlockKey: '123'} as AndroidDriverCaps;
       sandbox.stub(driver.adb, 'getApiLevel').resolves(23);
       sandbox.stub(driver.adb, 'fingerprint').withArgs(caps.unlockKey).onFirstCall();
-      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME).onFirstCall();
+      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(sinon.match(UNLOCK_WAIT_TIME)).onFirstCall();
       await expect(fingerprintUnlock.bind(driver)(caps)).to.be.fulfilled;
     });
   });
@@ -217,7 +217,7 @@ describe('Lock', function () {
       for (const e of els) {
         getAttributeStub.withArgs('text', e.ELEMENT as any).resolves(e.ELEMENT.toString());
       }
-      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME);
+      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(sinon.match(UNLOCK_WAIT_TIME));
       const clickStub = sandbox.stub(driver, 'click');
 
       await pinUnlock.bind(driver)(caps);
@@ -353,7 +353,7 @@ describe('Lock', function () {
         .withArgs(keys, pos, 100)
         .returns(patternActions);
       sandbox.stub(driver, 'performActions').withArgs(patternActions).resolves();
-      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(UNLOCK_WAIT_TIME).onFirstCall();
+      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(sinon.match(UNLOCK_WAIT_TIME)).onFirstCall();
     });
     it('should be able to unlock device using pattern (API level >= 21)', async function () {
       sandbox.stub(driver.adb, 'getApiLevel').resolves(21);
