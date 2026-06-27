@@ -1,3 +1,9 @@
+## [13.2.6](https://github.com/appium/appium-android-driver/compare/v13.2.5...v13.2.6) (2026-06-27)
+
+### Miscellaneous Chores
+
+* remove unused XML test dependencies ([#1067](https://github.com/appium/appium-android-driver/issues/1067)) ([41cab4a](https://github.com/appium/appium-android-driver/commit/41cab4ac96a040b43f8c547385f74c82d7ad8336))
+
 ## [13.2.5](https://github.com/appium/appium-android-driver/compare/v13.2.4...v13.2.5) (2026-06-27)
 
 ### Miscellaneous Chores
