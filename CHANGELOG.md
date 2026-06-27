@@ -1,3 +1,9 @@
+## [13.2.5](https://github.com/appium/appium-android-driver/compare/v13.2.4...v13.2.5) (2026-06-27)
+
+### Miscellaneous Chores
+
+* Fix Prettier formatting ([#1069](https://github.com/appium/appium-android-driver/issues/1069)) ([625ce37](https://github.com/appium/appium-android-driver/commit/625ce374afbec330adc27530c6f818f5df290f33))
+
 ## [13.2.4](https://github.com/appium/appium-android-driver/compare/v13.2.3...v13.2.4) (2026-06-19)
 
 ### Miscellaneous Chores
