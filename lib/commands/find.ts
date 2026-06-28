@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import _ from 'lodash';
-import {errors, isErrorType} from 'appium/driver';
-import type {AndroidDriver} from '../driver';
+import {errors, isErrorType} from 'appium/driver.js';
+import {util} from '@appium/support';
+import type {AndroidDriver} from '../driver.js';
 import type {Element} from '@appium/types';
-import type {FindElementOpts} from './types';
+import type {FindElementOpts} from './types.js';
 
 /**
  * @param strategy The element location strategy to use (e.g., 'id', 'xpath', 'class name').
@@ -70,7 +68,7 @@ export async function findElOrEls(
     }
 
     // we want to return false if we want to potentially try again
-    return !_.isEmpty(element);
+    return !util.isEmpty(element);
   };
 
   try {
@@ -89,7 +87,7 @@ export async function findElOrEls(
   if (mult) {
     return element as Element[];
   }
-  if (_.isEmpty(element)) {
+  if (util.isEmpty(element)) {
     throw new errors.NoSuchElementError();
   }
   return element as Element;
@@ -109,5 +107,6 @@ export async function doFindElementOrEls(
   this: AndroidDriver,
   params: FindElementOpts,
 ): Promise<Element | Element[]> {
+  void params;
   throw new errors.NotImplementedError('Not implemented');
 }

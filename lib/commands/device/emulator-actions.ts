@@ -1,14 +1,14 @@
 import {util} from '@appium/support';
-import {requireEmulator} from './utils';
-import {errors} from 'appium/driver';
-import type {AndroidDriver} from '../../driver';
+import {requireEmulator} from './utils.js';
+import {errors} from 'appium/driver.js';
+import type {AndroidDriver} from '../../driver.js';
 import type {
   GsmAction,
   GsmSignalStrength,
   GsmVoiceState,
   PowerACState,
   NetworkSpeed,
-} from '../types';
+} from '../types.js';
 
 /**
  * @deprecated Use mobile: extension

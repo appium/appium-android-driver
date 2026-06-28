@@ -1,8 +1,7 @@
 import {util} from '@appium/support';
 import {Chromedriver} from 'appium-chromedriver';
-import {errors, PROTOCOLS} from 'appium/driver';
+import {errors, PROTOCOLS} from 'appium/driver.js';
 import type {StringRecord} from '@appium/types';
-import _ from 'lodash';
 import {
   CHROMIUM_WIN,
   KNOWN_CHROME_PACKAGE_NAMES,
@@ -15,12 +14,12 @@ import {
   setupExistingChromedriver,
   setupNewChromedriver,
   shouldDismissChromeWelcome,
-} from './helpers';
-import {APP_STATE} from '../app-management';
-import {BIDI_EVENT_NAME} from '../bidi/constants';
-import {makeContextUpdatedEvent, makeObsoleteContextUpdatedEvent} from '../bidi/models';
-import type {AndroidDriver} from '../../driver';
-import type {WebviewsMapping} from '../types';
+} from './helpers.js';
+import {APP_STATE} from '../app-management.js';
+import {BIDI_EVENT_NAME} from '../bidi/constants.js';
+import {makeContextUpdatedEvent, makeObsoleteContextUpdatedEvent} from '../bidi/models.js';
+import type {AndroidDriver} from '../../driver.js';
+import type {WebviewsMapping} from '../types.js';
 
 // https://github.com/appium/appium/issues/20710
 const DEFAULT_NATIVE_WINDOW_HANDLE = '1';
@@ -69,7 +68,7 @@ export async function setContext(this: AndroidDriver, name?: string | null): Pro
   const webviewsMapping = await getWebViewsMapping.bind(this)(this.opts);
   const contexts = this.assignContexts(webviewsMapping);
   // if the context we want doesn't exist, fail
-  if (!_.includes(contexts, newContext)) {
+  if (!contexts?.includes(newContext)) {
     throw new errors.NoSuchContextError();
   }
 
@@ -243,7 +242,7 @@ export async function startChromedriverProxy(
     await setupExistingChromedriver.bind(this)(cd, context);
   } else {
     // XXX: this suppresses errors about putting arbitrary stuff on opts
-    const opts = _.cloneDeep(this.opts) as any;
+    const opts = structuredClone(this.opts) as any;
     opts.chromeUseRunningApp = true;
 
     // if requested, tell chromedriver to attach to the android package we have
@@ -258,7 +257,7 @@ export async function startChromedriverProxy(
       }
       if (!opts.extractChromeAndroidPackageFromContextName) {
         if (
-          _.has(this.opts, 'enableWebviewDetailsCollection') &&
+          Object.hasOwn(this.opts, 'enableWebviewDetailsCollection') &&
           !this.opts.enableWebviewDetailsCollection
         ) {
           // When enableWebviewDetailsCollection capability is explicitly disabled, try to identify
@@ -266,14 +265,13 @@ export async function startChromedriverProxy(
           // since webviewsMapping does not have info object
           const contexts = webviewsMapping.map((wm) => wm.webviewName);
           for (const knownPackage of KNOWN_CHROME_PACKAGE_NAMES) {
-            if (_.includes(contexts, `${WEBVIEW_BASE}${knownPackage}`)) {
+            if (contexts?.includes(`${WEBVIEW_BASE}${knownPackage}`)) {
               continue;
             }
             const appState = await this.queryAppState(knownPackage);
             if (
-              _.includes(
-                [APP_STATE.RUNNING_IN_BACKGROUND, APP_STATE.RUNNING_IN_FOREGROUND],
-                appState,
+              [APP_STATE.RUNNING_IN_BACKGROUND, APP_STATE.RUNNING_IN_FOREGROUND].includes(
+                appState as any,
               )
             ) {
               opts.chromeAndroidPackage = knownPackage;
@@ -286,7 +284,11 @@ export async function startChromedriverProxy(
           }
         } else {
           for (const wm of webviewsMapping) {
-            if (wm.webviewName === context && _.has(wm?.info, 'Android-Package')) {
+            if (
+              wm.webviewName === context &&
+              util.isPlainObject(wm?.info) &&
+              Object.hasOwn(wm.info, 'Android-Package')
+            ) {
               // XXX: should be a type guard here
               opts.chromeAndroidPackage = (wm.info as NonNullable<WebviewsMapping['info']>)[
                 'Android-Package'
@@ -367,7 +369,7 @@ export async function onChromedriverStop(this: AndroidDriver, context: string): 
  */
 export async function stopChromedriverProxies(this: AndroidDriver): Promise<void> {
   this.suspendChromedriverProxy(); // make sure we turn off the proxy flag
-  for (const context of _.keys(this.sessionChromedrivers)) {
+  for (const context of Object.keys(this.sessionChromedrivers)) {
     const cd = this.sessionChromedrivers[context];
     this.log.debug(`Stopping chromedriver for context ${context}`);
     // stop listening for the stopped state event
@@ -388,7 +390,7 @@ export async function stopChromedriverProxies(this: AndroidDriver): Promise<void
  * @returns True if the context is a Chromedriver context, false otherwise
  */
 export function isChromedriverContext(this: AndroidDriver, viewName: string): boolean {
-  return _.includes(viewName, WEBVIEW_WIN) || viewName === CHROMIUM_WIN;
+  return viewName?.includes(WEBVIEW_WIN) || viewName === CHROMIUM_WIN;
 }
 
 /**
@@ -399,7 +401,7 @@ export async function notifyBiDiContextChange(this: AndroidDriver): Promise<void
   const name = await this.getCurrentContext();
   this.eventEmitter.emit(
     BIDI_EVENT_NAME,
-    makeContextUpdatedEvent(_.toLower(String(this.opts.automationName)), name),
+    makeContextUpdatedEvent(String(this.opts.automationName).toLowerCase(), name),
   );
   this.eventEmitter.emit(BIDI_EVENT_NAME, makeObsoleteContextUpdatedEvent(name));
 }
@@ -435,7 +437,7 @@ export async function mobileGetChromeCapabilities(this: AndroidDriver): Promise<
 export async function startChromeSession(this: AndroidDriver): Promise<void> {
   this.log.info('Starting a chrome-based browser session');
   // XXX: this suppresses errors about putting arbitrary stuff on opts
-  const opts = _.cloneDeep(this.opts) as any;
+  const opts = structuredClone(this.opts) as any;
 
   const knownPackages = [
     'org.chromium.chrome.shell',
@@ -445,7 +447,7 @@ export async function startChromeSession(this: AndroidDriver): Promise<void> {
     'org.chromium.webview_shell',
   ];
 
-  if (_.includes(knownPackages, this.opts.appPackage)) {
+  if (knownPackages.includes(this.opts.appPackage as any)) {
     opts.chromeBundleId = this.opts.appPackage;
   } else {
     opts.chromeAndroidActivity = this.opts.appActivity;

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import type {Position, Size} from '@appium/types';
-import type {AndroidDriver} from '../driver';
-import type {DoSetElementValueOpts} from './types';
+import type {AndroidDriver} from '../driver.js';
+import type {DoSetElementValueOpts} from './types.js';
 
 /**
  * Gets an attribute value from an element.

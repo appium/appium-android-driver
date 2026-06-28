@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {util} from '@appium/support';
 import {ADB} from 'appium-adb';
 import {retryInterval} from 'asyncbox';
@@ -8,9 +7,9 @@ import {
   UNICODE_IME,
   EMPTY_IME,
 } from 'io.appium.settings';
-import {prepareEmulatorForImageInjection} from '../image-injection';
-import {ADB_LISTEN_ALL_NETWORK_FEATURE} from '../../utils';
-import type {AndroidDriver} from '../../driver';
+import {prepareEmulatorForImageInjection} from '../image-injection.js';
+import {ADB_LISTEN_ALL_NETWORK_FEATURE} from '../../utils.js';
+import type {AndroidDriver} from '../../driver.js';
 
 const HELPER_APP_INSTALL_RETRIES = 3;
 const HELPER_APP_INSTALL_RETRY_DELAY_MS = 5000;
@@ -39,7 +38,7 @@ export function ensureNetworkSpeed(this: AndroidDriver, networkSpeed: string): s
   }
   this.log.warn(
     `Wrong network speed param '${networkSpeed}', using default: ${this.adb.NETWORK_SPEED.FULL}. ` +
-      `Supported values: ${_.values(this.adb.NETWORK_SPEED)}`,
+      `Supported values: ${Object.values(this.adb.NETWORK_SPEED)}`,
   );
   return this.adb.NETWORK_SPEED.FULL;
 }
@@ -53,7 +52,7 @@ export function prepareAvdArgs(this: AndroidDriver): string[] {
   const {networkSpeed, isHeadless, avdArgs} = this.opts;
   const result: string[] = [];
   if (avdArgs) {
-    if (_.isArray(avdArgs)) {
+    if (Array.isArray(avdArgs)) {
       result.push(...avdArgs);
     } else {
       result.push(...util.shellParse(`${avdArgs}`));

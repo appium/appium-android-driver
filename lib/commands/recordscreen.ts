@@ -1,16 +1,15 @@
 import {fs, net, system, tempDir, timing, util} from '@appium/support';
 import type {NetOptions, HttpUploadOptions} from '@appium/support';
 import {waitForCondition} from 'asyncbox';
-import _ from 'lodash';
 import path from 'node:path';
 import {exec} from 'teen_process';
-import type {AndroidDriver} from '../driver';
+import type {AndroidDriver} from '../driver.js';
 import type {ADB} from 'appium-adb';
 import type {
   StartScreenRecordingOpts,
   StopScreenRecordingOpts,
   ScreenRecordingProperties,
-} from './types';
+} from './types.js';
 
 const RETRY_PAUSE = 300;
 const RETRY_TIMEOUT = 5000;
@@ -63,10 +62,10 @@ export async function startRecordingScreen(
     );
   }
 
-  if (!_.isEmpty(this._screenRecordingProperties)) {
+  if (!util.isEmpty(this._screenRecordingProperties)) {
     // XXX: this doesn't need to be done in serial, does it?
     const props = this._screenRecordingProperties;
-    for (const record of props.records || []) {
+    for (const record of props?.records || []) {
       await this.adb.rimraf(record);
     }
     this._screenRecordingProperties = undefined;
@@ -117,7 +116,7 @@ export async function stopRecordingScreen(
   await verifyScreenRecordIsSupported(this.adb, this.isEmulator());
 
   const props = this._screenRecordingProperties;
-  if (!_.isEmpty(props)) {
+  if (!util.isEmpty(props) && props) {
     props.stopped = true;
   }
 
@@ -125,19 +124,19 @@ export async function stopRecordingScreen(
     await terminateBackgroundScreenRecording(this.adb, false);
   } catch (err) {
     this.log.warn((err as Error).message);
-    if (!_.isEmpty(props)) {
+    if (!util.isEmpty(props) && props) {
       this.log.warn('The resulting video might be corrupted');
     }
   }
 
-  if (_.isEmpty(props)) {
+  if (util.isEmpty(props)) {
     this.log.info(
       `Screen recording has not been previously started by Appium. There is nothing to stop`,
     );
     return '';
   }
 
-  if (props.recordingProcess?.isRunning) {
+  if (props?.recordingProcess?.isRunning) {
     try {
       await props.recordingProcess.stop('SIGINT', PROCESS_SHUTDOWN_TIMEOUT);
     } catch {
@@ -148,7 +147,7 @@ export async function stopRecordingScreen(
     props.recordingProcess = null;
   }
 
-  if (_.isEmpty(props.records)) {
+  if (util.isEmpty(props?.records)) {
     throw this.log.errorWithException(
       `No screen recordings have been stored on the device so far. ` +
         `Are you sure the ${SCREENRECORD_BINARY} utility works as expected?`,
@@ -158,13 +157,13 @@ export async function stopRecordingScreen(
   const tmpRoot = await tempDir.openDir();
   try {
     const localRecords: string[] = [];
-    for (const pathOnDevice of props.records) {
+    for (const pathOnDevice of props?.records || []) {
       const relativePath = path.resolve(tmpRoot, path.posix.basename(pathOnDevice));
       localRecords.push(relativePath);
       await this.adb.pull(pathOnDevice, relativePath, {timeout: ADB_PULL_TIMEOUT});
       await this.adb.rimraf(pathOnDevice);
     }
-    let resultFilePath = _.last(localRecords) as string;
+    let resultFilePath = localRecords.at(-1) as string;
     if (localRecords.length > 1) {
       this.log.info(`Got ${localRecords.length} screen recordings. Trying to merge them`);
       try {
@@ -176,7 +175,7 @@ export async function stopRecordingScreen(
         );
       }
     }
-    if (_.isEmpty(options.remotePath)) {
+    if (util.isEmpty(options?.remotePath)) {
       const {size} = await fs.stat(resultFilePath);
       this.log.debug(
         `The size of the resulting screen recording is ${util.toReadableSizeString(size)}`,
@@ -196,7 +195,7 @@ async function uploadRecordedMedia(
   remotePath?: string,
   uploadOptions: StopScreenRecordingOpts = {},
 ): Promise<string> {
-  if (_.isEmpty(remotePath)) {
+  if (util.isEmpty(remotePath)) {
     return (await util.toInMemoryBase64(localFile)).toString();
   }
 
@@ -322,14 +321,14 @@ async function mergeScreenRecords(this: AndroidDriver, mediaFiles: string[]): Pr
 
 async function terminateBackgroundScreenRecording(adb: ADB, force = true): Promise<boolean> {
   const screenrecordPids = await adb.getProcessIdsByName(SCREENRECORD_BINARY);
-  if (_.isEmpty(screenrecordPids)) {
+  if (util.isEmpty(screenrecordPids)) {
     return false;
   }
 
   try {
     await adb.shell(['kill', force ? '-15' : '-2', ...screenrecordPids.map(String)]);
     await waitForCondition(
-      async () => _.isEmpty(await adb.getProcessIdsByName(SCREENRECORD_BINARY)),
+      async () => util.isEmpty(await adb.getProcessIdsByName(SCREENRECORD_BINARY)),
       {
         waitMs: PROCESS_SHUTDOWN_TIMEOUT,
         intervalMs: 500,

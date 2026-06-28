@@ -1,12 +1,11 @@
-import type {BiDiLogLevel, LogEntryAddedEvent, ContextUpdatedEvent} from './types';
-import {NATIVE_WIN} from '../context/helpers';
+import type {BiDiLogLevel, LogEntryAddedEvent, ContextUpdatedEvent} from './types.js';
+import {NATIVE_WIN} from '../context/helpers.js';
 import {
   CONTEXT_UPDATED_EVENT,
   LOG_ENTRY_ADDED_EVENT,
   CONTEXT_UPDATED_EVENT_OBSOLETE,
-} from './constants';
+} from './constants.js';
 import type {LogEntry} from 'appium-adb';
-import _ from 'lodash';
 
 function toContextUpdatedEvent(method: string, contextName: string): ContextUpdatedEvent {
   return {
@@ -56,7 +55,7 @@ export function makeLogEntryAddedEvent(
 }
 
 function adjustLogLevel(originalLevel: string): BiDiLogLevel {
-  const originalLevelLc = _.toLower(originalLevel);
+  const originalLevelLc = originalLevel?.toLowerCase();
   switch (originalLevelLc) {
     case 'debug':
     case 'info':

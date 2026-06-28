@@ -14,10 +14,9 @@ import {
   fingerprintUnlock,
   toCredentialType,
   verifyUnlock,
-} from './helpers';
-import _ from 'lodash';
-import type {AndroidDriver, AndroidDriverCaps} from '../../driver';
-import type {UnlockType} from '../types';
+} from './helpers.js';
+import type {AndroidDriver, AndroidDriverCaps} from '../../driver.js';
+import type {UnlockType} from '../types.js';
 
 /**
  * Locks the device and optionally unlocks it after a specified number of seconds.
@@ -119,7 +118,7 @@ export async function unlockWithOptions(
   if (
     unlockKey &&
     unlockType !== FINGERPRINT_UNLOCK &&
-    (_.isNil(unlockStrategy) || _.toLower(unlockStrategy) === 'locksettings') &&
+    (unlockStrategy == null || unlockStrategy?.toLowerCase() === 'locksettings') &&
     (await this.adb.isLockManagementSupported())
   ) {
     await fastUnlock.bind(this)({

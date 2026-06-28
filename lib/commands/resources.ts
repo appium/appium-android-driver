@@ -1,8 +1,7 @@
-import _ from 'lodash';
-import {fs, tempDir} from '@appium/support';
+import {fs, tempDir, util} from '@appium/support';
 import type {StringRecord} from '@appium/types';
-import type {AndroidDriver, AndroidDriverOpts} from '../driver';
-import type {Locale} from './types';
+import type {AndroidDriver, AndroidDriverOpts} from '../driver.js';
+import type {Locale} from './types.js';
 
 /**
  * Gets the localized strings from the application.
@@ -24,8 +23,8 @@ export async function getStrings(
   // and values of type string
   const preprocessStringsMap = (mapping: StringRecord): StringRecord => {
     const result: StringRecord = {};
-    for (const [key, value] of _.toPairs(mapping)) {
-      result[key] = _.isString(value) ? value : JSON.stringify(value);
+    for (const [key, value] of Object.entries(mapping)) {
+      result[key] = typeof value === 'string' ? value : JSON.stringify(value);
     }
     return result;
   };
@@ -63,7 +62,7 @@ export async function ensureDeviceLocale(
     } catch (e1) {
       this.log.debug((e1 as Error).stack);
     }
-    if (!_.isEmpty(suggestions)) {
+    if (!util.isEmpty(suggestions)) {
       errMsg += ` You may want to apply one of the following locales instead: ${suggestions}`;
     }
     throw new Error(errMsg, {cause: e});
@@ -114,10 +113,10 @@ async function fetchLocaleSuggestions(
   const supportedLocales = await this.settingsApp.listSupportedLocales();
   const suggestedLocales = supportedLocales.filter(
     (locale) =>
-      _.toLower(language) === _.toLower(locale.language) ||
-      _.toLower(country) === _.toLower(locale.country),
+      language?.toLowerCase() === locale.language.toLowerCase() ||
+      country?.toLowerCase() === locale.country.toLowerCase(),
   );
-  return _.isEmpty(suggestedLocales) ? supportedLocales : suggestedLocales;
+  return util.isEmpty(suggestedLocales) ? supportedLocales : suggestedLocales;
 }
 
 function toLocaleAbbr({language, country, script}: Locale): string {

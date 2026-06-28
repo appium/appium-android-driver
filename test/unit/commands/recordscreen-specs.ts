@@ -1,14 +1,13 @@
-import {AndroidDriver} from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver.js';
 import {ADB} from 'appium-adb';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
+import {describe, beforeEach, afterEach, it} from 'node:test';
 
 use(chaiAsPromised);
 
-describe('recording the screen', function () {
-  this.timeout(60000);
-
+describe('recording the screen', {timeout: 60000}, function () {
   let driver: AndroidDriver;
   let adb: ADB;
   const sandbox = sinon.createSandbox();

@@ -1,18 +1,19 @@
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
-import * as webviewHelpers from '../../../lib/commands/context/helpers';
+import * as webviewHelpers from '../../../lib/commands/context/helpers.js';
 import {
   NATIVE_WIN,
   WEBVIEW_BASE,
   WEBVIEW_WIN,
   CHROMIUM_WIN,
   setupNewChromedriver,
-} from '../../../lib/commands/context/helpers';
-import {AndroidDriver} from '../../../lib/driver';
+} from '../../../lib/commands/context/helpers.js';
+import {AndroidDriver} from '../../../lib/driver.js';
 import {Chromedriver} from 'appium-chromedriver';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, beforeEach, afterEach, it} from 'node:test';
 
 use(chaiAsPromised);
 

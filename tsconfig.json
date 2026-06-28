@@ -4,15 +4,9 @@
   "compilerOptions": {
     "outDir": "build",
     "esModuleInterop": true,
-    "types": ["node", "mocha"],
+    "types": ["node"],
     "strict": true,
     "checkJs": true
-  },
-  "ts-node": {
-    "transpileOnly": true,
-    "compilerOptions": {
-      "rootDir": "."
-    }
   },
   "include": ["lib", "test"]
 }

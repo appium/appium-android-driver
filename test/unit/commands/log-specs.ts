@@ -1,11 +1,11 @@
-import _ from 'lodash';
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
 import type {LogEntry} from 'appium-adb';
 import os from 'node:os';
-import {AndroidDriver} from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, before, it} from 'node:test';
 
 use(chaiAsPromised);
 
@@ -21,9 +21,11 @@ describe('commands - logging', function () {
       expect(driver.getLogTypes).to.be.an.instanceof(Function);
     });
     it('should get log types', async function () {
+      const xor = (a: string[], b: string[]) =>
+        a.filter((x) => !b.includes(x)).concat(b.filter((x) => !a.includes(x)));
       const types = await driver.getLogTypes();
       // all the types should be returned
-      expect(_.xor(['logcat', 'bugreport', 'server'], types)).to.eql([]);
+      expect(xor(['logcat', 'bugreport', 'server'], types)).to.eql([]);
     });
   });
   describe('getLog', function () {

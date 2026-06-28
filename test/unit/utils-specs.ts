@@ -1,6 +1,7 @@
-import {parseArray} from '../../lib/utils';
+import {parseArray} from '../../lib/utils.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it} from 'node:test';
 
 use(chaiAsPromised);
 

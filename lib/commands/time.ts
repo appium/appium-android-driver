@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
-import type {AndroidDriver} from '../driver';
+import type {AndroidDriver} from '../driver.js';
 
 const MOMENT_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
 

@@ -1,11 +1,10 @@
-import _ from 'lodash';
 import {asyncmap} from 'asyncbox';
 import {fs, tempDir} from '@appium/support';
 import path from 'node:path';
 import type {Location} from '@appium/types';
+import {getThirdPartyPackages} from './app-management.js';
+import type {AndroidDriver} from '../driver.js';
 import {SETTINGS_HELPER_ID} from 'io.appium.settings';
-import {getThirdPartyPackages} from './app-management';
-import type {AndroidDriver} from '../driver';
 
 // The value close to zero, but not zero, is needed
 // to trick JSON generation and send a float value instead of an integer,
@@ -210,8 +209,9 @@ async function resetMockLocation(this: AndroidDriver): Promise<void> {
     }
     const thirdPartyPkgIds = await thirdPartyPkgIdsPromise;
     // Only include currently installed packages
-    const resultPkgs = _.intersection(pkgIds, thirdPartyPkgIds);
-    if (_.size(resultPkgs) <= 1) {
+    const thirdPartyPkgIdsSet = new Set(thirdPartyPkgIds);
+    const resultPkgs = pkgIds.filter((pkg) => thirdPartyPkgIdsSet.has(pkg));
+    if (resultPkgs.length <= 1) {
       await this.adb.shell([
         'appops',
         'set',

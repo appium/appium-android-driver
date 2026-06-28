@@ -1,6 +1,5 @@
-import {errors} from 'appium/driver';
-import _ from 'lodash';
-import type {AndroidDriver} from '../driver';
+import {errors} from 'appium/driver.js';
+import type {AndroidDriver} from '../driver.js';
 
 const SUPPORTED_ACTIONS = {
   ENABLE: 'enable',
@@ -32,7 +31,7 @@ export async function mobileBluetooth(this: AndroidDriver, action: BluetoothActi
       break;
     default:
       throw new errors.InvalidArgumentError(
-        `You must provide a valid 'action' argument. Supported actions are: ${_.values(SUPPORTED_ACTIONS)}`,
+        `You must provide a valid 'action' argument. Supported actions are: ${Object.values(SUPPORTED_ACTIONS)}`,
       );
   }
 }

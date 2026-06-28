@@ -1,5 +1,4 @@
 import {util, timing} from '@appium/support';
-import _ from 'lodash';
 import axios from 'axios';
 import net from 'node:net';
 import {findAPortNotInUse} from 'portscanner';
@@ -9,9 +8,9 @@ import path from 'node:path';
 import http from 'node:http';
 import {Chromedriver} from 'appium-chromedriver';
 import type {ChromedriverOpts} from 'appium-chromedriver';
-import {toDetailsCacheKey, getWebviewDetails, WEBVIEWS_DETAILS_CACHE} from './cache';
+import {toDetailsCacheKey, getWebviewDetails, WEBVIEWS_DETAILS_CACHE} from './cache.js';
 import dns from 'node:dns/promises';
-import type {AndroidDriver, AndroidDriverOpts} from '../../driver';
+import type {AndroidDriver, AndroidDriverOpts} from '../../driver.js';
 import type {
   GetWebviewsOpts,
   WebviewsMapping,
@@ -20,7 +19,7 @@ import type {
   PortSpec,
   WebviewProc,
   DetailCollectionOptions,
-} from '../types';
+} from '../types.js';
 import type {StringRecord} from '@appium/types';
 
 // https://cs.chromium.org/chromium/src/chrome/browser/devtools/device/android_device_info_query.cc
@@ -166,7 +165,7 @@ export async function getWebViewsMapping(
   this.log.debug(`Getting a list of available webviews`);
 
   let waitMs = waitForWebviewMs;
-  if (!_.isNumber(waitMs)) {
+  if (!Number.isInteger(waitMs)) {
     waitMs = parseInt(`${waitMs}`, 10) || 0;
   }
 
@@ -181,7 +180,7 @@ export async function getWebViewsMapping(
 
     this.log.debug(`No webviews found in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
     await sleep(WEBVIEW_WAIT_INTERVAL_MS);
-  } while (timer.getDuration().asMilliSeconds < waitMs);
+  } while (timer.getDuration().asMilliSeconds < Number(waitMs));
 
   await collectWebviewsDetails.bind(this)(webviewsMapping, {
     ensureWebviewsHavePages,
@@ -256,7 +255,7 @@ export async function setupNewChromedriver(
   }
 
   const details = context ? getWebviewDetails(this.adb, context) : undefined;
-  if (!_.isEmpty(details)) {
+  if (!util.isEmpty(details)) {
     this.log.debug(
       'Passing web view details to the Chromedriver constructor: ' +
         JSON.stringify(details, null, 2),
@@ -264,7 +263,7 @@ export async function setupNewChromedriver(
   }
 
   const chromedriverOpts: ChromedriverOpts & {details?: WebViewDetails} = {
-    port: _.isNil(opts.chromedriverPort) ? undefined : String(opts.chromedriverPort),
+    port: opts.chromedriverPort == null ? undefined : String(opts.chromedriverPort),
     executable: opts.chromedriverExecutable,
     adb: this.adb,
     cmdArgs: opts.chromedriverArgs as string[] | undefined,
@@ -285,10 +284,10 @@ export async function setupNewChromedriver(
   opts.chromeOptions = opts.chromeOptions || {};
   // try out any prefixed chromeOptions,
   // and strip the prefix
-  for (const opt of _.keys(opts)) {
+  for (const opt of Object.keys(opts)) {
     if (opt.endsWith(':chromeOptions')) {
       this?.log?.warn(`Merging '${opt}' into 'chromeOptions'. This may cause unexpected behavior`);
-      _.merge(opts.chromeOptions, (opts as any)[opt]);
+      deepMerge(opts.chromeOptions, (opts as any)[opt]);
     }
   }
 
@@ -296,12 +295,12 @@ export async function setupNewChromedriver(
   opts.chromeLoggingPrefs = opts.chromeLoggingPrefs ?? {};
 
   // Strip the prefix and store it
-  for (const opt of _.keys(opts)) {
+  for (const opt of Object.keys(opts)) {
     if (opt.endsWith(':loggingPrefs')) {
       this.log.warn(
         `Merging '${opt}' into 'chromeLoggingPrefs'. This may cause unexpected behavior`,
       );
-      _.merge(opts.chromeLoggingPrefs, (opts as any)[opt]);
+      deepMerge(opts.chromeLoggingPrefs, (opts as any)[opt]);
     }
   }
 
@@ -350,7 +349,7 @@ export async function setupExistingChromedriver<T extends Chromedriver>(
 export function shouldDismissChromeWelcome(this: AndroidDriver): boolean {
   return (
     !!this.opts.chromeOptions &&
-    _.isArray(this.opts.chromeOptions.args) &&
+    Array.isArray(this.opts.chromeOptions.args) &&
     this.opts.chromeOptions.args.includes('--no-first-run')
   );
 }
@@ -449,7 +448,7 @@ function createChromedriverCaps(
 
     caps.chromeOptions.androidPackage = androidPackage;
   }
-  if (_.isBoolean(opts.chromeUseRunningApp)) {
+  if (typeof opts.chromeUseRunningApp === 'boolean') {
     caps.chromeOptions.androidUseRunningApp = opts.chromeUseRunningApp;
   }
   if (opts.chromeAndroidPackage) {
@@ -463,14 +462,14 @@ function createChromedriverCaps(
   } else if (webViewDetails?.process?.name && webViewDetails?.process?.id) {
     caps.chromeOptions.androidProcess = webViewDetails.process.name;
   }
-  if (_.toLower(opts.browserName) === 'chromium-webview') {
+  if (opts.browserName?.toLowerCase() === 'chromium-webview') {
     caps.chromeOptions.androidActivity = opts.appActivity;
   }
   if (opts.pageLoadStrategy) {
     caps.pageLoadStrategy = opts.pageLoadStrategy;
   }
-  const isChrome = _.toLower(caps.chromeOptions.androidPackage) === 'chrome';
-  if (_.includes(KNOWN_CHROME_PACKAGE_NAMES, caps.chromeOptions.androidPackage) || isChrome) {
+  const isChrome = caps.chromeOptions.androidPackage?.toLowerCase() === 'chrome';
+  if (KNOWN_CHROME_PACKAGE_NAMES.includes(caps.chromeOptions.androidPackage as any) || isChrome) {
     // if we have extracted package from context name, it could come in as bare
     // "chrome", and so we should make sure the details are correct, including
     // not using an activity or process id
@@ -483,7 +482,7 @@ function createChromedriverCaps(
   // add device id from adb
   caps.chromeOptions.androidDeviceSerial = deviceId;
 
-  if (_.isPlainObject(opts.loggingPrefs) || _.isPlainObject(opts.chromeLoggingPrefs)) {
+  if (util.isPlainObject(opts.loggingPrefs) || util.isPlainObject(opts.chromeLoggingPrefs)) {
     if (opts.loggingPrefs) {
       this.log.warn(
         `The 'loggingPrefs' cap is deprecated; use the 'chromeLoggingPrefs' cap instead`,
@@ -507,7 +506,7 @@ function createChromedriverCaps(
     delete opts.chromeOptions.Arguments;
   }
 
-  if (opts.webSocketUrl && _.isNil(caps.webSocketUrl) && this.opts.chromedriverForwardBiDi) {
+  if (opts.webSocketUrl && caps.webSocketUrl == null && this.opts.chromedriverForwardBiDi) {
     caps.webSocketUrl = opts.webSocketUrl;
   }
 
@@ -516,14 +515,14 @@ function createChromedriverCaps(
   );
 
   const protectedCapNames: string[] = [];
-  for (const [opt, val] of _.toPairs(opts.chromeOptions)) {
-    if (_.isUndefined(caps.chromeOptions[opt])) {
+  for (const [opt, val] of Object.entries(opts.chromeOptions)) {
+    if (caps.chromeOptions[opt] == null) {
       caps.chromeOptions[opt] = val;
     } else {
       protectedCapNames.push(opt);
     }
   }
-  if (!_.isEmpty(protectedCapNames)) {
+  if (!util.isEmpty(protectedCapNames)) {
     this.log.info(
       'The following Chromedriver capabilities cannot be overridden ' +
         'by the provided chromeOptions:',
@@ -600,7 +599,7 @@ async function collectWebviewsDetails(
   webviewsMapping: WebviewProps[],
   opts: DetailCollectionOptions = {},
 ): Promise<void> {
-  if (_.isEmpty(webviewsMapping)) {
+  if (util.isEmpty(webviewsMapping)) {
     return;
   }
 
@@ -716,9 +715,9 @@ async function getPotentialWebviewProcs(this: AndroidDriver): Promise<string[]> 
 
     names.push(sockPath);
   }
-  if (_.isEmpty(names)) {
+  if (util.isEmpty(names)) {
     this.log.debug('Found no active devtools sockets');
-    if (!_.isEmpty(allMatches)) {
+    if (!util.isEmpty(allMatches)) {
       this.log.debug(`Other sockets are: ${JSON.stringify(allMatches, null, 2)}`);
     }
   } else {
@@ -728,7 +727,7 @@ async function getPotentialWebviewProcs(this: AndroidDriver): Promise<string[]> 
     );
   }
   // sometimes the webview process shows up multiple times per app
-  return _.uniq(names);
+  return util.uniq(names);
 }
 
 /**
@@ -864,6 +863,17 @@ function isCompatibleCdpHost(host: string): boolean {
     host.endsWith('.localhost') ||
     Boolean(net.isIP(host))
   );
+}
+
+function deepMerge(target: StringRecord, source: StringRecord): StringRecord {
+  for (const key in source) {
+    if (util.isPlainObject(source[key]) && util.isPlainObject(target[key])) {
+      deepMerge(target[key], source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  }
+  return target;
 }
 
 // #endregion

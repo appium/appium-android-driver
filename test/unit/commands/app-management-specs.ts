@@ -1,10 +1,11 @@
 import sinon from 'sinon';
-import {AndroidDriver} from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver.js';
 import {fs} from '@appium/support';
 import * as asyncbox from 'asyncbox';
 import {ADB} from 'appium-adb';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, beforeEach, afterEach, it} from 'node:test';
 
 use(chaiAsPromised);
 

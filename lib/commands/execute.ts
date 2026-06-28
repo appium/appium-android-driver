@@ -1,8 +1,7 @@
-import _ from 'lodash';
-import {errors, PROTOCOLS} from 'appium/driver';
+import {errors, PROTOCOLS} from 'appium/driver.js';
 import {util} from '@appium/support';
 import type {StringRecord, Element} from '@appium/types';
-import type {AndroidDriver} from '../driver';
+import type {AndroidDriver} from '../driver.js';
 import type {Chromedriver} from 'appium-chromedriver';
 
 const EXECUTE_SCRIPT_PREFIX = 'mobile:';
@@ -23,7 +22,7 @@ export async function execute(
   script: string,
   args?: ExecuteMethodArgs,
 ): Promise<any> {
-  if (_.startsWith(script, EXECUTE_SCRIPT_PREFIX)) {
+  if (script.startsWith(EXECUTE_SCRIPT_PREFIX)) {
     const formattedScript = script.trim().replace(/^mobile:\s*/, `${EXECUTE_SCRIPT_PREFIX} `);
     const executeMethodArgs = preprocessExecuteMethodArgs(args);
     return await this.executeMethod(formattedScript, [executeMethodArgs]);
@@ -48,7 +47,7 @@ export async function execute(
  * @returns Preprocessed arguments as a StringRecord.
  */
 function preprocessExecuteMethodArgs(args?: ExecuteMethodArgs): StringRecord {
-  const executeMethodArgs = (_.isArray(args) ? _.first(args) : args) ?? ({} as StringRecord);
+  const executeMethodArgs = (Array.isArray(args) ? args[0] : args) ?? ({} as StringRecord);
 
   /**
    * Renames the deprecated `element` key to `elementId`.  Historically,

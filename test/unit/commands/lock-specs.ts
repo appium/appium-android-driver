@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
-import {AndroidDriver} from '../../../lib/driver';
-import type {AndroidDriverCaps} from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver.js';
+import type {AndroidDriverCaps} from '../../../lib/driver.js';
 import {
   validateUnlockCapabilities,
   encodePassword,
@@ -14,12 +14,13 @@ import {
   getPatternKeyPosition,
   getPatternActions,
   patternUnlock,
-} from '../../../lib/commands/lock/helpers';
-import {unlockWithOptions} from '../../../lib/commands/lock/exports';
-import * as unlockHelpers from '../../../lib/commands/lock/helpers';
+} from '../../../lib/commands/lock/helpers.js';
+import {unlockWithOptions} from '../../../lib/commands/lock/exports.js';
+import * as unlockHelpers from '../../../lib/commands/lock/helpers.js';
 import * as asyncboxHelpers from 'asyncbox';
 import {expect, use} from 'chai'; // expect is used
 import chaiAsPromised from 'chai-as-promised';
+import {describe, beforeEach, afterEach, it} from 'node:test';
 
 use(chaiAsPromised);
 

@@ -1,7 +1,6 @@
-import {DEFAULT_WS_PATHNAME_PREFIX, BaseDriver} from 'appium/driver';
-import _ from 'lodash';
+import {DEFAULT_WS_PATHNAME_PREFIX, BaseDriver} from 'appium/driver.js';
 import os from 'node:os';
-import WebSocket from 'ws';
+import {WebSocketServer} from 'ws';
 import type {AppiumServer, WSServer} from '@appium/types';
 import type {EventEmitter} from 'node:events';
 import type {ADB} from 'appium-adb';
@@ -11,11 +10,12 @@ import {
   toLogRecord,
   nativeLogEntryToSeleniumEntry,
   type LogEntry,
-} from '../utils';
-import {NATIVE_WIN} from './context/helpers';
-import {BIDI_EVENT_NAME} from './bidi/constants';
-import {makeLogEntryAddedEvent} from './bidi/models';
-import type {AndroidDriver} from '../driver';
+} from '../utils.js';
+import {NATIVE_WIN} from './context/helpers.js';
+import {BIDI_EVENT_NAME} from './bidi/constants.js';
+import {makeLogEntryAddedEvent} from './bidi/models.js';
+import type {AndroidDriver} from '../driver.js';
+import {util} from '@appium/support';
 
 export const supportedLogTypes = {
   logcat: {
@@ -52,7 +52,7 @@ export const supportedLogTypes = {
 export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<void> {
   const server = this.server as AppiumServer;
   const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
-  if (!_.isEmpty(await server.getWebSocketHandlers(pathname))) {
+  if (!util.isEmpty(await server.getWebSocketHandlers(pathname))) {
     this.log.debug(`The logcat broadcasting web socket server is already listening at ${pathname}`);
     return;
   }
@@ -62,12 +62,12 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
       `${JSON.stringify(server.address())} to ${pathname}`,
   );
   // https://github.com/websockets/ws/blob/master/doc/ws.md
-  const wss = new WebSocket.Server({
+  const wss = new WebSocketServer({
     noServer: true,
   });
   wss.on('connection', (ws, req) => {
     if (req) {
-      const remoteIp = _.isEmpty(req.headers['x-forwarded-for'])
+      const remoteIp = util.isEmpty(req.headers['x-forwarded-for'])
         ? req.socket.remoteAddress
         : req.headers['x-forwarded-for'];
       this.log.debug(`Established a new logcat listener web socket connection from ${remoteIp}`);
@@ -75,7 +75,7 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
       this.log.debug('Established a new logcat listener web socket connection');
     }
 
-    if (_.isEmpty(this._logcatWebsocketListener)) {
+    if (util.isEmpty(this._logcatWebsocketListener) || !this._logcatWebsocketListener) {
       this._logcatWebsocketListener = (logRecord: LogEntry) => {
         if (ws?.readyState === WebSocket.OPEN) {
           ws.send(logRecord.message);
@@ -85,7 +85,7 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
     this.adb.setLogcatListener(this._logcatWebsocketListener);
 
     ws.on('close', (code, reason) => {
-      if (!_.isEmpty(this._logcatWebsocketListener)) {
+      if (!util.isEmpty(this._logcatWebsocketListener) && this._logcatWebsocketListener) {
         try {
           this.adb.removeLogcatListener(this._logcatWebsocketListener);
         } catch {}
@@ -93,10 +93,10 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
       }
 
       let closeMsg = 'Logcat listener web socket is closed.';
-      if (!_.isEmpty(code)) {
+      if (!util.isEmpty(code)) {
         closeMsg += ` Code: ${code}.`;
       }
-      if (!_.isEmpty(reason)) {
+      if (!util.isEmpty(reason)) {
         closeMsg += ` Reason: ${reason.toString()}.`;
       }
       this.log.debug(closeMsg);
@@ -114,7 +114,7 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
 export async function mobileStopLogsBroadcast(this: AndroidDriver): Promise<void> {
   const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
   const server = this.server as AppiumServer;
-  if (_.isEmpty(await server.getWebSocketHandlers(pathname))) {
+  if (util.isEmpty(await server.getWebSocketHandlers(pathname))) {
     return;
   }
 
@@ -174,7 +174,7 @@ export function assignBiDiLogListener<EE extends EventEmitter>(
  * @returns Promise that resolves to the logs for the specified type.
  */
 export async function getLog(this: AndroidDriver, logType: string): Promise<any> {
-  if (this.isWebContext() && !_.keys(this.supportedLogTypes).includes(logType)) {
+  if (this.isWebContext() && !Object.keys(this.supportedLogTypes).includes(logType)) {
     return await (this.chromedriver as Chromedriver).jwproxy.command('/log', 'POST', {
       type: logType,
     });

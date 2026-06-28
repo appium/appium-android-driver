@@ -1,5 +1,5 @@
 import type {MethodMap} from '@appium/types';
-import type {AndroidDriver} from './driver';
+import type {AndroidDriver} from './driver.js';
 
 export const newMethodMap = {
   '/session/:sessionId/timeouts/implicit_wait': {

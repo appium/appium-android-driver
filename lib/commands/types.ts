@@ -1,5 +1,5 @@
 import type {HTTPMethod, StringRecord} from '@appium/types';
-import type {AndroidDriverCaps} from '../driver';
+import type {AndroidDriverCaps} from '../driver.js';
 import type {SubProcess} from 'teen_process';
 import type {timing} from '@appium/support';
 
@@ -19,7 +19,15 @@ export type GsmVoiceState = 'on' | 'off';
 export type PowerACState = 'on' | 'off';
 
 export type NetworkSpeed =
-  'gsm' | 'scsd' | 'gprs' | 'edge' | 'umts' | 'hsdpa' | 'lte' | 'evdo' | 'full';
+  | 'gsm'
+  | 'scsd'
+  | 'gprs'
+  | 'edge'
+  | 'umts'
+  | 'hsdpa'
+  | 'lte'
+  | 'evdo'
+  | 'full';
 
 /**
  * Returned by `queryAppState`

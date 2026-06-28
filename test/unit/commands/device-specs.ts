@@ -1,13 +1,13 @@
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
-import _ from 'lodash';
-import {AndroidDriver} from '../../../lib/driver';
-import {prepareAvdArgs, prepareEmulator} from '../../../lib/commands/device/utils';
-import * as deviceUtils from '../../../lib/commands/device/utils';
-import * as geolocationHelpers from '../../../lib/commands/geolocation';
-import * as keyboardHelpers from '../../../lib/commands/keyboard';
+import {AndroidDriver} from '../../../lib/driver.js';
+import {prepareAvdArgs, prepareEmulator} from '../../../lib/commands/device/utils.js';
+import * as deviceUtils from '../../../lib/commands/device/utils.js';
+import * as geolocationHelpers from '../../../lib/commands/geolocation.js';
+import * as keyboardHelpers from '../../../lib/commands/keyboard.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, beforeEach, afterEach, it, before, after} from 'node:test';
 
 use(chaiAsPromised);
 
@@ -185,7 +185,7 @@ describe('Device Helpers', function () {
       sinon.stub(ADB, 'createADB').callsFake(async function () {
         return {
           getDevicesWithRetry() {
-            return _.map(devices, function getDevice(device) {
+            return devices.map(function getDevice(device) {
               return {udid: device.udid};
             });
           },
@@ -203,7 +203,7 @@ describe('Device Helpers', function () {
           },
 
           getPlatformVersion() {
-            return _.filter(devices, {udid: curDeviceId})[0].os;
+            return devices.filter((device) => device.udid === curDeviceId)[0].os;
           },
           curDeviceId: 'emulator-1234',
           emulatorPort: 1234,

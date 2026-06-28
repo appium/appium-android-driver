@@ -1,7 +1,7 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import type {Size, Rect, StringRecord} from '@appium/types';
-import type {AndroidDriver} from '../driver';
-import type {SmsListResult, ListSmsOpts} from './types';
+import type {AndroidDriver} from '../driver.js';
+import type {SmsListResult, ListSmsOpts} from './types.js';
 
 /**
  * Gets the window size.

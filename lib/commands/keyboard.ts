@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import _ from 'lodash';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import {UNICODE_IME, EMPTY_IME} from 'io.appium.settings';
-import type {AndroidDriver} from '../driver';
-import type {SendKeysOpts} from './types';
+import type {AndroidDriver} from '../driver.js';
+import type {SendKeysOpts} from './types.js';
 
 /**
  * Hides the on-screen keyboard.
@@ -32,7 +30,7 @@ export async function isKeyboardShown(this: AndroidDriver): Promise<boolean> {
  */
 export async function keys(this: AndroidDriver, keys: string | string[]): Promise<void> {
   // Protocol sends an array; rethink approach
-  const keysStr = _.isArray(keys) ? keys.join('') : keys;
+  const keysStr = Array.isArray(keys) ? keys.join('') : keys;
   await this.doSendKeys({
     text: keysStr,
     replace: false,
@@ -47,6 +45,7 @@ export async function keys(this: AndroidDriver, keys: string | string[]): Promis
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
 export async function doSendKeys(this: AndroidDriver, params: SendKeysOpts): Promise<void> {
+  void params;
   throw new errors.NotImplementedError('Not implemented');
 }
 
@@ -81,6 +80,8 @@ export async function pressKeyCode(
   keycode: string | number,
   metastate?: number,
 ): Promise<void> {
+  void keycode;
+  void metastate;
   throw new errors.NotImplementedError('Not implemented');
 }
 
@@ -97,6 +98,8 @@ export async function longPressKeyCode(
   keycode: string | number,
   metastate?: number,
 ): Promise<void> {
+  void keycode;
+  void metastate;
   throw new errors.NotImplementedError('Not implemented');
 }
 
