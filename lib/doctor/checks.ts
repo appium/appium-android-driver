@@ -1,7 +1,6 @@
 import {resolveExecutablePath} from './utils.js';
-import {system, fs, doctor} from '@appium/support';
+import {system, fs, doctor, console} from '@appium/support';
 import path from 'node:path';
-import '@colors/colors';
 import {getAndroidBinaryPath, getSdkRootFromEnv} from 'appium-adb';
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
 
@@ -63,7 +62,7 @@ class EnvVarAndPathCheck implements IDoctorCheck {
 
   async fix(): Promise<string> {
     return (
-      `Make sure the environment variable ${this.varName.bold} is properly configured for the Appium process. ` +
+      `Make sure the environment variable ${console.styleText('bold', this.varName)} is properly configured for the Appium process. ` +
       `Refer ${ENVIRONMENT_VARS_TUTORIAL_URL} for more details.`
     );
   }
@@ -147,7 +146,7 @@ export class AndroidSdkCheck implements IDoctorCheck {
 
   async fix(): Promise<string> {
     return (
-      `Manually install ${'Android SDK'.bold} and set ${'ANDROID_HOME'.bold}. ` +
+      `Manually install ${console.styleText('bold', 'Android SDK')} and set ${console.styleText('bold', 'ANDROID_HOME')}. ` +
       `Read ${[ANDROID_SDK_LINK1, ANDROID_SDK_LINK2].join(' and ')}.`
     );
   }
@@ -174,7 +173,7 @@ export class OptionalBundletoolCheck implements IDoctorCheck {
 
   async fix(): Promise<string> {
     return (
-      `${'bundletool.jar'.bold} is used to handle Android App bundles. ` +
+      `${console.styleText('bold', 'bundletool.jar')} is used to handle Android App bundles. ` +
       `Please download the binary from ${BUNDLETOOL_RELEASES_LINK} and store it ` +
       `to any folder listed in the PATH environment variable. Folders that ` +
       `are currently present in PATH: ${process.env.PATH}`
@@ -211,9 +210,7 @@ export class OptionalGstreamerCheck implements IDoctorCheck {
 
   async fix(): Promise<string> {
     return (
-      `${
-        `${this.GSTREAMER_BINARY} and ${this.GST_INSPECT_BINARY}`.bold
-      } are used to stream the screen of the device under test. ` +
+      `${`${console.styleText('bold', this.GSTREAMER_BINARY)} and ${console.styleText('bold', this.GST_INSPECT_BINARY)}`} are used to stream the screen of the device under test. ` +
       `Please read ${GSTREAMER_INSTALL_LINK}.`
     );
   }
@@ -242,7 +239,7 @@ export class OptionalFfmpegCheck implements IDoctorCheck {
 
   async fix(): Promise<string> {
     return (
-      `${`${this.FFMPEG_BINARY}`.bold} is used to capture screen recordings from the device under test. ` +
+      `${console.styleText('bold', this.FFMPEG_BINARY)} is used to capture screen recordings from the device under test. ` +
       `Please read ${FFMPEG_INSTALL_LINK}.`
     );
   }
