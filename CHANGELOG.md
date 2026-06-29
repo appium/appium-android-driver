@@ -1,3 +1,5 @@
+## [13.2.7](https://github.com/appium/appium-android-driver/compare/v13.2.6...v13.2.7) (2026-06-29)
+
 ## [13.2.6](https://github.com/appium/appium-android-driver/compare/v13.2.5...v13.2.6) (2026-06-27)
 
 ### Miscellaneous Chores
