@@ -274,6 +274,10 @@ export async function setupNewChromedriver(
     bundleId: (opts as any).chromeBundleId,
     useSystemExecutable: opts.chromedriverUseSystemExecutable,
     disableBuildCheck: opts.chromedriverDisableBuildCheck,
+    // Pre-grant Android runtime permissions to Chrome so the session is not blocked by a
+    // native permission dialog. Requires appium-chromedriver with the `grantPermissions`
+    // option (https://github.com/appium/appium-chromedriver/pull/587).
+    grantPermissions: opts.chromedriverGrantPermissions,
     details: details as any,
     isAutodownloadEnabled: isChromedriverAutodownloadEnabled.bind(this)(),
   };
