@@ -76,7 +76,7 @@
     "@types/node": "^26.0.0",
     "@types/portscanner": "^2.1.1",
     "@types/semver": "^7.5.0",
-    "@types/sinon": "^21.0.1",
+    "@types/sinon": "^22.0.0",
     "@types/ws": "^8.5.4",
     "chai": "^6.0.0",
     "chai-as-promised": "^8.0.0",
