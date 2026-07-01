@@ -1,3 +1,9 @@
+## [13.2.9](https://github.com/appium/appium-android-driver/compare/v13.2.8...v13.2.9) (2026-07-01)
+
+### Miscellaneous Chores
+
+* downgrade conventional-changelog-conventionalcommits to v9 ([#1073](https://github.com/appium/appium-android-driver/issues/1073)) ([f54fcf5](https://github.com/appium/appium-android-driver/commit/f54fcf55d306d95a8e1ccfdf3ab740dc8244da9f))
+
 ## [13.2.8](https://github.com/appium/appium-android-driver/compare/v13.2.7...v13.2.8) (2026-07-01)
 
 ## [13.2.7](https://github.com/appium/appium-android-driver/compare/v13.2.6...v13.2.7) (2026-06-29)
