@@ -80,7 +80,7 @@
     "@types/ws": "^8.5.4",
     "chai": "^6.0.0",
     "chai-as-promised": "^8.0.0",
-    "conventional-changelog-conventionalcommits": "^10.2.0",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "mocha": "^11.0.1",
     "prettier": "^3.0.1",
     "semantic-release": "^25.0.2",
