@@ -111,6 +111,9 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   chromedriverDisableBuildCheck: {
     isBoolean: true,
   },
+  chromedriverGrantPermissions: {
+    // boolean (grant a default set) or an array of `android.permission.*` names
+  },
   chromeLoggingPrefs: {
     isObject: true,
   },
