@@ -309,6 +309,19 @@ export async function setupNewChromedriver(
   this.log.debug(
     `Before starting chromedriver, androidPackage is '${caps.chromeOptions.androidPackage}'`,
   );
+  // Optionally pre-grant all runtime permissions to the resolved Chrome package before Chrome
+  // is launched, so the session is not interrupted by a native permission dialog (geolocation,
+  // camera, file access, ...). Because the grant is requested explicitly, failures propagate.
+  if (opts.chromedriverGrantPermissions) {
+    const chromePkg = caps.chromeOptions?.androidPackage;
+    if (!chromePkg) {
+      throw new Error(
+        `'chromedriverGrantPermissions' is enabled but the Chrome package name could not be ` +
+          `resolved from the chromedriver capabilities, so runtime permissions cannot be granted`,
+      );
+    }
+    await this.adb.grantAllPermissions(chromePkg);
+  }
   const sessionCaps = await chromedriver.start(caps);
   cacheChromedriverCaps.bind(this)(sessionCaps, context);
   return chromedriver;
