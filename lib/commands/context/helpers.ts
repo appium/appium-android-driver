@@ -320,7 +320,6 @@ export async function setupNewChromedriver(
           `resolved from the chromedriver capabilities, so runtime permissions cannot be granted`,
       );
     }
-    this.log.info(`Granting all runtime permissions to '${chromePkg}'`);
     await this.adb.grantAllPermissions(chromePkg);
   }
   const sessionCaps = await chromedriver.start(caps);
