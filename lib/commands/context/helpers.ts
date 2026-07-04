@@ -314,15 +314,14 @@ export async function setupNewChromedriver(
   // camera, file access, ...). Because the grant is requested explicitly, failures propagate.
   if (opts.chromedriverGrantPermissions) {
     const chromePkg = caps.chromeOptions?.androidPackage;
-    if (chromePkg) {
-      this.log.info(`Granting all runtime permissions to '${chromePkg}'`);
-      await this.adb.grantAllPermissions(chromePkg);
-    } else {
-      this.log.warn(
-        `'chromedriverGrantPermissions' is set but the Chrome package could not be resolved; ` +
-          `skipping the permission grant`,
+    if (!chromePkg) {
+      throw new Error(
+        `'chromedriverGrantPermissions' is enabled but the Chrome package name could not be ` +
+          `resolved from the chromedriver capabilities, so runtime permissions cannot be granted`,
       );
     }
+    this.log.info(`Granting all runtime permissions to '${chromePkg}'`);
+    await this.adb.grantAllPermissions(chromePkg);
   }
   const sessionCaps = await chromedriver.start(caps);
   cacheChromedriverCaps.bind(this)(sessionCaps, context);

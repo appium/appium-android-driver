@@ -224,6 +224,14 @@ describe('Context', function () {
       await driver.startChromedriverProxy('WEBVIEW_1', []);
       expect(grantStub.called).to.be.false;
     });
+    it('should throw when chromedriverGrantPermissions is set but the Chrome package cannot be resolved', async function () {
+      driver.opts.chromedriverGrantPermissions = true;
+      const grantStub = sandbox.stub(driver.adb, 'grantAllPermissions').resolves();
+      await expect(driver.startChromedriverProxy('WEBVIEW_1', [])).to.be.rejectedWith(
+        /could not be resolved/,
+      );
+      expect(grantStub.called).to.be.false;
+    });
     it('should handle chromedriver event with STATE_STOPPED state', async function () {
       await driver.startChromedriverProxy('WEBVIEW_1', []);
       driver.chromedriver!.emit(Chromedriver.EVENT_CHANGED, {
