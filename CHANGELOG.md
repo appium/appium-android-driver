@@ -1,3 +1,9 @@
+## [13.3.0](https://github.com/appium/appium-android-driver/compare/v13.2.9...v13.3.0) (2026-07-04)
+
+### Features
+
+* grant runtime permissions to the Chrome package (chromedriverGrantPermissions) ([#1071](https://github.com/appium/appium-android-driver/issues/1071)) ([893dd45](https://github.com/appium/appium-android-driver/commit/893dd456f5d2dca0ded9a760e5dce9e6207d9fb1))
+
 ## [13.2.9](https://github.com/appium/appium-android-driver/compare/v13.2.8...v13.2.9) (2026-07-01)
 
 ### Miscellaneous Chores
