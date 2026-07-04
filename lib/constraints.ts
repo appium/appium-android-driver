@@ -112,7 +112,7 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
     isBoolean: true,
   },
   chromedriverGrantPermissions: {
-    // boolean (grant a default set) or an array of `android.permission.*` names
+    isBoolean: true,
   },
   chromeLoggingPrefs: {
     isObject: true,

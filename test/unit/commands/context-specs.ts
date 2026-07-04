@@ -211,6 +211,19 @@ describe('Context', function () {
         (driver.chromedriver?.start as sinon.SinonStub).getCall(0).args[0].chromeOptions,
       ).to.deep.include({androidPackage: 'pkg'});
     });
+    it('should grant all runtime permissions to the Chrome package when chromedriverGrantPermissions is set', async function () {
+      driver.opts.appPackage = 'com.pkg';
+      driver.opts.chromedriverGrantPermissions = true;
+      const grantStub = sandbox.stub(driver.adb, 'grantAllPermissions').resolves();
+      await driver.startChromedriverProxy('WEBVIEW_1', []);
+      expect(grantStub.calledOnceWithExactly('com.pkg')).to.be.true;
+    });
+    it('should not grant permissions when chromedriverGrantPermissions is not set', async function () {
+      driver.opts.appPackage = 'com.pkg';
+      const grantStub = sandbox.stub(driver.adb, 'grantAllPermissions').resolves();
+      await driver.startChromedriverProxy('WEBVIEW_1', []);
+      expect(grantStub.called).to.be.false;
+    });
     it('should handle chromedriver event with STATE_STOPPED state', async function () {
       await driver.startChromedriverProxy('WEBVIEW_1', []);
       driver.chromedriver!.emit(Chromedriver.EVENT_CHANGED, {
