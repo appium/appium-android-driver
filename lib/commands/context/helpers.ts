@@ -248,7 +248,17 @@ export async function setupNewChromedriver(
     opts.chromedriverPort = (opts as any).chromeDriverPort;
   }
 
-  if (opts.chromedriverPort) {
+  if (opts.chromedriverPort && opts.chromedriverPorts) {
+    // If both the single 'chromedriverPort' and the 'chromedriverPorts' pool are provided, prefer
+    // the pool. Otherwise the explicitly configured range would be silently bypassed by the single
+    // port, which is surprising and makes it impossible to guarantee a per-session port is picked
+    // from the pool (e.g. when several parallel sessions share the same host).
+    this.log.info(
+      `Both 'chromedriverPort' (${opts.chromedriverPort}) and 'chromedriverPorts' were provided; ` +
+        `preferring a free port from the 'chromedriverPorts' pool and ignoring 'chromedriverPort'`,
+    );
+    opts.chromedriverPort = await getChromedriverPort.bind(this)(opts.chromedriverPorts);
+  } else if (opts.chromedriverPort) {
     this.log.debug(`Using user-specified port ${opts.chromedriverPort} for chromedriver`);
   } else {
     // if a single port wasn't given, we'll look for a free one
