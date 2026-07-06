@@ -198,6 +198,7 @@ export async function getLaunchInfo(this: AndroidDriver): Promise<ADBLaunchInfo 
 export async function initDevice(this: AndroidDriver): Promise<void> {
   const {
     skipDeviceInitialization,
+    skipSettingsAppInstall,
     locale,
     language,
     localeScript,
@@ -225,16 +226,24 @@ export async function initDevice(this: AndroidDriver): Promise<void> {
     // Some feature such as location/wifi are not necessary for all users,
     // but they require the settings app. So, try to configure it while Appium
     // does not throw error even if they fail.
-    const shouldThrowError = Boolean(
-      language ||
-      locale ||
-      localeScript ||
-      unicodeKeyboard ||
-      hideKeyboard ||
-      disableWindowAnimation ||
-      !skipUnlock,
-    );
-    await pushSettingsApp.bind(this)(shouldThrowError);
+    if (skipSettingsAppInstall) {
+      this.log.info(
+        `'skipSettingsAppInstall' is set. Skipping installation of the Appium Settings helper app. ` +
+          `Capabilities and features that depend on it (locale/language, IME/keyboard handling, ` +
+          `geolocation mocking, window animation control, unlock) may be unavailable.`,
+      );
+    } else {
+      const shouldThrowError = Boolean(
+        language ||
+        locale ||
+        localeScript ||
+        unicodeKeyboard ||
+        hideKeyboard ||
+        disableWindowAnimation ||
+        !skipUnlock,
+      );
+      await pushSettingsApp.bind(this)(shouldThrowError);
+    }
   }
 
   const setupPromises: Promise<void>[] = [];
