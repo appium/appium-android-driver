@@ -11,7 +11,6 @@ import {
   getMemoryInfo,
   getNetworkTrafficInfo,
 } from '../../../lib/commands/performance';
-import _ from 'lodash';
 import {ADB} from 'appium-adb';
 import * as asyncbox from 'asyncbox';
 import {expect, use} from 'chai';
@@ -48,7 +47,7 @@ describe('performance data', function () {
   describe('getPerformanceDataTypes', function () {
     it('should get the list of available getPerformance data type', async function () {
       const types = await driver.getPerformanceDataTypes();
-      expect(types).to.eql(_.keys(SUPPORTED_PERFORMANCE_DATA_TYPES));
+      expect(types).to.eql(Object.keys(SUPPORTED_PERFORMANCE_DATA_TYPES));
     });
   });
   describe('getCPUInfo', function () {

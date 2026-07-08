@@ -1,6 +1,5 @@
 import {fs, net, util} from '@appium/support';
 import type {NetOptions, HttpUploadOptions} from '@appium/support';
-import _ from 'lodash';
 import dayjs from 'dayjs';
 import path from 'node:path';
 import type {HTTPMethod, StringRecord} from '@appium/types';
@@ -128,7 +127,7 @@ export async function mobileStopMediaProjectionRecording(
     throw new Error(`No recent media projection recording have been found. Did you start any?`);
   }
 
-  if (_.isEmpty(remotePath)) {
+  if (util.isEmpty(remotePath)) {
     const {size} = await fs.stat(recentRecordingPath);
     this.log.debug(
       `The size of the resulting media projection recording is ${util.toReadableSizeString(size)}`,
@@ -154,7 +153,7 @@ async function uploadRecordedMedia(
   remotePath?: string,
   uploadOptions: UploadOptions = {},
 ): Promise<string> {
-  if (_.isEmpty(remotePath)) {
+  if (util.isEmpty(remotePath)) {
     return (await util.toInMemoryBase64(localFile)).toString();
   }
 
@@ -182,7 +181,7 @@ async function uploadRecordedMedia(
 }
 
 function adjustMediaExtension(name: string): string {
-  return _.toLower(name).endsWith(DEFAULT_EXT) ? name : `${name}${DEFAULT_EXT}`;
+  return name?.toLowerCase()?.endsWith(DEFAULT_EXT) ? name : `${name}${DEFAULT_EXT}`;
 }
 
 async function verifyMediaProjectionRecordingIsSupported(adb: ADB): Promise<void> {

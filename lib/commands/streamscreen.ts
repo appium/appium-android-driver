@@ -1,6 +1,5 @@
 import {fs, logger, system, util} from '@appium/support';
 import {waitForCondition} from 'asyncbox';
-import _ from 'lodash';
 import {spawn} from 'node:child_process';
 import http from 'node:http';
 import net from 'node:net';
@@ -89,10 +88,10 @@ export async function mobileStartScreenStreaming(
 ): Promise<void> {
   this.assertFeatureEnabled(ADB_SCREEN_STREAMING_FEATURE);
 
-  if (_.isUndefined(this._screenStreamingProps)) {
+  if (this._screenStreamingProps === undefined) {
     await verifyStreamingRequirements(this.adb);
   }
-  if (!_.isEmpty(this._screenStreamingProps)) {
+  if (!util.isEmpty(this._screenStreamingProps)) {
     this.log.info(
       `The screen streaming session is already running. ` +
         `Stop it first in order to start a new one.`,
@@ -246,8 +245,8 @@ export async function mobileStartScreenStreaming(
  * If no streaming session is active, this method returns without error.
  */
 export async function mobileStopScreenStreaming(this: AndroidDriver): Promise<void> {
-  if (_.isEmpty(this._screenStreamingProps)) {
-    if (!_.isUndefined(this._screenStreamingProps)) {
+  if (util.isEmpty(this._screenStreamingProps) || !this._screenStreamingProps) {
+    if (this._screenStreamingProps !== undefined) {
       this.log.debug(`Screen streaming is not running. There is nothing to stop`);
     }
     return;
@@ -287,7 +286,7 @@ export async function mobileStopScreenStreaming(this: AndroidDriver): Promise<vo
 function createStreamingLogger(streamName: string, udid: string): AppiumLogger {
   return logger.getLogger(
     `${streamName}@` +
-      _.truncate(udid, {
+      util.truncateString(udid, {
         length: 8,
         omission: '',
       }),
@@ -295,7 +294,7 @@ function createStreamingLogger(streamName: string, udid: string): AppiumLogger {
 }
 
 async function verifyStreamingRequirements(adb: ADB): Promise<void> {
-  if (!_.trim(await adb.shell(['which', SCREENRECORD_BINARY]))) {
+  if (!(await adb.shell(['which', SCREENRECORD_BINARY])).trim()) {
     throw new Error(
       `The required '${SCREENRECORD_BINARY}' binary is not available on the device under test`,
     );
@@ -319,11 +318,11 @@ async function verifyStreamingRequirements(adb: ADB): Promise<void> {
   await Promise.all(gstreamerCheckPromises);
 
   const moduleCheckPromises: Promise<void>[] = [];
-  for (const [name, modName] of _.toPairs(REQUIRED_GST_PLUGINS)) {
+  for (const [name, modName] of Object.entries(REQUIRED_GST_PLUGINS)) {
     moduleCheckPromises.push(
       (async () => {
         const {stdout} = await exec(GST_INSPECT_BINARY, [name]);
-        if (!_.includes(stdout, modName)) {
+        if (!stdout?.includes(modName)) {
           throw new Error(
             `The required GStreamer plugin '${name}' from '${modName}' module is not installed. ` +
               `See ${GST_TUTORIAL_URL} for more details on how to install it.`,
@@ -366,9 +365,9 @@ async function initDeviceStreamingProc(
   opts: {width?: string | number; height?: string | number; bitRate?: string | number} = {},
 ): Promise<ReturnType<typeof spawn>> {
   const {width, height, bitRate} = opts;
-  const adjustedWidth = _.isUndefined(width) ? deviceInfo.width : parseInt(String(width), 10);
-  const adjustedHeight = _.isUndefined(height) ? deviceInfo.height : parseInt(String(height), 10);
-  const adjustedBitrate = _.isUndefined(bitRate) ? DEFAULT_BITRATE : parseInt(String(bitRate), 10);
+  const adjustedWidth = width === undefined ? deviceInfo.width : parseInt(String(width), 10);
+  const adjustedHeight = height === undefined ? deviceInfo.height : parseInt(String(height), 10);
+  const adjustedBitrate = bitRate === undefined ? DEFAULT_BITRATE : parseInt(String(bitRate), 10);
   let screenRecordCmd =
     SCREENRECORD_BINARY +
     ` --output-format=h264` +
@@ -396,7 +395,7 @@ async function initDeviceStreamingProc(
   const deviceStreamingLogger = createStreamingLogger(SCREENRECORD_BINARY, deviceInfo.udid);
   const errorsListener = (chunk: Buffer | string) => {
     const stderr = chunk.toString();
-    if (_.trim(stderr)) {
+    if (stderr?.trim()) {
       deviceStreamingLogger.debug(stderr);
     }
   };
@@ -404,7 +403,7 @@ async function initDeviceStreamingProc(
 
   const startupListener = (chunk: Buffer | string) => {
     if (!isStarted) {
-      isStarted = !_.isEmpty(chunk);
+      isStarted = !util.isEmpty(chunk);
     }
   };
   deviceStreaming.stdout.on('data', startupListener);
@@ -477,7 +476,7 @@ async function initGstreamerPipeline(
   });
   const gstreamerLogger = createStreamingLogger('gst', deviceInfo.udid);
   const gstOutputListener = (stdout: string, stderr: string) => {
-    if (_.trim(stderr || stdout)) {
+    if ((stderr || stdout)?.trim()) {
       gstreamerLogger.debug(stderr || stdout);
     }
   };

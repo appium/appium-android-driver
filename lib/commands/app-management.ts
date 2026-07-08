@@ -1,6 +1,5 @@
 import {util} from '@appium/support';
 import {waitForCondition, longSleep} from 'asyncbox';
-import _ from 'lodash';
 import {EOL} from 'node:os';
 import type {AndroidDriver, AndroidDriverOpts} from '../driver';
 import type {AppInfoMap, AppState, IsAppInstalledOptions, TerminateAppOpts} from './types';
@@ -107,7 +106,7 @@ export async function queryAppState(this: AndroidDriver, appId: string): Promise
   if (!(await this.adb.isAppRunning(appId))) {
     return APP_STATE.NOT_RUNNING;
   }
-  const appIdRe = new RegExp(`\\b${_.escapeRegExp(appId)}/`);
+  const appIdRe = new RegExp(`\\b${util.escapeRegExp(appId)}/`);
   for (const line of (await this.adb.dumpWindows()).split('\n')) {
     if (appIdRe.test(line) && ['mCurrentFocus', 'mFocusedApp'].some((x) => line.includes(x))) {
       return APP_STATE.RUNNING_IN_FOREGROUND;
@@ -184,7 +183,7 @@ export async function terminateApp(
 ): Promise<boolean> {
   this.log.info(`Terminating '${appId}'`);
   const pids = await this.adb.listAppProcessIds(appId);
-  if (_.isEmpty(pids)) {
+  if (util.isEmpty(pids)) {
     this.log.info(`The app '${appId}' is not running`);
     return false;
   }
@@ -210,7 +209,11 @@ export async function terminateApp(
           return true;
         }
         currentPids = await this.adb.listAppProcessIds(appId);
-        if (_.isEmpty(currentPids) || _.isEmpty(_.intersection(pids, currentPids))) {
+        const currentPidsSet = new Set(currentPids);
+        if (
+          util.isEmpty(currentPids) ||
+          util.isEmpty(pids.filter((pid) => currentPidsSet.has(pid)))
+        ) {
           this.log.info(
             `The application '${appId}' was reported running, ` +
               `although all process ids belonging to it have been changed: ` +
@@ -227,7 +230,11 @@ export async function terminateApp(
       },
     );
   } catch {
-    if (!_.isEmpty(currentPids) && !_.isEmpty(_.difference(pids, currentPids))) {
+    const currentPidsSet = new Set(currentPids);
+    if (
+      !util.isEmpty(currentPids) &&
+      !util.isEmpty(pids.filter((pid) => !currentPidsSet.has(pid)))
+    ) {
       this.log.warn(
         `Some of processes belonging to the '${appId}' applcation are still running ` +
           `after ${timeout}ms (${JSON.stringify(pids)} -> ${JSON.stringify(currentPids)})`,
@@ -384,7 +391,7 @@ export async function background(this: AndroidDriver, seconds: number): Promise<
   const sleepMs = seconds * 1000;
   const thresholdMs = 30 * 1000; // use the spin-wait for anything over this threshold
   // for our spin interval, use 1% of the total wait time, but nothing bigger than 30s
-  const intervalMs = _.min([30 * 1000, parseInt(String(sleepMs / 100), 10)]) || 1000;
+  const intervalMs = Math.min(30 * 1000, parseInt(String(sleepMs / 100), 10)) || 1000;
   const progressCb = ({elapsedMs, progress}: {elapsedMs: number; progress: number}) => {
     const waitSecs = (elapsedMs / 1000).toFixed(0);
     const progressPct = (progress * 100).toFixed(2);
@@ -430,7 +437,9 @@ export async function background(this: AndroidDriver, seconds: number): Promise<
             stopApp: false,
           };
   }
-  args = _.pickBy(args, (value) => !_.isUndefined(value)) as StartAppOptions;
+  args = Object.fromEntries(
+    Object.entries(args).filter(([, value]) => value !== undefined),
+  ) as StartAppOptions;
   this.log.debug(`Bringing application back to foreground with arguments: ${JSON.stringify(args)}`);
   return await this.adb.startApp(args);
 }
@@ -487,7 +496,7 @@ export async function resetAUT(
     // fullReset has priority over fastReset
     if (!fullReset && fastReset) {
       const output = await this.adb.clear(appPackage);
-      if (_.isString(output) && output.toLowerCase().includes('failed')) {
+      if (typeof output === 'string' && output.toLowerCase().includes('failed')) {
         throw new Error(
           `Cannot clear the application data of '${appPackage}'. Original error: ${output}`,
         );
@@ -655,7 +664,7 @@ export async function getThirdPartyPackages(
       .replace(/package:/g, '')
       .split(EOL);
     this.log.debug(`'${appPackagesArray}' filtered with '${filterPackages}'`);
-    return _.difference(appPackagesArray, filterPackages);
+    return appPackagesArray.filter((pkg) => !filterPackages.includes(pkg));
   } catch (err) {
     const error = err as Error;
     this.log.warn(`Unable to get packages with 'adb shell pm list packages -3': ${error.message}`);

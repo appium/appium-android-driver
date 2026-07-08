@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {util} from '@appium/support';
 import type {AndroidDriver} from '../driver';
@@ -69,7 +68,7 @@ export async function mobileSetConnectivity(
   data?: boolean,
   airplaneMode?: boolean,
 ): Promise<void> {
-  if (_.every([wifi, data, airplaneMode], _.isUndefined)) {
+  if (wifi === undefined && data === undefined && airplaneMode === undefined) {
     throw new errors.InvalidArgumentError(
       `Either one of ${JSON.stringify(SUPPORTED_SERVICE_NAMES)} options must be provided`,
     );
@@ -81,20 +80,20 @@ export async function mobileSetConnectivity(
     [airplaneMode, AIRPLANE_MODE_KEY_NAME],
   ];
   const services = connectivityPairs.reduce<ServiceType[]>((acc, [value, key]) => {
-    if (!_.isUndefined(value)) {
+    if (value !== undefined) {
       acc.push(key);
     }
     return acc;
   }, []);
   const currentState = await this.mobileGetConnectivity(services);
   const setters: Promise<any>[] = [];
-  if (!_.isUndefined(wifi) && currentState.wifi !== Boolean(wifi)) {
+  if (wifi !== undefined && currentState.wifi !== Boolean(wifi)) {
     setters.push(this.setWifiState(wifi));
   }
-  if (!_.isUndefined(data) && currentState.data !== Boolean(data)) {
+  if (data !== undefined && currentState.data !== Boolean(data)) {
     setters.push(this.setDataState(data));
   }
-  if (!_.isUndefined(airplaneMode) && currentState.airplaneMode !== Boolean(airplaneMode)) {
+  if (airplaneMode !== undefined && currentState.airplaneMode !== Boolean(airplaneMode)) {
     setters.push(
       (async () => {
         await this.adb.setAirplaneMode(airplaneMode);
@@ -104,7 +103,7 @@ export async function mobileSetConnectivity(
       })(),
     );
   }
-  if (!_.isEmpty(setters)) {
+  if (setters.length > 0) {
     await Promise.all(setters);
   }
 }
@@ -120,9 +119,9 @@ export async function mobileGetConnectivity(
   this: AndroidDriver,
   services: ServiceType[] | ServiceType = SUPPORTED_SERVICE_NAMES,
 ): Promise<GetConnectivityResult> {
-  const svcs = _.castArray(services);
-  const unsupportedServices = _.difference(svcs, SUPPORTED_SERVICE_NAMES);
-  if (!_.isEmpty(unsupportedServices)) {
+  const svcs = Array.isArray(services) ? services : [services];
+  const unsupportedServices = svcs.filter((svc) => !SUPPORTED_SERVICE_NAMES.includes(svc));
+  if (unsupportedServices.length > 0) {
     throw new errors.InvalidArgumentError(
       `${util.pluralize(
         'Service name',
@@ -144,13 +143,13 @@ export async function mobileGetConnectivity(
       : Promise.resolve(undefined),
   ]);
   const result: GetConnectivityResult = {};
-  if (!_.isUndefined(wifi)) {
+  if (wifi !== undefined) {
     result.wifi = Boolean(wifi);
   }
-  if (!_.isUndefined(data)) {
+  if (data !== undefined) {
     result.data = Boolean(data);
   }
-  if (!_.isUndefined(airplaneMode)) {
+  if (airplaneMode !== undefined) {
     result.airplaneMode = Boolean(airplaneMode);
   }
   return result;

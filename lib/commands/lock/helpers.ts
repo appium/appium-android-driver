@@ -1,6 +1,5 @@
 import {util} from '@appium/support';
 import {sleep, waitForCondition} from 'asyncbox';
-import _ from 'lodash';
 import type {ADB} from 'appium-adb';
 import type {Position, StringRecord} from '@appium/types';
 import type {AndroidDriver, AndroidDriverCaps} from '../../driver';
@@ -58,16 +57,16 @@ export function validateUnlockCapabilities<T extends AndroidDriverCaps>(caps: T)
   }
 
   if ([PIN_UNLOCK, PIN_UNLOCK_KEY_EVENT, FINGERPRINT_UNLOCK].includes(unlockType)) {
-    if (!/^[0-9]+$/.test(_.trim(unlockKey))) {
+    if (!/^[0-9]+$/.test(String(unlockKey)?.trim())) {
       throw new Error(`Unlock key value '${unlockKey}' must only consist of digits`);
     }
   } else if (unlockType === PATTERN_UNLOCK) {
-    if (!/^[1-9]{2,9}$/.test(_.trim(unlockKey))) {
+    if (!/^[1-9]{2,9}$/.test(String(unlockKey)?.trim())) {
       throw new Error(
         `Unlock key value '${unlockKey}' must only include from two to nine digits in range 1..9`,
       );
     }
-    if (/([1-9]).*?\1/.test(_.trim(unlockKey))) {
+    if (/([1-9]).*?\1/.test(String(unlockKey)?.trim())) {
       throw new Error(
         `Unlock key value '${unlockKey}' must define a valid pattern where repeats are not allowed`,
       );
@@ -161,7 +160,7 @@ export async function pinUnlock(
   await this.adb.dismissKeyguard();
   const keys = stringKeyToArr(String(capabilities.unlockKey));
   const els = await this.findElOrEls('id', 'com.android.systemui:id/digit_text', true);
-  if (_.isEmpty(els)) {
+  if (util.isEmpty(els)) {
     // fallback to pin with key event
     return await pinUnlockWithKeyEvent.bind(this)(capabilities);
   }
@@ -267,7 +266,7 @@ export function getPatternActions(
 ): StringRecord[] {
   // https://www.w3.org/TR/webdriver2/#actions
   const pointerActions: StringRecord[] = [];
-  const intKeys = keys.map((key) => (_.isString(key) ? _.parseInt(key) : key));
+  const intKeys = keys.map((key) => (typeof key === 'string' ? parseInt(key, 10) : key));
   let lastPos: Position | undefined;
   for (const key of intKeys) {
     const keyPos = getPatternKeyPosition(key, initPos, piece);
