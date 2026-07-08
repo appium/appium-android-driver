@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
 import {AndroidDriver} from '../../../lib/driver';
-import { getDeviceTime } from '../../../lib/commands/time';
+import {getDeviceTime} from '../../../lib/commands/time';
 
 import {expect, use} from 'chai'; // expect is used
 import chaiAsPromised from 'chai-as-promised';
@@ -28,10 +28,7 @@ describe('Time Commands', function () {
         .withArgs(['date', '+%Y-%m-%dT%T%z'])
         .resolves('2026-07-08T15:30:45+0200\n');
 
-      const result = await getDeviceTime.call(
-        driver,
-        'YYYY-MM-DD HH:mm:ss Z',
-      );
+      const result = await getDeviceTime.call(driver, 'YYYY-MM-DD HH:mm:ss Z');
 
       expect(result).to.equal('2026-07-08 15:30:45 +02:00');
     });
@@ -53,13 +50,9 @@ describe('Time Commands', function () {
         .withArgs(['date', '+%Y-%m-%dT%T%z'])
         .resolves('invalid-date');
 
-      const result = await getDeviceTime.call(
-        driver,
-        'YYYY-MM-DD HH:mm:ss',
-      );
+      const result = await getDeviceTime.call(driver, 'YYYY-MM-DD HH:mm:ss');
 
       expect(result).to.equal('invalid-date');
     });
   });
-
 });
