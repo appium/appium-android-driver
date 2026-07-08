@@ -1,7 +1,7 @@
-import _ from 'lodash';
 import {errors} from 'appium/driver';
 import type {LogEntry} from 'appium-adb';
 import type {AndroidDriver} from './driver';
+import {util} from '@appium/support';
 
 export type {LogEntry};
 
@@ -29,8 +29,8 @@ export function requireArgs(
   argNames: string | string[],
   opts: Record<string, any>,
 ): Record<string, any> {
-  for (const argName of _.isArray(argNames) ? argNames : [argNames]) {
-    if (!_.has(opts, argName)) {
+  for (const argName of Array.isArray(argNames) ? argNames : [argNames]) {
+    if (util.isPlainObject(opts) && !Object.hasOwn(opts, argName)) {
       throw new errors.InvalidArgumentError(`'${argName}' argument must be provided`);
     }
   }
@@ -48,9 +48,9 @@ export function parseArray(cap: string | string[]): string[] {
     parsedCaps = JSON.parse(cap as string);
   } catch {}
 
-  if (_.isArray(parsedCaps)) {
+  if (Array.isArray(parsedCaps)) {
     return parsedCaps;
-  } else if (_.isString(cap)) {
+  } else if (typeof cap === 'string') {
     return [cap];
   }
 
@@ -62,12 +62,12 @@ export function parseArray(cap: string | string[]): string[] {
  * @returns
  */
 export async function removeAllSessionWebSocketHandlers(this: AndroidDriver): Promise<void> {
-  if (!this.sessionId || !_.isFunction(this.server?.getWebSocketHandlers)) {
+  if (!this.sessionId || typeof this.server?.getWebSocketHandlers !== 'function') {
     return;
   }
 
   const activeHandlers = await this.server.getWebSocketHandlers(this.sessionId);
-  for (const pathname of _.keys(activeHandlers)) {
+  for (const pathname of Object.keys(activeHandlers)) {
     await this.server.removeWebSocketHandler(pathname);
   }
 }
@@ -78,8 +78,8 @@ export async function removeAllSessionWebSocketHandlers(this: AndroidDriver): Pr
  * @returns
  */
 export function nativeLogEntryToSeleniumEntry(x: LogEntryWithPrefix): LogEntry {
-  const msg = _.isEmpty(x.prefix) ? x.message : `[${x.prefix}] ${x.message}`;
-  return toLogRecord(x.timestamp ?? Date.now(), _.replace(msg, COLOR_CODE_PATTERN, ''));
+  const msg = util.isEmpty(x.prefix) ? x.message : `[${x.prefix}] ${x.message}`;
+  return toLogRecord(x.timestamp ?? Date.now(), msg.replace(COLOR_CODE_PATTERN, ''));
 }
 
 /**

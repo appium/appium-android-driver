@@ -1,6 +1,5 @@
 import {util} from '@appium/support';
 import {errors} from 'appium/driver';
-import _ from 'lodash';
 import {exec} from 'teen_process';
 import type {ExecError} from 'teen_process';
 import {ADB_SHELL_FEATURE} from '../utils';
@@ -36,11 +35,16 @@ export async function mobileShell<T extends boolean>(
 ): Promise<T extends true ? {stdout: string; stderr: string} : string> {
   this.assertFeatureEnabled(ADB_SHELL_FEATURE);
 
-  if (!_.isString(command)) {
+  if (typeof command !== 'string') {
     throw new errors.InvalidArgumentError(`The 'command' argument is mandatory`);
   }
 
-  const adbArgs = [...this.adb.executable.defaultArgs, 'shell', command, ..._.castArray(args)];
+  const adbArgs = [
+    ...this.adb.executable.defaultArgs,
+    'shell',
+    command,
+    ...(Array.isArray(args) ? args : [args]),
+  ];
   this.log.debug(`Running '${this.adb.executable.path} ${util.quote(adbArgs)}'`);
   try {
     const {stdout, stderr} = await exec(this.adb.executable.path, adbArgs, {timeout});

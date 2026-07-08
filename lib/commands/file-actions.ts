@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {fs, util, zip, tempDir} from '@appium/support';
 import path from 'node:path';
 import {errors} from 'appium/driver';
@@ -98,7 +97,7 @@ export async function pushFile(
   }
   const localFile = await tempDir.path({prefix: 'appium', suffix: '.tmp'});
   let base64String: string;
-  if (_.isArray(base64Data)) {
+  if (Array.isArray(base64Data)) {
     // some clients (ahem) java, send a byte array encoding utf8 characters
     // instead of a string, which would be infinitely better!
     base64String = Buffer.from(base64Data).toString('utf8');
@@ -327,7 +326,7 @@ function createFSTests(adb: ADB) {
     const checkCmd = `[ -${op} '${escapePath(p)}' ] && echo ${passFlag}`;
     const fullCmd = runAs ? `run-as ${runAs} ${checkCmd}` : checkCmd;
     try {
-      return _.includes(await adb.shell([fullCmd]), passFlag);
+      return (await adb.shell([fullCmd])).includes(passFlag);
     } catch {
       return false;
     }

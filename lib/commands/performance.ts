@@ -1,8 +1,8 @@
 import {retryInterval} from 'asyncbox';
-import _ from 'lodash';
 import type {ExecError} from 'teen_process';
 import type {AndroidDriver} from '../driver';
 import type {PerformanceDataType} from './types';
+import {util} from '@appium/support';
 
 export const NETWORK_KEYS = [
   [
@@ -68,7 +68,7 @@ const RETRY_PAUSE_MS = 1000;
  * The possible values are: 'cpuinfo', 'memoryinfo', 'batteryinfo', 'networkinfo'.
  */
 export async function getPerformanceDataTypes(this: AndroidDriver): Promise<PerformanceDataType[]> {
-  return _.keys(SUPPORTED_PERFORMANCE_DATA_TYPES) as PerformanceDataType[];
+  return Object.keys(SUPPORTED_PERFORMANCE_DATA_TYPES) as PerformanceDataType[];
 }
 
 /**
@@ -89,7 +89,7 @@ export async function getPerformanceData(
   dataType: string,
   retries: number = 2,
 ): Promise<any[][]> {
-  switch (_.toLower(dataType)) {
+  switch (dataType?.toLowerCase()) {
     case 'batteryinfo':
       return await getBatteryInfo.call(this, retries);
     case 'cpuinfo':
@@ -187,7 +187,7 @@ export async function getMemoryInfo(
       }
     }
     if (valDict.totalPrivateDirty && valDict.totalPrivateDirty !== 'nodex') {
-      const headers = _.clone(MEMORY_KEYS);
+      const headers = structuredClone(MEMORY_KEYS);
       const values = headers.map((header) => valDict[header]);
       return [headers, values];
     }
@@ -371,11 +371,7 @@ export async function getNetworkTrafficInfo(
       }
     }
 
-    if (
-      !_.isEqual(pendingBytes, '') &&
-      !_.isUndefined(pendingBytes) &&
-      !_.isEqual(pendingBytes, 'nodex')
-    ) {
+    if (pendingBytes !== '' && pendingBytes !== undefined && pendingBytes !== 'nodex') {
       return returnValue;
     } else {
       throw new Error(`Unable to parse network traffic data: '${data}'`);
@@ -427,7 +423,7 @@ export async function getCPUInfo(
     // `output` will be something like
     //    +0% 2209/io.appium.android.apis: 0.1% user + 0.2% kernel / faults: 70 minor
     const usagesPattern = new RegExp(
-      `^.+\\/${_.escapeRegExp(packageName)}:\\D+([\\d.]+)%\\s+user\\s+\\+\\s+([\\d.]+)%\\s+kernel`,
+      `^.+\\/${util.escapeRegExp(packageName)}:\\D+([\\d.]+)%\\s+user\\s+\\+\\s+([\\d.]+)%\\s+kernel`,
       'm',
     );
     const match = usagesPattern.exec(output);
@@ -462,7 +458,7 @@ export async function getBatteryInfo(this: AndroidDriver, retries: number = 2): 
     const power = parseInt((data.split(':')[1] || '').trim(), 10);
 
     if (!Number.isNaN(power)) {
-      return [_.clone(BATTERY_KEYS), [power.toString()]];
+      return [structuredClone(BATTERY_KEYS), [power.toString()]];
     } else {
       throw new Error(`Unable to parse battery data: '${data}'`);
     }

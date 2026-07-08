@@ -2,7 +2,6 @@ import {errors} from 'appium/driver';
 import path from 'node:path';
 import {fs, tempDir} from '@appium/support';
 import crypto from 'node:crypto';
-import _ from 'lodash';
 import type {AndroidDriver} from '../driver';
 
 const EMULATOR_RESOURCES_ROOT = ['emulator', 'resources'];
@@ -92,7 +91,7 @@ export async function mobileInjectEmulatorCameraImage(
     throw new Error('The image injection feature is only available on emulators');
   }
 
-  if (!_.isString(payload) || _.size(payload) <= PNG_MAGIC_LENGTH) {
+  if (typeof payload !== 'string' || payload.length <= PNG_MAGIC_LENGTH) {
     throw new errors.InvalidArgumentError(
       `You must provide a valid base64-encoded .PNG data as the 'payload' argument`,
     );

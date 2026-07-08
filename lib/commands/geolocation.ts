@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {asyncmap} from 'asyncbox';
 import {fs, tempDir} from '@appium/support';
 import path from 'node:path';
@@ -208,10 +207,10 @@ async function resetMockLocation(this: AndroidDriver): Promise<void> {
         pkgIds = JSON.parse(await this.adb.shell(['cat', MOCK_APP_IDS_STORE]));
       } catch {}
     }
-    const thirdPartyPkgIds = await thirdPartyPkgIdsPromise;
+    const thirdPartyPkgIds = new Set(await thirdPartyPkgIdsPromise);
     // Only include currently installed packages
-    const resultPkgs = _.intersection(pkgIds, thirdPartyPkgIds);
-    if (_.size(resultPkgs) <= 1) {
+    const resultPkgs = pkgIds.filter((pkg) => thirdPartyPkgIds.has(pkg));
+    if (resultPkgs.length <= 1) {
       await this.adb.shell([
         'appops',
         'set',

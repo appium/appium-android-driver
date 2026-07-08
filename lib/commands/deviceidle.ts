@@ -1,5 +1,4 @@
 import {errors} from 'appium/driver';
-import _ from 'lodash';
 import type {AndroidDriver} from '../driver';
 
 const SUPPORTED_ACTIONS = ['whitelistAdd', 'whitelistRemove'] as const;
@@ -20,11 +19,11 @@ export async function mobileDeviceidle(
   action: (typeof SUPPORTED_ACTIONS)[number],
   packages?: string | string[],
 ): Promise<void> {
-  if (!(_.isString(packages) || _.isArray(packages))) {
+  if (!(typeof packages === 'string' || Array.isArray(packages))) {
     throw new errors.InvalidArgumentError(`packages argument must be a string or an array`);
   }
 
-  const packagesArr = _.isArray(packages) ? packages : [packages];
+  const packagesArr = Array.isArray(packages) ? packages : [packages];
   const commonArgs = ['dumpsys', 'deviceidle', 'whitelist'];
   let argsGenerator: (pkg: string) => string[];
   switch (action) {

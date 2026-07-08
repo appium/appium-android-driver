@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {util} from '@appium/support';
 import type {AndroidDriver} from '../driver';
@@ -126,7 +125,7 @@ export async function mobileStartActivity(
   flags?: string,
 ): Promise<string> {
   const cmd = ['am', 'start-activity'];
-  if (!_.isNil(user)) {
+  if (util.hasValue(user)) {
     cmd.push('--user', String(user));
   }
   if (wait) {
@@ -135,13 +134,13 @@ export async function mobileStartActivity(
   if (stop) {
     cmd.push('-S');
   }
-  if (!_.isNil(windowingMode)) {
+  if (util.hasValue(windowingMode)) {
     cmd.push('--windowingMode', String(windowingMode));
   }
-  if (!_.isNil(activityType)) {
+  if (util.hasValue(activityType)) {
     cmd.push('--activityType', String(activityType));
   }
-  if (!_.isNil(display)) {
+  if (util.hasValue(display)) {
     cmd.push('--display', String(display));
   }
   cmd.push(
@@ -200,7 +199,7 @@ export async function mobileBroadcast(
   flags?: string,
 ): Promise<string> {
   const cmd = ['am', 'broadcast'];
-  if (!_.isNil(user)) {
+  if (util.hasValue(user)) {
     cmd.push('--user', String(user));
   }
   if (receiverPermission) {
@@ -265,7 +264,7 @@ export async function mobileStartService(
 ): Promise<string> {
   const cmd = ['am'];
   cmd.push(foreground ? 'start-foreground-service' : 'start-service');
-  if (!_.isNil(user)) {
+  if (util.hasValue(user)) {
     cmd.push('--user', String(user));
   }
   cmd.push(
@@ -320,7 +319,7 @@ export async function mobileStopService(
   flags?: string,
 ): Promise<string> {
   const cmd = ['am', 'stop-service'];
-  if (!_.isNil(user)) {
+  if (util.hasValue(user)) {
     cmd.push('--user', String(user));
   }
   cmd.push(
@@ -366,12 +365,12 @@ function parseIntentSpec(opts: IntentOpts = {}): string[] {
   if (mimeType) {
     resultArgs.push('-t', mimeType);
   }
-  if (!_.isNil(identifier)) {
+  if (util.hasValue(identifier)) {
     resultArgs.push('-i', identifier);
   }
   if (categories) {
-    if (_.isArray(categories)) {
-      resultArgs.push(..._.flatMap(categories.map((cName) => ['-c', cName])));
+    if (Array.isArray(categories)) {
+      resultArgs.push(...categories.flatMap((cName) => ['-c', cName]));
     } else {
       resultArgs.push('-c', categories);
     }
@@ -383,11 +382,11 @@ function parseIntentSpec(opts: IntentOpts = {}): string[] {
     resultArgs.push('-p', opts.package);
   }
   if (extras) {
-    if (!_.isArray(extras)) {
+    if (!Array.isArray(extras)) {
       throw new errors.InvalidArgumentError(`'extras' must be an array`);
     }
     for (const item of extras) {
-      if (!_.isArray(item)) {
+      if (!Array.isArray(item)) {
         throw new errors.InvalidArgumentError(`Extra argument '${item}' must be an array`);
       }
       const [type, key, value] = item;
@@ -397,14 +396,14 @@ function parseIntentSpec(opts: IntentOpts = {}): string[] {
             `Supported intent argument types are: ${SUPPORTED_EXTRA_TYPES.join(', ')}`,
         );
       }
-      if (_.isEmpty(key) || (_.isString(key) && _.trim(key) === '')) {
+      if (util.isEmpty(key) || (typeof key === 'string' && key.trim() === '')) {
         throw new errors.InvalidArgumentError(
           `Extra argument's key in '${JSON.stringify(item)}' must be a valid string identifier`,
         );
       }
       if (type === NO_VALUE_ARG_TYPE) {
         resultArgs.push(`--e${type}`, key);
-      } else if (_.isUndefined(value)) {
+      } else if (value === undefined) {
         throw new errors.InvalidArgumentError(
           `Intent argument type '${type}' in '${JSON.stringify(item)}' requires a ` +
             `valid value to be provided`,

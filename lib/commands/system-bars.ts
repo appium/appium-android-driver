@@ -1,8 +1,8 @@
 import {errors} from 'appium/driver';
-import _ from 'lodash';
 import type {StringRecord} from '@appium/types';
 import type {AndroidDriver} from '../driver';
 import type {StatusBarCommand, WindowProperties} from './types';
+import {util} from '@appium/support';
 
 const WINDOW_TITLE_PATTERN = /^\s+Window\s#\d+\sWindow\{[0-9a-f]+\s\w+\s([\w-]+)\}:$/;
 const FRAME_PATTERN = /\bm?[Ff]rame=\[([0-9.-]+),([0-9.-]+)\]\[([0-9.-]+),([0-9.-]+)\]/;
@@ -64,15 +64,15 @@ export async function mobilePerformStatusBarCommand(
   component?: string,
 ): Promise<string> {
   const toStatusBarCommandCallable =
-    (cmd: string, argsCallable?: () => string[] | string) => async (): Promise<string> =>
-      await this.adb.shell([
-        'cmd',
-        'statusbar',
-        cmd,
-        ...(argsCallable ? _.castArray(argsCallable()) : []),
-      ]);
+    (cmd: string, argsCallable?: () => string[] | string) => async (): Promise<string> => {
+      let argsCallableArray = argsCallable ? argsCallable() : [];
+      if (!Array.isArray(argsCallableArray)) {
+        argsCallableArray = [argsCallableArray];
+      }
+      return await this.adb.shell(['cmd', 'statusbar', cmd, ...argsCallableArray]);
+    };
   const tileCommandArgsCallable = () => component as string;
-  const statusBarCommands = _.fromPairs(
+  const statusBarCommands = Object.fromEntries(
     (
       [
         ['expandNotifications', ['expand-notifications']],
@@ -90,7 +90,7 @@ export async function mobilePerformStatusBarCommand(
   if (!action) {
     throw new errors.InvalidArgumentError(
       `The '${command}' status bar command is unknown. Only the following commands ` +
-        `are supported: ${_.keys(statusBarCommands)}`,
+        `are supported: ${Object.keys(statusBarCommands)}`,
     );
   }
   return await action();
@@ -110,7 +110,7 @@ export function parseWindowProperties(
   name: string,
   props: string[],
 ): WindowProperties {
-  const result = _.cloneDeep(DEFAULT_WINDOW_PROPERTIES);
+  const result = structuredClone(DEFAULT_WINDOW_PROPERTIES);
   const propLines = props.join('\n');
   const frameMatch = FRAME_PATTERN.exec(propLines);
   if (!frameMatch) {
@@ -142,29 +142,29 @@ export function parseWindowProperties(
 export function parseWindows(this: AndroidDriver, lines: string): SystemBarsResult {
   const windows: StringRecord<string[]> = {};
   let currentWindowName: string | null = null;
-  for (const line of lines.split('\n').map(_.trimEnd)) {
-    const match = WINDOW_TITLE_PATTERN.exec(line);
+  for (const line of lines.split('\n').map((line) => String(line)?.trimEnd())) {
+    const match = WINDOW_TITLE_PATTERN.exec(line as any);
     if (match) {
       currentWindowName = match[1];
       windows[currentWindowName] = [];
       continue;
     }
-    if (_.trim(line).length === 0) {
+    if (String(line)?.trim()?.length === 0) {
       currentWindowName = null;
       continue;
     }
 
-    if (currentWindowName && _.isArray(windows[currentWindowName])) {
+    if (currentWindowName && Array.isArray(windows[currentWindowName])) {
       windows[currentWindowName].push(line);
     }
   }
-  if (_.isEmpty(windows)) {
+  if (util.isEmpty(windows)) {
     this.log.debug(lines);
     throw new Error('Cannot parse any window information from the dumpsys output');
   }
 
   const result: SystemBarsResult = {};
-  for (const [name, props] of _.toPairs(windows)) {
+  for (const [name, props] of Object.entries(windows)) {
     if (
       name.startsWith(STATUS_BAR_WINDOW_NAME_PREFIX) ||
       props.some((line: string) => STATUS_BAR_TYPE_PATTERN.test(line))
@@ -182,14 +182,14 @@ export function parseWindows(this: AndroidDriver, lines: string): SystemBarsResu
       ['statusBar', STATUS_BAR_WINDOW_NAME_PREFIX],
       ['navigationBar', NAVIGATION_BAR_WINDOW_NAME_PREFIX],
     ] as const
-  ).filter(([name]) => _.isNil(result[name as keyof SystemBarsResult]));
+  ).filter(([name]) => result[name as keyof SystemBarsResult] == null);
   for (const [window, namePrefix] of unmatchedWindows) {
     this.log.info(
       `No windows have been found whose title matches to ` +
         `'${namePrefix}'. Assuming it is invisible. ` +
-        `Only the following windows are available: ${_.keys(windows)}`,
+        `Only the following windows are available: ${Object.keys(windows)}`,
     );
-    result[window as keyof SystemBarsResult] = _.cloneDeep(DEFAULT_WINDOW_PROPERTIES);
+    result[window as keyof SystemBarsResult] = structuredClone(DEFAULT_WINDOW_PROPERTIES);
   }
   return result;
 }

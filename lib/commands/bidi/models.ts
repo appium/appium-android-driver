@@ -6,7 +6,6 @@ import {
   CONTEXT_UPDATED_EVENT_OBSOLETE,
 } from './constants';
 import type {LogEntry} from 'appium-adb';
-import _ from 'lodash';
 
 function toContextUpdatedEvent(method: string, contextName: string): ContextUpdatedEvent {
   return {
@@ -56,7 +55,7 @@ export function makeLogEntryAddedEvent(
 }
 
 function adjustLogLevel(originalLevel: string): BiDiLogLevel {
-  const originalLevelLc = _.toLower(originalLevel);
+  const originalLevelLc = originalLevel?.toLowerCase();
   switch (originalLevelLc) {
     case 'debug':
     case 'info':
