@@ -884,13 +884,17 @@ function merge<T extends Record<string, any>>(target: T, source: any): T {
   }
 
   for (const key of Object.keys(source)) {
-    const sourceValue = source[key];
+    // Prevent prototype pollution when merging untrusted capability objects
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      continue;
+    }
+
+    const sourceValue = (source as Record<string, any>)[key];
 
     if (util.isPlainObject(sourceValue)) {
-      if (!util.isPlainObject(target[key])) {
-        (target as Record<string, any>)[key] = {} as any;
+      if (!util.isPlainObject((target as Record<string, any>)[key])) {
+        (target as Record<string, any>)[key] = {};
       }
-
       merge((target as any)[key], sourceValue);
     } else {
       (target as Record<string, any>)[key] = sourceValue;
