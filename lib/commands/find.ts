@@ -107,5 +107,6 @@ export async function doFindElementOrEls(
   this: AndroidDriver,
   params: FindElementOpts,
 ): Promise<Element | Element[]> {
+  void params;
   throw new errors.NotImplementedError('Not implemented');
 }
