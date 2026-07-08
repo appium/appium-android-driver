@@ -1,3 +1,9 @@
+## [13.3.1](https://github.com/appium/appium-android-driver/compare/v13.3.0...v13.3.1) (2026-07-08)
+
+### Miscellaneous Chores
+
+* Drop colors dependency ([#1079](https://github.com/appium/appium-android-driver/issues/1079)) ([fab47d5](https://github.com/appium/appium-android-driver/commit/fab47d529759ec7608fea5903b4150db6922d8d2))
+
 ## [13.3.0](https://github.com/appium/appium-android-driver/compare/v13.2.9...v13.3.0) (2026-07-04)
 
 ### Features
