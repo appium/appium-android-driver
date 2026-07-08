@@ -657,6 +657,7 @@ export async function getThirdPartyPackages(
   this: AndroidDriver,
   filterPackages: string[] = [],
 ): Promise<string[]> {
+  const filterPackagesSet = new Set(filterPackages);
   try {
     const packagesString = await this.adb.shell(['pm', 'list', 'packages', '-3']);
     const appPackagesArray = packagesString
@@ -664,7 +665,7 @@ export async function getThirdPartyPackages(
       .replace(/package:/g, '')
       .split(EOL);
     this.log.debug(`'${appPackagesArray}' filtered with '${filterPackages}'`);
-    return appPackagesArray.filter((pkg) => !filterPackages.includes(pkg));
+    return appPackagesArray.filter((pkg) => !filterPackagesSet.has(pkg));
   } catch (err) {
     const error = err as Error;
     this.log.warn(`Unable to get packages with 'adb shell pm list packages -3': ${error.message}`);

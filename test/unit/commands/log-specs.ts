@@ -22,11 +22,7 @@ describe('commands - logging', function () {
     it('should get log types', async function () {
       const types = await driver.getLogTypes();
       // all the types should be returned
-      expect(
-        [...new Set(['logcat', 'bugreport', 'server', ...types])].filter(
-          (item) => !(['logcat', 'bugreport', 'server'].includes(item) && types.includes(item)),
-        ),
-      ).to.eql([]);
+      expect(types).to.have.members(['logcat', 'bugreport', 'server']);
     });
   });
   describe('getLog', function () {
