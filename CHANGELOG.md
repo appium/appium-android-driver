@@ -1,3 +1,9 @@
+## [13.3.2](https://github.com/appium/appium-android-driver/compare/v13.3.1...v13.3.2) (2026-07-08)
+
+### Miscellaneous Chores
+
+* Replace moment with dayjs ([#1078](https://github.com/appium/appium-android-driver/issues/1078)) ([8bdea5d](https://github.com/appium/appium-android-driver/commit/8bdea5d5b6eec3304eac81dc2e56672f0de2e6d4))
+
 ## [13.3.1](https://github.com/appium/appium-android-driver/compare/v13.3.0...v13.3.1) (2026-07-08)
 
 ### Miscellaneous Chores
