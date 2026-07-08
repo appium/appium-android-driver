@@ -90,8 +90,7 @@ export async function mobileStartScreenStreaming(
 
   if (this._screenStreamingProps === undefined) {
     await verifyStreamingRequirements(this.adb);
-  }
-  if (!util.isEmpty(this._screenStreamingProps)) {
+  } else {
     this.log.info(
       `The screen streaming session is already running. ` +
         `Stop it first in order to start a new one.`,
@@ -245,7 +244,7 @@ export async function mobileStartScreenStreaming(
  * If no streaming session is active, this method returns without error.
  */
 export async function mobileStopScreenStreaming(this: AndroidDriver): Promise<void> {
-  if (util.isEmpty(this._screenStreamingProps) || !this._screenStreamingProps) {
+  if (!this._screenStreamingProps) {
     if (this._screenStreamingProps !== undefined) {
       this.log.debug(`Screen streaming is not running. There is nothing to stop`);
     }
