@@ -19,15 +19,7 @@ export type GsmVoiceState = 'on' | 'off';
 export type PowerACState = 'on' | 'off';
 
 export type NetworkSpeed =
-  | 'gsm'
-  | 'scsd'
-  | 'gprs'
-  | 'edge'
-  | 'umts'
-  | 'hsdpa'
-  | 'lte'
-  | 'evdo'
-  | 'full';
+  'gsm' | 'scsd' | 'gprs' | 'edge' | 'umts' | 'hsdpa' | 'lte' | 'evdo' | 'full';
 
 /**
  * Returned by `queryAppState`
