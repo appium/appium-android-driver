@@ -1,3 +1,9 @@
+## [13.3.3](https://github.com/appium/appium-android-driver/compare/v13.3.2...v13.3.3) (2026-07-08)
+
+### Miscellaneous Chores
+
+* Ditch lodash ([#1080](https://github.com/appium/appium-android-driver/issues/1080)) ([a91cb03](https://github.com/appium/appium-android-driver/commit/a91cb034c5d3e4bf09bb43c52bba5c8f667cacc3))
+
 ## [13.3.2](https://github.com/appium/appium-android-driver/compare/v13.3.1...v13.3.2) (2026-07-08)
 
 ### Miscellaneous Chores
