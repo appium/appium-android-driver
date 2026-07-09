@@ -1,3 +1,9 @@
+## [13.3.4](https://github.com/appium/appium-android-driver/compare/v13.3.3...v13.3.4) (2026-07-09)
+
+### Miscellaneous Chores
+
+* Drop mocha ([#1082](https://github.com/appium/appium-android-driver/issues/1082)) ([6c3cfd3](https://github.com/appium/appium-android-driver/commit/6c3cfd35f54b9f1592df13e5845840bb71bb9433))
+
 ## [13.3.3](https://github.com/appium/appium-android-driver/compare/v13.3.2...v13.3.3) (2026-07-08)
 
 ### Miscellaneous Chores
