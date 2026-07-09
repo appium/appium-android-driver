@@ -5,6 +5,7 @@ import {SettingsApp} from 'io.appium.settings';
 import {errors} from 'appium/driver';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 use(chaiAsPromised);
 

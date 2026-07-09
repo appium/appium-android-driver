@@ -3,6 +3,7 @@ import {AndroidDriver} from '../../../lib/driver';
 import {ADB} from 'appium-adb';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 use(chaiAsPromised);
 
@@ -47,8 +48,7 @@ describe('Keyboard', function () {
       await await expect(driver.hideKeyboard()).to.eventually.be.fulfilled;
       expect(keyeventStub1.calledWithExactly(111)).to.be.true;
     });
-    it('should throw if cannot close keyboard', async function () {
-      this.timeout(10000);
+    it('should throw if cannot close keyboard', {timeout: 10000}, async function () {
       driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
         return Promise.resolve({
           isKeyboardShown: true,

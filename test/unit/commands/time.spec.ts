@@ -5,6 +5,7 @@ import {getDeviceTime} from '../../../lib/commands/time';
 
 import {expect, use} from 'chai'; // expect is used
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 use(chaiAsPromised);
 
