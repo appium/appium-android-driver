@@ -5,6 +5,7 @@ import os from 'node:os';
 import {AndroidDriver} from '../../../lib/driver';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it, before} from 'node:test';
 
 use(chaiAsPromised);
 
