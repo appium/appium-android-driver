@@ -504,5 +504,32 @@ describe('Device Helpers', function () {
         .onFirstCall();
       await driver.initDevice();
     });
+    it('should not reinstall the Settings app when skipSettingsAppReinstall is set and the app is present', async function () {
+      const driver = new AndroidDriver();
+      driver.adb = new ADB();
+      driver.opts = {skipSettingsAppReinstall: true} as any;
+      sandbox.stub(driver.adb, 'waitForDevice').throws();
+      sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('io.appium.settings').resolves(true);
+      const pushStub = sandbox.stub(deviceUtils, 'pushSettingsApp');
+      sandbox.stub(driver, 'ensureDeviceLocale').throws();
+      sandbox
+        .stub(geolocationHelpers, 'setMockLocationApp')
+        .withArgs('io.appium.settings')
+        .onFirstCall();
+      await driver.initDevice();
+      expect(pushStub.called).to.be.false;
+    });
+    it('should throw if skipSettingsAppReinstall is set but the Settings app is not installed', async function () {
+      const driver = new AndroidDriver();
+      driver.adb = new ADB();
+      driver.opts = {skipSettingsAppReinstall: true} as any;
+      sandbox.stub(driver.adb, 'waitForDevice').throws();
+      sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
+      sandbox.stub(driver.adb, 'isAppInstalled').withArgs('io.appium.settings').resolves(false);
+      const pushStub = sandbox.stub(deviceUtils, 'pushSettingsApp');
+      await expect(driver.initDevice()).to.be.rejectedWith(/not installed/);
+      expect(pushStub.called).to.be.false;
+    });
   });
 });
