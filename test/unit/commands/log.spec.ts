@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
 import type {LogEntry} from 'appium-adb';
@@ -6,6 +5,7 @@ import os from 'node:os';
 import {AndroidDriver} from '../../../lib/driver';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it, before} from 'node:test';
 
 use(chaiAsPromised);
 
@@ -23,7 +23,7 @@ describe('commands - logging', function () {
     it('should get log types', async function () {
       const types = await driver.getLogTypes();
       // all the types should be returned
-      expect(_.xor(['logcat', 'bugreport', 'server'], types)).to.eql([]);
+      expect(types).to.have.members(['logcat', 'bugreport', 'server']);
     });
   });
   describe('getLog', function () {

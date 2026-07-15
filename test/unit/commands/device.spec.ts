@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
-import _ from 'lodash';
 import {AndroidDriver} from '../../../lib/driver';
 import {prepareAvdArgs, prepareEmulator} from '../../../lib/commands/device/utils';
 import * as deviceUtils from '../../../lib/commands/device/utils';
@@ -8,6 +7,7 @@ import * as geolocationHelpers from '../../../lib/commands/geolocation';
 import * as keyboardHelpers from '../../../lib/commands/keyboard';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it, beforeEach, afterEach, before, after} from 'node:test';
 
 use(chaiAsPromised);
 
@@ -185,9 +185,7 @@ describe('Device Helpers', function () {
       sinon.stub(ADB, 'createADB').callsFake(async function () {
         return {
           getDevicesWithRetry() {
-            return _.map(devices, function getDevice(device) {
-              return {udid: device.udid};
-            });
+            return devices.map((device) => ({udid: device.udid}));
           },
 
           getPortFromEmulatorString() {
@@ -203,7 +201,7 @@ describe('Device Helpers', function () {
           },
 
           getPlatformVersion() {
-            return _.filter(devices, {udid: curDeviceId})[0].os;
+            return devices.find((device) => device.udid === curDeviceId)?.os;
           },
           curDeviceId: 'emulator-1234',
           emulatorPort: 1234,

@@ -7,7 +7,6 @@ import type {
   StringRecord,
   W3CDriverCaps,
 } from '@appium/types';
-import _ from 'lodash';
 import type {ADB, LogcatListener} from 'appium-adb';
 import type {default as AppiumChromedriver} from 'appium-chromedriver';
 import {BaseDriver} from 'appium/driver';
@@ -462,7 +461,7 @@ class AndroidDriver
       'accessibility id',
       '-android uiautomator',
     ];
-    this.desiredCapConstraints = _.cloneDeep(ANDROID_DRIVER_CONSTRAINTS);
+    this.desiredCapConstraints = structuredClone(ANDROID_DRIVER_CONSTRAINTS);
     this.sessionChromedrivers = {};
     this.jwpProxyActive = false;
 
@@ -483,8 +482,7 @@ class AndroidDriver
   }
 
   get isChromeSession(): boolean {
-    return _.includes(
-      Object.keys(CHROME_BROWSER_PACKAGE_ACTIVITY),
+    return Object.keys(CHROME_BROWSER_PACKAGE_ACTIVITY).includes(
       (this.opts.browserName || '').toLowerCase(),
     );
   }

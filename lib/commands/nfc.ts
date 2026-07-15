@@ -1,5 +1,4 @@
 import {errors} from 'appium/driver';
-import _ from 'lodash';
 import type {AndroidDriver} from '../driver';
 import type {NfcAction} from './types';
 
@@ -27,7 +26,7 @@ export async function mobileNfc(this: AndroidDriver, action: NfcAction): Promise
       break;
     default:
       throw new errors.InvalidArgumentError(
-        `You must provide a valid 'action' argument. Supported actions are: ${_.values(SUPPORTED_ACTIONS)}`,
+        `You must provide a valid 'action' argument. Supported actions are: ${Object.values(SUPPORTED_ACTIONS)}`,
       );
   }
 }

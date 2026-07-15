@@ -1,7 +1,8 @@
 import {AndroidDriver} from '../../../lib/driver';
 import {parseWindowProperties, parseWindows} from '../../../lib/commands/system-bars';
-import {expect, use} from 'chai'; // expect is used
+import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {describe, it, before} from 'node:test';
 
 use(chaiAsPromised);
 

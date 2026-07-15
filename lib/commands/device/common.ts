@@ -1,5 +1,4 @@
 import * as semver from 'semver';
-import _ from 'lodash';
 import path from 'node:path';
 import {setMockLocationApp} from '../geolocation';
 import {SETTINGS_HELPER_ID} from 'io.appium.settings';
@@ -38,7 +37,7 @@ export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDev
 
     // udid was given, lets try to init with that device
     if (udid) {
-      if (!_.includes(_.map(devices, 'udid'), udid)) {
+      if (!devices?.some((device) => device.udid === udid)) {
         throw this.log.errorWithException(
           `Device ${udid} was not in the list of connected devices`,
         );
@@ -72,11 +71,13 @@ export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDev
         const semverDO = deviceOS;
 
         const bothVersionsCanBeCoerced = semver.valid(deviceOS) && semver.valid(platformVersion);
-        const bothVersionsAreStrings = _.isString(deviceOS) && _.isString(platformVersion);
+        const bothVersionsAreStrings =
+          typeof deviceOS === 'string' && typeof platformVersion === 'string';
         if (
           (bothVersionsCanBeCoerced &&
             (semverDO as semver.SemVer).version === (semverPV as semver.SemVer).version) ||
-          (bothVersionsAreStrings && _.toLower(deviceOS) === _.toLower(platformVersion))
+          (bothVersionsAreStrings &&
+            String(deviceOS)?.toLowerCase() === String(platformVersion)?.toLowerCase())
         ) {
           // Got an exact match - proceed immediately
           udid = device.udid;
@@ -91,18 +92,19 @@ export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDev
         const dvMajor = (semverDO as semver.SemVer).major;
         const dvMinor = (semverDO as semver.SemVer).minor;
         if (
-          ((!_.includes(this.opts.platformVersion, '.') && pvMajor === dvMajor) ||
+          ((!String(this.opts.platformVersion)?.includes('.') && pvMajor === dvMajor) ||
             (pvMajor === dvMajor && pvMinor === dvMinor)) &&
           // Got a partial match - make sure we consider the most recent
           // device version available on the host system
-          ((partialMatchCandidate && semver.gt(deviceOS, _.values(partialMatchCandidate)[0])) ||
+          ((partialMatchCandidate &&
+            semver.gt(deviceOS, Object.values(partialMatchCandidate)[0])) ||
             !partialMatchCandidate)
         ) {
           partialMatchCandidate = {[device.udid]: deviceOS};
         }
       }
       if (!udid && partialMatchCandidate) {
-        udid = _.keys(partialMatchCandidate)[0];
+        udid = Object.keys(partialMatchCandidate)[0];
         adb.setDeviceId(udid);
       }
 
@@ -258,7 +260,7 @@ export async function initDevice(this: AndroidDriver): Promise<void> {
   if (!this.isEmulator()) {
     setupPromises.push(
       (async () => {
-        if (mockLocationApp || _.isUndefined(mockLocationApp)) {
+        if (mockLocationApp || mockLocationApp === undefined) {
           await setMockLocationApp.bind(this)(mockLocationApp || SETTINGS_HELPER_ID);
         } else {
           await this.mobileResetGeolocation();
