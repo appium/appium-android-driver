@@ -1,3 +1,9 @@
+## [13.4.0](https://github.com/appium/appium-android-driver/compare/v13.3.4...v13.4.0) (2026-07-15)
+
+### Features
+
+* add skipSettingsAppInstall capability to skip installing the Settings helper app ([#1077](https://github.com/appium/appium-android-driver/issues/1077)) ([fba4a2c](https://github.com/appium/appium-android-driver/commit/fba4a2cc2d04f350612652749e13aa63ad239d81))
+
 ## [13.3.4](https://github.com/appium/appium-android-driver/compare/v13.3.3...v13.3.4) (2026-07-09)
 
 ### Miscellaneous Chores
