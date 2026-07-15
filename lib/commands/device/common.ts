@@ -200,6 +200,7 @@ export async function getLaunchInfo(this: AndroidDriver): Promise<ADBLaunchInfo 
 export async function initDevice(this: AndroidDriver): Promise<void> {
   const {
     skipDeviceInitialization,
+    skipSettingsAppReinstall,
     locale,
     language,
     localeScript,
@@ -227,16 +228,32 @@ export async function initDevice(this: AndroidDriver): Promise<void> {
     // Some feature such as location/wifi are not necessary for all users,
     // but they require the settings app. So, try to configure it while Appium
     // does not throw error even if they fail.
-    const shouldThrowError = Boolean(
-      language ||
-      locale ||
-      localeScript ||
-      unicodeKeyboard ||
-      hideKeyboard ||
-      disableWindowAnimation ||
-      !skipUnlock,
-    );
-    await pushSettingsApp.bind(this)(shouldThrowError);
+    if (skipSettingsAppReinstall) {
+      // The Settings helper app is host-managed/pinned here, so do not (re)install it.
+      // Device init and mock-location below depend on it, so require it to be present
+      // and fail fast with a clear error rather than letting those steps break opaquely.
+      if (!(await this.adb.isAppInstalled(SETTINGS_HELPER_ID))) {
+        throw new Error(
+          `'skipSettingsAppReinstall' is set, but the Appium Settings helper app ` +
+            `('${SETTINGS_HELPER_ID}') is not installed on the device. Install it during ` +
+            `device provisioning, or unset the capability to let the driver install it.`,
+        );
+      }
+      this.log.info(
+        `'skipSettingsAppReinstall' is set; using the already-installed Appium Settings helper app as-is.`,
+      );
+    } else {
+      const shouldThrowError = Boolean(
+        language ||
+        locale ||
+        localeScript ||
+        unicodeKeyboard ||
+        hideKeyboard ||
+        disableWindowAnimation ||
+        !skipUnlock,
+      );
+      await pushSettingsApp.bind(this)(shouldThrowError);
+    }
   }
 
   const setupPromises: Promise<void>[] = [];

@@ -212,6 +212,9 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   skipDeviceInitialization: {
     isBoolean: true,
   },
+  skipSettingsAppReinstall: {
+    isBoolean: true,
+  },
   remoteAppsCacheLimit: {
     isNumber: true,
   },
