@@ -230,7 +230,7 @@ export async function terminateApp(
     const currentPidsSet = new Set(currentPids);
     if (!util.isEmpty(currentPids) && pids.some((pid) => !currentPidsSet.has(pid))) {
       this.log.warn(
-        `Some of processes belonging to the '${appId}' applcation are still running ` +
+        `Some of processes belonging to the '${appId}' application are still running ` +
           `after ${timeout}ms (${JSON.stringify(pids)} -> ${JSON.stringify(currentPids)})`,
       );
     }

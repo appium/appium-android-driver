@@ -198,7 +198,7 @@ import {getSystemBars, mobilePerformStatusBarCommand} from './commands/system-ba
 import {getDeviceTime, mobileGetDeviceTime} from './commands/time.js';
 import {executeMethodMap} from './execute-method-map.js';
 import {LRUCache} from 'lru-cache';
-import type {ScreenRecordingProperties} from './commands/types.js';
+import type {ScreenRecordingProperties, ScreenStreamingProps} from './commands/types.js';
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
 export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;
@@ -228,7 +228,7 @@ class AndroidDriver
   defaultIME?: string;
   _wasWindowAnimationDisabled?: boolean;
   _cachedActivityArgs: StringRecord;
-  _screenStreamingProps?: StringRecord;
+  _screenStreamingProps?: ScreenStreamingProps;
   _screenRecordingProperties?: ScreenRecordingProperties;
   _logcatWebsocketListener?: LogcatListener;
   _bidiServerLogListener?: (...args: any[]) => void;

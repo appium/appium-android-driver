@@ -8,7 +8,7 @@ import {checkPortStatus} from 'portscanner';
 import {SubProcess, exec} from 'teen_process';
 import type {AndroidDriver} from '../driver.js';
 import type {ADB} from 'appium-adb';
-import type {AppiumLogger, StringRecord} from '@appium/types';
+import type {AppiumLogger} from '@appium/types';
 import type {DeviceInfo, InitGStreamerPipelineOpts} from './types.js';
 
 const RECORDING_INTERVAL_SEC = 5;
@@ -225,11 +225,13 @@ export async function mobileStartScreenStreaming(
     }
   }
 
+  // Both are guaranteed to be set at this point, since mjpegServerReadyPromise
+  // only resolves after the MJPEG server has started listening.
   this._screenStreamingProps = {
     deviceStreamingProc,
     gstreamerPipeline,
-    mjpegSocket,
-    mjpegServer,
+    mjpegSocket: mjpegSocket as net.Socket,
+    mjpegServer: mjpegServer as http.Server,
   };
 }
 
@@ -251,8 +253,8 @@ export async function mobileStopScreenStreaming(this: AndroidDriver): Promise<vo
     return;
   }
 
-  const {deviceStreamingProc, gstreamerPipeline, mjpegSocket, mjpegServer} = this
-    ._screenStreamingProps as StringRecord;
+  const {deviceStreamingProc, gstreamerPipeline, mjpegSocket, mjpegServer} =
+    this._screenStreamingProps;
 
   try {
     mjpegSocket.end();

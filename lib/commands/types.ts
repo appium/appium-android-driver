@@ -2,6 +2,9 @@ import type {HTTPMethod, StringRecord} from '@appium/types';
 import type {AndroidDriverCaps} from '../driver.js';
 import type {SubProcess} from 'teen_process';
 import type {timing} from '@appium/support';
+import type {spawn} from 'node:child_process';
+import type {Socket} from 'node:net';
+import type {Server} from 'node:http';
 
 /**
  * @privateRemarks probably better defined in `appium-adb`
@@ -450,6 +453,16 @@ export interface InitGStreamerPipelineOpts {
   tcpPort: number;
   considerRotation?: boolean;
   logPipelineDetails?: boolean;
+}
+
+/**
+ * @internal
+ */
+export interface ScreenStreamingProps {
+  deviceStreamingProc: ReturnType<typeof spawn>;
+  gstreamerPipeline: SubProcess;
+  mjpegSocket: Socket;
+  mjpegServer: Server;
 }
 export interface WindowProperties {
   /**

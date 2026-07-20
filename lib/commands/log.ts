@@ -1,6 +1,6 @@
 import {DEFAULT_WS_PATHNAME_PREFIX, BaseDriver} from 'appium/driver.js';
 import os from 'node:os';
-import {WebSocketServer} from 'ws';
+import {WebSocket, WebSocketServer} from 'ws';
 import type {AppiumServer, WSServer} from '@appium/types';
 import type {EventEmitter} from 'node:events';
 import type {ADB} from 'appium-adb';
