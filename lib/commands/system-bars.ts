@@ -63,15 +63,14 @@ export async function mobilePerformStatusBarCommand(
   command: StatusBarCommand,
   component?: string,
 ): Promise<string> {
-  const castArray = (args: string[] | string) => (Array.isArray(args) ? args : [args]);
   const toStatusBarCommandCallable =
-    (cmd: string, argsCallable?: () => string[] | string) => async (): Promise<string> =>
-      await this.adb.shell([
-        'cmd',
-        'statusbar',
-        cmd,
-        ...(argsCallable ? castArray(argsCallable()) : []),
-      ]);
+    (cmd: string, argsCallable?: () => string[] | string) => async (): Promise<string> => {
+      let argsCallableArray = argsCallable ? argsCallable() : [];
+      if (!Array.isArray(argsCallableArray)) {
+        argsCallableArray = [argsCallableArray];
+      }
+      return await this.adb.shell(['cmd', 'statusbar', cmd, ...argsCallableArray]);
+    };
   const tileCommandArgsCallable = () => component as string;
   const statusBarCommands = Object.fromEntries(
     (

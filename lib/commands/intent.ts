@@ -125,7 +125,7 @@ export async function mobileStartActivity(
   flags?: string,
 ): Promise<string> {
   const cmd = ['am', 'start-activity'];
-  if (user != null) {
+  if (util.hasValue(user)) {
     cmd.push('--user', String(user));
   }
   if (wait) {
@@ -134,13 +134,13 @@ export async function mobileStartActivity(
   if (stop) {
     cmd.push('-S');
   }
-  if (windowingMode != null) {
+  if (util.hasValue(windowingMode)) {
     cmd.push('--windowingMode', String(windowingMode));
   }
-  if (activityType != null) {
+  if (util.hasValue(activityType)) {
     cmd.push('--activityType', String(activityType));
   }
-  if (display != null) {
+  if (util.hasValue(display)) {
     cmd.push('--display', String(display));
   }
   cmd.push(
@@ -199,7 +199,7 @@ export async function mobileBroadcast(
   flags?: string,
 ): Promise<string> {
   const cmd = ['am', 'broadcast'];
-  if (user != null) {
+  if (util.hasValue(user)) {
     cmd.push('--user', String(user));
   }
   if (receiverPermission) {
@@ -264,7 +264,7 @@ export async function mobileStartService(
 ): Promise<string> {
   const cmd = ['am'];
   cmd.push(foreground ? 'start-foreground-service' : 'start-service');
-  if (user != null) {
+  if (util.hasValue(user)) {
     cmd.push('--user', String(user));
   }
   cmd.push(
@@ -319,7 +319,7 @@ export async function mobileStopService(
   flags?: string,
 ): Promise<string> {
   const cmd = ['am', 'stop-service'];
-  if (user != null) {
+  if (util.hasValue(user)) {
     cmd.push('--user', String(user));
   }
   cmd.push(
@@ -365,7 +365,7 @@ function parseIntentSpec(opts: IntentOpts = {}): string[] {
   if (mimeType) {
     resultArgs.push('-t', mimeType);
   }
-  if (identifier != null) {
+  if (util.hasValue(identifier)) {
     resultArgs.push('-i', identifier);
   }
   if (categories) {

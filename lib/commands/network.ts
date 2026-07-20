@@ -68,7 +68,7 @@ export async function mobileSetConnectivity(
   data?: boolean,
   airplaneMode?: boolean,
 ): Promise<void> {
-  if ([wifi, data, airplaneMode].every((value) => value === undefined)) {
+  if (wifi === undefined && data === undefined && airplaneMode === undefined) {
     throw new errors.InvalidArgumentError(
       `Either one of ${JSON.stringify(SUPPORTED_SERVICE_NAMES)} options must be provided`,
     );
@@ -120,8 +120,7 @@ export async function mobileGetConnectivity(
   services: ServiceType[] | ServiceType = SUPPORTED_SERVICE_NAMES,
 ): Promise<GetConnectivityResult> {
   const svcs = Array.isArray(services) ? services : [services];
-  const supportedServicesSet = new Set(SUPPORTED_SERVICE_NAMES);
-  const unsupportedServices = svcs.filter((svc) => !supportedServicesSet.has(svc));
+  const unsupportedServices = svcs.filter((svc) => !SUPPORTED_SERVICE_NAMES.includes(svc));
   if (unsupportedServices.length > 0) {
     throw new errors.InvalidArgumentError(
       `${util.pluralize(

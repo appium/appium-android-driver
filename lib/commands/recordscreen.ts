@@ -62,7 +62,7 @@ export async function startRecordingScreen(
     );
   }
 
-  if (!util.isEmpty(this._screenRecordingProperties)) {
+  if (this._screenRecordingProperties) {
     // XXX: this doesn't need to be done in serial, does it?
     const props = this._screenRecordingProperties;
     for (const record of props?.records || []) {
@@ -116,7 +116,7 @@ export async function stopRecordingScreen(
   await verifyScreenRecordIsSupported(this.adb, this.isEmulator());
 
   const props = this._screenRecordingProperties;
-  if (!util.isEmpty(props) && props) {
+  if (props) {
     props.stopped = true;
   }
 
@@ -124,12 +124,12 @@ export async function stopRecordingScreen(
     await terminateBackgroundScreenRecording(this.adb, false);
   } catch (err) {
     this.log.warn((err as Error).message);
-    if (!util.isEmpty(props) && props) {
+    if (props) {
       this.log.warn('The resulting video might be corrupted');
     }
   }
 
-  if (util.isEmpty(props)) {
+  if (!props) {
     this.log.info(
       `Screen recording has not been previously started by Appium. There is nothing to stop`,
     );
@@ -147,7 +147,7 @@ export async function stopRecordingScreen(
     props.recordingProcess = null;
   }
 
-  if (util.isEmpty(props?.records)) {
+  if (util.isEmpty(props.records)) {
     throw this.log.errorWithException(
       `No screen recordings have been stored on the device so far. ` +
         `Are you sure the ${SCREENRECORD_BINARY} utility works as expected?`,
@@ -175,7 +175,7 @@ export async function stopRecordingScreen(
         );
       }
     }
-    if (util.isEmpty(options?.remotePath)) {
+    if (util.isEmpty(options.remotePath)) {
       const {size} = await fs.stat(resultFilePath);
       this.log.debug(
         `The size of the resulting screen recording is ${util.toReadableSizeString(size)}`,

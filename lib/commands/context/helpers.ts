@@ -165,7 +165,7 @@ export async function getWebViewsMapping(
   this.log.debug(`Getting a list of available webviews`);
 
   let waitMs = waitForWebviewMs;
-  if (!Number.isInteger(waitMs)) {
+  if (!Number.isFinite(waitMs) || typeof waitMs !== 'number') {
     waitMs = parseInt(`${waitMs}`, 10) || 0;
   }
 
@@ -287,7 +287,7 @@ export async function setupNewChromedriver(
   for (const opt of Object.keys(opts)) {
     if (opt.endsWith(':chromeOptions')) {
       this?.log?.warn(`Merging '${opt}' into 'chromeOptions'. This may cause unexpected behavior`);
-      deepMerge(opts.chromeOptions, (opts as any)[opt]);
+      merge(opts.chromeOptions, (opts as Record<string, any>)[opt]);
     }
   }
 
@@ -300,7 +300,7 @@ export async function setupNewChromedriver(
       this.log.warn(
         `Merging '${opt}' into 'chromeLoggingPrefs'. This may cause unexpected behavior`,
       );
-      deepMerge(opts.chromeLoggingPrefs, (opts as any)[opt]);
+      merge(opts.chromeLoggingPrefs, (opts as Record<string, any>)[opt]);
     }
   }
 
@@ -308,6 +308,19 @@ export async function setupNewChromedriver(
   this.log.debug(
     `Before starting chromedriver, androidPackage is '${caps.chromeOptions.androidPackage}'`,
   );
+  // Optionally pre-grant all runtime permissions to the resolved Chrome package before Chrome
+  // is launched, so the session is not interrupted by a native permission dialog (geolocation,
+  // camera, file access, ...). Because the grant is requested explicitly, failures propagate.
+  if (opts.chromedriverGrantPermissions) {
+    const chromePkg = caps.chromeOptions?.androidPackage;
+    if (!chromePkg) {
+      throw new Error(
+        `'chromedriverGrantPermissions' is enabled but the Chrome package name could not be ` +
+          `resolved from the chromedriver capabilities, so runtime permissions cannot be granted`,
+      );
+    }
+    await this.adb.grantAllPermissions(chromePkg);
+  }
   const sessionCaps = await chromedriver.start(caps);
   cacheChromedriverCaps.bind(this)(sessionCaps, context);
   return chromedriver;
@@ -462,14 +475,14 @@ function createChromedriverCaps(
   } else if (webViewDetails?.process?.name && webViewDetails?.process?.id) {
     caps.chromeOptions.androidProcess = webViewDetails.process.name;
   }
-  if (opts.browserName?.toLowerCase() === 'chromium-webview') {
+  if (String(opts.browserName)?.toLowerCase() === 'chromium-webview') {
     caps.chromeOptions.androidActivity = opts.appActivity;
   }
   if (opts.pageLoadStrategy) {
     caps.pageLoadStrategy = opts.pageLoadStrategy;
   }
-  const isChrome = caps.chromeOptions.androidPackage?.toLowerCase() === 'chrome';
-  if (KNOWN_CHROME_PACKAGE_NAMES.includes(caps.chromeOptions.androidPackage as any) || isChrome) {
+  const isChrome = String(caps.chromeOptions.androidPackage)?.toLowerCase() === 'chrome';
+  if (KNOWN_CHROME_PACKAGE_NAMES?.includes(caps.chromeOptions.androidPackage as any) || isChrome) {
     // if we have extracted package from context name, it could come in as bare
     // "chrome", and so we should make sure the details are correct, including
     // not using an activity or process id
@@ -516,7 +529,7 @@ function createChromedriverCaps(
 
   const protectedCapNames: string[] = [];
   for (const [opt, val] of Object.entries(opts.chromeOptions)) {
-    if (caps.chromeOptions[opt] == null) {
+    if (caps.chromeOptions[opt] === undefined) {
       caps.chromeOptions[opt] = val;
     } else {
       protectedCapNames.push(opt);
@@ -865,14 +878,29 @@ function isCompatibleCdpHost(host: string): boolean {
   );
 }
 
-function deepMerge(target: StringRecord, source: StringRecord): StringRecord {
-  for (const key in source) {
-    if (util.isPlainObject(source[key]) && util.isPlainObject(target[key])) {
-      deepMerge(target[key], source[key]);
+function merge<T extends Record<string, any>>(target: T, source: any): T {
+  if (!util.isPlainObject(source)) {
+    return target;
+  }
+
+  for (const key of Object.keys(source)) {
+    // Prevent prototype pollution when merging untrusted capability objects
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      continue;
+    }
+
+    const sourceValue = (source as Record<string, any>)[key];
+
+    if (util.isPlainObject(sourceValue)) {
+      if (!util.isPlainObject((target as Record<string, any>)[key])) {
+        (target as Record<string, any>)[key] = {};
+      }
+      merge((target as any)[key], sourceValue);
     } else {
-      target[key] = source[key];
+      (target as Record<string, any>)[key] = sourceValue;
     }
   }
+
   return target;
 }
 

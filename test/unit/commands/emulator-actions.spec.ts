@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import {AndroidDriver} from '../../../lib/driver.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, beforeEach, afterEach, it} from 'node:test';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 use(chaiAsPromised);
 

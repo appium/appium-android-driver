@@ -257,7 +257,7 @@ export async function startChromedriverProxy(
       }
       if (!opts.extractChromeAndroidPackageFromContextName) {
         if (
-          Object.hasOwn(this.opts, 'enableWebviewDetailsCollection') &&
+          this.opts.enableWebviewDetailsCollection !== undefined &&
           !this.opts.enableWebviewDetailsCollection
         ) {
           // When enableWebviewDetailsCollection capability is explicitly disabled, try to identify
@@ -284,11 +284,7 @@ export async function startChromedriverProxy(
           }
         } else {
           for (const wm of webviewsMapping) {
-            if (
-              wm.webviewName === context &&
-              util.isPlainObject(wm?.info) &&
-              Object.hasOwn(wm.info, 'Android-Package')
-            ) {
+            if (wm.webviewName === context && wm?.info?.['Android-Package'] !== undefined) {
               // XXX: should be a type guard here
               opts.chromeAndroidPackage = (wm.info as NonNullable<WebviewsMapping['info']>)[
                 'Android-Package'
@@ -401,7 +397,7 @@ export async function notifyBiDiContextChange(this: AndroidDriver): Promise<void
   const name = await this.getCurrentContext();
   this.eventEmitter.emit(
     BIDI_EVENT_NAME,
-    makeContextUpdatedEvent(String(this.opts.automationName).toLowerCase(), name),
+    makeContextUpdatedEvent(String(this.opts.automationName)?.toLowerCase(), name),
   );
   this.eventEmitter.emit(BIDI_EVENT_NAME, makeObsoleteContextUpdatedEvent(name));
 }
@@ -447,7 +443,7 @@ export async function startChromeSession(this: AndroidDriver): Promise<void> {
     'org.chromium.webview_shell',
   ];
 
-  if (knownPackages.includes(this.opts.appPackage as any)) {
+  if (knownPackages?.includes(this.opts.appPackage as string)) {
     opts.chromeBundleId = this.opts.appPackage;
   } else {
     opts.chromeAndroidActivity = this.opts.appActivity;

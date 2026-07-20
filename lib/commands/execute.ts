@@ -22,7 +22,7 @@ export async function execute(
   script: string,
   args?: ExecuteMethodArgs,
 ): Promise<any> {
-  if (script.startsWith(EXECUTE_SCRIPT_PREFIX)) {
+  if (script?.startsWith(EXECUTE_SCRIPT_PREFIX)) {
     const formattedScript = script.trim().replace(/^mobile:\s*/, `${EXECUTE_SCRIPT_PREFIX} `);
     const executeMethodArgs = preprocessExecuteMethodArgs(args);
     return await this.executeMethod(formattedScript, [executeMethodArgs]);

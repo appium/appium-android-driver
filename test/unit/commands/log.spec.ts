@@ -5,7 +5,7 @@ import os from 'node:os';
 import {AndroidDriver} from '../../../lib/driver.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, before, it} from 'node:test';
+import {describe, it, before} from 'node:test';
 
 use(chaiAsPromised);
 
@@ -21,11 +21,9 @@ describe('commands - logging', function () {
       expect(driver.getLogTypes).to.be.an.instanceof(Function);
     });
     it('should get log types', async function () {
-      const xor = (a: string[], b: string[]) =>
-        a.filter((x) => !b.includes(x)).concat(b.filter((x) => !a.includes(x)));
       const types = await driver.getLogTypes();
       // all the types should be returned
-      expect(xor(['logcat', 'bugreport', 'server'], types)).to.eql([]);
+      expect(types).to.have.members(['logcat', 'bugreport', 'server']);
     });
   });
   describe('getLog', function () {

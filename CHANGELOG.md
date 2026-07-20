@@ -1,3 +1,49 @@
+## [13.4.0](https://github.com/appium/appium-android-driver/compare/v13.3.4...v13.4.0) (2026-07-15)
+
+### Features
+
+* add skipSettingsAppInstall capability to skip installing the Settings helper app ([#1077](https://github.com/appium/appium-android-driver/issues/1077)) ([fba4a2c](https://github.com/appium/appium-android-driver/commit/fba4a2cc2d04f350612652749e13aa63ad239d81))
+
+## [13.3.4](https://github.com/appium/appium-android-driver/compare/v13.3.3...v13.3.4) (2026-07-09)
+
+### Miscellaneous Chores
+
+* Drop mocha ([#1082](https://github.com/appium/appium-android-driver/issues/1082)) ([6c3cfd3](https://github.com/appium/appium-android-driver/commit/6c3cfd35f54b9f1592df13e5845840bb71bb9433))
+
+## [13.3.3](https://github.com/appium/appium-android-driver/compare/v13.3.2...v13.3.3) (2026-07-08)
+
+### Miscellaneous Chores
+
+* Ditch lodash ([#1080](https://github.com/appium/appium-android-driver/issues/1080)) ([a91cb03](https://github.com/appium/appium-android-driver/commit/a91cb034c5d3e4bf09bb43c52bba5c8f667cacc3))
+
+## [13.3.2](https://github.com/appium/appium-android-driver/compare/v13.3.1...v13.3.2) (2026-07-08)
+
+### Miscellaneous Chores
+
+* Replace moment with dayjs ([#1078](https://github.com/appium/appium-android-driver/issues/1078)) ([8bdea5d](https://github.com/appium/appium-android-driver/commit/8bdea5d5b6eec3304eac81dc2e56672f0de2e6d4))
+
+## [13.3.1](https://github.com/appium/appium-android-driver/compare/v13.3.0...v13.3.1) (2026-07-08)
+
+### Miscellaneous Chores
+
+* Drop colors dependency ([#1079](https://github.com/appium/appium-android-driver/issues/1079)) ([fab47d5](https://github.com/appium/appium-android-driver/commit/fab47d529759ec7608fea5903b4150db6922d8d2))
+
+## [13.3.0](https://github.com/appium/appium-android-driver/compare/v13.2.9...v13.3.0) (2026-07-04)
+
+### Features
+
+* grant runtime permissions to the Chrome package (chromedriverGrantPermissions) ([#1071](https://github.com/appium/appium-android-driver/issues/1071)) ([893dd45](https://github.com/appium/appium-android-driver/commit/893dd456f5d2dca0ded9a760e5dce9e6207d9fb1))
+
+## [13.2.9](https://github.com/appium/appium-android-driver/compare/v13.2.8...v13.2.9) (2026-07-01)
+
+### Miscellaneous Chores
+
+* downgrade conventional-changelog-conventionalcommits to v9 ([#1073](https://github.com/appium/appium-android-driver/issues/1073)) ([f54fcf5](https://github.com/appium/appium-android-driver/commit/f54fcf55d306d95a8e1ccfdf3ab740dc8244da9f))
+
+## [13.2.8](https://github.com/appium/appium-android-driver/compare/v13.2.7...v13.2.8) (2026-07-01)
+
+## [13.2.7](https://github.com/appium/appium-android-driver/compare/v13.2.6...v13.2.7) (2026-06-29)
+
 ## [13.2.6](https://github.com/appium/appium-android-driver/compare/v13.2.5...v13.2.6) (2026-06-27)
 
 ### Miscellaneous Chores

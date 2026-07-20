@@ -111,6 +111,9 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   chromedriverDisableBuildCheck: {
     isBoolean: true,
   },
+  chromedriverGrantPermissions: {
+    isBoolean: true,
+  },
   chromeLoggingPrefs: {
     isObject: true,
   },
@@ -207,6 +210,9 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
     isString: true,
   },
   skipDeviceInitialization: {
+    isBoolean: true,
+  },
+  skipSettingsAppReinstall: {
     isBoolean: true,
   },
   remoteAppsCacheLimit: {

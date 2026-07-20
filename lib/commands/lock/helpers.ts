@@ -57,16 +57,16 @@ export function validateUnlockCapabilities<T extends AndroidDriverCaps>(caps: T)
   }
 
   if ([PIN_UNLOCK, PIN_UNLOCK_KEY_EVENT, FINGERPRINT_UNLOCK].includes(unlockType)) {
-    if (!/^[0-9]+$/.test(String(unlockKey).trim())) {
+    if (!/^[0-9]+$/.test(String(unlockKey)?.trim())) {
       throw new Error(`Unlock key value '${unlockKey}' must only consist of digits`);
     }
   } else if (unlockType === PATTERN_UNLOCK) {
-    if (!/^[1-9]{2,9}$/.test(String(unlockKey).trim())) {
+    if (!/^[1-9]{2,9}$/.test(String(unlockKey)?.trim())) {
       throw new Error(
         `Unlock key value '${unlockKey}' must only include from two to nine digits in range 1..9`,
       );
     }
-    if (/([1-9]).*?\1/.test(String(unlockKey).trim())) {
+    if (/([1-9]).*?\1/.test(String(unlockKey)?.trim())) {
       throw new Error(
         `Unlock key value '${unlockKey}' must define a valid pattern where repeats are not allowed`,
       );

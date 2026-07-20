@@ -5,7 +5,7 @@ import {ADB} from 'appium-adb';
 import {AndroidDriver} from '../../../lib/driver.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, before, beforeEach, afterEach, it} from 'node:test';
+import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 use(chaiAsPromised);
 

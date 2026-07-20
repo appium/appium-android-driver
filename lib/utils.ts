@@ -30,7 +30,7 @@ export function requireArgs(
   opts: Record<string, any>,
 ): Record<string, any> {
   for (const argName of Array.isArray(argNames) ? argNames : [argNames]) {
-    if (!Object.hasOwn(opts, argName)) {
+    if (util.isPlainObject(opts) && !Object.hasOwn(opts, argName)) {
       throw new errors.InvalidArgumentError(`'${argName}' argument must be provided`);
     }
   }

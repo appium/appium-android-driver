@@ -1,6 +1,6 @@
 import {fs, net, util} from '@appium/support';
 import type {NetOptions, HttpUploadOptions} from '@appium/support';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import path from 'node:path';
 import type {HTTPMethod, StringRecord} from '@appium/types';
 import type {AndroidDriver} from '../driver.js';
@@ -50,7 +50,7 @@ export async function mobileStartMediaProjectionRecording(
   await verifyMediaProjectionRecordingIsSupported(this.adb);
 
   const recorder = this.settingsApp.makeMediaProjectionRecorder();
-  const fname = adjustMediaExtension(filename || moment().format(DEFAULT_FILENAME_FORMAT));
+  const fname = adjustMediaExtension(filename || dayjs().format(DEFAULT_FILENAME_FORMAT));
   const didStart = await recorder.start({
     resolution,
     priority,
@@ -181,7 +181,7 @@ async function uploadRecordedMedia(
 }
 
 function adjustMediaExtension(name: string): string {
-  return name.toLowerCase().endsWith(DEFAULT_EXT) ? name : `${name}${DEFAULT_EXT}`;
+  return name?.toLowerCase()?.endsWith(DEFAULT_EXT) ? name : `${name}${DEFAULT_EXT}`;
 }
 
 async function verifyMediaProjectionRecordingIsSupported(adb: ADB): Promise<void> {

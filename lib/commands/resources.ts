@@ -62,7 +62,7 @@ export async function ensureDeviceLocale(
     } catch (e1) {
       this.log.debug((e1 as Error).stack);
     }
-    if (!util.isEmpty(suggestions)) {
+    if (suggestions.length > 0) {
       errMsg += ` You may want to apply one of the following locales instead: ${suggestions}`;
     }
     throw new Error(errMsg, {cause: e});
@@ -113,8 +113,8 @@ async function fetchLocaleSuggestions(
   const supportedLocales = await this.settingsApp.listSupportedLocales();
   const suggestedLocales = supportedLocales.filter(
     (locale) =>
-      language?.toLowerCase() === locale.language.toLowerCase() ||
-      country?.toLowerCase() === locale.country.toLowerCase(),
+      language?.toLowerCase() === locale.language?.toLowerCase() ||
+      country?.toLowerCase() === locale.country?.toLowerCase(),
   );
   return util.isEmpty(suggestedLocales) ? supportedLocales : suggestedLocales;
 }

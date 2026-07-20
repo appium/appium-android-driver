@@ -75,7 +75,7 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
       this.log.debug('Established a new logcat listener web socket connection');
     }
 
-    if (util.isEmpty(this._logcatWebsocketListener) || !this._logcatWebsocketListener) {
+    if (!this._logcatWebsocketListener) {
       this._logcatWebsocketListener = (logRecord: LogEntry) => {
         if (ws?.readyState === WebSocket.OPEN) {
           ws.send(logRecord.message);
@@ -85,7 +85,7 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
     this.adb.setLogcatListener(this._logcatWebsocketListener);
 
     ws.on('close', (code, reason) => {
-      if (!util.isEmpty(this._logcatWebsocketListener) && this._logcatWebsocketListener) {
+      if (this._logcatWebsocketListener) {
         try {
           this.adb.removeLogcatListener(this._logcatWebsocketListener);
         } catch {}

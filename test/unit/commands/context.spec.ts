@@ -13,7 +13,7 @@ import {Chromedriver} from 'appium-chromedriver';
 import {errors} from 'appium/driver.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, beforeEach, afterEach, it} from 'node:test';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 use(chaiAsPromised);
 
@@ -211,6 +211,27 @@ describe('Context', function () {
       expect(
         (driver.chromedriver?.start as sinon.SinonStub).getCall(0).args[0].chromeOptions,
       ).to.deep.include({androidPackage: 'pkg'});
+    });
+    it('should grant all runtime permissions to the Chrome package when chromedriverGrantPermissions is set', async function () {
+      driver.opts.appPackage = 'com.pkg';
+      driver.opts.chromedriverGrantPermissions = true;
+      const grantStub = sandbox.stub(driver.adb, 'grantAllPermissions').resolves();
+      await driver.startChromedriverProxy('WEBVIEW_1', []);
+      expect(grantStub.calledOnceWithExactly('com.pkg')).to.be.true;
+    });
+    it('should not grant permissions when chromedriverGrantPermissions is not set', async function () {
+      driver.opts.appPackage = 'com.pkg';
+      const grantStub = sandbox.stub(driver.adb, 'grantAllPermissions').resolves();
+      await driver.startChromedriverProxy('WEBVIEW_1', []);
+      expect(grantStub.called).to.be.false;
+    });
+    it('should throw when chromedriverGrantPermissions is set but the Chrome package cannot be resolved', async function () {
+      driver.opts.chromedriverGrantPermissions = true;
+      const grantStub = sandbox.stub(driver.adb, 'grantAllPermissions').resolves();
+      await expect(driver.startChromedriverProxy('WEBVIEW_1', [])).to.be.rejectedWith(
+        /could not be resolved/,
+      );
+      expect(grantStub.called).to.be.false;
     });
     it('should handle chromedriver event with STATE_STOPPED state', async function () {
       await driver.startChromedriverProxy('WEBVIEW_1', []);

@@ -68,7 +68,7 @@ export async function mobileChangePermissions(
     throw new errors.InvalidArgumentError(`A valid appPackage must be provided`);
   }
   action ??=
-    target.toLowerCase() === PERMISSION_TARGET.APPOPS ? APPOPS_ACTION.ALLOW : PM_ACTION.GRANT;
+    target?.toLowerCase() === PERMISSION_TARGET.APPOPS ? APPOPS_ACTION.ALLOW : PM_ACTION.GRANT;
   if (permissions == null) {
     throw new errors.InvalidArgumentError(`'permissions' argument is required`);
   }
@@ -76,19 +76,19 @@ export async function mobileChangePermissions(
     throw new errors.InvalidArgumentError(`'permissions' argument must not be empty`);
   }
 
-  switch (target.toLowerCase()) {
+  switch (target?.toLowerCase()) {
     case PERMISSION_TARGET.PM:
       return await changePermissionsViaPm.bind(this)(
         permissions,
         appPackage,
-        action.toLowerCase() as PMAction,
+        action?.toLowerCase() as PMAction,
       );
     case PERMISSION_TARGET.APPOPS:
       this.assertFeatureEnabled(ADB_SHELL_FEATURE);
       return await changePermissionsViaAppops.bind(this)(
         permissions,
         appPackage,
-        action.toLowerCase() as AppOpsAction,
+        action?.toLowerCase() as AppOpsAction,
       );
     default:
       throw new errors.InvalidArgumentError(
@@ -112,7 +112,7 @@ export async function mobileGetPermissions(
 ): Promise<string[]> {
   appPackage ??= this.opts.appPackage;
   let actionFunc: (pkg: string) => Promise<string[]>;
-  switch (type.toLowerCase()) {
+  switch (type?.toLowerCase()) {
     case PERMISSIONS_TYPE.REQUESTED:
       actionFunc = (pkg) => this.adb.getReqPermissions(pkg);
       break;

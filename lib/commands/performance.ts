@@ -89,7 +89,7 @@ export async function getPerformanceData(
   dataType: string,
   retries: number = 2,
 ): Promise<any[][]> {
-  switch (dataType.toLowerCase()) {
+  switch (dataType?.toLowerCase()) {
     case 'batteryinfo':
       return await getBatteryInfo.call(this, retries);
     case 'cpuinfo':
@@ -458,7 +458,7 @@ export async function getBatteryInfo(this: AndroidDriver, retries: number = 2): 
     const power = parseInt((data.split(':')[1] || '').trim(), 10);
 
     if (!Number.isNaN(power)) {
-      return [[...BATTERY_KEYS], [String(power)]];
+      return [[...BATTERY_KEYS], [power.toString()]];
     } else {
       throw new Error(`Unable to parse battery data: '${data}'`);
     }

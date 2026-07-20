@@ -118,7 +118,7 @@ export async function unlockWithOptions(
   if (
     unlockKey &&
     unlockType !== FINGERPRINT_UNLOCK &&
-    (unlockStrategy == null || unlockStrategy?.toLowerCase() === 'locksettings') &&
+    (unlockStrategy == null || String(unlockStrategy)?.toLowerCase() === 'locksettings') &&
     (await this.adb.isLockManagementSupported())
   ) {
     await fastUnlock.bind(this)({
