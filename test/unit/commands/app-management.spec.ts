@@ -1,7 +1,7 @@
 import sinon from 'sinon';
+import esmock from 'esmock';
 import {AndroidDriver} from '../../../lib/driver.js';
 import {fs} from '@appium/support';
-import * as asyncbox from 'asyncbox';
 import {ADB} from 'appium-adb';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -139,6 +139,14 @@ describe('App Management', function () {
     });
   });
   describe('background', function () {
+    async function mockBackground(sleepStub: sinon.SinonStub) {
+      return (
+        await esmock('../../../lib/commands/app-management.js', {
+          asyncbox: {longSleep: sleepStub},
+        })
+      ).background;
+    }
+
     it('should bring app to background and back', async function () {
       const appPackage = 'wpkg';
       const appActivity = 'wacv';
@@ -154,10 +162,11 @@ describe('App Management', function () {
         .stub(driver.adb, 'getFocusedPackageAndActivity')
         .resolves({appPackage, appActivity});
       const goToHomeStub = sandbox.stub(driver.adb, 'goToHome');
-      const sleepStub = sandbox.stub(asyncbox, 'longSleep');
+      const sleepStub = sandbox.stub();
       const startAppStub = sandbox.stub(driver.adb, 'startApp');
       const activateAppStub = sandbox.stub(driver.adb, 'activateApp');
-      await driver.background(10);
+      const background = await mockBackground(sleepStub);
+      await background.bind(driver)(10);
       expect(getFocusedStub.calledOnce).to.be.true;
       expect(goToHomeStub.calledOnce).to.be.true;
       expect(sleepStub.calledOnce).to.be.true;
@@ -192,10 +201,11 @@ describe('App Management', function () {
         .stub(driver.adb, 'getFocusedPackageAndActivity')
         .resolves({appPackage, appActivity});
       const goToHomeStub2 = sandbox.stub(driver.adb, 'goToHome');
-      const sleepStub = sandbox.stub(asyncbox, 'longSleep');
+      const sleepStub = sandbox.stub();
       const startAppStub2 = sandbox.stub(driver.adb, 'startApp');
       const activateAppStub2 = sandbox.stub(driver.adb, 'activateApp');
-      await driver.background(10);
+      const background = await mockBackground(sleepStub);
+      await background.bind(driver)(10);
       expect(getFocusedStub2.calledOnce).to.be.true;
       expect(goToHomeStub2.calledOnce).to.be.true;
       expect(sleepStub.firstCall.args[0]).to.equal(10_000);
@@ -222,10 +232,11 @@ describe('App Management', function () {
         .stub(driver.adb, 'getFocusedPackageAndActivity')
         .resolves({appPackage: appWaitPackage, appActivity: appWaitActivity});
       const goToHomeStub3 = sandbox.stub(driver.adb, 'goToHome');
-      const sleepStub = sandbox.stub(asyncbox, 'longSleep');
+      const sleepStub = sandbox.stub();
       const startAppStub3 = sandbox.stub(driver.adb, 'startApp');
       const activateAppStub3 = sandbox.stub(driver.adb, 'activateApp');
-      await driver.background(10);
+      const background = await mockBackground(sleepStub);
+      await background.bind(driver)(10);
       expect(getFocusedStub3.calledOnce).to.be.true;
       expect(goToHomeStub3.calledOnce).to.be.true;
       expect(sleepStub.firstCall.args[0]).to.equal(10_000);
@@ -235,7 +246,8 @@ describe('App Management', function () {
     it('should not bring app back if seconds are negative', async function () {
       const goToHomeStub4 = sandbox.stub(driver.adb, 'goToHome');
       const startAppStub4 = sandbox.stub(driver.adb, 'startApp');
-      await driver.background(-1);
+      const background = await mockBackground(sandbox.stub());
+      await background.bind(driver)(-1);
       expect(goToHomeStub4.calledOnce).to.be.true;
       expect(startAppStub4.notCalled).to.be.true;
     });

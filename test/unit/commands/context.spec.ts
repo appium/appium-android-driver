@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+import esmock from 'esmock';
 import {ADB} from 'appium-adb';
 import * as webviewHelpers from '../../../lib/commands/context/helpers.js';
 import {
@@ -54,36 +55,65 @@ describe('Context', function () {
     });
   });
   describe('getContexts', function () {
+    async function mockContextExports(helpersOverrides: Record<string, any>) {
+      return esmock('../../../lib/commands/context/exports.js', {
+        '../../../lib/commands/context/helpers.js': helpersOverrides,
+      });
+    }
+
     it('should get Chromium context where appropriate', async function () {
-      const getWebViewsMappingStub = sandbox.stub(webviewHelpers, 'getWebViewsMapping');
+      const getWebViewsMappingStub = sandbox.stub();
+      const {getContexts, assignContexts} = await mockContextExports({
+        getWebViewsMapping: getWebViewsMappingStub,
+      });
       driver = new AndroidDriver({browserName: 'Chrome'} as any);
+      driver.getContexts = getContexts;
+      driver.assignContexts = assignContexts;
       expect(await driver.getContexts()).to.include(CHROMIUM_WIN);
       expect(getWebViewsMappingStub.calledOnce).to.be.true;
     });
     it('should use ADB to figure out which webviews are available', async function () {
-      const parseWebviewNamesStub = sandbox
-        .stub(webviewHelpers, 'parseWebviewNames')
-        .returns(['DEFAULT', 'VW', 'ANOTHER']);
-      const getWebViewsMappingStub = sandbox.stub(webviewHelpers, 'getWebViewsMapping');
+      const parseWebviewNamesStub = sandbox.stub().returns(['DEFAULT', 'VW', 'ANOTHER']);
+      const getWebViewsMappingStub = sandbox.stub();
+      const {getContexts, assignContexts} = await mockContextExports({
+        getWebViewsMapping: getWebViewsMappingStub,
+        parseWebviewNames: parseWebviewNamesStub,
+      });
+      driver.getContexts = getContexts;
+      driver.assignContexts = assignContexts;
       expect(await driver.getContexts()).to.not.include(CHROMIUM_WIN);
       expect(parseWebviewNamesStub.calledOnce).to.be.true;
       expect(getWebViewsMappingStub.calledOnce).to.be.true;
     });
   });
   describe('setContext', function () {
-    beforeEach(function () {
-      sandbox.stub(webviewHelpers, 'getWebViewsMapping').resolves([
+    async function mockContextExports(helpersOverrides: Record<string, any>) {
+      const getWebViewsMappingStub = sandbox.stub().resolves([
         {webviewName: 'DEFAULT', pages: ['PAGE'] as any},
         {webviewName: 'WV', pages: ['PAGE'] as any},
         {webviewName: 'ANOTHER', pages: ['PAGE'] as any},
       ] as any);
+      const {setContext, assignContexts} = await esmock(
+        '../../../lib/commands/context/exports.js',
+        {
+          '../../../lib/commands/context/helpers.js': {
+            getWebViewsMapping: getWebViewsMappingStub,
+            ...helpersOverrides,
+          },
+        },
+      );
+      driver.setContext = setContext;
+      driver.assignContexts = assignContexts;
+    }
+
+    beforeEach(function () {
       sandbox.stub(driver, 'switchContext');
     });
     it('should switch to default context if name is null', async function () {
       sandbox.stub(driver, 'defaultContextName').returns('DEFAULT');
-      sandbox
-        .stub(webviewHelpers, 'parseWebviewNames')
-        .returns(['DEFAULT', 'VW', 'ANOTHER'] as any);
+      await mockContextExports({
+        parseWebviewNames: sandbox.stub().returns(['DEFAULT', 'VW', 'ANOTHER']),
+      });
       await driver.setContext(null as any);
       expect(
         (driver.switchContext as sinon.SinonStub).calledWithExactly('DEFAULT', [
@@ -96,7 +126,9 @@ describe('Context', function () {
     });
     it('should switch to default web view if name is WEBVIEW', async function () {
       sandbox.stub(driver, 'defaultWebviewName').returns('WV');
-      sandbox.stub(webviewHelpers, 'parseWebviewNames').returns(['DEFAULT', 'WV', 'ANOTHER']);
+      await mockContextExports({
+        parseWebviewNames: sandbox.stub().returns(['DEFAULT', 'WV', 'ANOTHER']),
+      });
       await driver.setContext(WEBVIEW_WIN);
       expect(
         (driver.switchContext as sinon.SinonStub).calledWithExactly('WV', [
@@ -108,9 +140,11 @@ describe('Context', function () {
       expect(driver.curContext).to.equal('WV');
     });
     it('should throw error if context does not exist', async function () {
+      await mockContextExports({});
       await expect(driver.setContext('fake')).to.be.rejectedWith(errors.NoSuchContextError);
     });
     it('should not switch to context if already in it', async function () {
+      await mockContextExports({});
       driver.curContext = 'ANOTHER';
       await driver.setContext('ANOTHER');
       expect((driver.switchContext as sinon.SinonStub).notCalled).to.be.true;
