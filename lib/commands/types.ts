@@ -2,7 +2,7 @@ import type {HTTPMethod, StringRecord} from '@appium/types';
 import type {AndroidDriverCaps} from '../driver.js';
 import type {SubProcess} from 'teen_process';
 import type {timing} from '@appium/support';
-import type {spawn} from 'node:child_process';
+import type {ChildProcess} from 'node:child_process';
 import type {Socket} from 'node:net';
 import type {Server} from 'node:http';
 
@@ -456,10 +456,11 @@ export interface InitGStreamerPipelineOpts {
 }
 
 /**
- * @internal
+ * The screen streaming process handles cached on the driver instance
+ * while a `mobile: startScreenStreaming` session is active.
  */
 export interface ScreenStreamingProps {
-  deviceStreamingProc: ReturnType<typeof spawn>;
+  deviceStreamingProc: ChildProcess;
   gstreamerPipeline: SubProcess;
   mjpegSocket: Socket;
   mjpegServer: Server;
