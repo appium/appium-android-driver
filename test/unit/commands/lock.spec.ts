@@ -7,6 +7,7 @@ import {
   validateUnlockCapabilities,
   encodePassword,
   stringKeyToArr,
+  UNLOCK_WAIT_TIME,
   KEYCODE_NUMPAD_ENTER,
   getPatternKeyPosition,
   getPatternActions,
@@ -194,10 +195,12 @@ describe('Lock', function () {
       const caps = {unlockKey: '123'} as AndroidDriverCaps;
       sandbox.stub(driver.adb, 'getApiLevel').resolves(23);
       sandbox.stub(driver.adb, 'fingerprint').withArgs(caps.unlockKey).onFirstCall();
+      const sleepStub = sandbox.stub();
       const {fingerprintUnlock} = await esmock(HELPERS_PATH, {
-        asyncbox: {sleep: sandbox.stub()},
+        asyncbox: {sleep: sleepStub},
       });
       await expect(fingerprintUnlock.bind(driver)(caps)).to.be.fulfilled;
+      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
     });
   });
   describe('pinUnlock', function () {
@@ -230,8 +233,9 @@ describe('Lock', function () {
         getAttributeStub.withArgs('text', e.ELEMENT as any).resolves(e.ELEMENT.toString());
       }
       const clickStub = sandbox.stub(driver, 'click');
+      const sleepStub = sandbox.stub();
       const {pinUnlock} = await esmock(HELPERS_PATH, {
-        asyncbox: {sleep: sandbox.stub()},
+        asyncbox: {sleep: sleepStub},
       });
 
       await pinUnlock.bind(driver)(caps);
@@ -241,6 +245,7 @@ describe('Lock', function () {
       expect(clickStub.getCall(2).args[0]).to.equal(5);
       expect(clickStub.getCall(3).args[0]).to.equal(7);
       expect(clickStub.getCall(4).args[0]).to.equal(9);
+      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
     });
   });
   describe('passwordUnlock', function () {
@@ -253,10 +258,12 @@ describe('Lock', function () {
         .withArgs(['input', 'keyevent', String(KEYCODE_NUMPAD_ENTER)]);
       sandbox.stub(driver.adb, 'isScreenLocked').resolves(true);
       sandbox.stub(driver.adb, 'keyevent').withArgs(66).onFirstCall();
+      const sleepStub = sandbox.stub();
       const {passwordUnlock} = await esmock(HELPERS_PATH, {
-        asyncbox: {sleep: sandbox.stub()},
+        asyncbox: {sleep: sleepStub},
       });
       await passwordUnlock.bind(driver)(caps);
+      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
     });
   });
   describe('getPatternKeyPosition', function () {
@@ -363,10 +370,12 @@ describe('Lock', function () {
         .stub(driver, 'findElOrEls')
         .withArgs('id', 'com.android.systemui:id/lockPatternView', false)
         .resolves(el as any);
+      const sleepStub = sandbox.stub();
       const {patternUnlock} = await esmock(HELPERS_PATH, {
-        asyncbox: {sleep: sandbox.stub()},
+        asyncbox: {sleep: sleepStub},
       });
       await patternUnlock.bind(driver)(caps);
+      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
     });
     it('should be able to unlock device using pattern (API level < 21)', async function () {
       sandbox.stub(driver.adb, 'getApiLevel').resolves(20);
@@ -374,10 +383,12 @@ describe('Lock', function () {
         .stub(driver, 'findElOrEls')
         .withArgs('id', 'com.android.keyguard:id/lockPatternView', false)
         .resolves(el as any);
+      const sleepStub = sandbox.stub();
       const {patternUnlock} = await esmock(HELPERS_PATH, {
-        asyncbox: {sleep: sandbox.stub()},
+        asyncbox: {sleep: sleepStub},
       });
       await patternUnlock.bind(driver)(caps);
+      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
     });
   });
 });
