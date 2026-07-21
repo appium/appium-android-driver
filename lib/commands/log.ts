@@ -65,6 +65,9 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
   const wss = new WebSocketServer({
     noServer: true,
   });
+  // Tracks every currently connected listener socket so log lines get
+  // broadcast to all of them, not just the one that connected first.
+  const connectedSockets = new Set<WebSocket>();
   wss.on('connection', (ws, req) => {
     if (req) {
       const remoteIp = util.isEmpty(req.headers['x-forwarded-for'])
@@ -75,17 +78,21 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
       this.log.debug('Established a new logcat listener web socket connection');
     }
 
+    connectedSockets.add(ws);
     if (!this._logcatWebsocketListener) {
       this._logcatWebsocketListener = (logRecord: LogEntry) => {
-        if (ws?.readyState === WebSocket.OPEN) {
-          ws.send(logRecord.message);
+        for (const socket of connectedSockets) {
+          if (socket.readyState === WebSocket.OPEN) {
+            socket.send(logRecord.message);
+          }
         }
       };
     }
     this.adb.setLogcatListener(this._logcatWebsocketListener);
 
     ws.on('close', (code, reason) => {
-      if (this._logcatWebsocketListener) {
+      connectedSockets.delete(ws);
+      if (connectedSockets.size === 0 && this._logcatWebsocketListener) {
         try {
           this.adb.removeLogcatListener(this._logcatWebsocketListener);
         } catch {}
