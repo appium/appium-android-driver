@@ -436,7 +436,8 @@ describe('Device Helpers', function () {
           hideKeyboardCompletely: overrides.hideKeyboardCompletely,
         };
       }
-      return (await esmock('../../../lib/commands/device/common.js', importMocks)).initDevice;
+      return (await esmock('../../../lib/commands/device/common.js', import.meta.url, importMocks))
+        .initDevice;
     }
 
     it('should init a real device', async function () {

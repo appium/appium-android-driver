@@ -37,7 +37,8 @@ describe('Lock', function () {
 
   describe('unlockWithOptions', function () {
     async function mockUnlockWithOptions(helpersOverrides: Record<string, any>) {
-      return (await esmock(EXPORTS_PATH, {[HELPERS_PATH]: helpersOverrides})).unlockWithOptions;
+      return (await esmock(EXPORTS_PATH, import.meta.url, {[HELPERS_PATH]: helpersOverrides}))
+        .unlockWithOptions;
     }
 
     it('should return if screen is already unlocked', async function () {
@@ -196,7 +197,7 @@ describe('Lock', function () {
       sandbox.stub(driver.adb, 'getApiLevel').resolves(23);
       sandbox.stub(driver.adb, 'fingerprint').withArgs(caps.unlockKey).onFirstCall();
       const sleepStub = sandbox.stub();
-      const {fingerprintUnlock} = await esmock(HELPERS_PATH, {
+      const {fingerprintUnlock} = await esmock(HELPERS_PATH, import.meta.url, {
         asyncbox: {sleep: sleepStub},
       });
       await expect(fingerprintUnlock.bind(driver)(caps)).to.be.fulfilled;
@@ -234,7 +235,7 @@ describe('Lock', function () {
       }
       const clickStub = sandbox.stub(driver, 'click');
       const sleepStub = sandbox.stub();
-      const {pinUnlock} = await esmock(HELPERS_PATH, {
+      const {pinUnlock} = await esmock(HELPERS_PATH, import.meta.url, {
         asyncbox: {sleep: sleepStub},
       });
 
@@ -259,7 +260,7 @@ describe('Lock', function () {
       sandbox.stub(driver.adb, 'isScreenLocked').resolves(true);
       sandbox.stub(driver.adb, 'keyevent').withArgs(66).onFirstCall();
       const sleepStub = sandbox.stub();
-      const {passwordUnlock} = await esmock(HELPERS_PATH, {
+      const {passwordUnlock} = await esmock(HELPERS_PATH, import.meta.url, {
         asyncbox: {sleep: sleepStub},
       });
       await passwordUnlock.bind(driver)(caps);
@@ -371,7 +372,7 @@ describe('Lock', function () {
         .withArgs('id', 'com.android.systemui:id/lockPatternView', false)
         .resolves(el as any);
       const sleepStub = sandbox.stub();
-      const {patternUnlock} = await esmock(HELPERS_PATH, {
+      const {patternUnlock} = await esmock(HELPERS_PATH, import.meta.url, {
         asyncbox: {sleep: sleepStub},
       });
       await patternUnlock.bind(driver)(caps);
@@ -384,7 +385,7 @@ describe('Lock', function () {
         .withArgs('id', 'com.android.keyguard:id/lockPatternView', false)
         .resolves(el as any);
       const sleepStub = sandbox.stub();
-      const {patternUnlock} = await esmock(HELPERS_PATH, {
+      const {patternUnlock} = await esmock(HELPERS_PATH, import.meta.url, {
         asyncbox: {sleep: sleepStub},
       });
       await patternUnlock.bind(driver)(caps);
