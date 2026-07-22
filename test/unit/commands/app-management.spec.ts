@@ -141,7 +141,7 @@ describe('App Management', function () {
   describe('background', function () {
     async function mockBackground(sleepStub: sinon.SinonStub) {
       return (
-        await esmock('../../../lib/commands/app-management.js', {
+        await esmock('../../../lib/commands/app-management.js', import.meta.url, {
           asyncbox: {longSleep: sleepStub},
         })
       ).background;

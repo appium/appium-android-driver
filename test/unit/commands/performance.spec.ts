@@ -49,6 +49,7 @@ describe('performance data', function () {
     });
     ({getBatteryInfo, getCPUInfo, getMemoryInfo, getNetworkTrafficInfo} = await esmock(
       '../../../lib/commands/performance.js',
+      import.meta.url,
       {
         asyncbox: {retryInterval: retryIntervalStub},
       },

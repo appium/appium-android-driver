@@ -56,7 +56,7 @@ describe('Context', function () {
   });
   describe('getContexts', function () {
     async function mockContextExports(helpersOverrides: Record<string, any>) {
-      return esmock('../../../lib/commands/context/exports.js', {
+      return esmock('../../../lib/commands/context/exports.js', import.meta.url, {
         '../../../lib/commands/context/helpers.js': helpersOverrides,
       });
     }
@@ -95,6 +95,7 @@ describe('Context', function () {
       ] as any);
       const {setContext, assignContexts} = await esmock(
         '../../../lib/commands/context/exports.js',
+        import.meta.url,
         {
           '../../../lib/commands/context/helpers.js': {
             getWebViewsMapping: getWebViewsMappingStub,
