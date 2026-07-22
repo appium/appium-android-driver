@@ -1,3 +1,13 @@
+## [14.0.0](https://github.com/appium/appium-android-driver/compare/v13.4.0...v14.0.0) (2026-07-22)
+
+### ⚠ BREAKING CHANGES
+
+* The package now ships as native ESM ("type": "module") with a conditional exports map instead of a CommonJS entry point. Consumers using require('appium-android-driver') must switch to import or dynamic import().
+
+### Features
+
+* Migrate package to ESM ([#1084](https://github.com/appium/appium-android-driver/issues/1084)) ([f2175aa](https://github.com/appium/appium-android-driver/commit/f2175aa87c684aef3aa91fa3b03d76d3cf327ebf))
+
 ## [13.4.0](https://github.com/appium/appium-android-driver/compare/v13.3.4...v13.4.0) (2026-07-15)
 
 ### Features
