@@ -1,3 +1,9 @@
+## [14.0.1](https://github.com/appium/appium-android-driver/compare/v14.0.0...v14.0.1) (2026-07-22)
+
+### Miscellaneous Chores
+
+* Update tsconfig ([#1087](https://github.com/appium/appium-android-driver/issues/1087)) ([73d09a8](https://github.com/appium/appium-android-driver/commit/73d09a8b490f3b076bba63f3476bf01e336e8e3e))
+
 ## [14.0.0](https://github.com/appium/appium-android-driver/compare/v13.4.0...v14.0.0) (2026-07-22)
 
 ### ⚠ BREAKING CHANGES
