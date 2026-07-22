@@ -1,6 +1,6 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import type {LogEntry} from 'appium-adb';
-import type {AndroidDriver} from './driver';
+import type {AndroidDriver} from './driver.js';
 import {util} from '@appium/support';
 
 export type {LogEntry};
@@ -38,9 +38,10 @@ export function requireArgs(
 }
 
 /**
+ * Parses a capability into an array
  *
- * @param cap
- * @returns
+ * @param cap - The capability to parse
+ * @returns The parsed capability
  */
 export function parseArray(cap: string | string[]): string[] {
   let parsedCaps;
@@ -58,8 +59,7 @@ export function parseArray(cap: string | string[]): string[] {
 }
 
 /**
- * @this AndroidDriver
- * @returns
+ * Removes all session web socket handlers
  */
 export async function removeAllSessionWebSocketHandlers(this: AndroidDriver): Promise<void> {
   if (!this.sessionId || typeof this.server?.getWebSocketHandlers !== 'function') {
@@ -73,9 +73,10 @@ export async function removeAllSessionWebSocketHandlers(this: AndroidDriver): Pr
 }
 
 /**
+ * Converts a native log entry to a Selenium log entry
  *
- * @param x
- * @returns
+ * @param x - The native log entry
+ * @returns The Selenium log entry
  */
 export function nativeLogEntryToSeleniumEntry(x: LogEntryWithPrefix): LogEntry {
   const msg = util.isEmpty(x.prefix) ? x.message : `[${x.prefix}] ${x.message}`;
@@ -83,6 +84,7 @@ export function nativeLogEntryToSeleniumEntry(x: LogEntryWithPrefix): LogEntry {
 }
 
 /**
+ * Converts a timestamp and message to a Selenium log entry
  *
  * @see {@link https://github.com/SeleniumHQ/selenium/blob/0d425676b3c9df261dd641917f867d4d5ce7774d/java/client/src/org/openqa/selenium/logging/LogEntry.java}
  * @param timestamp

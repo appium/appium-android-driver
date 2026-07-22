@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import type {StringRecord} from '@appium/types';
-import type {AndroidDriver} from '../driver';
+import type {AndroidDriver} from '../driver.js';
 
 /**
  * Performs a series of actions (gestures) on the device.
@@ -11,5 +10,6 @@ import type {AndroidDriver} from '../driver';
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
 export async function performActions(this: AndroidDriver, actions: StringRecord[]): Promise<void> {
+  void actions;
   throw new errors.NotImplementedError('Not implemented');
 }

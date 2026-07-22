@@ -1,5 +1,5 @@
-import {AndroidDriver} from '../../../lib/driver';
-import {parseWindowProperties, parseWindows} from '../../../lib/commands/system-bars';
+import {AndroidDriver} from '../../../lib/driver.js';
+import {parseWindowProperties, parseWindows} from '../../../lib/commands/system-bars.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {describe, it, before} from 'node:test';

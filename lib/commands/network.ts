@@ -1,7 +1,7 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import {util} from '@appium/support';
-import type {AndroidDriver} from '../driver';
-import type {ServiceType, GetConnectivityResult} from './types';
+import type {AndroidDriver} from '../driver.js';
+import type {ServiceType, GetConnectivityResult} from './types.js';
 
 const AIRPLANE_MODE_MASK = 0b001;
 const WIFI_MASK = 0b010;

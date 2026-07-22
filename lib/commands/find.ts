@@ -1,8 +1,8 @@
-import {errors, isErrorType} from 'appium/driver';
-import type {AndroidDriver} from '../driver';
-import type {Element} from '@appium/types';
-import type {FindElementOpts} from './types';
+import {errors, isErrorType} from 'appium/driver.js';
 import {util} from '@appium/support';
+import type {AndroidDriver} from '../driver.js';
+import type {Element} from '@appium/types';
+import type {FindElementOpts} from './types.js';
 
 /**
  * @param strategy The element location strategy to use (e.g., 'id', 'xpath', 'class name').

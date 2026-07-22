@@ -7,9 +7,9 @@ import {
   UNICODE_IME,
   EMPTY_IME,
 } from 'io.appium.settings';
-import {prepareEmulatorForImageInjection} from '../image-injection';
-import {ADB_LISTEN_ALL_NETWORK_FEATURE} from '../../utils';
-import type {AndroidDriver} from '../../driver';
+import {prepareEmulatorForImageInjection} from '../image-injection.js';
+import {ADB_LISTEN_ALL_NETWORK_FEATURE} from '../../utils.js';
+import type {AndroidDriver} from '../../driver.js';
 
 const HELPER_APP_INSTALL_RETRIES = 3;
 const HELPER_APP_INSTALL_RETRY_DELAY_MS = 5000;

@@ -1,7 +1,7 @@
 import {retryInterval} from 'asyncbox';
 import type {ExecError} from 'teen_process';
-import type {AndroidDriver} from '../driver';
-import type {PerformanceDataType} from './types';
+import type {AndroidDriver} from '../driver.js';
+import type {PerformanceDataType} from './types.js';
 import {util} from '@appium/support';
 
 export const NETWORK_KEYS = [
@@ -187,7 +187,7 @@ export async function getMemoryInfo(
       }
     }
     if (valDict.totalPrivateDirty && valDict.totalPrivateDirty !== 'nodex') {
-      const headers = structuredClone(MEMORY_KEYS);
+      const headers = [...MEMORY_KEYS];
       const values = headers.map((header) => valDict[header]);
       return [headers, values];
     }
@@ -458,7 +458,7 @@ export async function getBatteryInfo(this: AndroidDriver, retries: number = 2): 
     const power = parseInt((data.split(':')[1] || '').trim(), 10);
 
     if (!Number.isNaN(power)) {
-      return [structuredClone(BATTERY_KEYS), [power.toString()]];
+      return [[...BATTERY_KEYS], [power.toString()]];
     } else {
       throw new Error(`Unable to parse battery data: '${data}'`);
     }

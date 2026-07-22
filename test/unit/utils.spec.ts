@@ -1,4 +1,4 @@
-import {parseArray} from '../../lib/utils';
+import {parseArray} from '../../lib/utils.js';
 import {expect} from 'chai';
 import {describe, it} from 'node:test';
 

@@ -1,28 +1,26 @@
 import sinon from 'sinon';
+import esmock from 'esmock';
 import {ADB} from 'appium-adb';
-import {AndroidDriver} from '../../../lib/driver';
-import type {AndroidDriverCaps} from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver.js';
+import type {AndroidDriverCaps} from '../../../lib/driver.js';
 import {
   validateUnlockCapabilities,
   encodePassword,
   stringKeyToArr,
   UNLOCK_WAIT_TIME,
-  fingerprintUnlock,
-  passwordUnlock,
-  pinUnlock,
   KEYCODE_NUMPAD_ENTER,
   getPatternKeyPosition,
   getPatternActions,
-  patternUnlock,
-} from '../../../lib/commands/lock/helpers';
-import {unlockWithOptions} from '../../../lib/commands/lock/exports';
-import * as unlockHelpers from '../../../lib/commands/lock/helpers';
-import * as asyncboxHelpers from 'asyncbox';
+} from '../../../lib/commands/lock/helpers.js';
+import {unlockWithOptions} from '../../../lib/commands/lock/exports.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 use(chaiAsPromised);
+
+const HELPERS_PATH = '../../../lib/commands/lock/helpers.js';
+const EXPORTS_PATH = '../../../lib/commands/lock/exports.js';
 
 describe('Lock', function () {
   let driver: AndroidDriver;
@@ -38,6 +36,10 @@ describe('Lock', function () {
   });
 
   describe('unlockWithOptions', function () {
+    async function mockUnlockWithOptions(helpersOverrides: Record<string, any>) {
+      return (await esmock(EXPORTS_PATH, {[HELPERS_PATH]: helpersOverrides})).unlockWithOptions;
+    }
+
     it('should return if screen is already unlocked', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').withArgs().onFirstCall().resolves(false);
       sandbox.stub(driver.adb, 'getApiLevel').throws();
@@ -61,8 +63,8 @@ describe('Lock', function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().resolves(true);
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
-      sandbox.stub(unlockHelpers, 'pinUnlock');
-      await unlockWithOptions.bind(driver)({
+      const mockedUnlockWithOptions = await mockUnlockWithOptions({pinUnlock: sandbox.stub()});
+      await mockedUnlockWithOptions.bind(driver)({
         unlockType: 'pin',
         unlockKey: '1111',
       } as AndroidDriverCaps);
@@ -71,8 +73,10 @@ describe('Lock', function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
-      sandbox.stub(unlockHelpers, 'pinUnlockWithKeyEvent').onFirstCall();
-      await unlockWithOptions.bind(driver)({
+      const mockedUnlockWithOptions = await mockUnlockWithOptions({
+        pinUnlockWithKeyEvent: sandbox.stub(),
+      });
+      await mockedUnlockWithOptions.bind(driver)({
         unlockType: 'pinWithKeyEvent',
         unlockKey: '1111',
       } as AndroidDriverCaps);
@@ -80,9 +84,11 @@ describe('Lock', function () {
     it('should call fastUnlock if unlockKey is provided', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(true);
-      sandbox.stub(unlockHelpers, 'verifyUnlock').onFirstCall();
-      sandbox.stub(unlockHelpers, 'fastUnlock').onFirstCall();
-      await unlockWithOptions.bind(driver)({
+      const mockedUnlockWithOptions = await mockUnlockWithOptions({
+        verifyUnlock: sandbox.stub(),
+        fastUnlock: sandbox.stub(),
+      });
+      await mockedUnlockWithOptions.bind(driver)({
         unlockKey: 'appium',
         unlockType: 'password',
       } as AndroidDriverCaps);
@@ -90,8 +96,10 @@ describe('Lock', function () {
     it('should call passwordUnlock if unlockType is password', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
-      sandbox.stub(unlockHelpers, 'passwordUnlock').onFirstCall();
-      await unlockWithOptions.bind(driver)({
+      const mockedUnlockWithOptions = await mockUnlockWithOptions({
+        passwordUnlock: sandbox.stub(),
+      });
+      await mockedUnlockWithOptions.bind(driver)({
         unlockType: 'password',
         unlockKey: 'appium',
       } as AndroidDriverCaps);
@@ -99,8 +107,10 @@ describe('Lock', function () {
     it('should call patternUnlock if unlockType is pattern', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
-      sandbox.stub(unlockHelpers, 'patternUnlock').onFirstCall();
-      await unlockWithOptions.bind(driver)({
+      const mockedUnlockWithOptions = await mockUnlockWithOptions({
+        patternUnlock: sandbox.stub(),
+      });
+      await mockedUnlockWithOptions.bind(driver)({
         unlockType: 'pattern',
         unlockKey: '123456789',
       } as AndroidDriverCaps);
@@ -108,8 +118,10 @@ describe('Lock', function () {
     it('should call fingerprintUnlock if unlockType is fingerprint', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').throws();
-      sandbox.stub(unlockHelpers, 'fingerprintUnlock').onFirstCall();
-      await unlockWithOptions.bind(driver)({
+      const mockedUnlockWithOptions = await mockUnlockWithOptions({
+        fingerprintUnlock: sandbox.stub(),
+      });
+      await mockedUnlockWithOptions.bind(driver)({
         unlockType: 'fingerprint',
         unlockKey: '1111',
       } as AndroidDriverCaps);
@@ -183,13 +195,16 @@ describe('Lock', function () {
       const caps = {unlockKey: '123'} as AndroidDriverCaps;
       sandbox.stub(driver.adb, 'getApiLevel').resolves(23);
       sandbox.stub(driver.adb, 'fingerprint').withArgs(caps.unlockKey).onFirstCall();
-      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(sinon.match(UNLOCK_WAIT_TIME)).onFirstCall();
+      const sleepStub = sandbox.stub();
+      const {fingerprintUnlock} = await esmock(HELPERS_PATH, {
+        asyncbox: {sleep: sleepStub},
+      });
       await expect(fingerprintUnlock.bind(driver)(caps)).to.be.fulfilled;
+      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
     });
   });
   describe('pinUnlock', function () {
     const caps = {unlockKey: '13579'} as AndroidDriverCaps;
-    const keys = ['1', '3', '5', '7', '9'];
     const els = [
       {ELEMENT: 1},
       {ELEMENT: 2},
@@ -206,7 +221,6 @@ describe('Lock', function () {
     });
     it('should be able to unlock device using pin (API level >= 21)', async function () {
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
-      sandbox.stub(unlockHelpers, 'stringKeyToArr').returns(keys);
       sandbox.stub(driver.adb, 'getApiLevel').resolves(21);
       sandbox
         .stub(driver, 'findElOrEls')
@@ -218,8 +232,11 @@ describe('Lock', function () {
       for (const e of els) {
         getAttributeStub.withArgs('text', e.ELEMENT as any).resolves(e.ELEMENT.toString());
       }
-      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(sinon.match(UNLOCK_WAIT_TIME));
       const clickStub = sandbox.stub(driver, 'click');
+      const sleepStub = sandbox.stub();
+      const {pinUnlock} = await esmock(HELPERS_PATH, {
+        asyncbox: {sleep: sleepStub},
+      });
 
       await pinUnlock.bind(driver)(caps);
 
@@ -228,6 +245,7 @@ describe('Lock', function () {
       expect(clickStub.getCall(2).args[0]).to.equal(5);
       expect(clickStub.getCall(3).args[0]).to.equal(7);
       expect(clickStub.getCall(4).args[0]).to.equal(9);
+      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
     });
   });
   describe('passwordUnlock', function () {
@@ -235,17 +253,17 @@ describe('Lock', function () {
       const caps = {unlockKey: 'psswrd'} as any;
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox
-        .stub(unlockHelpers, 'encodePassword')
-        .withArgs(caps.unlockKey)
-        .returns(caps.unlockKey);
-      sandbox
         .stub(driver.adb, 'shell')
         .withArgs(['input', 'text', caps.unlockKey])
         .withArgs(['input', 'keyevent', String(KEYCODE_NUMPAD_ENTER)]);
-      sandbox.stub(asyncboxHelpers, 'sleep');
       sandbox.stub(driver.adb, 'isScreenLocked').resolves(true);
       sandbox.stub(driver.adb, 'keyevent').withArgs(66).onFirstCall();
+      const sleepStub = sandbox.stub();
+      const {passwordUnlock} = await esmock(HELPERS_PATH, {
+        asyncbox: {sleep: sleepStub},
+      });
       await passwordUnlock.bind(driver)(caps);
+      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
     });
   });
   describe('getPatternKeyPosition', function () {
@@ -333,14 +351,9 @@ describe('Lock', function () {
     const el = {ELEMENT: 1};
     const pos = {x: 10, y: 20};
     const size = {width: 300, height: 400};
-    const keys = ['1', '3', '5', '7', '9'];
     const caps = {unlockKey: '13579'} as AndroidDriverCaps;
-    const patternActions = [
-      {type: 'pointer', id: 'patternUnlock', parameters: {pointerType: 'touch'}, actions: []},
-    ] as any;
     beforeEach(function () {
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
-      sandbox.stub(unlockHelpers, 'stringKeyToArr').returns(keys);
       sandbox
         .stub(driver, 'getLocation')
         .withArgs(el.ELEMENT as any)
@@ -349,12 +362,7 @@ describe('Lock', function () {
         .stub(driver, 'getSize')
         .withArgs(el.ELEMENT as any)
         .resolves(size);
-      sandbox
-        .stub(unlockHelpers, 'getPatternActions')
-        .withArgs(keys, pos, 100)
-        .returns(patternActions);
-      sandbox.stub(driver, 'performActions').withArgs(patternActions).resolves();
-      sandbox.stub(asyncboxHelpers, 'sleep').withArgs(sinon.match(UNLOCK_WAIT_TIME)).onFirstCall();
+      sandbox.stub(driver, 'performActions').resolves();
     });
     it('should be able to unlock device using pattern (API level >= 21)', async function () {
       sandbox.stub(driver.adb, 'getApiLevel').resolves(21);
@@ -362,7 +370,12 @@ describe('Lock', function () {
         .stub(driver, 'findElOrEls')
         .withArgs('id', 'com.android.systemui:id/lockPatternView', false)
         .resolves(el as any);
+      const sleepStub = sandbox.stub();
+      const {patternUnlock} = await esmock(HELPERS_PATH, {
+        asyncbox: {sleep: sleepStub},
+      });
       await patternUnlock.bind(driver)(caps);
+      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
     });
     it('should be able to unlock device using pattern (API level < 21)', async function () {
       sandbox.stub(driver.adb, 'getApiLevel').resolves(20);
@@ -370,7 +383,12 @@ describe('Lock', function () {
         .stub(driver, 'findElOrEls')
         .withArgs('id', 'com.android.keyguard:id/lockPatternView', false)
         .resolves(el as any);
+      const sleepStub = sandbox.stub();
+      const {patternUnlock} = await esmock(HELPERS_PATH, {
+        asyncbox: {sleep: sleepStub},
+      });
       await patternUnlock.bind(driver)(caps);
+      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
     });
   });
 });

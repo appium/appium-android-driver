@@ -1,4 +1,4 @@
-import {resolveExecutablePath} from './utils';
+import {resolveExecutablePath} from './utils.js';
 import {system, fs, doctor, console} from '@appium/support';
 import path from 'node:path';
 import {getAndroidBinaryPath, getSdkRootFromEnv} from 'appium-adb';

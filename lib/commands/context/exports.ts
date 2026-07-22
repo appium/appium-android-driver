@@ -1,6 +1,6 @@
 import {util} from '@appium/support';
 import {Chromedriver} from 'appium-chromedriver';
-import {errors, PROTOCOLS} from 'appium/driver';
+import {errors, PROTOCOLS} from 'appium/driver.js';
 import type {StringRecord} from '@appium/types';
 import {
   CHROMIUM_WIN,
@@ -14,12 +14,12 @@ import {
   setupExistingChromedriver,
   setupNewChromedriver,
   shouldDismissChromeWelcome,
-} from './helpers';
-import {APP_STATE} from '../app-management';
-import {BIDI_EVENT_NAME} from '../bidi/constants';
-import {makeContextUpdatedEvent, makeObsoleteContextUpdatedEvent} from '../bidi/models';
-import type {AndroidDriver} from '../../driver';
-import type {WebviewsMapping} from '../types';
+} from './helpers.js';
+import {APP_STATE} from '../app-management.js';
+import {BIDI_EVENT_NAME} from '../bidi/constants.js';
+import {makeContextUpdatedEvent, makeObsoleteContextUpdatedEvent} from '../bidi/models.js';
+import type {AndroidDriver} from '../../driver.js';
+import type {WebviewsMapping} from '../types.js';
 
 // https://github.com/appium/appium/issues/20710
 const DEFAULT_NATIVE_WINDOW_HANDLE = '1';

@@ -1,6 +1,6 @@
-import {DEFAULT_WS_PATHNAME_PREFIX, BaseDriver} from 'appium/driver';
+import {DEFAULT_WS_PATHNAME_PREFIX, BaseDriver} from 'appium/driver.js';
 import os from 'node:os';
-import WebSocket from 'ws';
+import {WebSocket, WebSocketServer} from 'ws';
 import type {AppiumServer, WSServer} from '@appium/types';
 import type {EventEmitter} from 'node:events';
 import type {ADB} from 'appium-adb';
@@ -10,11 +10,11 @@ import {
   toLogRecord,
   nativeLogEntryToSeleniumEntry,
   type LogEntry,
-} from '../utils';
-import {NATIVE_WIN} from './context/helpers';
-import {BIDI_EVENT_NAME} from './bidi/constants';
-import {makeLogEntryAddedEvent} from './bidi/models';
-import type {AndroidDriver} from '../driver';
+} from '../utils.js';
+import {NATIVE_WIN} from './context/helpers.js';
+import {BIDI_EVENT_NAME} from './bidi/constants.js';
+import {makeLogEntryAddedEvent} from './bidi/models.js';
+import type {AndroidDriver} from '../driver.js';
 import {util} from '@appium/support';
 
 export const supportedLogTypes = {
@@ -62,9 +62,12 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
       `${JSON.stringify(server.address())} to ${pathname}`,
   );
   // https://github.com/websockets/ws/blob/master/doc/ws.md
-  const wss = new WebSocket.Server({
+  const wss = new WebSocketServer({
     noServer: true,
   });
+  // Tracks every currently connected listener socket so log lines get
+  // broadcast to all of them, not just the one that connected first.
+  const connectedSockets = new Set<WebSocket>();
   wss.on('connection', (ws, req) => {
     if (req) {
       const remoteIp = util.isEmpty(req.headers['x-forwarded-for'])
@@ -75,17 +78,21 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
       this.log.debug('Established a new logcat listener web socket connection');
     }
 
+    connectedSockets.add(ws);
     if (!this._logcatWebsocketListener) {
       this._logcatWebsocketListener = (logRecord: LogEntry) => {
-        if (ws?.readyState === WebSocket.OPEN) {
-          ws.send(logRecord.message);
+        for (const socket of connectedSockets) {
+          if (socket.readyState === WebSocket.OPEN) {
+            socket.send(logRecord.message);
+          }
         }
       };
     }
     this.adb.setLogcatListener(this._logcatWebsocketListener);
 
     ws.on('close', (code, reason) => {
-      if (this._logcatWebsocketListener) {
+      connectedSockets.delete(ws);
+      if (connectedSockets.size === 0 && this._logcatWebsocketListener) {
         try {
           this.adb.removeLogcatListener(this._logcatWebsocketListener);
         } catch {}

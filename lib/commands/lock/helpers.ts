@@ -2,8 +2,8 @@ import {util} from '@appium/support';
 import {sleep, waitForCondition} from 'asyncbox';
 import type {ADB} from 'appium-adb';
 import type {Position, StringRecord} from '@appium/types';
-import type {AndroidDriver, AndroidDriverCaps} from '../../driver';
-import type {UnlockType, FastUnlockOptions} from '../types';
+import type {AndroidDriver, AndroidDriverCaps} from '../../driver.js';
+import type {UnlockType, FastUnlockOptions} from '../types.js';
 
 export const PIN_UNLOCK = 'pin';
 export const PIN_UNLOCK_KEY_EVENT = 'pinWithKeyEvent';

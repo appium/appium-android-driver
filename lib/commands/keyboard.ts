@@ -1,7 +1,7 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import {UNICODE_IME, EMPTY_IME} from 'io.appium.settings';
-import type {AndroidDriver} from '../driver';
-import type {SendKeysOpts} from './types';
+import type {AndroidDriver} from '../driver.js';
+import type {SendKeysOpts} from './types.js';
 
 /**
  * Hides the on-screen keyboard.

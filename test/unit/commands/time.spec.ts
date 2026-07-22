@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
-import {AndroidDriver} from '../../../lib/driver';
-import {getDeviceTime} from '../../../lib/commands/time';
+import {AndroidDriver} from '../../../lib/driver.js';
+import {getDeviceTime} from '../../../lib/commands/time.js';
 
 import {expect, use} from 'chai'; // expect is used
 import chaiAsPromised from 'chai-as-promised';

@@ -1,7 +1,7 @@
-import {errors, PROTOCOLS} from 'appium/driver';
+import {errors, PROTOCOLS} from 'appium/driver.js';
 import {util} from '@appium/support';
 import type {StringRecord, Element} from '@appium/types';
-import type {AndroidDriver} from '../driver';
+import type {AndroidDriver} from '../driver.js';
 import type {Chromedriver} from 'appium-chromedriver';
 
 const EXECUTE_SCRIPT_PREFIX = 'mobile:';

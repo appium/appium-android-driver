@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import type {AndroidDriver} from '../driver';
+import utc from 'dayjs/plugin/utc.js';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+import type {AndroidDriver} from '../driver.js';
 
 dayjs.extend(utc);
 dayjs.extend(customParseFormat);

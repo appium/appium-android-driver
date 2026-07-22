@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import {AndroidDriver} from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {describe, it, beforeEach, afterEach} from 'node:test';

@@ -1,10 +1,10 @@
-import type {BiDiLogLevel, LogEntryAddedEvent, ContextUpdatedEvent} from './types';
-import {NATIVE_WIN} from '../context/helpers';
+import type {BiDiLogLevel, LogEntryAddedEvent, ContextUpdatedEvent} from './types.js';
+import {NATIVE_WIN} from '../context/helpers.js';
 import {
   CONTEXT_UPDATED_EVENT,
   LOG_ENTRY_ADDED_EVENT,
   CONTEXT_UPDATED_EVENT_OBSOLETE,
-} from './constants';
+} from './constants.js';
 import type {LogEntry} from 'appium-adb';
 
 function toContextUpdatedEvent(method: string, contextName: string): ContextUpdatedEvent {

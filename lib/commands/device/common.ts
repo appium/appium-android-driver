@@ -1,14 +1,14 @@
 import * as semver from 'semver';
 import path from 'node:path';
-import {setMockLocationApp} from '../geolocation';
+import {setMockLocationApp} from '../geolocation.js';
 import {SETTINGS_HELPER_ID} from 'io.appium.settings';
-import {hideKeyboardCompletely, initUnicodeKeyboard} from '../keyboard';
-import {createBaseADB, prepareEmulator, pushSettingsApp} from './utils';
-import {adjustTimeZone} from '../time';
+import {hideKeyboardCompletely, initUnicodeKeyboard} from '../keyboard.js';
+import {createBaseADB, prepareEmulator, pushSettingsApp} from './utils.js';
+import {adjustTimeZone} from '../time.js';
 import {retryInterval} from 'asyncbox';
-import {GET_SERVER_LOGS_FEATURE, nativeLogEntryToSeleniumEntry} from '../../utils';
-import type {AndroidDriver} from '../../driver';
-import type {ADBDeviceInfo, ADBLaunchInfo} from '../types';
+import {GET_SERVER_LOGS_FEATURE, nativeLogEntryToSeleniumEntry} from '../../utils.js';
+import type {AndroidDriver} from '../../driver.js';
+import type {ADBDeviceInfo, ADBLaunchInfo} from '../types.js';
 import type {ADB} from 'appium-adb';
 
 /**
@@ -76,8 +76,7 @@ export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDev
         if (
           (bothVersionsCanBeCoerced &&
             (semverDO as semver.SemVer).version === (semverPV as semver.SemVer).version) ||
-          (bothVersionsAreStrings &&
-            String(deviceOS)?.toLowerCase() === String(platformVersion)?.toLowerCase())
+          (bothVersionsAreStrings && deviceOS.toLowerCase() === platformVersion.toLowerCase())
         ) {
           // Got an exact match - proceed immediately
           udid = device.udid;
@@ -92,7 +91,7 @@ export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDev
         const dvMajor = (semverDO as semver.SemVer).major;
         const dvMinor = (semverDO as semver.SemVer).minor;
         if (
-          ((!String(this.opts.platformVersion)?.includes('.') && pvMajor === dvMajor) ||
+          ((!String(this.opts.platformVersion).includes('.') && pvMajor === dvMajor) ||
             (pvMajor === dvMajor && pvMinor === dvMinor)) &&
           // Got a partial match - make sure we consider the most recent
           // device version available on the host system

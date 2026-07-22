@@ -1,9 +1,9 @@
 import {util} from '@appium/support';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import {exec} from 'teen_process';
 import type {ExecError} from 'teen_process';
-import {ADB_SHELL_FEATURE} from '../utils';
-import type {AndroidDriver} from '../driver';
+import {ADB_SHELL_FEATURE} from '../utils.js';
+import type {AndroidDriver} from '../driver.js';
 
 /**
  * Executes a shell command on the device via ADB.

@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import {ADB} from 'appium-adb';
-import {AndroidDriver} from '../../../lib/driver';
-import {setMockLocationApp} from '../../../lib/commands/geolocation';
+import {AndroidDriver} from '../../../lib/driver.js';
+import {setMockLocationApp} from '../../../lib/commands/geolocation.js';
 import {use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {describe, it, beforeEach, afterEach} from 'node:test';

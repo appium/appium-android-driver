@@ -3,9 +3,9 @@ import type {NetOptions, HttpUploadOptions} from '@appium/support';
 import dayjs from 'dayjs';
 import path from 'node:path';
 import type {HTTPMethod, StringRecord} from '@appium/types';
-import type {AndroidDriver} from '../driver';
+import type {AndroidDriver} from '../driver.js';
 import type {ADB} from 'appium-adb';
-import type {FormFields} from './types';
+import type {FormFields} from './types.js';
 
 // https://github.com/appium/io.appium.settings#internal-audio--video-recording
 const DEFAULT_EXT = '.mp4';

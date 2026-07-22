@@ -2,9 +2,9 @@ import {asyncmap} from 'asyncbox';
 import {fs, tempDir} from '@appium/support';
 import path from 'node:path';
 import type {Location} from '@appium/types';
+import {getThirdPartyPackages} from './app-management.js';
+import type {AndroidDriver} from '../driver.js';
 import {SETTINGS_HELPER_ID} from 'io.appium.settings';
-import {getThirdPartyPackages} from './app-management';
-import type {AndroidDriver} from '../driver';
 
 // The value close to zero, but not zero, is needed
 // to trick JSON generation and send a float value instead of an integer,

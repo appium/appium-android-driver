@@ -1,6 +1,6 @@
 import {LRUCache} from 'lru-cache';
 import type {ADB} from 'appium-adb';
-import type {WebViewDetails} from '../types';
+import type {WebViewDetails} from '../types.js';
 
 export const WEBVIEWS_DETAILS_CACHE = new LRUCache<string, WebViewDetails>({
   max: 100,

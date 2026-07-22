@@ -1,4 +1,4 @@
-import type {AndroidDriver} from '../driver';
+import type {AndroidDriver} from '../driver.js';
 
 const RESPONSE_PATTERN = /:\s+(\w+)/;
 

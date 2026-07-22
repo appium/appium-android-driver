@@ -1,7 +1,7 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import {util} from '@appium/support';
-import type {AndroidDriver} from '../driver';
-import type {IntentOpts} from './types';
+import type {AndroidDriver} from '../driver.js';
+import type {IntentOpts} from './types.js';
 
 const NO_VALUE_ARG_TYPE = 'sn';
 const SUPPORTED_EXTRA_TYPES = [

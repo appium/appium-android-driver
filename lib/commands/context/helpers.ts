@@ -8,9 +8,9 @@ import path from 'node:path';
 import http from 'node:http';
 import {Chromedriver} from 'appium-chromedriver';
 import type {ChromedriverOpts} from 'appium-chromedriver';
-import {toDetailsCacheKey, getWebviewDetails, WEBVIEWS_DETAILS_CACHE} from './cache';
+import {toDetailsCacheKey, getWebviewDetails, WEBVIEWS_DETAILS_CACHE} from './cache.js';
 import dns from 'node:dns/promises';
-import type {AndroidDriver, AndroidDriverOpts} from '../../driver';
+import type {AndroidDriver, AndroidDriverOpts} from '../../driver.js';
 import type {
   GetWebviewsOpts,
   WebviewsMapping,
@@ -19,7 +19,7 @@ import type {
   PortSpec,
   WebviewProc,
   DetailCollectionOptions,
-} from '../types';
+} from '../types.js';
 import type {StringRecord} from '@appium/types';
 
 // https://cs.chromium.org/chromium/src/chrome/browser/devtools/device/android_device_info_query.cc
@@ -180,7 +180,7 @@ export async function getWebViewsMapping(
 
     this.log.debug(`No webviews found in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
     await sleep(WEBVIEW_WAIT_INTERVAL_MS);
-  } while (timer.getDuration().asMilliSeconds < waitMs);
+  } while (timer.getDuration().asMilliSeconds < Number(waitMs));
 
   await collectWebviewsDetails.bind(this)(webviewsMapping, {
     ensureWebviewsHavePages,

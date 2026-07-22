@@ -1,8 +1,8 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import path from 'node:path';
 import {fs, tempDir} from '@appium/support';
 import crypto from 'node:crypto';
-import type {AndroidDriver} from '../driver';
+import type {AndroidDriver} from '../driver.js';
 
 const EMULATOR_RESOURCES_ROOT = ['emulator', 'resources'];
 const CONFIG_NAME = 'Toren1BD.posters';

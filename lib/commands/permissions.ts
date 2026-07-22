@@ -1,6 +1,6 @@
-import {errors} from 'appium/driver';
-import {ADB_SHELL_FEATURE} from '../utils';
-import type {AndroidDriver} from '../driver';
+import {errors} from 'appium/driver.js';
+import {ADB_SHELL_FEATURE} from '../utils.js';
+import type {AndroidDriver} from '../driver.js';
 import {util} from '@appium/support';
 
 const ALL_PERMISSIONS_MAGIC = 'all';

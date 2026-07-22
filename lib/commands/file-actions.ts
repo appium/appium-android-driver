@@ -1,7 +1,7 @@
 import {fs, util, zip, tempDir} from '@appium/support';
 import path from 'node:path';
-import {errors} from 'appium/driver';
-import type {AndroidDriver} from '../driver';
+import {errors} from 'appium/driver.js';
+import type {AndroidDriver} from '../driver.js';
 import type {ADB} from 'appium-adb';
 
 const CONTAINER_PATH_MARKER = '@';

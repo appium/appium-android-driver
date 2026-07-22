@@ -1,7 +1,7 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import type {StringRecord} from '@appium/types';
-import type {AndroidDriver} from '../driver';
-import type {StatusBarCommand, WindowProperties} from './types';
+import type {AndroidDriver} from '../driver.js';
+import type {StatusBarCommand, WindowProperties} from './types.js';
 import {util} from '@appium/support';
 
 const WINDOW_TITLE_PATTERN = /^\s+Window\s#\d+\sWindow\{[0-9a-f]+\s\w+\s([\w-]+)\}:$/;
@@ -142,14 +142,14 @@ export function parseWindowProperties(
 export function parseWindows(this: AndroidDriver, lines: string): SystemBarsResult {
   const windows: StringRecord<string[]> = {};
   let currentWindowName: string | null = null;
-  for (const line of lines.split('\n').map((line) => String(line)?.trimEnd())) {
-    const match = WINDOW_TITLE_PATTERN.exec(line as any);
+  for (const line of lines.split('\n').map((line) => line.trimEnd())) {
+    const match = WINDOW_TITLE_PATTERN.exec(line);
     if (match) {
       currentWindowName = match[1];
       windows[currentWindowName] = [];
       continue;
     }
-    if (String(line)?.trim()?.length === 0) {
+    if (line.trim().length === 0) {
       currentWindowName = null;
       continue;
     }

@@ -1,7 +1,7 @@
 import {fs, tempDir, util} from '@appium/support';
 import type {StringRecord} from '@appium/types';
-import type {AndroidDriver, AndroidDriverOpts} from '../driver';
-import type {Locale} from './types';
+import type {AndroidDriver, AndroidDriverOpts} from '../driver.js';
+import type {Locale} from './types.js';
 
 /**
  * Gets the localized strings from the application.

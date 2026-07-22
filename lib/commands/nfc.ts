@@ -1,6 +1,6 @@
-import {errors} from 'appium/driver';
-import type {AndroidDriver} from '../driver';
-import type {NfcAction} from './types';
+import {errors} from 'appium/driver.js';
+import type {AndroidDriver} from '../driver.js';
+import type {NfcAction} from './types.js';
 
 const SUPPORTED_ACTIONS = {
   ENABLE: 'enable',

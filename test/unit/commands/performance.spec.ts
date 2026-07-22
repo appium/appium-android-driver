@@ -1,18 +1,20 @@
 import sinon from 'sinon';
-import {AndroidDriver} from '../../../lib/driver';
+import esmock from 'esmock';
+import {AndroidDriver} from '../../../lib/driver.js';
 import {
   SUPPORTED_PERFORMANCE_DATA_TYPES,
   NETWORK_KEYS,
   CPU_KEYS,
   BATTERY_KEYS,
   MEMORY_KEYS,
-  getBatteryInfo,
-  getCPUInfo,
-  getMemoryInfo,
-  getNetworkTrafficInfo,
-} from '../../../lib/commands/performance';
+} from '../../../lib/commands/performance.js';
+import type {
+  getBatteryInfo as GetBatteryInfo,
+  getCPUInfo as GetCPUInfo,
+  getMemoryInfo as GetMemoryInfo,
+  getNetworkTrafficInfo as GetNetworkTrafficInfo,
+} from '../../../lib/commands/performance.js';
 import {ADB} from 'appium-adb';
-import * as asyncbox from 'asyncbox';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {describe, it, beforeEach, afterEach} from 'node:test';
@@ -27,20 +29,30 @@ const sandbox = sinon.createSandbox();
 let adb: sinon.SinonStubbedInstance<ADB>;
 let driver: AndroidDriver;
 let retryIntervalStub: sinon.SinonStub;
+let getBatteryInfo: typeof GetBatteryInfo;
+let getCPUInfo: typeof GetCPUInfo;
+let getMemoryInfo: typeof GetMemoryInfo;
+let getNetworkTrafficInfo: typeof GetNetworkTrafficInfo;
 
 describe('performance data', function () {
-  beforeEach(function () {
+  beforeEach(async function () {
     const adbInstance = new ADB();
     driver = new AndroidDriver();
     driver.adb = adbInstance;
     adb = sandbox.stub(adbInstance);
-    retryIntervalStub = sandbox.stub(asyncbox, 'retryInterval').callsFake(async function (
+    retryIntervalStub = sandbox.stub().callsFake(async function (
       times: number,
       sleepMs: number,
       fn: () => Promise<unknown>,
     ) {
       return await fn();
     });
+    ({getBatteryInfo, getCPUInfo, getMemoryInfo, getNetworkTrafficInfo} = await esmock(
+      '../../../lib/commands/performance.js',
+      {
+        asyncbox: {retryInterval: retryIntervalStub},
+      },
+    ));
   });
   afterEach(function () {
     sandbox.restore();

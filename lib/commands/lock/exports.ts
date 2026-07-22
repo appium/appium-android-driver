@@ -14,9 +14,9 @@ import {
   fingerprintUnlock,
   toCredentialType,
   verifyUnlock,
-} from './helpers';
-import type {AndroidDriver, AndroidDriverCaps} from '../../driver';
-import type {UnlockType} from '../types';
+} from './helpers.js';
+import type {AndroidDriver, AndroidDriverCaps} from '../../driver.js';
+import type {UnlockType} from '../types.js';
 
 /**
  * Locks the device and optionally unlocks it after a specified number of seconds.

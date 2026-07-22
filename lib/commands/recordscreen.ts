@@ -3,13 +3,13 @@ import type {NetOptions, HttpUploadOptions} from '@appium/support';
 import {waitForCondition} from 'asyncbox';
 import path from 'node:path';
 import {exec} from 'teen_process';
-import type {AndroidDriver} from '../driver';
+import type {AndroidDriver} from '../driver.js';
 import type {ADB} from 'appium-adb';
 import type {
   StartScreenRecordingOpts,
   StopScreenRecordingOpts,
   ScreenRecordingProperties,
-} from './types';
+} from './types.js';
 
 const RETRY_PAUSE = 300;
 const RETRY_TIMEOUT = 5000;
@@ -65,7 +65,7 @@ export async function startRecordingScreen(
   if (this._screenRecordingProperties) {
     // XXX: this doesn't need to be done in serial, does it?
     const props = this._screenRecordingProperties;
-    for (const record of props.records || []) {
+    for (const record of props?.records || []) {
       await this.adb.rimraf(record);
     }
     this._screenRecordingProperties = undefined;
@@ -136,7 +136,7 @@ export async function stopRecordingScreen(
     return '';
   }
 
-  if (props.recordingProcess?.isRunning) {
+  if (props?.recordingProcess?.isRunning) {
     try {
       await props.recordingProcess.stop('SIGINT', PROCESS_SHUTDOWN_TIMEOUT);
     } catch {
@@ -157,7 +157,7 @@ export async function stopRecordingScreen(
   const tmpRoot = await tempDir.openDir();
   try {
     const localRecords: string[] = [];
-    for (const pathOnDevice of props.records) {
+    for (const pathOnDevice of props?.records || []) {
       const relativePath = path.resolve(tmpRoot, path.posix.basename(pathOnDevice));
       localRecords.push(relativePath);
       await this.adb.pull(pathOnDevice, relativePath, {timeout: ADB_PULL_TIMEOUT});

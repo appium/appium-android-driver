@@ -1,8 +1,8 @@
 import {util} from '@appium/support';
 import {waitForCondition, longSleep} from 'asyncbox';
 import {EOL} from 'node:os';
-import type {AndroidDriver, AndroidDriverOpts} from '../driver';
-import type {AppInfoMap, AppState, IsAppInstalledOptions, TerminateAppOpts} from './types';
+import type {AndroidDriver, AndroidDriverOpts} from '../driver.js';
+import type {AppInfoMap, AppState, IsAppInstalledOptions, TerminateAppOpts} from './types.js';
 import type {
   UninstallOptions,
   InstallOptions,
@@ -210,10 +210,7 @@ export async function terminateApp(
         }
         currentPids = await this.adb.listAppProcessIds(appId);
         const currentPidsSet = new Set(currentPids);
-        if (
-          util.isEmpty(currentPids) ||
-          util.isEmpty(pids.filter((pid) => currentPidsSet.has(pid)))
-        ) {
+        if (util.isEmpty(currentPids) || !pids.some((pid) => currentPidsSet.has(pid))) {
           this.log.info(
             `The application '${appId}' was reported running, ` +
               `although all process ids belonging to it have been changed: ` +
@@ -231,12 +228,9 @@ export async function terminateApp(
     );
   } catch {
     const currentPidsSet = new Set(currentPids);
-    if (
-      !util.isEmpty(currentPids) &&
-      !util.isEmpty(pids.filter((pid) => !currentPidsSet.has(pid)))
-    ) {
+    if (!util.isEmpty(currentPids) && pids.some((pid) => !currentPidsSet.has(pid))) {
       this.log.warn(
-        `Some of processes belonging to the '${appId}' applcation are still running ` +
+        `Some of processes belonging to the '${appId}' application are still running ` +
           `after ${timeout}ms (${JSON.stringify(pids)} -> ${JSON.stringify(currentPids)})`,
       );
     }

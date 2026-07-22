@@ -1,5 +1,5 @@
-import {errors} from 'appium/driver';
-import type {AndroidDriver} from '../../driver';
+import {errors} from 'appium/driver.js';
+import type {AndroidDriver} from '../../driver.js';
 
 const EMU_CONSOLE_FEATURE = 'emulator_console';
 

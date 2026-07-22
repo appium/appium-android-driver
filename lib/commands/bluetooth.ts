@@ -1,5 +1,5 @@
-import {errors} from 'appium/driver';
-import type {AndroidDriver} from '../driver';
+import {errors} from 'appium/driver.js';
+import type {AndroidDriver} from '../driver.js';
 
 const SUPPORTED_ACTIONS = {
   ENABLE: 'enable',

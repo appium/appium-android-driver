@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import {AndroidDriver} from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver.js';
 import * as support from '@appium/support';
 import {ADB} from 'appium-adb';
 import {expect, use} from 'chai';

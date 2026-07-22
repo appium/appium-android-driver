@@ -1,8 +1,8 @@
 import sinon from 'sinon';
-import {DEVTOOLS_SOCKET_PATTERN} from '../../../lib/commands/context/helpers';
-import * as webviewHelpers from '../../../lib/commands/context/helpers';
+import {DEVTOOLS_SOCKET_PATTERN} from '../../../lib/commands/context/helpers.js';
+import * as webviewHelpers from '../../../lib/commands/context/helpers.js';
 import {ADB} from 'appium-adb';
-import {AndroidDriver} from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';

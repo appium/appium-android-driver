@@ -1,6 +1,6 @@
-import {errors} from 'appium/driver';
-import type {AndroidDriver} from '../driver';
-import type {TrimMemoryLevel} from './types';
+import {errors} from 'appium/driver.js';
+import type {AndroidDriver} from '../driver.js';
+import type {TrimMemoryLevel} from './types.js';
 
 /**
  * Simulates the onTrimMemory() event for the given package.

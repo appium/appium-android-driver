@@ -8,14 +8,14 @@ import type {
   W3CDriverCaps,
 } from '@appium/types';
 import type {ADB, LogcatListener} from 'appium-adb';
-import type {default as AppiumChromedriver} from 'appium-chromedriver';
-import {BaseDriver} from 'appium/driver';
-import {ANDROID_DRIVER_CONSTRAINTS} from './constraints';
-import type {AndroidDriverConstraints} from './constraints';
-import {newMethodMap} from './method-map';
+import type {Chromedriver as AppiumChromedriver} from 'appium-chromedriver';
+import {BaseDriver} from 'appium/driver.js';
+import {ANDROID_DRIVER_CONSTRAINTS} from './constraints.js';
+import type {AndroidDriverConstraints} from './constraints.js';
+import {newMethodMap} from './method-map.js';
 import {SettingsApp} from 'io.appium.settings';
-import {parseArray, removeAllSessionWebSocketHandlers} from './utils';
-import {CHROME_BROWSER_PACKAGE_ACTIVITY} from './commands/context/helpers';
+import {parseArray, removeAllSessionWebSocketHandlers} from './utils.js';
+import {CHROME_BROWSER_PACKAGE_ACTIVITY} from './commands/context/helpers.js';
 import {
   getContexts,
   setContext,
@@ -37,13 +37,13 @@ import {
   getWindowHandles,
   setWindow,
   notifyBiDiContextChange,
-} from './commands/context/exports';
+} from './commands/context/exports.js';
 import {
   getDeviceInfoFromCaps,
   createADB,
   getLaunchInfo,
   initDevice,
-} from './commands/device/common';
+} from './commands/device/common.js';
 import {
   fingerprint,
   mobileFingerprint,
@@ -62,8 +62,8 @@ import {
   networkSpeed,
   mobileNetworkSpeed,
   sensorSet,
-} from './commands/device/emulator-actions';
-import {mobileExecEmuConsoleCommand} from './commands/device/emulator-console';
+} from './commands/device/emulator-actions.js';
+import {mobileExecEmuConsoleCommand} from './commands/device/emulator-console.js';
 import {
   getThirdPartyPackages,
   uninstallOtherPackages,
@@ -86,10 +86,10 @@ import {
   activateApp,
   queryAppState,
   isAppInstalled,
-} from './commands/app-management';
-import {mobileGetUiMode, mobileSetUiMode} from './commands/appearance';
-import {mobileDeviceidle} from './commands/deviceidle';
-import {mobileBluetooth} from './commands/bluetooth';
+} from './commands/app-management.js';
+import {mobileGetUiMode, mobileSetUiMode} from './commands/appearance.js';
+import {mobileDeviceidle} from './commands/deviceidle.js';
+import {mobileBluetooth} from './commands/bluetooth.js';
 import {
   getAttribute,
   getName,
@@ -106,10 +106,10 @@ import {
   getText,
   getLocation,
   getSize,
-} from './commands/element';
-import {execute} from './commands/execute';
-import {pullFile, pullFolder, pushFile, mobileDeleteFile} from './commands/file-actions';
-import {findElOrEls, doFindElementOrEls} from './commands/find';
+} from './commands/element.js';
+import {execute} from './commands/execute.js';
+import {pullFile, pullFolder, pushFile, mobileDeleteFile} from './commands/file-actions.js';
+import {findElOrEls, doFindElementOrEls} from './commands/find.js';
 import {
   setGeoLocation,
   getGeoLocation,
@@ -119,8 +119,8 @@ import {
   mobileGetGeolocation,
   mobileSetGeolocation,
   mobileResetGeolocation,
-} from './commands/geolocation';
-import {performActions} from './commands/gestures';
+} from './commands/geolocation.js';
+import {performActions} from './commands/gestures.js';
 import {
   isIMEActivated,
   availableIMEEngines,
@@ -128,14 +128,14 @@ import {
   activateIMEEngine,
   deactivateIMEEngine,
   setStylusHandwriting,
-} from './commands/ime';
+} from './commands/ime.js';
 import {
   startActivity,
   mobileStartActivity,
   mobileBroadcast,
   mobileStartService,
   mobileStopService,
-} from './commands/intent';
+} from './commands/intent.js';
 import {
   hideKeyboard,
   isKeyboardShown,
@@ -144,8 +144,8 @@ import {
   pressKeyCode,
   longPressKeyCode,
   mobilePerformEditorAction,
-} from './commands/keyboard';
-import {lock, unlock, mobileUnlock, isLocked} from './commands/lock/exports';
+} from './commands/keyboard.js';
+import {lock, unlock, mobileUnlock, isLocked} from './commands/lock/exports.js';
 import {
   supportedLogTypes,
   mobileStartLogsBroadcast,
@@ -153,15 +153,15 @@ import {
   getLogTypes,
   getLog,
   assignBiDiLogListener,
-} from './commands/log';
+} from './commands/log.js';
 import {
   mobileIsMediaProjectionRecordingRunning,
   mobileStartMediaProjectionRecording,
   mobileStopMediaProjectionRecording,
-} from './commands/media-projection';
-import {mobileSendTrimMemory} from './commands/memory';
-import {mobileNfc} from './commands/nfc';
-import {mobileInjectEmulatorCameraImage} from './commands/image-injection';
+} from './commands/media-projection.js';
+import {mobileSendTrimMemory} from './commands/memory.js';
+import {mobileNfc} from './commands/nfc.js';
+import {mobileInjectEmulatorCameraImage} from './commands/image-injection.js';
 import {
   getWindowRect,
   getWindowSize,
@@ -170,7 +170,7 @@ import {
   mobileListSms,
   openNotifications,
   setUrl,
-} from './commands/misc';
+} from './commands/misc.js';
 import {
   getNetworkConnection,
   isWifiOn,
@@ -182,23 +182,23 @@ import {
   toggleData,
   toggleFlightMode,
   toggleWiFi,
-} from './commands/network';
+} from './commands/network.js';
 import {
   getPerformanceData,
   getPerformanceDataTypes,
   mobileGetPerformanceData,
-} from './commands/performance';
-import {reset, closeApp, launchApp} from './commands/legacy';
-import {mobileChangePermissions, mobileGetPermissions} from './commands/permissions';
-import {startRecordingScreen, stopRecordingScreen} from './commands/recordscreen';
-import {getStrings, ensureDeviceLocale} from './commands/resources';
-import {mobileShell} from './commands/shell';
-import {mobileStartScreenStreaming, mobileStopScreenStreaming} from './commands/streamscreen';
-import {getSystemBars, mobilePerformStatusBarCommand} from './commands/system-bars';
-import {getDeviceTime, mobileGetDeviceTime} from './commands/time';
-import {executeMethodMap} from './execute-method-map';
+} from './commands/performance.js';
+import {reset, closeApp, launchApp} from './commands/legacy.js';
+import {mobileChangePermissions, mobileGetPermissions} from './commands/permissions.js';
+import {startRecordingScreen, stopRecordingScreen} from './commands/recordscreen.js';
+import {getStrings, ensureDeviceLocale} from './commands/resources.js';
+import {mobileShell} from './commands/shell.js';
+import {mobileStartScreenStreaming, mobileStopScreenStreaming} from './commands/streamscreen.js';
+import {getSystemBars, mobilePerformStatusBarCommand} from './commands/system-bars.js';
+import {getDeviceTime, mobileGetDeviceTime} from './commands/time.js';
+import {executeMethodMap} from './execute-method-map.js';
 import {LRUCache} from 'lru-cache';
-import type {ScreenRecordingProperties} from './commands/types';
+import type {ScreenRecordingProperties, ScreenStreamingProps} from './commands/types.js';
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
 export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;
@@ -228,7 +228,7 @@ class AndroidDriver
   defaultIME?: string;
   _wasWindowAnimationDisabled?: boolean;
   _cachedActivityArgs: StringRecord;
-  _screenStreamingProps?: StringRecord;
+  _screenStreamingProps?: ScreenStreamingProps;
   _screenRecordingProperties?: ScreenRecordingProperties;
   _logcatWebsocketListener?: LogcatListener;
   _bidiServerLogListener?: (...args: any[]) => void;

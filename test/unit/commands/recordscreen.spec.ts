@@ -1,4 +1,4 @@
-import {AndroidDriver} from '../../../lib/driver';
+import {AndroidDriver} from '../../../lib/driver.js';
 import {ADB} from 'appium-adb';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
