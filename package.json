@@ -80,7 +80,7 @@
     "prettier": "^3.0.1",
     "semantic-release": "^25.0.2",
     "sinon": "^22.0.0",
-    "typescript": "^6.0.2"
+    "typescript": "^7.0.2"
   },
   "peerDependencies": {
     "appium": "^3.0.0-rc.2"
