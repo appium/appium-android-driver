@@ -29,7 +29,7 @@ const ANDROID_MEDIA_RESCAN_INTENT = 'android.intent.action.MEDIA_SCANNER_SCAN_FI
 export async function pullFile(this: AndroidDriver, remotePath: string): Promise<string> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
-      `It is expected that remote path points to a file and not to a folder. ` + `'${remotePath}' is given instead`,
+      `It is expected that remote path points to a file and not to a folder. '${remotePath}' is given instead`,
     );
   }
   let tmpDestination: string | null = null;
@@ -88,7 +88,7 @@ export async function pullFile(this: AndroidDriver, remotePath: string): Promise
 export async function pushFile(this: AndroidDriver, remotePath: string, base64Data: string | number[]): Promise<void> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
-      `It is expected that remote path points to a file and not to a folder. ` + `'${remotePath}' is given instead`,
+      `It is expected that remote path points to a file and not to a folder. '${remotePath}' is given instead`,
     );
   }
   const localFile = await tempDir.path({prefix: 'appium', suffix: '.tmp'});
@@ -177,7 +177,7 @@ export async function pullFolder(this: AndroidDriver, remotePath: string): Promi
 export async function mobileDeleteFile(this: AndroidDriver, remotePath: string): Promise<boolean> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
-      `It is expected that remote path points to a folder and not to a file. ` + `'${remotePath}' is given instead`,
+      `It is expected that remote path points to a folder and not to a file. '${remotePath}' is given instead`,
     );
   }
   return await deleteFileOrFolder.call(this, this.adb, remotePath);

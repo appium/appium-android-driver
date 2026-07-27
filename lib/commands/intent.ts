@@ -406,7 +406,7 @@ function parseIntentSpec(opts: IntentOpts = {}): string[] {
         resultArgs.push(`--e${type}`, key);
       } else if (value === undefined) {
         throw new errors.InvalidArgumentError(
-          `Intent argument type '${type}' in '${JSON.stringify(item)}' requires a ` + `valid value to be provided`,
+          `Intent argument type '${type}' in '${JSON.stringify(item)}' requires a valid value to be provided`,
         );
       } else {
         resultArgs.push(`--e${type}`, key, value);

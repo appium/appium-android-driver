@@ -132,7 +132,7 @@ async function changePermissionsViaPm(
 ): Promise<void> {
   if (!Object.values(PM_ACTION).includes(action)) {
     throw new errors.InvalidArgumentError(
-      `Unknown action '${action}'. ` + `Only ${JSON.stringify(Object.values(PM_ACTION))} actions are supported`,
+      `Unknown action '${action}'. Only ${JSON.stringify(Object.values(PM_ACTION))} actions are supported`,
     );
   }
 
@@ -166,7 +166,7 @@ async function changePermissionsViaAppops(
 ): Promise<void> {
   if (!Object.values(APPOPS_ACTION).includes(action)) {
     throw new errors.InvalidArgumentError(
-      `Unknown action '${action}'. ` + `Only ${JSON.stringify(Object.values(APPOPS_ACTION))} actions are supported`,
+      `Unknown action '${action}'. Only ${JSON.stringify(Object.values(APPOPS_ACTION))} actions are supported`,
     );
   }
   if (typeof permissions === 'string' && permissions.toLowerCase() === ALL_PERMISSIONS_MAGIC) {

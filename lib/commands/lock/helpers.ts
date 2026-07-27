@@ -70,7 +70,7 @@ export function validateUnlockCapabilities<T extends AndroidDriverCaps>(caps: T)
     }
   } else {
     throw new Error(
-      `Invalid unlock type '${unlockType}'. ` + `Only the following unlock types are supported: ${UNLOCK_TYPES}`,
+      `Invalid unlock type '${unlockType}'. Only the following unlock types are supported: ${UNLOCK_TYPES}`,
     );
   }
   return caps;

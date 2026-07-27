@@ -119,7 +119,7 @@ export function parseWebviewNames(
   const result: string[] = [];
   for (const {webview, pages, proc, webviewName} of webviewsMapping) {
     if (ensureWebviewsHavePages && !pages?.length) {
-      this.log.info(`Skipping the webview '${webview}' at '${proc}' ` + `since it has reported having zero pages`);
+      this.log.info(`Skipping the webview '${webview}' at '${proc}' since it has reported having zero pages`);
       continue;
     }
     if (webviewName) {
@@ -545,9 +545,9 @@ async function allocateDevtoolsChannel(
     endPort = webviewDevtoolsPort + (endPort - startPort);
     startPort = webviewDevtoolsPort;
   }
-  this.log.debug(`Forwarding remote port ${remotePort} to a local ` + `port in range ${startPort}..${endPort}`);
+  this.log.debug(`Forwarding remote port ${remotePort} to a local port in range ${startPort}..${endPort}`);
   if (!webviewDevtoolsPort) {
-    this.log.debug(`You could use the 'webviewDevtoolsPort' capability to customize ` + `the starting port number`);
+    this.log.debug(`You could use the 'webviewDevtoolsPort' capability to customize the starting port number`);
   }
   const port = await DEVTOOLS_PORT_ALLOCATION_GUARD(async () => {
     let localPort: number;
@@ -782,7 +782,7 @@ async function getChromedriverPort(this: AndroidDriver, portSpec?: PortSpec): Pr
 
   if (foundPort === null) {
     throw new Error(
-      `Could not find a free port for chromedriver using ` + `chromedriverPorts spec ${JSON.stringify(portSpec)}`,
+      `Could not find a free port for chromedriver using chromedriverPorts spec ${JSON.stringify(portSpec)}`,
     );
   }
 

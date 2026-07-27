@@ -54,9 +54,7 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
     return;
   }
 
-  this.log.info(
-    `Starting logcat broadcasting on web socket server ` + `${JSON.stringify(server.address())} to ${pathname}`,
-  );
+  this.log.info(`Starting logcat broadcasting on web socket server ${JSON.stringify(server.address())} to ${pathname}`);
   // https://github.com/websockets/ws/blob/master/doc/ws.md
   const wss = new WebSocketServer({
     noServer: true,
@@ -122,7 +120,7 @@ export async function mobileStopLogsBroadcast(this: AndroidDriver): Promise<void
   }
 
   this.log.debug(
-    `Stopping logcat broadcasting on web socket server ` + `${JSON.stringify(server.address())} to ${pathname}`,
+    `Stopping logcat broadcasting on web socket server ${JSON.stringify(server.address())} to ${pathname}`,
   );
   await server.removeWebSocketHandler(pathname);
 }

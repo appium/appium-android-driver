@@ -93,16 +93,16 @@ export async function mobileStartScreenStreaming(
   if (this._screenStreamingProps === undefined) {
     await verifyStreamingRequirements(this.adb);
   } else {
-    this.log.info(`The screen streaming session is already running. ` + `Stop it first in order to start a new one.`);
+    this.log.info(`The screen streaming session is already running. Stop it first in order to start a new one.`);
     return;
   }
   if ((await checkPortStatus(port, host)) === 'open') {
-    this.log.info(`The port #${port} at ${host} is busy. ` + `Assuming the screen streaming is already running`);
+    this.log.info(`The port #${port} at ${host} is busy. Assuming the screen streaming is already running`);
     return;
   }
   if ((await checkPortStatus(tcpPort, TCP_HOST)) === 'open') {
     throw this.log.errorWithException(
-      `The port #${tcpPort} at ${TCP_HOST} is busy. ` + `Make sure there are no leftovers from previous sessions.`,
+      `The port #${tcpPort} at ${TCP_HOST} is busy. Make sure there are no leftovers from previous sessions.`,
     );
   }
   this._screenStreamingProps = undefined;
@@ -334,7 +334,7 @@ async function getDeviceInfo(adb: ADB, log?: AppiumLogger): Promise<DeviceInfo> 
     if (!match) {
       log?.debug(output);
       throw new Error(
-        `Cannot parse the device ${key} from the adb command output. ` + `Check the server log for more details.`,
+        `Cannot parse the device ${key} from the adb command output. Check the server log for more details.`,
       );
     }
     result[key] = parseInt(match[1], 10);

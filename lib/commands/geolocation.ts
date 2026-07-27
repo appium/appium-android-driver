@@ -134,7 +134,7 @@ export async function toggleLocationServices(this: AndroidDriver): Promise<void>
   this.log.info('Toggling location services');
   const isGpsEnabled = await this.isLocationServicesEnabled();
   this.log.debug(
-    `Current GPS state: ${isGpsEnabled}. ` + `The service is going to be ${isGpsEnabled ? 'disabled' : 'enabled'}`,
+    `Current GPS state: ${isGpsEnabled}. The service is going to be ${isGpsEnabled ? 'disabled' : 'enabled'}`,
   );
   await this.adb.toggleGPSLocationProvider(!isGpsEnabled);
 }

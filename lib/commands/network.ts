@@ -189,7 +189,7 @@ export async function setNetworkConnection(this: AndroidDriver, type: number): P
   if (shouldEnableWifi !== isWiFiEnabled) {
     await this.setWifiState(shouldEnableWifi);
   } else {
-    this.log.info(`Not changing Wi-Fi state, since it is already ` + `${shouldEnableWifi ? 'enabled' : 'disabled'}`);
+    this.log.info(`Not changing Wi-Fi state, since it is already ${shouldEnableWifi ? 'enabled' : 'disabled'}`);
   }
 
   if (shouldEnableAirplaneMode) {

@@ -196,7 +196,7 @@ export async function pushSettingsApp(this: AndroidDriver, throwIfError: boolean
   // Reinstall would stop the settings helper process anyway, so
   // there is no need to continue if the application is still running
   if (await this.settingsApp.isRunningInForeground()) {
-    this.log.debug(`${SETTINGS_HELPER_ID} is already running. ` + `There is no need to reset its permissions.`);
+    this.log.debug(`${SETTINGS_HELPER_ID} is already running. There is no need to reset its permissions.`);
     return;
   }
 
