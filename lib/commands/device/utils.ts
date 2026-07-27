@@ -51,7 +51,7 @@ export function prepareAvdArgs(this: AndroidDriver): string[] {
     if (Array.isArray(avdArgs)) {
       result.push(...avdArgs);
     } else {
-      result.push(...util.shellParse(`${avdArgs}`));
+      result.push(...util.shellParse(`${avdArgs}`).filter((entry): entry is string => typeof entry === 'string'));
     }
   }
   if (networkSpeed) {
