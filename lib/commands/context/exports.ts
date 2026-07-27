@@ -338,7 +338,7 @@ export async function onChromedriverStop(this: AndroidDriver, context: string): 
   } else {
     // if a Chromedriver in the non-active context barfs, we don't really
     // care, we'll just make a new one next time we need the context.
-    this.log.warn("Chromedriver quit unexpectedly, but it wasn't the active " + 'context, ignoring');
+    this.log.warn("Chromedriver quit unexpectedly, but it wasn't the active context, ignoring");
     delete this.sessionChromedrivers[context];
   }
 }

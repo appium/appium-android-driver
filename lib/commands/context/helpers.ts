@@ -514,7 +514,7 @@ function createChromedriverCaps(
     }
   }
   if (!util.isEmpty(protectedCapNames)) {
-    this.log.info('The following Chromedriver capabilities cannot be overridden ' + 'by the provided chromeOptions:');
+    this.log.info('The following Chromedriver capabilities cannot be overridden by the provided chromeOptions:');
     for (const optName of protectedCapNames) {
       this.log.info(`  ${optName} (${JSON.stringify(opts.chromeOptions[optName])})`);
     }
