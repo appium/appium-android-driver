@@ -1,10 +1,12 @@
-import type {HTTPMethod, StringRecord} from '@appium/types';
-import type {AndroidDriverCaps} from '../driver.js';
-import type {SubProcess} from 'teen_process';
-import type {timing} from '@appium/support';
 import type {ChildProcess} from 'node:child_process';
-import type {Socket} from 'node:net';
 import type {Server} from 'node:http';
+import type {Socket} from 'node:net';
+
+import type {timing} from '@appium/support';
+import type {HTTPMethod, StringRecord} from '@appium/types';
+import type {SubProcess} from 'teen_process';
+
+import type {AndroidDriverCaps} from '../driver.js';
 
 /**
  * @privateRemarks probably better defined in `appium-adb`
@@ -21,8 +23,7 @@ export type GsmVoiceState = 'on' | 'off';
 
 export type PowerACState = 'on' | 'off';
 
-export type NetworkSpeed =
-  'gsm' | 'scsd' | 'gprs' | 'edge' | 'umts' | 'hsdpa' | 'lte' | 'evdo' | 'full';
+export type NetworkSpeed = 'gsm' | 'scsd' | 'gprs' | 'edge' | 'umts' | 'hsdpa' | 'lte' | 'evdo' | 'full';
 
 /**
  * Returned by `queryAppState`
@@ -138,9 +139,7 @@ export interface WebviewsMapping {
  * [8000, [9000, 9100]]
  * ```
  */
-export type PortSpec = Array<
-  number | string | [startPort: number | string, endPort: number | string]
->;
+export type PortSpec = Array<number | string | [startPort: number | string, endPort: number | string]>;
 
 export interface DoSetElementValueOpts {
   elementId: string;

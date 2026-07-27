@@ -14,11 +14,7 @@ const RESPONSE_PATTERN = /:\s+(\w+)/;
  * - car: yes|no
  * @returns Promise that resolves when the UI mode is set.
  */
-export async function mobileSetUiMode(
-  this: AndroidDriver,
-  mode: string,
-  value: string,
-): Promise<void> {
+export async function mobileSetUiMode(this: AndroidDriver, mode: string, value: string): Promise<void> {
   await this.adb.shell(['cmd', 'uimode', mode, value]);
 }
 

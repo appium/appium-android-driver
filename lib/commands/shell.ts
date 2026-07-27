@@ -2,8 +2,9 @@ import {util} from '@appium/support';
 import {errors} from 'appium/driver.js';
 import {exec} from 'teen_process';
 import type {ExecError} from 'teen_process';
-import {ADB_SHELL_FEATURE} from '../utils.js';
+
 import type {AndroidDriver} from '../driver.js';
+import {ADB_SHELL_FEATURE} from '../utils.js';
 
 /**
  * Executes a shell command on the device via ADB.
@@ -39,12 +40,7 @@ export async function mobileShell<T extends boolean>(
     throw new errors.InvalidArgumentError(`The 'command' argument is mandatory`);
   }
 
-  const adbArgs = [
-    ...this.adb.executable.defaultArgs,
-    'shell',
-    command,
-    ...(Array.isArray(args) ? args : [args]),
-  ];
+  const adbArgs = [...this.adb.executable.defaultArgs, 'shell', command, ...(Array.isArray(args) ? args : [args])];
   this.log.debug(`Running '${this.adb.executable.path} ${util.quote(adbArgs)}'`);
   try {
     const {stdout, stderr} = await exec(this.adb.executable.path, adbArgs, {timeout});

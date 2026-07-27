@@ -1,11 +1,13 @@
-import sinon from 'sinon';
-import esmock from 'esmock';
-import {AndroidDriver} from '../../../lib/driver.js';
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
 import {fs} from '@appium/support';
 import {ADB} from 'appium-adb';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import esmock from 'esmock';
+import sinon from 'sinon';
+
+import {AndroidDriver} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 
@@ -285,17 +287,7 @@ describe('App Management', function () {
       params.waitActivity = 'act';
       params.stopApp = true;
       const startAppStub7 = sandbox.stub(driver.adb, 'startApp');
-      await driver.startActivity(
-        'pkg',
-        'act',
-        undefined,
-        undefined,
-        'act',
-        'cat',
-        'flgs',
-        'opt',
-        false,
-      );
+      await driver.startActivity('pkg', 'act', undefined, undefined, 'act', 'cat', 'flgs', 'opt', false);
       expect(startAppStub7.calledWithExactly(params)).to.be.true;
     });
   });
@@ -413,10 +405,7 @@ describe('App Management', function () {
       await driver.installOtherApks([], opts as any);
     });
     it('should call adb.installOrUpgrade once if otherApps has one item', async function () {
-      sandbox
-        .stub(driver.adb, 'installOrUpgrade')
-        .withArgs(fakeApk, undefined, expectedADBInstallOpts)
-        .onFirstCall();
+      sandbox.stub(driver.adb, 'installOrUpgrade').withArgs(fakeApk, undefined, expectedADBInstallOpts).onFirstCall();
       await driver.installOtherApks([fakeApk], opts as any);
     });
     it('should call adb.installOrUpgrade twice if otherApps has two item', async function () {

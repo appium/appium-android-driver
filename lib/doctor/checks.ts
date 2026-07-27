@@ -1,19 +1,18 @@
-import {resolveExecutablePath} from './utils.js';
-import {system, fs, doctor, console} from '@appium/support';
 import path from 'node:path';
-import {getAndroidBinaryPath, getSdkRootFromEnv} from 'appium-adb';
+
+import {system, fs, doctor, console} from '@appium/support';
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
+import {getAndroidBinaryPath, getSdkRootFromEnv} from 'appium-adb';
+
+import {resolveExecutablePath} from './utils.js';
 
 const JAVA_HOME_VAR_NAME = system.isWindows() ? '%JAVA_HOME%' : '$JAVA_HOME';
-const ENVIRONMENT_VARS_TUTORIAL_URL =
-  'https://github.com/appium/java-client/blob/master/docs/environment.md';
-const JAVA_HOME_TUTORIAL =
-  'https://docs.oracle.com/cd/E21454_01/html/821-2531/inst_jdk_javahome_t.html';
+const ENVIRONMENT_VARS_TUTORIAL_URL = 'https://github.com/appium/java-client/blob/master/docs/environment.md';
+const JAVA_HOME_TUTORIAL = 'https://docs.oracle.com/cd/E21454_01/html/821-2531/inst_jdk_javahome_t.html';
 const ANDROID_SDK_LINK1 = 'https://developer.android.com/studio#cmdline-tools';
 const ANDROID_SDK_LINK2 = 'https://developer.android.com/studio/intro/update#sdk-manager';
 const BUNDLETOOL_RELEASES_LINK = 'https://github.com/google/bundletool/releases/';
-const GSTREAMER_INSTALL_LINK =
-  'https://gstreamer.freedesktop.org/documentation/installing/index.html?gi-language=c';
+const GSTREAMER_INSTALL_LINK = 'https://gstreamer.freedesktop.org/documentation/installing/index.html?gi-language=c';
 const FFMPEG_INSTALL_LINK = 'https://www.ffmpeg.org/download.html';
 
 export interface EnvVarCheckOptions {
@@ -47,14 +46,10 @@ class EnvVarAndPathCheck implements IDoctorCheck {
 
     const stat = await fs.stat(varValue);
     if (this.opts.expectDir && !stat.isDirectory()) {
-      return doctor.nok(
-        `${this.varName} is expected to be a valid folder, got a file path instead`,
-      );
+      return doctor.nok(`${this.varName} is expected to be a valid folder, got a file path instead`);
     }
     if (this.opts.expectFile && stat.isDirectory()) {
-      return doctor.nok(
-        `${this.varName} is expected to be a valid file, got a folder path instead`,
-      );
+      return doctor.nok(`${this.varName} is expected to be a valid file, got a folder path instead`);
     }
 
     return doctor.ok(`${this.varName} is set to: ${varValue}`);
@@ -203,9 +198,7 @@ export class OptionalGstreamerCheck implements IDoctorCheck {
       ? doctor.okOptional(
           `${this.GSTREAMER_BINARY} and ${this.GST_INSPECT_BINARY} are installed at: ${gstreamerPath} and ${gstInspectPath}`,
         )
-      : doctor.nokOptional(
-          `${this.GSTREAMER_BINARY} and/or ${this.GST_INSPECT_BINARY} cannot be found`,
-        );
+      : doctor.nokOptional(`${this.GSTREAMER_BINARY} and/or ${this.GST_INSPECT_BINARY} cannot be found`);
   }
 
   async fix(): Promise<string> {

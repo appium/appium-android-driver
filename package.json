@@ -3,23 +3,22 @@
   "version": "14.0.2",
   "description": "Android UiAutomator and Chrome support for Appium",
   "keywords": [
-    "appium",
     "android",
-    "testing",
+    "appium",
     "automation",
     "mobile",
-    "mobile testing"
+    "mobile testing",
+    "testing"
   ],
   "bugs": {
     "url": "https://github.com/appium/appium-android-driver/issues"
   },
+  "license": "Apache-2.0",
+  "author": "Appium Contributors",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium-android-driver.git"
   },
-  "license": "Apache-2.0",
-  "author": "Appium Contributors",
-  "main": "./build/lib/index.js",
   "bin": {},
   "directories": {
     "lib": "lib"
@@ -29,22 +28,27 @@
     "build/lib",
     "CHANGELOG.md"
   ],
+  "type": "module",
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "tsc -b",
     "clean": "npm run build -- --clean",
     "dev": "npm run build -- --watch",
-    "lint": "eslint .",
-    "lint:fix": "npm run lint -- --fix",
+    "lint": "oxlint -c oxlint.config.mjs .",
+    "lint:fix": "oxlint -c oxlint.config.mjs --fix .",
     "prepare": "npm run rebuild",
     "rebuild": "npm run clean; npm run build",
-    "format": "prettier -w ./lib ./test",
-    "format:check": "prettier --check ./lib ./test",
+    "format": "oxfmt -c oxfmt.config.mjs .",
+    "format:check": "oxfmt -c oxfmt.config.mjs --check .",
     "test": "node --enable-source-maps --test --test-force-exit --test-timeout=60000 \"./build/test/unit/**/*.spec.js\""
-  },
-  "prettier": {
-    "bracketSpacing": false,
-    "printWidth": 100,
-    "singleQuote": true
   },
   "dependencies": {
     "@appium/support": "^7.2.5",
@@ -61,11 +65,10 @@
     "ws": "^8.0.0"
   },
   "devDependencies": {
-    "@appium/eslint-config-appium-ts": "^3.0.0",
-    "@appium/tsconfig": "^1.0.0-rc.1",
+    "@appium/oxc-config": "^1.1.0",
+    "@appium/semantic-release-config": "^1.1.0",
+    "@appium/tsconfig": "^1.2.0",
     "@appium/types": "^1.0.0-rc.1",
-    "@semantic-release/changelog": "^6.0.1",
-    "@semantic-release/git": "^10.0.1",
     "@types/chai": "^5.2.3",
     "@types/chai-as-promised": "^8.0.2",
     "@types/node": "^26.0.0",
@@ -75,12 +78,8 @@
     "@types/ws": "^8.5.4",
     "chai": "^6.0.0",
     "chai-as-promised": "^8.0.0",
-    "conventional-changelog-conventionalcommits": "^9.3.1",
     "esmock": "^2.7.6",
-    "prettier": "^3.0.1",
-    "semantic-release": "^25.0.2",
-    "sinon": "^22.0.0",
-    "typescript": "^6.0.2"
+    "sinon": "^22.0.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-rc.2"
@@ -88,14 +87,5 @@
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
-  },
-  "types": "./build/lib/index.d.ts",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.js"
-    },
-    "./package.json": "./package.json"
   }
 }

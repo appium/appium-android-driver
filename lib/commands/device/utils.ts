@@ -1,15 +1,11 @@
 import {util} from '@appium/support';
 import {ADB} from 'appium-adb';
 import {retryInterval} from 'asyncbox';
-import {
-  path as SETTINGS_APK_PATH,
-  SETTINGS_HELPER_ID,
-  UNICODE_IME,
-  EMPTY_IME,
-} from 'io.appium.settings';
-import {prepareEmulatorForImageInjection} from '../image-injection.js';
-import {ADB_LISTEN_ALL_NETWORK_FEATURE} from '../../utils.js';
+import {path as SETTINGS_APK_PATH, SETTINGS_HELPER_ID, UNICODE_IME, EMPTY_IME} from 'io.appium.settings';
+
 import type {AndroidDriver} from '../../driver.js';
+import {ADB_LISTEN_ALL_NETWORK_FEATURE} from '../../utils.js';
+import {prepareEmulatorForImageInjection} from '../image-injection.js';
 
 const HELPER_APP_INSTALL_RETRIES = 3;
 const HELPER_APP_INSTALL_RETRY_DELAY_MS = 5000;
@@ -97,10 +93,7 @@ export async function prepareEmulator(this: AndroidDriver, adb: ADB): Promise<vo
   }
   const args = prepareAvdArgs.bind(this)();
   if (isEmulatorRunning) {
-    if (
-      (await prepareEmulatorForImageInjection.bind(this)(adb.sdkRoot as string)) ||
-      args.includes('-wipe-data')
-    ) {
+    if ((await prepareEmulatorForImageInjection.bind(this)(adb.sdkRoot as string)) || args.includes('-wipe-data')) {
       this.log.debug(`Killing '${avdName}'`);
       await adb.killEmulator(avdName);
     } else {
@@ -203,9 +196,7 @@ export async function pushSettingsApp(this: AndroidDriver, throwIfError: boolean
   // Reinstall would stop the settings helper process anyway, so
   // there is no need to continue if the application is still running
   if (await this.settingsApp.isRunningInForeground()) {
-    this.log.debug(
-      `${SETTINGS_HELPER_ID} is already running. ` + `There is no need to reset its permissions.`,
-    );
+    this.log.debug(`${SETTINGS_HELPER_ID} is already running. ` + `There is no need to reset its permissions.`);
     return;
   }
 

@@ -1,11 +1,12 @@
-import sinon from 'sinon';
-import {ADB} from 'appium-adb';
-import {AndroidDriver} from '../../../lib/driver.js';
-import {getDeviceTime} from '../../../lib/commands/time.js';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
+import {ADB} from 'appium-adb';
 import {expect, use} from 'chai'; // expect is used
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import sinon from 'sinon';
+
+import {getDeviceTime} from '../../../lib/commands/time.js';
+import {AndroidDriver} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 
@@ -24,10 +25,7 @@ describe('Time Commands', function () {
 
   describe('getDeviceTime', function () {
     it('return formatted device time with timezone offset', async function () {
-      sandbox
-        .stub(driver.adb, 'shell')
-        .withArgs(['date', '+%Y-%m-%dT%T%z'])
-        .resolves('2026-07-08T15:30:45+0200\n');
+      sandbox.stub(driver.adb, 'shell').withArgs(['date', '+%Y-%m-%dT%T%z']).resolves('2026-07-08T15:30:45+0200\n');
 
       const result = await getDeviceTime.call(driver, 'YYYY-MM-DD HH:mm:ss Z');
 
@@ -35,10 +33,7 @@ describe('Time Commands', function () {
     });
 
     it('use the default format when no format is provided', async function () {
-      sandbox
-        .stub(driver.adb, 'shell')
-        .withArgs(['date', '+%Y-%m-%dT%T%z'])
-        .resolves('2026-07-08T15:30:45+0200');
+      sandbox.stub(driver.adb, 'shell').withArgs(['date', '+%Y-%m-%dT%T%z']).resolves('2026-07-08T15:30:45+0200');
 
       const result = await getDeviceTime.call(driver);
 
@@ -46,10 +41,7 @@ describe('Time Commands', function () {
     });
 
     it('return the original timestamp when parsing fails', async function () {
-      sandbox
-        .stub(driver.adb, 'shell')
-        .withArgs(['date', '+%Y-%m-%dT%T%z'])
-        .resolves('invalid-date');
+      sandbox.stub(driver.adb, 'shell').withArgs(['date', '+%Y-%m-%dT%T%z']).resolves('invalid-date');
 
       const result = await getDeviceTime.call(driver, 'YYYY-MM-DD HH:mm:ss');
 

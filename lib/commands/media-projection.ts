@@ -1,10 +1,12 @@
+import path from 'node:path';
+
 import {fs, net, util} from '@appium/support';
 import type {NetOptions, HttpUploadOptions} from '@appium/support';
-import dayjs from 'dayjs';
-import path from 'node:path';
 import type {HTTPMethod, StringRecord} from '@appium/types';
-import type {AndroidDriver} from '../driver.js';
 import type {ADB} from 'appium-adb';
+import dayjs from 'dayjs';
+
+import type {AndroidDriver} from '../driver.js';
 import type {FormFields} from './types.js';
 
 // https://github.com/appium/io.appium.settings#internal-audio--video-recording
@@ -60,9 +62,7 @@ export async function mobileStartMediaProjectionRecording(
   if (didStart) {
     this.log.info(`A new media projection recording '${fname}' has been successfully started`);
   } else {
-    this.log.info(
-      'Another media projection recording is already in progress. There is nothing to start',
-    );
+    this.log.info('Another media projection recording is already in progress. There is nothing to start');
   }
   return didStart;
 }
@@ -72,9 +72,7 @@ export async function mobileStartMediaProjectionRecording(
  *
  * @returns Promise that resolves to `true` if recording is running, `false` otherwise.
  */
-export async function mobileIsMediaProjectionRecordingRunning(
-  this: AndroidDriver,
-): Promise<boolean> {
+export async function mobileIsMediaProjectionRecordingRunning(this: AndroidDriver): Promise<boolean> {
   await verifyMediaProjectionRecordingIsSupported(this.adb);
 
   const recorder = this.settingsApp.makeMediaProjectionRecorder();
@@ -129,9 +127,7 @@ export async function mobileStopMediaProjectionRecording(
 
   if (util.isEmpty(remotePath)) {
     const {size} = await fs.stat(recentRecordingPath);
-    this.log.debug(
-      `The size of the resulting media projection recording is ${util.toReadableSizeString(size)}`,
-    );
+    this.log.debug(`The size of the resulting media projection recording is ${util.toReadableSizeString(size)}`);
   }
   try {
     return await uploadRecordedMedia(recentRecordingPath, remotePath, {
@@ -157,15 +153,7 @@ async function uploadRecordedMedia(
     return (await util.toInMemoryBase64(localFile)).toString();
   }
 
-  const {
-    user,
-    pass,
-    method,
-    headers,
-    fileFieldName,
-    formFields,
-    uploadTimeout: timeout,
-  } = uploadOptions;
+  const {user, pass, method, headers, fileFieldName, formFields, uploadTimeout: timeout} = uploadOptions;
   const options: NetOptions & HttpUploadOptions = {
     method: method || 'PUT',
     headers,

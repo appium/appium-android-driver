@@ -1,10 +1,12 @@
-import sinon from 'sinon';
-import {AndroidDriver} from '../../../lib/driver.js';
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
 import * as support from '@appium/support';
 import {ADB} from 'appium-adb';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import sinon from 'sinon';
+
+import {AndroidDriver} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 
@@ -25,10 +27,7 @@ describe('File Actions', function () {
       const localFile = 'local/tmp_file';
       sandbox.stub(support.tempDir, 'path').resolves(localFile);
       const pullStub1 = sandbox.stub(driver.adb, 'pull');
-      sandbox
-        .stub(support.util, 'toInMemoryBase64')
-        .withArgs(localFile)
-        .resolves(Buffer.from('YXBwaXVt', 'utf8'));
+      sandbox.stub(support.util, 'toInMemoryBase64').withArgs(localFile).resolves(Buffer.from('YXBwaXVt', 'utf8'));
       sandbox.stub(support.fs, 'exists').withArgs(localFile).resolves(true);
       const unlinkStub4 = sandbox.stub(support.fs, 'unlink');
       await expect(driver.pullFile('remote_path')).to.become('YXBwaXVt');
@@ -44,21 +43,13 @@ describe('File Actions', function () {
       sandbox.stub(support.tempDir, 'path').resolves(localFile);
       const pullStub = sandbox.stub(driver.adb, 'pull');
       const shellStub2 = sandbox.stub(driver.adb, 'shell');
-      sandbox
-        .stub(support.util, 'toInMemoryBase64')
-        .withArgs(localFile)
-        .resolves(Buffer.from('YXBwaXVt', 'utf8'));
+      sandbox.stub(support.util, 'toInMemoryBase64').withArgs(localFile).resolves(Buffer.from('YXBwaXVt', 'utf8'));
       sandbox.stub(support.fs, 'exists').withArgs(localFile).resolves(true);
       const unlinkStub3 = sandbox.stub(support.fs, 'unlink');
       await expect(driver.pullFile(`@${packageId}/${remotePath}`)).to.become('YXBwaXVt');
       expect(pullStub.calledWithExactly(tmpPath, localFile)).to.be.true;
-      expect(
-        shellStub2.calledWithExactly([
-          'run-as',
-          packageId,
-          `chmod 777 '/data/data/${packageId}/${remotePath}'`,
-        ]),
-      ).to.be.true;
+      expect(shellStub2.calledWithExactly(['run-as', packageId, `chmod 777 '/data/data/${packageId}/${remotePath}'`]))
+        .to.be.true;
       expect(
         shellStub2.calledWithExactly([
           'run-as',
@@ -102,27 +93,12 @@ describe('File Actions', function () {
       await driver.pushFile(`@${packageId}/${remotePath}`, 'YXBwaXVt');
       expect(writeFileStub.calledWithExactly(localFile, content, 'binary')).to.be.true;
       expect(pushStub2.calledWithExactly(localFile, tmpPath)).to.be.true;
-      expect(
-        shellStub.calledWithExactly([
-          'run-as',
-          packageId,
-          `mkdir -p '/data/data/${packageId}/path/in'`,
-        ]),
-      ).to.be.true;
-      expect(
-        shellStub.calledWithExactly([
-          'run-as',
-          packageId,
-          `touch '/data/data/${packageId}/${remotePath}'`,
-        ]),
-      ).to.be.true;
-      expect(
-        shellStub.calledWithExactly([
-          'run-as',
-          packageId,
-          `chmod 777 '/data/data/${packageId}/${remotePath}'`,
-        ]),
-      ).to.be.true;
+      expect(shellStub.calledWithExactly(['run-as', packageId, `mkdir -p '/data/data/${packageId}/path/in'`])).to.be
+        .true;
+      expect(shellStub.calledWithExactly(['run-as', packageId, `touch '/data/data/${packageId}/${remotePath}'`])).to.be
+        .true;
+      expect(shellStub.calledWithExactly(['run-as', packageId, `chmod 777 '/data/data/${packageId}/${remotePath}'`])).to
+        .be.true;
       expect(
         shellStub.calledWithExactly([
           'run-as',

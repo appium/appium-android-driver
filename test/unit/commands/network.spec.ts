@@ -1,11 +1,13 @@
-import sinon from 'sinon';
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
 import {ADB} from 'appium-adb';
-import {AndroidDriver} from '../../../lib/driver.js';
-import {SettingsApp} from 'io.appium.settings';
 import {errors} from 'appium/driver.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {SettingsApp} from 'io.appium.settings';
+import sinon from 'sinon';
+
+import {AndroidDriver} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 
@@ -124,9 +126,9 @@ describe('Network', function () {
       );
     });
     it('should raise unsupported services in array', async function () {
-      await expect(
-        driver.mobileGetConnectivity(['bad', 'array'] as any),
-      ).to.eventually.be.rejectedWith(errors.InvalidArgumentError);
+      await expect(driver.mobileGetConnectivity(['bad', 'array'] as any)).to.eventually.be.rejectedWith(
+        errors.InvalidArgumentError,
+      );
     });
     it('should raise unsupported services with an empty array', async function () {
       await expect(driver.mobileGetConnectivity()).to.eventually.eql({});
@@ -169,8 +171,7 @@ describe('Network', function () {
       (driver.isEmulator as sinon.SinonStub).returns('is_emu');
       (settingsApp.setDataState as sinon.SinonStub).resolves('');
       await driver.toggleData();
-      expect((settingsApp.setDataState as sinon.SinonStub).calledWithExactly(true, 'is_emu')).to.be
-        .true;
+      expect((settingsApp.setDataState as sinon.SinonStub).calledWithExactly(true, 'is_emu')).to.be.true;
     });
   });
   describe('toggleWiFi', function () {
@@ -179,8 +180,7 @@ describe('Network', function () {
       (driver.isEmulator as sinon.SinonStub).returns('is_emu');
       (settingsApp.setWifiState as sinon.SinonStub).resolves('');
       await driver.toggleWiFi();
-      expect((settingsApp.setWifiState as sinon.SinonStub).calledWithExactly(true, 'is_emu')).to.be
-        .true;
+      expect((settingsApp.setWifiState as sinon.SinonStub).calledWithExactly(true, 'is_emu')).to.be.true;
     });
   });
   describe('toggleFlightMode', function () {

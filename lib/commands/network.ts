@@ -1,5 +1,6 @@
-import {errors} from 'appium/driver.js';
 import {util} from '@appium/support';
+import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../driver.js';
 import type {ServiceType, GetConnectivityResult} from './types.js';
 
@@ -9,11 +10,7 @@ const DATA_MASK = 0b100;
 const WIFI_KEY_NAME = 'wifi';
 const DATA_KEY_NAME = 'data';
 const AIRPLANE_MODE_KEY_NAME = 'airplaneMode';
-const SUPPORTED_SERVICE_NAMES: ServiceType[] = [
-  WIFI_KEY_NAME,
-  DATA_KEY_NAME,
-  AIRPLANE_MODE_KEY_NAME,
-];
+const SUPPORTED_SERVICE_NAMES: ServiceType[] = [WIFI_KEY_NAME, DATA_KEY_NAME, AIRPLANE_MODE_KEY_NAME];
 
 /**
  * Gets the current network connection state.
@@ -123,14 +120,8 @@ export async function mobileGetConnectivity(
   const unsupportedServices = svcs.filter((svc) => !SUPPORTED_SERVICE_NAMES.includes(svc));
   if (unsupportedServices.length > 0) {
     throw new errors.InvalidArgumentError(
-      `${util.pluralize(
-        'Service name',
-        unsupportedServices.length,
-        false,
-      )} ${unsupportedServices} ` +
-        `${
-          unsupportedServices.length === 1 ? 'is' : 'are'
-        } not known. Only the following services are ` +
+      `${util.pluralize('Service name', unsupportedServices.length, false)} ${unsupportedServices} ` +
+        `${unsupportedServices.length === 1 ? 'is' : 'are'} not known. Only the following services are ` +
         `suported: ${SUPPORTED_SERVICE_NAMES}`,
     );
   }
@@ -138,9 +129,7 @@ export async function mobileGetConnectivity(
   const [wifi, data, airplaneMode] = await Promise.all([
     svcs.includes(WIFI_KEY_NAME) ? this.adb.isWifiOn() : Promise.resolve(undefined),
     svcs.includes(DATA_KEY_NAME) ? this.adb.isDataOn() : Promise.resolve(undefined),
-    svcs.includes(AIRPLANE_MODE_KEY_NAME)
-      ? this.adb.isAirplaneModeOn()
-      : Promise.resolve(undefined),
+    svcs.includes(AIRPLANE_MODE_KEY_NAME) ? this.adb.isAirplaneModeOn() : Promise.resolve(undefined),
   ]);
   const result: GetConnectivityResult = {};
   if (wifi !== undefined) {
@@ -185,16 +174,12 @@ export async function setNetworkConnection(this: AndroidDriver, type: number): P
     }
   } else {
     this.log.info(
-      `Not changing airplane mode, since it is already ${
-        shouldEnableAirplaneMode ? 'enabled' : 'disabled'
-      }`,
+      `Not changing airplane mode, since it is already ${shouldEnableAirplaneMode ? 'enabled' : 'disabled'}`,
     );
   }
 
   if (shouldEnableWifi === isWiFiEnabled && shouldEnableDataConnection === isDataEnabled) {
-    this.log.info(
-      'Not changing data connection/Wi-Fi states, since they are already set to expected values',
-    );
+    this.log.info('Not changing data connection/Wi-Fi states, since they are already set to expected values');
     if (await this.adb.isAirplaneModeOn()) {
       return AIRPLANE_MODE_MASK | currentState;
     }
@@ -204,10 +189,7 @@ export async function setNetworkConnection(this: AndroidDriver, type: number): P
   if (shouldEnableWifi !== isWiFiEnabled) {
     await this.setWifiState(shouldEnableWifi);
   } else {
-    this.log.info(
-      `Not changing Wi-Fi state, since it is already ` +
-        `${shouldEnableWifi ? 'enabled' : 'disabled'}`,
-    );
+    this.log.info(`Not changing Wi-Fi state, since it is already ` + `${shouldEnableWifi ? 'enabled' : 'disabled'}`);
   }
 
   if (shouldEnableAirplaneMode) {

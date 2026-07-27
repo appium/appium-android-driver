@@ -1,5 +1,5 @@
-import {AndroidDriver} from './driver.js';
 import {getChromePkg} from './commands/context/helpers.js';
+import {AndroidDriver} from './driver.js';
 import {parseArray, requireArgs} from './utils.js';
 export const utils = {
   getChromePkg,

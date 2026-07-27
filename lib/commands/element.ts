@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import {errors} from 'appium/driver.js';
 import type {Position, Size} from '@appium/types';
+import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../driver.js';
 import type {DoSetElementValueOpts} from './types.js';
 
@@ -13,11 +14,7 @@ import type {DoSetElementValueOpts} from './types.js';
  * @returns Promise that resolves to the attribute value, or `null` if not found.
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
-export async function getAttribute(
-  this: AndroidDriver,
-  attribute: string,
-  elementId: string,
-): Promise<string | null> {
+export async function getAttribute(this: AndroidDriver, attribute: string, elementId: string): Promise<string | null> {
   throw new errors.NotImplementedError('Not implemented');
 }
 
@@ -139,10 +136,7 @@ export async function setElementValue(
  * @returns Promise that resolves when the value is set.
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
-export async function doSetElementValue(
-  this: AndroidDriver,
-  params: DoSetElementValueOpts,
-): Promise<void> {
+export async function doSetElementValue(this: AndroidDriver, params: DoSetElementValueOpts): Promise<void> {
   throw new errors.NotImplementedError('Not implemented');
 }
 
@@ -153,11 +147,7 @@ export async function doSetElementValue(
  * @param elementId The element identifier.
  * @returns Promise that resolves when the value is set.
  */
-export async function setValue(
-  this: AndroidDriver,
-  keys: string | string[],
-  elementId: string,
-): Promise<void> {
+export async function setValue(this: AndroidDriver, keys: string | string[], elementId: string): Promise<void> {
   return await this.setElementValue(keys, elementId, false);
 }
 
@@ -168,11 +158,7 @@ export async function setValue(
  * @param elementId The element identifier.
  * @returns Promise that resolves when the value is replaced.
  */
-export async function replaceValue(
-  this: AndroidDriver,
-  keys: string | string[],
-  elementId: string,
-): Promise<void> {
+export async function replaceValue(this: AndroidDriver, keys: string | string[], elementId: string): Promise<void> {
   return await this.setElementValue(keys, elementId, true);
 }
 

@@ -1,8 +1,12 @@
-import sinon from 'sinon';
-import esmock from 'esmock';
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
 import {ADB} from 'appium-adb';
-import {AndroidDriver} from '../../../lib/driver.js';
-import type {AndroidDriverCaps} from '../../../lib/driver.js';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import esmock from 'esmock';
+import sinon from 'sinon';
+
+import {unlockWithOptions} from '../../../lib/commands/lock/exports.js';
 import {
   validateUnlockCapabilities,
   encodePassword,
@@ -12,10 +16,8 @@ import {
   getPatternKeyPosition,
   getPatternActions,
 } from '../../../lib/commands/lock/helpers.js';
-import {unlockWithOptions} from '../../../lib/commands/lock/exports.js';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {AndroidDriver} from '../../../lib/driver.js';
+import type {AndroidDriverCaps} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 
@@ -37,8 +39,7 @@ describe('Lock', function () {
 
   describe('unlockWithOptions', function () {
     async function mockUnlockWithOptions(helpersOverrides: Record<string, any>) {
-      return (await esmock(EXPORTS_PATH, import.meta.url, {[HELPERS_PATH]: helpersOverrides}))
-        .unlockWithOptions;
+      return (await esmock(EXPORTS_PATH, import.meta.url, {[HELPERS_PATH]: helpersOverrides})).unlockWithOptions;
     }
 
     it('should return if screen is already unlocked', async function () {
@@ -57,8 +58,7 @@ describe('Lock', function () {
     it('should raise an error on undefined unlockKey when unlockType is defined', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').throws();
-      await expect(unlockWithOptions.bind(driver)({unlockType: 'pin'} as AndroidDriverCaps)).to.be
-        .rejected;
+      await expect(unlockWithOptions.bind(driver)({unlockType: 'pin'} as AndroidDriverCaps)).to.be.rejected;
     });
     it('should call pinUnlock if unlockType is pin', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().resolves(true);
@@ -139,16 +139,14 @@ describe('Lock', function () {
     it('should verify the unlock keys for pin/pinWithKeyEvent', function () {
       for (const invalidValue of [undefined, ' ', '1abc']) {
         expect(() => validateUnlockCapabilities(toCaps('pin', invalidValue) as any)).to.throw;
-        expect(() => validateUnlockCapabilities(toCaps('pinWithKeyEvent', invalidValue) as any)).to
-          .throw;
+        expect(() => validateUnlockCapabilities(toCaps('pinWithKeyEvent', invalidValue) as any)).to.throw;
       }
       validateUnlockCapabilities(toCaps('pin', '1111') as any);
       validateUnlockCapabilities(toCaps('pinWithKeyEvent', '1111') as any);
     });
     it('should verify the unlock keys for fingerprint', function () {
       for (const invalidValue of [undefined, ' ', '1abc']) {
-        expect(() => validateUnlockCapabilities(toCaps('fingerprint', invalidValue) as any)).to
-          .throw;
+        expect(() => validateUnlockCapabilities(toCaps('fingerprint', invalidValue) as any)).to.throw;
       }
       validateUnlockCapabilities(toCaps('fingerprint', '1') as any);
     });
@@ -164,12 +162,7 @@ describe('Lock', function () {
       for (const invalidValue of [undefined, '123', '   ']) {
         expect(() => validateUnlockCapabilities(toCaps('password', invalidValue) as any)).to.throw;
       }
-      for (const validValue of [
-        '121c3',
-        'appium',
-        'appium-android-driver',
-        '@#$%&-+()*"\':;!?,_ ./~`|={}\\[]',
-      ]) {
+      for (const validValue of ['121c3', 'appium', 'appium-android-driver', '@#$%&-+()*"\':;!?,_ ./~`|={}\\[]']) {
         validateUnlockCapabilities(toCaps('password', validValue) as any);
       }
     });

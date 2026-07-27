@@ -1,4 +1,5 @@
 import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../driver.js';
 
 const SUPPORTED_ACTIONS = {

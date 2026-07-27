@@ -1,7 +1,8 @@
-import {errors, isErrorType} from 'appium/driver.js';
 import {util} from '@appium/support';
-import type {AndroidDriver} from '../driver.js';
 import type {Element} from '@appium/types';
+import {errors, isErrorType} from 'appium/driver.js';
+
+import type {AndroidDriver} from '../driver.js';
 import type {FindElementOpts} from './types.js';
 
 /**
@@ -103,10 +104,7 @@ export async function findElOrEls(
  * @returns A single `Element` if `params.multiple` is `false`, or an array of `Element` objects if `true`.
  * @throws {errors.NotImplementedError} This method must be implemented by the specific context handler.
  */
-export async function doFindElementOrEls(
-  this: AndroidDriver,
-  params: FindElementOpts,
-): Promise<Element | Element[]> {
+export async function doFindElementOrEls(this: AndroidDriver, params: FindElementOpts): Promise<Element | Element[]> {
   void params;
   throw new errors.NotImplementedError('Not implemented');
 }

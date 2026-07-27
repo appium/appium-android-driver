@@ -1,8 +1,10 @@
-import sinon from 'sinon';
-import {AndroidDriver} from '../../../lib/driver.js';
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import sinon from 'sinon';
+
+import {AndroidDriver} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 
@@ -23,12 +25,12 @@ describe('Emulator Actions', function () {
       expect(sensorSetStub.calledWith('light', 0)).to.be.true;
     });
     it('should be reject if arguments are missing', async function () {
-      await expect(
-        driver.execute('mobile: sensorSet', [{sensor: 'light', value: 0}]),
-      ).to.eventually.be.rejectedWith(/sensorType/);
-      await expect(
-        driver.execute('mobile:  sensorSet', [{sensorType: 'light', val: 0}]),
-      ).to.eventually.be.rejectedWith(/value/);
+      await expect(driver.execute('mobile: sensorSet', [{sensor: 'light', value: 0}])).to.eventually.be.rejectedWith(
+        /sensorType/,
+      );
+      await expect(driver.execute('mobile:  sensorSet', [{sensorType: 'light', val: 0}])).to.eventually.be.rejectedWith(
+        /value/,
+      );
     });
   });
 });

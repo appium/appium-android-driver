@@ -1,7 +1,8 @@
-import {errors} from 'appium/driver.js';
-import type {LogEntry} from 'appium-adb';
-import type {AndroidDriver} from './driver.js';
 import {util} from '@appium/support';
+import type {LogEntry} from 'appium-adb';
+import {errors} from 'appium/driver.js';
+
+import type {AndroidDriver} from './driver.js';
 
 export type {LogEntry};
 
@@ -25,10 +26,7 @@ interface LogEntryWithPrefix {
  * @param opts the object to check
  * @returns the same given object
  */
-export function requireArgs(
-  argNames: string | string[],
-  opts: Record<string, any>,
-): Record<string, any> {
+export function requireArgs(argNames: string | string[], opts: Record<string, any>): Record<string, any> {
   for (const argName of Array.isArray(argNames) ? argNames : [argNames]) {
     if (util.isPlainObject(opts) && !Object.hasOwn(opts, argName)) {
       throw new errors.InvalidArgumentError(`'${argName}' argument must be provided`);

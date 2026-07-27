@@ -1,8 +1,10 @@
-import {fs, util, zip, tempDir} from '@appium/support';
 import path from 'node:path';
-import {errors} from 'appium/driver.js';
-import type {AndroidDriver} from '../driver.js';
+
+import {fs, util, zip, tempDir} from '@appium/support';
 import type {ADB} from 'appium-adb';
+import {errors} from 'appium/driver.js';
+
+import type {AndroidDriver} from '../driver.js';
 
 const CONTAINER_PATH_MARKER = '@';
 // https://regex101.com/r/PLdB0G/2
@@ -27,8 +29,7 @@ const ANDROID_MEDIA_RESCAN_INTENT = 'android.intent.action.MEDIA_SCANNER_SCAN_FI
 export async function pullFile(this: AndroidDriver, remotePath: string): Promise<string> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
-      `It is expected that remote path points to a file and not to a folder. ` +
-        `'${remotePath}' is given instead`,
+      `It is expected that remote path points to a file and not to a folder. ` + `'${remotePath}' is given instead`,
     );
   }
   let tmpDestination: string | null = null;
@@ -84,15 +85,10 @@ export async function pullFile(this: AndroidDriver, remotePath: string): Promise
  * @returns Promise that resolves when the file is pushed.
  * @throws {errors.InvalidArgumentError} If the remote path points to a folder instead of a file.
  */
-export async function pushFile(
-  this: AndroidDriver,
-  remotePath: string,
-  base64Data: string | number[],
-): Promise<void> {
+export async function pushFile(this: AndroidDriver, remotePath: string, base64Data: string | number[]): Promise<void> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
-      `It is expected that remote path points to a file and not to a folder. ` +
-        `'${remotePath}' is given instead`,
+      `It is expected that remote path points to a file and not to a folder. ` + `'${remotePath}' is given instead`,
     );
   }
   const localFile = await tempDir.path({prefix: 'appium', suffix: '.tmp'});
@@ -116,11 +112,7 @@ export async function pushFile(
       );
       tmpDestination = `/data/local/tmp/${path.posix.basename(pathInContainer)}`;
       try {
-        await this.adb.shell([
-          'run-as',
-          packageId,
-          `mkdir -p '${escapePath(path.posix.dirname(pathInContainer))}'`,
-        ]);
+        await this.adb.shell(['run-as', packageId, `mkdir -p '${escapePath(path.posix.dirname(pathInContainer))}'`]);
         await this.adb.shell(['run-as', packageId, `touch '${escapePath(pathInContainer)}'`]);
         await this.adb.shell(['run-as', packageId, `chmod 777 '${escapePath(pathInContainer)}'`]);
         await this.adb.push(localFile, tmpDestination);
@@ -185,8 +177,7 @@ export async function pullFolder(this: AndroidDriver, remotePath: string): Promi
 export async function mobileDeleteFile(this: AndroidDriver, remotePath: string): Promise<boolean> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
-      `It is expected that remote path points to a folder and not to a file. ` +
-        `'${remotePath}' is given instead`,
+      `It is expected that remote path points to a folder and not to a file. ` + `'${remotePath}' is given instead`,
     );
   }
   return await deleteFileOrFolder.call(this, this.adb, remotePath);
@@ -201,11 +192,7 @@ export async function mobileDeleteFile(this: AndroidDriver, remotePath: string):
  * If the remote path is valid, but the remote path does not exist
  * this function return `false`.
  */
-async function deleteFileOrFolder(
-  this: AndroidDriver,
-  adb: ADB,
-  remotePath: string,
-): Promise<boolean> {
+async function deleteFileOrFolder(this: AndroidDriver, adb: ADB, remotePath: string): Promise<boolean> {
   const {isDir, isPresent, isFile} = createFSTests(adb);
   let dstPath = remotePath;
   let pkgId: string | undefined;
@@ -246,9 +233,7 @@ async function deleteFileOrFolder(
     await adb.shell(['rm', `-f${expectsFile ? '' : 'r'}`, dstPath]);
   }
   if (await isPresent(dstPath, pkgId)) {
-    throw this.log.errorWithException(
-      `The item at '${dstPath}' still exists after being deleted. Is it writable?`,
-    );
+    throw this.log.errorWithException(`The item at '${dstPath}' still exists after being deleted. Is it writable?`);
   }
   return true;
 }
@@ -285,23 +270,12 @@ async function scanMedia(this: AndroidDriver, remotePath: string): Promise<void>
     if ((await this.adb.getApiLevel()) >= 29) {
       await this.settingsApp.scanMedia(remotePath);
     } else {
-      await this.adb.shell([
-        'am',
-        'broadcast',
-        '-a',
-        ANDROID_MEDIA_RESCAN_INTENT,
-        '-d',
-        `file://${remotePath}`,
-      ]);
+      await this.adb.shell(['am', 'broadcast', '-a', ANDROID_MEDIA_RESCAN_INTENT, '-d', `file://${remotePath}`]);
     }
   } catch (e) {
     const err = e as {stderr?: string; message?: string};
     // FIXME: what has a `stderr` prop?
-    this.log.warn(
-      `Ignoring an unexpected error upon media scanning of '${remotePath}': ${
-        err.stderr ?? err.message
-      }`,
-    );
+    this.log.warn(`Ignoring an unexpected error upon media scanning of '${remotePath}': ${err.stderr ?? err.message}`);
   }
 }
 
@@ -317,11 +291,7 @@ function escapePath(p: string): string {
  * Factory providing filesystem test functions using ADB
  */
 function createFSTests(adb: ADB) {
-  const performRemoteFsCheck = async (
-    p: string,
-    op: 'd' | 'f' | 'e',
-    runAs?: string,
-  ): Promise<boolean> => {
+  const performRemoteFsCheck = async (p: string, op: 'd' | 'f' | 'e', runAs?: string): Promise<boolean> => {
     const passFlag = '__PASS__';
     const checkCmd = `[ -${op} '${escapePath(p)}' ] && echo ${passFlag}`;
     const fullCmd = runAs ? `run-as ${runAs} ${checkCmd}` : checkCmd;
@@ -332,12 +302,9 @@ function createFSTests(adb: ADB) {
     }
   };
 
-  const isFile = async (p: string, runAs?: string): Promise<boolean> =>
-    await performRemoteFsCheck(p, 'f', runAs);
-  const isDir = async (p: string, runAs?: string): Promise<boolean> =>
-    await performRemoteFsCheck(p, 'd', runAs);
-  const isPresent = async (p: string, runAs?: string): Promise<boolean> =>
-    await performRemoteFsCheck(p, 'e', runAs);
+  const isFile = async (p: string, runAs?: string): Promise<boolean> => await performRemoteFsCheck(p, 'f', runAs);
+  const isDir = async (p: string, runAs?: string): Promise<boolean> => await performRemoteFsCheck(p, 'd', runAs);
+  const isPresent = async (p: string, runAs?: string): Promise<boolean> => await performRemoteFsCheck(p, 'e', runAs);
 
   return {isFile, isDir, isPresent};
 }

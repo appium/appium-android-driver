@@ -1,14 +1,11 @@
-import {util} from '@appium/support';
-import {waitForCondition, longSleep} from 'asyncbox';
 import {EOL} from 'node:os';
+
+import {util} from '@appium/support';
+import type {UninstallOptions, InstallOptions, StartAppOptions, ListInstalledPackagesOptions} from 'appium-adb';
+import {waitForCondition, longSleep} from 'asyncbox';
+
 import type {AndroidDriver, AndroidDriverOpts} from '../driver.js';
 import type {AppInfoMap, AppState, IsAppInstalledOptions, TerminateAppOpts} from './types.js';
-import type {
-  UninstallOptions,
-  InstallOptions,
-  StartAppOptions,
-  ListInstalledPackagesOptions,
-} from 'appium-adb';
 
 const APP_EXTENSIONS = ['.apk', '.apks'] as const;
 const PACKAGE_INSTALL_TIMEOUT_MS = 90000;
@@ -66,18 +63,14 @@ export async function mobileIsAppInstalled(
  * @throws {Error} If there is an error while retrieving the package list
  *
  */
-export async function mobileListApps(
-  this: AndroidDriver,
-  user?: string | number,
-): Promise<AppInfoMap> {
+export async function mobileListApps(this: AndroidDriver, user?: string | number): Promise<AppInfoMap> {
   const opts: ListInstalledPackagesOptions = {};
   if (util.hasValue(user)) {
     opts.user = `${user}`;
   }
   return (await this.adb.listInstalledPackages(opts)).reduce<AppInfoMap>((acc, pkg) => {
     const packageName = pkg.appPackage;
-    const versionCode =
-      pkg.versionCode && !Number.isNaN(+pkg.versionCode) ? +pkg.versionCode : null;
+    const versionCode = pkg.versionCode && !Number.isNaN(+pkg.versionCode) ? +pkg.versionCode : null;
     acc[packageName] = {
       packageName,
       versionCode,
@@ -189,9 +182,7 @@ export async function terminateApp(
   }
   await this.adb.forceStop(appId);
   const timeout =
-    util.hasValue(options.timeout) && !Number.isNaN(options.timeout)
-      ? parseInt(String(options.timeout), 10)
-      : 500;
+    util.hasValue(options.timeout) && !Number.isNaN(options.timeout) ? parseInt(String(options.timeout), 10) : 500;
 
   if (timeout <= 0) {
     this.log.info(
@@ -431,9 +422,7 @@ export async function background(this: AndroidDriver, seconds: number): Promise<
             stopApp: false,
           };
   }
-  args = Object.fromEntries(
-    Object.entries(args).filter(([, value]) => value !== undefined),
-  ) as StartAppOptions;
+  args = Object.fromEntries(Object.entries(args).filter(([, value]) => value !== undefined)) as StartAppOptions;
   this.log.debug(`Bringing application back to foreground with arguments: ${JSON.stringify(args)}`);
   return await this.adb.startApp(args);
 }
@@ -445,10 +434,7 @@ export async function background(this: AndroidDriver, seconds: number): Promise<
  * @param seconds The amount of seconds to wait between putting the app to background and restoring it.
  * Any negative value means to not restore the app after putting it to background.
  */
-export async function mobileBackgroundApp(
-  this: AndroidDriver,
-  seconds: number = -1,
-): Promise<void> {
+export async function mobileBackgroundApp(this: AndroidDriver, seconds: number = -1): Promise<void> {
   await this.background(seconds);
 }
 
@@ -463,10 +449,7 @@ export async function mobileBackgroundApp(
  * @param opts Optional driver options. If not provided, uses the current session options.
  * @throws {Error} If `appPackage` is not specified or if the app cannot be reset.
  */
-export async function resetAUT(
-  this: AndroidDriver,
-  opts: AndroidDriverOpts | null = null,
-): Promise<void> {
+export async function resetAUT(this: AndroidDriver, opts: AndroidDriverOpts | null = null): Promise<void> {
   const {
     app,
     appPackage,
@@ -491,9 +474,7 @@ export async function resetAUT(
     if (!fullReset && fastReset) {
       const output = await this.adb.clear(appPackage);
       if (typeof output === 'string' && output.toLowerCase().includes('failed')) {
-        throw new Error(
-          `Cannot clear the application data of '${appPackage}'. Original error: ${output}`,
-        );
+        throw new Error(`Cannot clear the application data of '${appPackage}'. Original error: ${output}`);
       }
       // executing `shell pm clear` resets previously assigned application permissions as well
       if (autoGrantPermissions) {
@@ -504,9 +485,7 @@ export async function resetAUT(
           this.log.error(`Unable to grant permissions requested. Original error: ${err.message}`);
         }
       }
-      this.log.debug(
-        `Performed fast reset on the installed '${appPackage}' application (stop and clear)`,
-      );
+      this.log.debug(`Performed fast reset on the installed '${appPackage}' application (stop and clear)`);
       return;
     }
   }
@@ -539,10 +518,7 @@ export async function resetAUT(
  * @param opts Optional driver options. If not provided, uses the current session options.
  * @throws {Error} If `app` or `appPackage` options are not specified.
  */
-export async function installAUT(
-  this: AndroidDriver,
-  opts: AndroidDriverOpts | null = null,
-): Promise<void> {
+export async function installAUT(this: AndroidDriver, opts: AndroidDriverOpts | null = null): Promise<void> {
   const {
     app,
     appPackage,
@@ -571,8 +547,7 @@ export async function installAUT(
   });
 
   // There is no need to reset the newly installed app
-  const isInstalledOverExistingApp =
-    !wasUninstalled && appState !== this.adb.APP_INSTALL_STATE.NOT_INSTALLED;
+  const isInstalledOverExistingApp = !wasUninstalled && appState !== this.adb.APP_INSTALL_STATE.NOT_INSTALLED;
   if (fastReset && isInstalledOverExistingApp) {
     this.log.info(`Performing fast reset on '${appPackage}'`);
     await this.resetAUT(opts);
@@ -647,10 +622,7 @@ export async function uninstallOtherPackages(
  * @returns An array of third-party package names, excluding those in `filterPackages`.
  * Returns an empty array if the command fails.
  */
-export async function getThirdPartyPackages(
-  this: AndroidDriver,
-  filterPackages: string[] = [],
-): Promise<string[]> {
+export async function getThirdPartyPackages(this: AndroidDriver, filterPackages: string[] = []): Promise<string[]> {
   const filterPackagesSet = new Set(filterPackages);
   try {
     const packagesString = await this.adb.shell(['pm', 'list', 'packages', '-3']);

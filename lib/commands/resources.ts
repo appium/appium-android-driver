@@ -1,5 +1,6 @@
 import {fs, tempDir, util} from '@appium/support';
 import type {StringRecord} from '@appium/types';
+
 import type {AndroidDriver, AndroidDriverOpts} from '../driver.js';
 import type {Locale} from './types.js';
 
@@ -10,10 +11,7 @@ import type {Locale} from './types.js';
  * the device's current language will be used.
  * @returns Promise that resolves to a mapping of string keys to their localized values.
  */
-export async function getStrings(
-  this: AndroidDriver,
-  language: string | null = null,
-): Promise<StringRecord> {
+export async function getStrings(this: AndroidDriver, language: string | null = null): Promise<StringRecord> {
   if (!language) {
     language = await this.adb.getDeviceLanguage();
     this.log.info(`No language specified, returning strings for: ${language}`);
@@ -105,11 +103,7 @@ async function extractStringsFromResources(
   }
 }
 
-async function fetchLocaleSuggestions(
-  this: AndroidDriver,
-  language?: string,
-  country?: string,
-): Promise<Locale[]> {
+async function fetchLocaleSuggestions(this: AndroidDriver, language?: string, country?: string): Promise<Locale[]> {
   const supportedLocales = await this.settingsApp.listSupportedLocales();
   const suggestedLocales = supportedLocales.filter(
     (locale) =>

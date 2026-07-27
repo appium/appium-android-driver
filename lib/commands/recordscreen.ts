@@ -1,15 +1,13 @@
+import path from 'node:path';
+
 import {fs, net, system, tempDir, timing, util} from '@appium/support';
 import type {NetOptions, HttpUploadOptions} from '@appium/support';
-import {waitForCondition} from 'asyncbox';
-import path from 'node:path';
-import {exec} from 'teen_process';
-import type {AndroidDriver} from '../driver.js';
 import type {ADB} from 'appium-adb';
-import type {
-  StartScreenRecordingOpts,
-  StopScreenRecordingOpts,
-  ScreenRecordingProperties,
-} from './types.js';
+import {waitForCondition} from 'asyncbox';
+import {exec} from 'teen_process';
+
+import type {AndroidDriver} from '../driver.js';
+import type {StartScreenRecordingOpts, StopScreenRecordingOpts, ScreenRecordingProperties} from './types.js';
 
 const RETRY_PAUSE = 300;
 const RETRY_TIMEOUT = 5000;
@@ -43,13 +41,7 @@ export async function startRecordingScreen(
   await verifyScreenRecordIsSupported(this.adb, this.isEmulator());
 
   let result = '';
-  const {
-    videoSize,
-    timeLimit = DEFAULT_RECORDING_TIME_SEC,
-    bugReport,
-    bitRate,
-    forceRestart,
-  } = options;
+  const {videoSize, timeLimit = DEFAULT_RECORDING_TIME_SEC, bugReport, bitRate, forceRestart} = options;
   if (!forceRestart) {
     result = await this.stopRecordingScreen(options);
   }
@@ -109,10 +101,7 @@ export async function startRecordingScreen(
  * @throws {Error} If screen recording is not supported, no recording was active,
  * or if the recording process cannot be stopped.
  */
-export async function stopRecordingScreen(
-  this: AndroidDriver,
-  options: StopScreenRecordingOpts = {},
-): Promise<string> {
+export async function stopRecordingScreen(this: AndroidDriver, options: StopScreenRecordingOpts = {}): Promise<string> {
   await verifyScreenRecordIsSupported(this.adb, this.isEmulator());
 
   const props = this._screenRecordingProperties;
@@ -130,9 +119,7 @@ export async function stopRecordingScreen(
   }
 
   if (!props) {
-    this.log.info(
-      `Screen recording has not been previously started by Appium. There is nothing to stop`,
-    );
+    this.log.info(`Screen recording has not been previously started by Appium. There is nothing to stop`);
     return '';
   }
 
@@ -140,9 +127,7 @@ export async function stopRecordingScreen(
     try {
       await props.recordingProcess.stop('SIGINT', PROCESS_SHUTDOWN_TIMEOUT);
     } catch {
-      throw this.log.errorWithException(
-        `Unable to stop screen recording within ${PROCESS_SHUTDOWN_TIMEOUT}ms`,
-      );
+      throw this.log.errorWithException(`Unable to stop screen recording within ${PROCESS_SHUTDOWN_TIMEOUT}ms`);
     }
     props.recordingProcess = null;
   }
@@ -177,9 +162,7 @@ export async function stopRecordingScreen(
     }
     if (util.isEmpty(options.remotePath)) {
       const {size} = await fs.stat(resultFilePath);
-      this.log.debug(
-        `The size of the resulting screen recording is ${util.toReadableSizeString(size)}`,
-      );
+      this.log.debug(`The size of the resulting screen recording is ${util.toReadableSizeString(size)}`);
     }
     return await uploadRecordedMedia(resultFilePath, options.remotePath, options);
   } finally {
@@ -307,14 +290,9 @@ async function mergeScreenRecords(this: AndroidDriver, mediaFiles: string[]): Pr
   const configFile = path.resolve(path.dirname(mediaFiles[0]), 'config.txt');
   await fs.writeFile(configFile, configContent, 'utf8');
   this.log.debug(`Generated ffmpeg merging config '${configFile}' with items:\n${configContent}`);
-  const result = path.resolve(
-    path.dirname(mediaFiles[0]),
-    `merge_${Math.floor(+new Date())}${DEFAULT_EXT}`,
-  );
+  const result = path.resolve(path.dirname(mediaFiles[0]), `merge_${Math.floor(+new Date())}${DEFAULT_EXT}`);
   const args = ['-safe', '0', '-f', 'concat', '-i', configFile, '-c', 'copy', result];
-  this.log.info(
-    `Initiating screen records merging using the command '${FFMPEG_BINARY} ${args.join(' ')}'`,
-  );
+  this.log.info(`Initiating screen records merging using the command '${FFMPEG_BINARY} ${args.join(' ')}'`);
   await exec(FFMPEG_BINARY, args);
   return result;
 }
@@ -327,13 +305,10 @@ async function terminateBackgroundScreenRecording(adb: ADB, force = true): Promi
 
   try {
     await adb.shell(['kill', force ? '-15' : '-2', ...screenrecordPids.map(String)]);
-    await waitForCondition(
-      async () => util.isEmpty(await adb.getProcessIdsByName(SCREENRECORD_BINARY)),
-      {
-        waitMs: PROCESS_SHUTDOWN_TIMEOUT,
-        intervalMs: 500,
-      },
-    );
+    await waitForCondition(async () => util.isEmpty(await adb.getProcessIdsByName(SCREENRECORD_BINARY)), {
+      waitMs: PROCESS_SHUTDOWN_TIMEOUT,
+      intervalMs: 500,
+    });
     return true;
   } catch (err) {
     throw new Error(`Unable to stop the background screen recording: ${(err as Error).message}`, {

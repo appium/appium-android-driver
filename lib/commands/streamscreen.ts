@@ -1,14 +1,16 @@
-import {fs, logger, system, util} from '@appium/support';
-import {waitForCondition} from 'asyncbox';
 import {spawn} from 'node:child_process';
 import http from 'node:http';
 import net from 'node:net';
 import url from 'node:url';
+
+import {fs, logger, system, util} from '@appium/support';
+import type {AppiumLogger} from '@appium/types';
+import type {ADB} from 'appium-adb';
+import {waitForCondition} from 'asyncbox';
 import {checkPortStatus} from 'portscanner';
 import {SubProcess, exec} from 'teen_process';
+
 import type {AndroidDriver} from '../driver.js';
-import type {ADB} from 'appium-adb';
-import type {AppiumLogger} from '@appium/types';
 import type {DeviceInfo, InitGStreamerPipelineOpts} from './types.js';
 
 const RECORDING_INTERVAL_SEC = 5;
@@ -91,22 +93,16 @@ export async function mobileStartScreenStreaming(
   if (this._screenStreamingProps === undefined) {
     await verifyStreamingRequirements(this.adb);
   } else {
-    this.log.info(
-      `The screen streaming session is already running. ` +
-        `Stop it first in order to start a new one.`,
-    );
+    this.log.info(`The screen streaming session is already running. ` + `Stop it first in order to start a new one.`);
     return;
   }
   if ((await checkPortStatus(port, host)) === 'open') {
-    this.log.info(
-      `The port #${port} at ${host} is busy. ` + `Assuming the screen streaming is already running`,
-    );
+    this.log.info(`The port #${port} at ${host} is busy. ` + `Assuming the screen streaming is already running`);
     return;
   }
   if ((await checkPortStatus(tcpPort, TCP_HOST)) === 'open') {
     throw this.log.errorWithException(
-      `The port #${tcpPort} at ${TCP_HOST} is busy. ` +
-        `Make sure there are no leftovers from previous sessions.`,
+      `The port #${tcpPort} at ${TCP_HOST} is busy. ` + `Make sure there are no leftovers from previous sessions.`,
     );
   }
   this._screenStreamingProps = undefined;
@@ -139,12 +135,7 @@ export async function mobileStartScreenStreaming(
   let mjpegConnectTimeoutId: ReturnType<typeof setTimeout> | undefined;
   const mjpegConnectTimeoutPromise = new Promise<never>((_resolve, reject) => {
     mjpegConnectTimeoutId = setTimeout(
-      () =>
-        reject(
-          new Error(
-            `Cannot connect to the streaming server within ${STREAMING_STARTUP_TIMEOUT_MS}ms`,
-          ),
-        ),
+      () => reject(new Error(`Cannot connect to the streaming server within ${STREAMING_STARTUP_TIMEOUT_MS}ms`)),
       STREAMING_STARTUP_TIMEOUT_MS,
     );
   });
@@ -160,9 +151,7 @@ export async function mobileStartScreenStreaming(
         );
 
         if (pathname && currentPathname !== pathname) {
-          this.log.info(
-            'Rejecting the broadcast request since it does not match the given pathname',
-          );
+          this.log.info('Rejecting the broadcast request since it does not match the given pathname');
           res.writeHead(404, {
             Connection: 'close',
             'Content-Type': 'text/plain; charset=utf-8',
@@ -174,8 +163,7 @@ export async function mobileStartScreenStreaming(
 
         this.log.info('Starting MJPEG broadcast');
         res.writeHead(200, {
-          'Cache-Control':
-            'no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0',
           Pragma: 'no-cache',
           Connection: 'close',
           'Content-Type': `multipart/x-mixed-replace; boundary=${BOUNDARY_STRING}`,
@@ -253,8 +241,7 @@ export async function mobileStopScreenStreaming(this: AndroidDriver): Promise<vo
     return;
   }
 
-  const {deviceStreamingProc, gstreamerPipeline, mjpegSocket, mjpegServer} =
-    this._screenStreamingProps;
+  const {deviceStreamingProc, gstreamerPipeline, mjpegSocket, mjpegServer} = this._screenStreamingProps;
 
   try {
     mjpegSocket.end();
@@ -296,9 +283,7 @@ function createStreamingLogger(streamName: string, udid: string): AppiumLogger {
 
 async function verifyStreamingRequirements(adb: ADB): Promise<void> {
   if (!(await adb.shell(['which', SCREENRECORD_BINARY])).trim()) {
-    throw new Error(
-      `The required '${SCREENRECORD_BINARY}' binary is not available on the device under test`,
-    );
+    throw new Error(`The required '${SCREENRECORD_BINARY}' binary is not available on the device under test`);
   }
 
   const gstreamerCheckPromises: Promise<void>[] = [];
@@ -349,8 +334,7 @@ async function getDeviceInfo(adb: ADB, log?: AppiumLogger): Promise<DeviceInfo> 
     if (!match) {
       log?.debug(output);
       throw new Error(
-        `Cannot parse the device ${key} from the adb command output. ` +
-          `Check the server log for more details.`,
+        `Cannot parse the device ${key} from the adb command output. ` + `Check the server log for more details.`,
       );
     }
     result[key] = parseInt(match[1], 10);
@@ -416,9 +400,7 @@ async function initDeviceStreamingProc(
       intervalMs: 300,
     });
   } catch (e) {
-    throw log.errorWithException(
-      `Cannot start the screen streaming process. Original error: ${(e as Error).message}`,
-    );
+    throw log.errorWithException(`Cannot start the screen streaming process. Original error: ${(e as Error).message}`);
   } finally {
     deviceStreaming.stderr.removeListener('data', errorsListener);
     deviceStreaming.stdout.removeListener('data', startupListener);
@@ -501,9 +483,7 @@ async function initGstreamerPipeline(
     );
   } catch (e) {
     didFail = true;
-    throw log.errorWithException(
-      `Cannot start the screen streaming pipeline. Original error: ${(e as Error).message}`,
-    );
+    throw log.errorWithException(`Cannot start the screen streaming pipeline. Original error: ${(e as Error).message}`);
   } finally {
     if (!logPipelineDetails || didFail) {
       gstreamerPipeline.removeListener('output', gstOutputListener);

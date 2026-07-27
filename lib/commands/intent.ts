@@ -1,5 +1,6 @@
-import {errors} from 'appium/driver.js';
 import {util} from '@appium/support';
+import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../driver.js';
 import type {IntentOpts} from './types.js';
 
@@ -405,8 +406,7 @@ function parseIntentSpec(opts: IntentOpts = {}): string[] {
         resultArgs.push(`--e${type}`, key);
       } else if (value === undefined) {
         throw new errors.InvalidArgumentError(
-          `Intent argument type '${type}' in '${JSON.stringify(item)}' requires a ` +
-            `valid value to be provided`,
+          `Intent argument type '${type}' in '${JSON.stringify(item)}' requires a ` + `valid value to be provided`,
         );
       } else {
         resultArgs.push(`--e${type}`, key, value);

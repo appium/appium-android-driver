@@ -1,8 +1,9 @@
-import {errors} from 'appium/driver.js';
+import {util} from '@appium/support';
 import type {StringRecord} from '@appium/types';
+import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../driver.js';
 import type {StatusBarCommand, WindowProperties} from './types.js';
-import {util} from '@appium/support';
 
 const WINDOW_TITLE_PATTERN = /^\s+Window\s#\d+\sWindow\{[0-9a-f]+\s\w+\s([\w-]+)\}:$/;
 const FRAME_PATTERN = /\bm?[Ff]rame=\[([0-9.-]+),([0-9.-]+)\]\[([0-9.-]+),([0-9.-]+)\]/;
@@ -38,12 +39,9 @@ export async function getSystemBars(this: AndroidDriver): Promise<StringRecord> 
   try {
     stdout = await this.adb.shell(['dumpsys', 'window', 'windows']);
   } catch (e) {
-    throw new Error(
-      `Cannot retrieve system bars details. Original error: ${(e as Error).message}`,
-      {
-        cause: e,
-      },
-    );
+    throw new Error(`Cannot retrieve system bars details. Original error: ${(e as Error).message}`, {
+      cause: e,
+    });
   }
   return parseWindows.bind(this)(stdout);
 }
@@ -105,11 +103,7 @@ export async function mobilePerformStatusBarCommand(
  * @returns Parsed properties object
  * @throws {Error} If there was an issue while parsing the properties string
  */
-export function parseWindowProperties(
-  this: AndroidDriver,
-  name: string,
-  props: string[],
-): WindowProperties {
+export function parseWindowProperties(this: AndroidDriver, name: string, props: string[]): WindowProperties {
   const result = structuredClone(DEFAULT_WINDOW_PROPERTIES);
   const propLines = props.join('\n');
   const frameMatch = FRAME_PATTERN.exec(propLines);

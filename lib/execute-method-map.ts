@@ -257,16 +257,7 @@ export const executeMethodMap = {
   'mobile: stopMediaProjectionRecording': {
     command: 'mobileStopMediaProjectionRecording',
     params: {
-      optional: [
-        'remotePath',
-        'user',
-        'pass',
-        'method',
-        'headers',
-        'fileFieldName',
-        'formFields',
-        'uploadTimeout',
-      ],
+      optional: ['remotePath', 'user', 'pass', 'method', 'headers', 'fileFieldName', 'formFields', 'uploadTimeout'],
     },
   },
 

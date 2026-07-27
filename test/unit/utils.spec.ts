@@ -1,6 +1,8 @@
-import {parseArray} from '../../lib/utils.js';
-import {expect} from 'chai';
 import {describe, it} from 'node:test';
+
+import {expect} from 'chai';
+
+import {parseArray} from '../../lib/utils.js';
 
 describe('Utils', function () {
   describe('#parseArray', function () {

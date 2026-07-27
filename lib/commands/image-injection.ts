@@ -1,7 +1,9 @@
-import {errors} from 'appium/driver.js';
-import path from 'node:path';
-import {fs, tempDir} from '@appium/support';
 import crypto from 'node:crypto';
+import path from 'node:path';
+
+import {fs, tempDir} from '@appium/support';
+import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../driver.js';
 
 const EMULATOR_RESOURCES_ROOT = ['emulator', 'resources'];
@@ -30,10 +32,7 @@ const PNG_MAGIC_LENGTH = 4;
  * to load the updated config or `false` if the current config is already up to date
  * or does not need to be updated
  */
-export async function prepareEmulatorForImageInjection(
-  this: AndroidDriver,
-  sdkRoot: string,
-): Promise<boolean> {
+export async function prepareEmulatorForImageInjection(this: AndroidDriver, sdkRoot: string): Promise<boolean> {
   const {injectedImageProperties: props} = this.opts;
   if (!props) {
     return false;
@@ -47,9 +46,7 @@ export async function prepareEmulatorForImageInjection(
   if (await fs.exists(configPath)) {
     const configPayload = await fs.readFile(configPath, 'utf8');
     if (configPayload.includes(strProps)) {
-      this.log.info(
-        `The image injection config at '${configPath}' is already up to date. Doing nothing`,
-      );
+      this.log.info(`The image injection config at '${configPath}' is already up to date. Doing nothing`);
       return false;
     }
     const updatedPayload = `${DEFAULT_CONFIG_PAYLOAD_PREFIX}
@@ -83,10 +80,7 @@ export async function prepareEmulatorForImageInjection(
  * @throws {Error} If called on a non-emulator device.
  * @throws {errors.InvalidArgumentError} If the payload is not a valid base64-encoded PNG.
  */
-export async function mobileInjectEmulatorCameraImage(
-  this: AndroidDriver,
-  payload: string,
-): Promise<void> {
+export async function mobileInjectEmulatorCameraImage(this: AndroidDriver, payload: string): Promise<void> {
   if (!this.isEmulator()) {
     throw new Error('The image injection feature is only available on emulators');
   }
@@ -99,9 +93,7 @@ export async function mobileInjectEmulatorCameraImage(
   const pngBuffer = Buffer.from(payload, 'base64');
   const magic = pngBuffer.toString('hex', 0, PNG_MAGIC_LENGTH);
   if (magic !== PNG_MAGIC) {
-    throw new errors.InvalidArgumentError(
-      'The provided image payload must contain a valid base64-encoded .PNG data',
-    );
+    throw new errors.InvalidArgumentError('The provided image payload must contain a valid base64-encoded .PNG data');
   }
 
   const tmpImagePath = await tempDir.path({
@@ -111,9 +103,7 @@ export async function mobileInjectEmulatorCameraImage(
   });
   await fs.writeFile(tmpImagePath, pngBuffer);
   await this.adb.execEmuConsoleCommand(`virtualscene-image table ${tmpImagePath}`);
-  this.log.info(
-    `The provided image has been successully injected to the ${this.adb.curDeviceId} emulator`,
-  );
+  this.log.info(`The provided image has been successully injected to the ${this.adb.curDeviceId} emulator`);
 }
 
 // #region Internal helpers

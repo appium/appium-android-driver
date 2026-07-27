@@ -1,10 +1,12 @@
-import {asyncmap} from 'asyncbox';
-import {fs, tempDir} from '@appium/support';
 import path from 'node:path';
+
+import {fs, tempDir} from '@appium/support';
 import type {Location} from '@appium/types';
-import {getThirdPartyPackages} from './app-management.js';
-import type {AndroidDriver} from '../driver.js';
+import {asyncmap} from 'asyncbox';
 import {SETTINGS_HELPER_ID} from 'io.appium.settings';
+
+import type {AndroidDriver} from '../driver.js';
+import {getThirdPartyPackages} from './app-management.js';
 
 // The value close to zero, but not zero, is needed
 // to trick JSON generation and send a float value instead of an integer,
@@ -87,10 +89,7 @@ export async function mobileSetGeolocation(
  * 20000ms by default.
  * @returns Promise that resolves when the GPS cache refresh is initiated.
  */
-export async function mobileRefreshGpsCache(
-  this: AndroidDriver,
-  timeoutMs?: number,
-): Promise<void> {
+export async function mobileRefreshGpsCache(this: AndroidDriver, timeoutMs?: number): Promise<void> {
   await this.settingsApp.refreshGeoLocationCache(timeoutMs);
 }
 
@@ -135,8 +134,7 @@ export async function toggleLocationServices(this: AndroidDriver): Promise<void>
   this.log.info('Toggling location services');
   const isGpsEnabled = await this.isLocationServicesEnabled();
   this.log.debug(
-    `Current GPS state: ${isGpsEnabled}. ` +
-      `The service is going to be ${isGpsEnabled ? 'disabled' : 'enabled'}`,
+    `Current GPS state: ${isGpsEnabled}. ` + `The service is going to be ${isGpsEnabled ? 'disabled' : 'enabled'}`,
   );
   await this.adb.toggleGPSLocationProvider(!isGpsEnabled);
 }
@@ -211,13 +209,7 @@ async function resetMockLocation(this: AndroidDriver): Promise<void> {
     // Only include currently installed packages
     const resultPkgs = pkgIds.filter((pkg) => thirdPartyPkgIds.has(pkg));
     if (resultPkgs.length <= 1) {
-      await this.adb.shell([
-        'appops',
-        'set',
-        resultPkgs[0] ?? SETTINGS_HELPER_ID,
-        'android:mock_location',
-        'deny',
-      ]);
+      await this.adb.shell(['appops', 'set', resultPkgs[0] ?? SETTINGS_HELPER_ID, 'android:mock_location', 'deny']);
       return;
     }
 

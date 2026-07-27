@@ -1,15 +1,17 @@
-import {util, timing} from '@appium/support';
-import axios from 'axios';
+import dns from 'node:dns/promises';
+import http from 'node:http';
 import net from 'node:net';
-import {findAPortNotInUse} from 'portscanner';
-import {sleep} from 'asyncbox';
 import os from 'node:os';
 import path from 'node:path';
-import http from 'node:http';
+
+import {util, timing} from '@appium/support';
+import type {StringRecord} from '@appium/types';
 import {Chromedriver} from 'appium-chromedriver';
 import type {ChromedriverOpts} from 'appium-chromedriver';
-import {toDetailsCacheKey, getWebviewDetails, WEBVIEWS_DETAILS_CACHE} from './cache.js';
-import dns from 'node:dns/promises';
+import {sleep} from 'asyncbox';
+import axios from 'axios';
+import {findAPortNotInUse} from 'portscanner';
+
 import type {AndroidDriver, AndroidDriverOpts} from '../../driver.js';
 import type {
   GetWebviewsOpts,
@@ -20,7 +22,7 @@ import type {
   WebviewProc,
   DetailCollectionOptions,
 } from '../types.js';
-import type {StringRecord} from '@appium/types';
+import {toDetailsCacheKey, getWebviewDetails, WEBVIEWS_DETAILS_CACHE} from './cache.js';
 
 // https://cs.chromium.org/chromium/src/chrome/browser/devtools/device/android_device_info_query.cc
 export const CHROME_BROWSER_PACKAGE_ACTIVITY = {
@@ -74,10 +76,10 @@ const WEBVIEW_PKG_PATTERN = new RegExp(`^${WEBVIEW_BASE}([^\\d\\s][\\w.]*)`);
 const WEBVIEW_WAIT_INTERVAL_MS = 200;
 const CDP_REQ_TIMEOUT = 2000; // ms
 const DEVTOOLS_PORTS_RANGE = [10900, 11000] as const;
-const DEVTOOLS_PORT_ALLOCATION_GUARD = util.getLockFileGuard(
-  path.resolve(os.tmpdir(), 'android_devtools_port_guard'),
-  {timeout: 7, tryRecovery: true},
-);
+const DEVTOOLS_PORT_ALLOCATION_GUARD = util.getLockFileGuard(path.resolve(os.tmpdir(), 'android_devtools_port_guard'), {
+  timeout: 7,
+  tryRecovery: true,
+});
 
 // #region Exported Functions
 
@@ -91,9 +93,8 @@ export function getChromePkg(
   browser: string,
 ): (typeof CHROME_BROWSER_PACKAGE_ACTIVITY)[keyof typeof CHROME_BROWSER_PACKAGE_ACTIVITY] {
   return (
-    CHROME_BROWSER_PACKAGE_ACTIVITY[
-      browser.toLowerCase() as keyof typeof CHROME_BROWSER_PACKAGE_ACTIVITY
-    ] || CHROME_BROWSER_PACKAGE_ACTIVITY.default
+    CHROME_BROWSER_PACKAGE_ACTIVITY[browser.toLowerCase() as keyof typeof CHROME_BROWSER_PACKAGE_ACTIVITY] ||
+    CHROME_BROWSER_PACKAGE_ACTIVITY.default
   );
 }
 
@@ -118,19 +119,14 @@ export function parseWebviewNames(
   const result: string[] = [];
   for (const {webview, pages, proc, webviewName} of webviewsMapping) {
     if (ensureWebviewsHavePages && !pages?.length) {
-      this.log.info(
-        `Skipping the webview '${webview}' at '${proc}' ` +
-          `since it has reported having zero pages`,
-      );
+      this.log.info(`Skipping the webview '${webview}' at '${proc}' ` + `since it has reported having zero pages`);
       continue;
     }
     if (webviewName) {
       result.push(webviewName);
     }
   }
-  this.log.debug(
-    `Found ${util.pluralize('webview', result.length, true)}: ${JSON.stringify(result)}`,
-  );
+  this.log.debug(`Found ${util.pluralize('webview', result.length, true)}: ${JSON.stringify(result)}`);
   return result;
 }
 
@@ -150,10 +146,7 @@ export function parseWebviewNames(
  * @param opts - Options for webview discovery including device socket, port, and collection settings
  * @returns An array of webview mapping objects
  */
-export async function getWebViewsMapping(
-  this: AndroidDriver,
-  opts: GetWebviewsOpts = {},
-): Promise<WebviewsMapping[]> {
+export async function getWebViewsMapping(this: AndroidDriver, opts: GetWebviewsOpts = {}): Promise<WebviewsMapping[]> {
   const {
     androidDeviceSocket = null,
     ensureWebviewsHavePages = true,
@@ -241,9 +234,7 @@ export async function setupNewChromedriver(
 ): Promise<Chromedriver> {
   // TODO: Remove the legacy
   if ((opts as any).chromeDriverPort) {
-    this.log.warn(
-      `The 'chromeDriverPort' capability is deprecated. Please use 'chromedriverPort' instead`,
-    );
+    this.log.warn(`The 'chromeDriverPort' capability is deprecated. Please use 'chromedriverPort' instead`);
     opts.chromedriverPort = (opts as any).chromeDriverPort;
   }
 
@@ -256,10 +247,7 @@ export async function setupNewChromedriver(
 
   const details = context ? getWebviewDetails(this.adb, context) : undefined;
   if (!util.isEmpty(details)) {
-    this.log.debug(
-      'Passing web view details to the Chromedriver constructor: ' +
-        JSON.stringify(details, null, 2),
-    );
+    this.log.debug('Passing web view details to the Chromedriver constructor: ' + JSON.stringify(details, null, 2));
   }
 
   const chromedriverOpts: ChromedriverOpts & {details?: WebViewDetails} = {
@@ -297,17 +285,13 @@ export async function setupNewChromedriver(
   // Strip the prefix and store it
   for (const opt of Object.keys(opts)) {
     if (opt.endsWith(':loggingPrefs')) {
-      this.log.warn(
-        `Merging '${opt}' into 'chromeLoggingPrefs'. This may cause unexpected behavior`,
-      );
+      this.log.warn(`Merging '${opt}' into 'chromeLoggingPrefs'. This may cause unexpected behavior`);
       merge(opts.chromeLoggingPrefs, (opts as Record<string, any>)[opt]);
     }
   }
 
   const caps = createChromedriverCaps.bind(this)(opts, curDeviceId, details) as any;
-  this.log.debug(
-    `Before starting chromedriver, androidPackage is '${caps.chromeOptions.androidPackage}'`,
-  );
+  this.log.debug(`Before starting chromedriver, androidPackage is '${caps.chromeOptions.androidPackage}'`);
   // Optionally pre-grant all runtime permissions to the resolved Chrome package before Chrome
   // is launched, so the session is not interrupted by a native permission dialog (geolocation,
   // camera, file access, ...). Because the grant is requested explicitly, failures propagate.
@@ -453,9 +437,7 @@ function createChromedriverCaps(
   const caps: any = {chromeOptions: {}};
 
   const androidPackage =
-    opts.chromeOptions?.androidPackage ||
-    opts.appPackage ||
-    webViewDetails?.info?.['Android-Package'];
+    opts.chromeOptions?.androidPackage || opts.appPackage || webViewDetails?.info?.['Android-Package'];
   if (androidPackage) {
     // chromedriver raises an invalid argument error when androidPackage is 'null'
 
@@ -497,9 +479,7 @@ function createChromedriverCaps(
 
   if (util.isPlainObject(opts.loggingPrefs) || util.isPlainObject(opts.chromeLoggingPrefs)) {
     if (opts.loggingPrefs) {
-      this.log.warn(
-        `The 'loggingPrefs' cap is deprecated; use the 'chromeLoggingPrefs' cap instead`,
-      );
+      this.log.warn(`The 'loggingPrefs' cap is deprecated; use the 'chromeLoggingPrefs' cap instead`);
     }
     caps.loggingPrefs = opts.chromeLoggingPrefs || opts.loggingPrefs;
   }
@@ -523,9 +503,7 @@ function createChromedriverCaps(
     caps.webSocketUrl = opts.webSocketUrl;
   }
 
-  this.log.debug(
-    'Precalculated Chromedriver capabilities: ' + JSON.stringify(caps.chromeOptions, null, 2),
-  );
+  this.log.debug('Precalculated Chromedriver capabilities: ' + JSON.stringify(caps.chromeOptions, null, 2));
 
   const protectedCapNames: string[] = [];
   for (const [opt, val] of Object.entries(opts.chromeOptions)) {
@@ -536,10 +514,7 @@ function createChromedriverCaps(
     }
   }
   if (!util.isEmpty(protectedCapNames)) {
-    this.log.info(
-      'The following Chromedriver capabilities cannot be overridden ' +
-        'by the provided chromeOptions:',
-    );
+    this.log.info('The following Chromedriver capabilities cannot be overridden ' + 'by the provided chromeOptions:');
     for (const optName of protectedCapNames) {
       this.log.info(`  ${optName} (${JSON.stringify(opts.chromeOptions[optName])})`);
     }
@@ -570,14 +545,9 @@ async function allocateDevtoolsChannel(
     endPort = webviewDevtoolsPort + (endPort - startPort);
     startPort = webviewDevtoolsPort;
   }
-  this.log.debug(
-    `Forwarding remote port ${remotePort} to a local ` + `port in range ${startPort}..${endPort}`,
-  );
+  this.log.debug(`Forwarding remote port ${remotePort} to a local ` + `port in range ${startPort}..${endPort}`);
   if (!webviewDevtoolsPort) {
-    this.log.debug(
-      `You could use the 'webviewDevtoolsPort' capability to customize ` +
-        `the starting port number`,
-    );
+    this.log.debug(`You could use the 'webviewDevtoolsPort' capability to customize ` + `the starting port number`);
   }
   const port = await DEVTOOLS_PORT_ALLOCATION_GUARD(async () => {
     let localPort: number;
@@ -616,11 +586,7 @@ async function collectWebviewsDetails(
     return;
   }
 
-  const {
-    webviewDevtoolsPort = null,
-    ensureWebviewsHavePages = null,
-    enableWebviewDetailsCollection = null,
-  } = opts;
+  const {webviewDevtoolsPort = null, ensureWebviewsHavePages = null, enableWebviewDetailsCollection = null} = opts;
 
   if (!ensureWebviewsHavePages) {
     this.log.info(
@@ -642,9 +608,7 @@ async function collectWebviewsDetails(
   }
 
   // Connect to each devtools socket and retrieve web view details
-  this.log.debug(
-    `Collecting CDP data of ${util.pluralize('webview', webviewsMapping.length, true)}`,
-  );
+  this.log.debug(`Collecting CDP data of ${util.pluralize('webview', webviewsMapping.length, true)}`);
   const detailCollectors: Promise<void>[] = [];
   for (const item of webviewsMapping) {
     detailCollectors.push(
@@ -652,10 +616,7 @@ async function collectWebviewsDetails(
         let port: number | undefined;
         let host: string | undefined;
         try {
-          [host, port] = (await allocateDevtoolsChannel.bind(this)(
-            item.proc,
-            webviewDevtoolsPort,
-          )) as [string, number];
+          [host, port] = (await allocateDevtoolsChannel.bind(this)(item.proc, webviewDevtoolsPort)) as [string, number];
           if (enableWebviewDetailsCollection) {
             item.info = await cdpInfo(host, port);
           }
@@ -664,9 +625,7 @@ async function collectWebviewsDetails(
           }
         } catch (e) {
           const err = e as Error;
-          this.log.info(
-            `CDP data for '${item.webview}' cannot be collected. Original error: ${err.message}`,
-          );
+          this.log.info(`CDP data for '${item.webview}' cannot be collected. Original error: ${err.message}`);
         } finally {
           if (port) {
             try {
@@ -753,10 +712,7 @@ async function getPotentialWebviewProcs(this: AndroidDriver): Promise<string[]> 
  * @param deviceSocket - The explicitly-named device socket to use, or null to find all webviews
  * @returns An array of webview process objects with proc and webview properties
  */
-async function webviewsFromProcs(
-  this: AndroidDriver,
-  deviceSocket: string | null = null,
-): Promise<WebviewProc[]> {
+async function webviewsFromProcs(this: AndroidDriver, deviceSocket: string | null = null): Promise<WebviewProc[]> {
   const socketNames = await getPotentialWebviewProcs.bind(this)();
   const webviews: WebviewProc[] = [];
   for (const socketName of socketNames) {
@@ -826,8 +782,7 @@ async function getChromedriverPort(this: AndroidDriver, portSpec?: PortSpec): Pr
 
   if (foundPort === null) {
     throw new Error(
-      `Could not find a free port for chromedriver using ` +
-        `chromedriverPorts spec ${JSON.stringify(portSpec)}`,
+      `Could not find a free port for chromedriver using ` + `chromedriverPorts spec ${JSON.stringify(portSpec)}`,
     );
   }
 
@@ -846,11 +801,7 @@ function isChromedriverAutodownloadEnabled(this: AndroidDriver): boolean {
   return false;
 }
 
-function cacheChromedriverCaps(
-  this: AndroidDriver,
-  sessionCaps: Record<string, any>,
-  context?: string,
-): void {
+function cacheChromedriverCaps(this: AndroidDriver, sessionCaps: Record<string, any>, context?: string): void {
   if (!context) {
     return;
   }
@@ -872,9 +823,7 @@ function cacheChromedriverCaps(
  */
 function isCompatibleCdpHost(host: string): boolean {
   return (
-    ['localhost', 'localhost.localdomain'].includes(host) ||
-    host.endsWith('.localhost') ||
-    Boolean(net.isIP(host))
+    ['localhost', 'localhost.localdomain'].includes(host) || host.endsWith('.localhost') || Boolean(net.isIP(host))
   );
 }
 

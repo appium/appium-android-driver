@@ -1,5 +1,6 @@
 import {errors} from 'appium/driver.js';
 import {UNICODE_IME, EMPTY_IME} from 'io.appium.settings';
+
 import type {AndroidDriver} from '../driver.js';
 import type {SendKeysOpts} from './types.js';
 
@@ -57,11 +58,7 @@ export async function doSendKeys(this: AndroidDriver, params: SendKeysOpts): Pro
  * @param metastate Optional meta state flags.
  * @returns Promise that resolves when the key event is sent.
  */
-export async function keyevent(
-  this: AndroidDriver,
-  keycode: string | number,
-  metastate?: number,
-): Promise<void> {
+export async function keyevent(this: AndroidDriver, keycode: string | number, metastate?: number): Promise<void> {
   // TODO deprecate keyevent; currently wd only implements keyevent
   this.log.warn('keyevent will be deprecated use pressKeyCode');
   return await this.pressKeyCode(keycode, metastate);
@@ -75,11 +72,7 @@ export async function keyevent(
  * @returns Promise that resolves when the key code is pressed.
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
-export async function pressKeyCode(
-  this: AndroidDriver,
-  keycode: string | number,
-  metastate?: number,
-): Promise<void> {
+export async function pressKeyCode(this: AndroidDriver, keycode: string | number, metastate?: number): Promise<void> {
   void keycode;
   void metastate;
   throw new errors.NotImplementedError('Not implemented');
@@ -109,10 +102,7 @@ export async function longPressKeyCode(
  * @param action The editor action to perform (e.g., 'done', 'go', 'next').
  * @returns Promise that resolves when the editor action is performed.
  */
-export async function mobilePerformEditorAction(
-  this: AndroidDriver,
-  action: string | number,
-): Promise<void> {
+export async function mobilePerformEditorAction(this: AndroidDriver, action: string | number): Promise<void> {
   await this.settingsApp.performEditorAction(action);
 }
 

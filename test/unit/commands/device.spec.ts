@@ -1,11 +1,13 @@
-import sinon from 'sinon';
-import esmock from 'esmock';
+import {describe, it, beforeEach, afterEach, before, after} from 'node:test';
+
 import {ADB} from 'appium-adb';
-import {AndroidDriver} from '../../../lib/driver.js';
-import {prepareAvdArgs, prepareEmulator} from '../../../lib/commands/device/utils.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it, beforeEach, afterEach, before, after} from 'node:test';
+import esmock from 'esmock';
+import sinon from 'sinon';
+
+import {prepareAvdArgs, prepareEmulator} from '../../../lib/commands/device/utils.js';
+import {AndroidDriver} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 
@@ -406,10 +408,7 @@ describe('Device Helpers', function () {
         driver.opts = {
           adbListenAllNetwork: true,
         } as any;
-        sandbox
-          .stub(driver, 'assertFeatureEnabled')
-          .withArgs('adb_listen_all_network')
-          .onFirstCall();
+        sandbox.stub(driver, 'assertFeatureEnabled').withArgs('adb_listen_all_network').onFirstCall();
         await driver.createADB();
       });
     });
@@ -436,8 +435,7 @@ describe('Device Helpers', function () {
           hideKeyboardCompletely: overrides.hideKeyboardCompletely,
         };
       }
-      return (await esmock('../../../lib/commands/device/common.js', import.meta.url, importMocks))
-        .initDevice;
+      return (await esmock('../../../lib/commands/device/common.js', import.meta.url, importMocks)).initDevice;
     }
 
     it('should init a real device', async function () {

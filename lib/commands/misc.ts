@@ -1,5 +1,6 @@
-import {errors} from 'appium/driver.js';
 import type {Size, Rect, StringRecord} from '@appium/types';
+import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../driver.js';
 import type {SmsListResult, ListSmsOpts} from './types.js';
 
@@ -86,10 +87,7 @@ export async function mobileGetNotifications(this: AndroidDriver): Promise<Strin
  * @param opts Optional parameters for listing SMS messages.
  * @returns Promise that resolves to the SMS list result.
  */
-export async function mobileListSms(
-  this: AndroidDriver,
-  opts?: ListSmsOpts,
-): Promise<SmsListResult> {
+export async function mobileListSms(this: AndroidDriver, opts?: ListSmsOpts): Promise<SmsListResult> {
   return await this.settingsApp.getSmsList(opts);
 }
 

@@ -1,4 +1,7 @@
 import {sleep} from 'asyncbox';
+
+import type {AndroidDriver, AndroidDriverCaps} from '../../driver.js';
+import type {UnlockType} from '../types.js';
 import {
   validateUnlockCapabilities,
   FINGERPRINT_UNLOCK,
@@ -15,8 +18,6 @@ import {
   toCredentialType,
   verifyUnlock,
 } from './helpers.js';
-import type {AndroidDriver, AndroidDriverCaps} from '../../driver.js';
-import type {UnlockType} from '../types.js';
 
 /**
  * Locks the device and optionally unlocks it after a specified number of seconds.
@@ -90,10 +91,7 @@ export async function mobileUnlock(
  *
  * @param caps - Optional capabilities to use for unlocking. If not provided, uses session capabilities.
  */
-export async function unlockWithOptions(
-  this: AndroidDriver,
-  caps: AndroidDriverCaps | null = null,
-): Promise<void> {
+export async function unlockWithOptions(this: AndroidDriver, caps: AndroidDriverCaps | null = null): Promise<void> {
   if (!(await this.adb.isScreenLocked())) {
     this.log.info('Screen already unlocked, doing nothing');
     return;
@@ -126,10 +124,7 @@ export async function unlockWithOptions(
       credentialType: toCredentialType(unlockType as UnlockType),
     });
   } else {
-    const unlockMethodMap: Record<
-      string,
-      (this: AndroidDriver, caps: AndroidDriverCaps) => Promise<void>
-    > = {
+    const unlockMethodMap: Record<string, (this: AndroidDriver, caps: AndroidDriverCaps) => Promise<void>> = {
       [PIN_UNLOCK]: pinUnlock,
       [PIN_UNLOCK_KEY_EVENT]: pinUnlockWithKeyEvent,
       [PASSWORD_UNLOCK]: passwordUnlock,

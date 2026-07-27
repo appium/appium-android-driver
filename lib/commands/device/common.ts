@@ -1,15 +1,17 @@
-import * as semver from 'semver';
 import path from 'node:path';
-import {setMockLocationApp} from '../geolocation.js';
-import {SETTINGS_HELPER_ID} from 'io.appium.settings';
-import {hideKeyboardCompletely, initUnicodeKeyboard} from '../keyboard.js';
-import {createBaseADB, prepareEmulator, pushSettingsApp} from './utils.js';
-import {adjustTimeZone} from '../time.js';
-import {retryInterval} from 'asyncbox';
-import {GET_SERVER_LOGS_FEATURE, nativeLogEntryToSeleniumEntry} from '../../utils.js';
-import type {AndroidDriver} from '../../driver.js';
-import type {ADBDeviceInfo, ADBLaunchInfo} from '../types.js';
+
 import type {ADB} from 'appium-adb';
+import {retryInterval} from 'asyncbox';
+import {SETTINGS_HELPER_ID} from 'io.appium.settings';
+import * as semver from 'semver';
+
+import type {AndroidDriver} from '../../driver.js';
+import {GET_SERVER_LOGS_FEATURE, nativeLogEntryToSeleniumEntry} from '../../utils.js';
+import {setMockLocationApp} from '../geolocation.js';
+import {hideKeyboardCompletely, initUnicodeKeyboard} from '../keyboard.js';
+import {adjustTimeZone} from '../time.js';
+import type {ADBDeviceInfo, ADBLaunchInfo} from '../types.js';
+import {createBaseADB, prepareEmulator, pushSettingsApp} from './utils.js';
 
 /**
  * Gets device information from capabilities, including UDID and emulator port.
@@ -38,9 +40,7 @@ export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDev
     // udid was given, lets try to init with that device
     if (udid) {
       if (!devices?.some((device) => device.udid === udid)) {
-        throw this.log.errorWithException(
-          `Device ${udid} was not in the list of connected devices`,
-        );
+        throw this.log.errorWithException(`Device ${udid} was not in the list of connected devices`);
       }
       emPort = adb.getPortFromEmulatorString(udid);
     } else if (this.opts.platformVersion) {
@@ -71,11 +71,9 @@ export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDev
         const semverDO = deviceOS;
 
         const bothVersionsCanBeCoerced = semver.valid(deviceOS) && semver.valid(platformVersion);
-        const bothVersionsAreStrings =
-          typeof deviceOS === 'string' && typeof platformVersion === 'string';
+        const bothVersionsAreStrings = typeof deviceOS === 'string' && typeof platformVersion === 'string';
         if (
-          (bothVersionsCanBeCoerced &&
-            (semverDO as semver.SemVer).version === (semverPV as semver.SemVer).version) ||
+          (bothVersionsCanBeCoerced && (semverDO as semver.SemVer).version === (semverPV as semver.SemVer).version) ||
           (bothVersionsAreStrings && deviceOS.toLowerCase() === platformVersion.toLowerCase())
         ) {
           // Got an exact match - proceed immediately
@@ -95,8 +93,7 @@ export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDev
             (pvMajor === dvMajor && pvMinor === dvMinor)) &&
           // Got a partial match - make sure we consider the most recent
           // device version available on the host system
-          ((partialMatchCandidate &&
-            semver.gt(deviceOS, Object.values(partialMatchCandidate)[0])) ||
+          ((partialMatchCandidate && semver.gt(deviceOS, Object.values(partialMatchCandidate)[0])) ||
             !partialMatchCandidate)
         ) {
           partialMatchCandidate = {[device.udid]: deviceOS};
@@ -168,9 +165,7 @@ export async function getLaunchInfo(this: AndroidDriver): Promise<ADBLaunchInfo 
   let apkPackage: string | undefined;
   let apkActivity: string | undefined;
   if (appOpt) {
-    this.log.debug(
-      `Parsing package and activity from the '${path.basename(appOpt)}' file manifest`,
-    );
+    this.log.debug(`Parsing package and activity from the '${path.basename(appOpt)}' file manifest`);
     ({apkPackage, apkActivity} = await this.adb.packageAndLaunchActivityFromManifest(appOpt));
   } else if (appPackage) {
     this.log.debug(`Parsing activity from the installed '${appPackage}' package manifest`);
@@ -238,18 +233,10 @@ export async function initDevice(this: AndroidDriver): Promise<void> {
             `device provisioning, or unset the capability to let the driver install it.`,
         );
       }
-      this.log.info(
-        `'skipSettingsAppReinstall' is set; using the already-installed Appium Settings helper app as-is.`,
-      );
+      this.log.info(`'skipSettingsAppReinstall' is set; using the already-installed Appium Settings helper app as-is.`);
     } else {
       const shouldThrowError = Boolean(
-        language ||
-        locale ||
-        localeScript ||
-        unicodeKeyboard ||
-        hideKeyboard ||
-        disableWindowAnimation ||
-        !skipUnlock,
+        language || locale || localeScript || unicodeKeyboard || hideKeyboard || disableWindowAnimation || !skipUnlock,
       );
       await pushSettingsApp.bind(this)(shouldThrowError);
     }

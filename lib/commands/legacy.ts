@@ -1,4 +1,5 @@
 import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../driver.js';
 
 const ISSUE_URL = 'https://github.com/appium/appium/issues/15807';

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc.js';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+import utc from 'dayjs/plugin/utc.js';
+
 import type {AndroidDriver} from '../driver.js';
 
 dayjs.extend(utc);
@@ -14,13 +15,8 @@ const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
  * @param format The format string for the time. Defaults to ISO8601 format.
  * @returns Promise that resolves to the formatted device time string.
  */
-export async function getDeviceTime(
-  this: AndroidDriver,
-  format: string = DATETIME_FORMAT_ISO8601,
-): Promise<string> {
-  this.log.debug(
-    `Attempting to capture Android device date and time. The format specifier is '${format}'`,
-  );
+export async function getDeviceTime(this: AndroidDriver, format: string = DATETIME_FORMAT_ISO8601): Promise<string> {
+  this.log.debug(`Attempting to capture Android device date and time. The format specifier is '${format}'`);
   const deviceTimestamp = (await this.adb.shell(['date', '+%Y-%m-%dT%T%z'])).trim();
   this.log.debug(`Got device timestamp: ${deviceTimestamp}`);
   const parsedTimestamp = dayjs.utc(deviceTimestamp, 'YYYY-MM-DDTHH:mm:ssZZ');

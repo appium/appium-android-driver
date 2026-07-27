@@ -1,20 +1,12 @@
+import {util} from '@appium/support';
 import {retryInterval} from 'asyncbox';
 import type {ExecError} from 'teen_process';
+
 import type {AndroidDriver} from '../driver.js';
 import type {PerformanceDataType} from './types.js';
-import {util} from '@appium/support';
 
 export const NETWORK_KEYS = [
-  [
-    'bucketStart',
-    'activeTime',
-    'rxBytes',
-    'rxPackets',
-    'txBytes',
-    'txPackets',
-    'operations',
-    'bucketDuration',
-  ],
+  ['bucketStart', 'activeTime', 'rxBytes', 'rxPackets', 'txBytes', 'txPackets', 'operations', 'bucketDuration'],
   ['st', 'activeTime', 'rb', 'rp', 'tb', 'tp', 'op', 'bucketDuration'],
 ] as const;
 
@@ -45,8 +37,7 @@ export const SUPPORTED_PERFORMANCE_DATA_TYPES = Object.freeze({
     'the amount of memory used by the process - memory information for applications on real devices and simulators',
   batteryinfo:
     'the remaining battery power - battery power information for applications on real devices and simulators',
-  networkinfo:
-    'the network statistics - network rx/tx information for applications on real devices and simulators',
+  networkinfo: 'the network statistics - network rx/tx information for applications on real devices and simulators',
 } as const);
 
 export const MEMINFO_TITLES = Object.freeze({
@@ -101,11 +92,7 @@ export async function getPerformanceData(
     default:
       throw new Error(
         `No performance data of type '${dataType}' found. ` +
-          `Only the following values are supported: ${JSON.stringify(
-            SUPPORTED_PERFORMANCE_DATA_TYPES,
-            [' '],
-            2,
-          )}`,
+          `Only the following values are supported: ${JSON.stringify(SUPPORTED_PERFORMANCE_DATA_TYPES, [' '], 2)}`,
       );
   }
 }
@@ -156,11 +143,7 @@ export async function mobileGetPerformanceData(
  * and the second row contains the corresponding values.
  * @throws {Error} If memory data cannot be retrieved or parsed.
  */
-export async function getMemoryInfo(
-  this: AndroidDriver,
-  packageName: string,
-  retries: number = 2,
-): Promise<any[][]> {
+export async function getMemoryInfo(this: AndroidDriver, packageName: string, retries: number = 2): Promise<any[][]> {
   return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
     const cmd = [
       'dumpsys',
@@ -211,10 +194,7 @@ export async function getMemoryInfo(
  * for each time bucket.
  * @throws {Error} If network traffic data cannot be retrieved or parsed.
  */
-export async function getNetworkTrafficInfo(
-  this: AndroidDriver,
-  retries: number = 2,
-): Promise<any[][]> {
+export async function getNetworkTrafficInfo(this: AndroidDriver, retries: number = 2): Promise<any[][]> {
   return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
     const returnValue: any[][] = [];
     let bucketDuration: string | undefined;
@@ -429,9 +409,7 @@ export async function getCPUInfo(
     const match = usagesPattern.exec(output);
     if (!match) {
       this.log.debug(output);
-      throw new Error(
-        `Unable to parse cpu usage data for '${packageName}'. Check the server log for more details`,
-      );
+      throw new Error(`Unable to parse cpu usage data for '${packageName}'. Check the server log for more details`);
     }
     const user = match[1];
     const kernel = match[2];
@@ -471,22 +449,11 @@ export async function getBatteryInfo(this: AndroidDriver, retries: number = 2): 
  * except 'TOTAL', which skips the second type name
  * !!! valDict gets mutated
  */
-function parseMeminfoForApi19To29(
-  entries: string[],
-  valDict: Record<string, string | number>,
-): void {
+function parseMeminfoForApi19To29(entries: string[], valDict: Record<string, string | number>): void {
   const [type, subType] = entries;
   if (type === MEMINFO_TITLES.NATIVE && subType === MEMINFO_TITLES.HEAP) {
-    [
-      ,
-      ,
-      valDict.nativePss,
-      valDict.nativePrivateDirty,
-      ,
-      ,
-      valDict.nativeHeapSize,
-      valDict.nativeHeapAllocatedSize,
-    ] = entries;
+    [, , valDict.nativePss, valDict.nativePrivateDirty, , , valDict.nativeHeapSize, valDict.nativeHeapAllocatedSize] =
+      entries;
   } else if (type === MEMINFO_TITLES.DALVIK && subType === MEMINFO_TITLES.HEAP) {
     [, , valDict.dalvikPss, valDict.dalvikPrivateDirty] = entries;
   } else if (type === MEMINFO_TITLES.EGL && subType === MEMINFO_TITLES.MTRACK) {
@@ -504,10 +471,7 @@ function parseMeminfoForApi19To29(
  * ['<System Type>', '<Memory Type>', <pss total>, <private dirty>, <private clean>, <swapPss dirty>, <rss total>, <heap size>, <heap alloc>, <heap free>]
  * !!! valDict gets mutated
  */
-function parseMeminfoForApiAbove29(
-  entries: string[],
-  valDict: Record<string, string | number>,
-): void {
+function parseMeminfoForApiAbove29(entries: string[], valDict: Record<string, string | number>): void {
   const [type, subType] = entries;
   if (type === MEMINFO_TITLES.NATIVE && subType === MEMINFO_TITLES.HEAP) {
     [

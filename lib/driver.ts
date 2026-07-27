@@ -10,60 +10,9 @@ import type {
 import type {ADB, LogcatListener} from 'appium-adb';
 import type {Chromedriver as AppiumChromedriver} from 'appium-chromedriver';
 import {BaseDriver} from 'appium/driver.js';
-import {ANDROID_DRIVER_CONSTRAINTS} from './constraints.js';
-import type {AndroidDriverConstraints} from './constraints.js';
-import {newMethodMap} from './method-map.js';
 import {SettingsApp} from 'io.appium.settings';
-import {parseArray, removeAllSessionWebSocketHandlers} from './utils.js';
-import {CHROME_BROWSER_PACKAGE_ACTIVITY} from './commands/context/helpers.js';
-import {
-  getContexts,
-  setContext,
-  getCurrentContext,
-  defaultContextName,
-  assignContexts,
-  switchContext,
-  defaultWebviewName,
-  isWebContext,
-  isChromedriverContext,
-  startChromedriverProxy,
-  onChromedriverStop,
-  stopChromedriverProxies,
-  suspendChromedriverProxy,
-  startChromeSession,
-  mobileGetContexts,
-  mobileGetChromeCapabilities,
-  getWindowHandle,
-  getWindowHandles,
-  setWindow,
-  notifyBiDiContextChange,
-} from './commands/context/exports.js';
-import {
-  getDeviceInfoFromCaps,
-  createADB,
-  getLaunchInfo,
-  initDevice,
-} from './commands/device/common.js';
-import {
-  fingerprint,
-  mobileFingerprint,
-  sendSMS,
-  mobileSendSms,
-  gsmCall,
-  mobileGsmCall,
-  gsmSignal,
-  mobileGsmSignal,
-  gsmVoice,
-  mobileGsmVoice,
-  powerAC,
-  mobilePowerAc,
-  powerCapacity,
-  mobilePowerCapacity,
-  networkSpeed,
-  mobileNetworkSpeed,
-  sensorSet,
-} from './commands/device/emulator-actions.js';
-import {mobileExecEmuConsoleCommand} from './commands/device/emulator-console.js';
+import {LRUCache} from 'lru-cache';
+
 import {
   getThirdPartyPackages,
   uninstallOtherPackages,
@@ -88,8 +37,52 @@ import {
   isAppInstalled,
 } from './commands/app-management.js';
 import {mobileGetUiMode, mobileSetUiMode} from './commands/appearance.js';
-import {mobileDeviceidle} from './commands/deviceidle.js';
 import {mobileBluetooth} from './commands/bluetooth.js';
+import {
+  getContexts,
+  setContext,
+  getCurrentContext,
+  defaultContextName,
+  assignContexts,
+  switchContext,
+  defaultWebviewName,
+  isWebContext,
+  isChromedriverContext,
+  startChromedriverProxy,
+  onChromedriverStop,
+  stopChromedriverProxies,
+  suspendChromedriverProxy,
+  startChromeSession,
+  mobileGetContexts,
+  mobileGetChromeCapabilities,
+  getWindowHandle,
+  getWindowHandles,
+  setWindow,
+  notifyBiDiContextChange,
+} from './commands/context/exports.js';
+import {CHROME_BROWSER_PACKAGE_ACTIVITY} from './commands/context/helpers.js';
+import {getDeviceInfoFromCaps, createADB, getLaunchInfo, initDevice} from './commands/device/common.js';
+import {
+  fingerprint,
+  mobileFingerprint,
+  sendSMS,
+  mobileSendSms,
+  gsmCall,
+  mobileGsmCall,
+  gsmSignal,
+  mobileGsmSignal,
+  gsmVoice,
+  mobileGsmVoice,
+  powerAC,
+  mobilePowerAc,
+  powerCapacity,
+  mobilePowerCapacity,
+  networkSpeed,
+  mobileNetworkSpeed,
+  sensorSet,
+} from './commands/device/emulator-actions.js';
+import {mobileExecEmuConsoleCommand} from './commands/device/emulator-console.js';
+import {mobileDeviceidle} from './commands/deviceidle.js';
 import {
   getAttribute,
   getName,
@@ -121,6 +114,7 @@ import {
   mobileResetGeolocation,
 } from './commands/geolocation.js';
 import {performActions} from './commands/gestures.js';
+import {mobileInjectEmulatorCameraImage} from './commands/image-injection.js';
 import {
   isIMEActivated,
   availableIMEEngines,
@@ -145,6 +139,7 @@ import {
   longPressKeyCode,
   mobilePerformEditorAction,
 } from './commands/keyboard.js';
+import {reset, closeApp, launchApp} from './commands/legacy.js';
 import {lock, unlock, mobileUnlock, isLocked} from './commands/lock/exports.js';
 import {
   supportedLogTypes,
@@ -160,8 +155,6 @@ import {
   mobileStopMediaProjectionRecording,
 } from './commands/media-projection.js';
 import {mobileSendTrimMemory} from './commands/memory.js';
-import {mobileNfc} from './commands/nfc.js';
-import {mobileInjectEmulatorCameraImage} from './commands/image-injection.js';
 import {
   getWindowRect,
   getWindowSize,
@@ -183,12 +176,8 @@ import {
   toggleFlightMode,
   toggleWiFi,
 } from './commands/network.js';
-import {
-  getPerformanceData,
-  getPerformanceDataTypes,
-  mobileGetPerformanceData,
-} from './commands/performance.js';
-import {reset, closeApp, launchApp} from './commands/legacy.js';
+import {mobileNfc} from './commands/nfc.js';
+import {getPerformanceData, getPerformanceDataTypes, mobileGetPerformanceData} from './commands/performance.js';
 import {mobileChangePermissions, mobileGetPermissions} from './commands/permissions.js';
 import {startRecordingScreen, stopRecordingScreen} from './commands/recordscreen.js';
 import {getStrings, ensureDeviceLocale} from './commands/resources.js';
@@ -196,9 +185,12 @@ import {mobileShell} from './commands/shell.js';
 import {mobileStartScreenStreaming, mobileStopScreenStreaming} from './commands/streamscreen.js';
 import {getSystemBars, mobilePerformStatusBarCommand} from './commands/system-bars.js';
 import {getDeviceTime, mobileGetDeviceTime} from './commands/time.js';
-import {executeMethodMap} from './execute-method-map.js';
-import {LRUCache} from 'lru-cache';
 import type {ScreenRecordingProperties, ScreenStreamingProps} from './commands/types.js';
+import {ANDROID_DRIVER_CONSTRAINTS} from './constraints.js';
+import type {AndroidDriverConstraints} from './constraints.js';
+import {executeMethodMap} from './execute-method-map.js';
+import {newMethodMap} from './method-map.js';
+import {parseArray, removeAllSessionWebSocketHandlers} from './utils.js';
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
 export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;
@@ -454,13 +446,7 @@ class AndroidDriver
   constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
 
-    this.locatorStrategies = [
-      'xpath',
-      'id',
-      'class name',
-      'accessibility id',
-      '-android uiautomator',
-    ];
+    this.locatorStrategies = ['xpath', 'id', 'class name', 'accessibility id', '-android uiautomator'];
     this.desiredCapConstraints = structuredClone(ANDROID_DRIVER_CONSTRAINTS);
     this.sessionChromedrivers = {};
     this.jwpProxyActive = false;
@@ -482,9 +468,7 @@ class AndroidDriver
   }
 
   get isChromeSession(): boolean {
-    return Object.keys(CHROME_BROWSER_PACKAGE_ACTIVITY).includes(
-      (this.opts.browserName || '').toLowerCase(),
-    );
+    return Object.keys(CHROME_BROWSER_PACKAGE_ACTIVITY).includes((this.opts.browserName || '').toLowerCase());
   }
 
   isEmulator(): boolean {
@@ -500,14 +484,10 @@ class AndroidDriver
     if (caps.browserName) {
       if (caps.app) {
         // warn if the capabilities have both `app` and `browser, although this is common with selenium grid
-        this.log.warn(
-          `The desired capabilities should generally not include both an 'app' and a 'browserName'`,
-        );
+        this.log.warn(`The desired capabilities should generally not include both an 'app' and a 'browserName'`);
       }
       if (caps.appPackage) {
-        throw this.log.errorWithException(
-          `The desired should not include both of an 'appPackage' and a 'browserName'`,
-        );
+        throw this.log.errorWithException(`The desired should not include both of an 'appPackage' and a 'browserName'`);
       }
     }
 
@@ -531,9 +511,7 @@ class AndroidDriver
       this.adb?.logcat?.removeAllListeners();
       await this.adb?.stopLogcat();
     } catch (e) {
-      this.log.warn(
-        `Cannot stop the logcat process. Original error: ${e instanceof Error ? e.message : String(e)}`,
-      );
+      this.log.warn(`Cannot stop the logcat process. Original error: ${e instanceof Error ? e.message : String(e)}`);
     }
 
     if (this._bidiServerLogListener) {

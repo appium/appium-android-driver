@@ -1,5 +1,6 @@
-import {errors} from 'appium/driver.js';
 import type {StringRecord} from '@appium/types';
+import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../driver.js';
 
 /**

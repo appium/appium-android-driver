@@ -1,7 +1,8 @@
-import {errors} from 'appium/driver.js';
-import {ADB_SHELL_FEATURE} from '../utils.js';
-import type {AndroidDriver} from '../driver.js';
 import {util} from '@appium/support';
+import {errors} from 'appium/driver.js';
+
+import type {AndroidDriver} from '../driver.js';
+import {ADB_SHELL_FEATURE} from '../utils.js';
 
 const ALL_PERMISSIONS_MAGIC = 'all';
 const PM_ACTION = Object.freeze({
@@ -67,8 +68,7 @@ export async function mobileChangePermissions(
   if (!appPackage) {
     throw new errors.InvalidArgumentError(`A valid appPackage must be provided`);
   }
-  action ??=
-    target?.toLowerCase() === PERMISSION_TARGET.APPOPS ? APPOPS_ACTION.ALLOW : PM_ACTION.GRANT;
+  action ??= target?.toLowerCase() === PERMISSION_TARGET.APPOPS ? APPOPS_ACTION.ALLOW : PM_ACTION.GRANT;
   if (permissions == null) {
     throw new errors.InvalidArgumentError(`'permissions' argument is required`);
   }
@@ -78,11 +78,7 @@ export async function mobileChangePermissions(
 
   switch (target?.toLowerCase()) {
     case PERMISSION_TARGET.PM:
-      return await changePermissionsViaPm.bind(this)(
-        permissions,
-        appPackage,
-        action?.toLowerCase() as PMAction,
-      );
+      return await changePermissionsViaPm.bind(this)(permissions, appPackage, action?.toLowerCase() as PMAction);
     case PERMISSION_TARGET.APPOPS:
       this.assertFeatureEnabled(ADB_SHELL_FEATURE);
       return await changePermissionsViaAppops.bind(this)(
@@ -91,9 +87,7 @@ export async function mobileChangePermissions(
         action?.toLowerCase() as AppOpsAction,
       );
     default:
-      throw new errors.InvalidArgumentError(
-        `'target' argument must be one of: ${Object.values(PERMISSION_TARGET)}`,
-      );
+      throw new errors.InvalidArgumentError(`'target' argument must be one of: ${Object.values(PERMISSION_TARGET)}`);
   }
 }
 /**
@@ -138,8 +132,7 @@ async function changePermissionsViaPm(
 ): Promise<void> {
   if (!Object.values(PM_ACTION).includes(action)) {
     throw new errors.InvalidArgumentError(
-      `Unknown action '${action}'. ` +
-        `Only ${JSON.stringify(Object.values(PM_ACTION))} actions are supported`,
+      `Unknown action '${action}'. ` + `Only ${JSON.stringify(Object.values(PM_ACTION))} actions are supported`,
     );
   }
 
@@ -149,9 +142,7 @@ async function changePermissionsViaPm(
     const grantedPermissions = await this.adb.getGrantedPermissions(appPackage, dumpsys);
     if (action === PM_ACTION.GRANT) {
       const reqPermissons = await this.adb.getReqPermissions(appPackage, dumpsys);
-      affectedPermissions = reqPermissons.filter(
-        (permission) => !grantedPermissions.includes(permission),
-      );
+      affectedPermissions = reqPermissons.filter((permission) => !grantedPermissions.includes(permission));
     } else {
       affectedPermissions = grantedPermissions;
     }
@@ -164,9 +155,7 @@ async function changePermissionsViaPm(
   if (action === PM_ACTION.GRANT) {
     await this.adb.grantPermissions(appPackage, affectedPermissions);
   } else {
-    await Promise.all(
-      affectedPermissions.map((name) => this.adb.revokePermission(appPackage, name)),
-    );
+    await Promise.all(affectedPermissions.map((name) => this.adb.revokePermission(appPackage, name)));
   }
 }
 async function changePermissionsViaAppops(
@@ -177,8 +166,7 @@ async function changePermissionsViaAppops(
 ): Promise<void> {
   if (!Object.values(APPOPS_ACTION).includes(action)) {
     throw new errors.InvalidArgumentError(
-      `Unknown action '${action}'. ` +
-        `Only ${JSON.stringify(Object.values(APPOPS_ACTION))} actions are supported`,
+      `Unknown action '${action}'. ` + `Only ${JSON.stringify(Object.values(APPOPS_ACTION))} actions are supported`,
     );
   }
   if (typeof permissions === 'string' && permissions.toLowerCase() === ALL_PERMISSIONS_MAGIC) {

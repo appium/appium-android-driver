@@ -1,10 +1,12 @@
-import sinon from 'sinon';
-import {AndroidDriver} from '../../../lib/driver.js';
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
 import {ADB} from 'appium-adb';
 import {errors} from 'appium/driver.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import sinon from 'sinon';
+
+import {AndroidDriver} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 
@@ -27,10 +29,7 @@ describe('IME', function () {
   describe('availableIMEEngines', function () {
     it('should return available IMEEngines', async function () {
       sandbox.stub(driver.adb, 'availableIMEs').resolves(['IME1', 'IME2']);
-      await await expect(driver.availableIMEEngines()).to.eventually.be.deep.equal([
-        'IME1',
-        'IME2',
-      ]);
+      await await expect(driver.availableIMEEngines()).to.eventually.be.deep.equal(['IME1', 'IME2']);
     });
   });
   describe('getActiveIMEEngine', function () {
@@ -50,9 +49,7 @@ describe('IME', function () {
     });
     it('should throws error if IME not found', async function () {
       sandbox.stub(driver.adb, 'availableIMEs').resolves(['IME1', 'IME2']);
-      await expect(driver.activateIMEEngine('IME3')).to.be.rejectedWith(
-        errors.IMENotAvailableError,
-      );
+      await expect(driver.activateIMEEngine('IME3')).to.be.rejectedWith(errors.IMENotAvailableError);
     });
   });
   describe('deactivateIMEEngine', function () {
@@ -70,21 +67,11 @@ describe('IME', function () {
     ] as const;
     cases.forEach(([enabled, expectedValue]) => {
       it(`should set stylus handwriting input method to ${enabled}`, async function () {
-        sandbox
-          .stub(driver, 'assertFeatureEnabled')
-          .withArgs('set_stylus_handwriting')
-          .onFirstCall();
+        sandbox.stub(driver, 'assertFeatureEnabled').withArgs('set_stylus_handwriting').onFirstCall();
         const shellStub = sandbox.stub(driver.adb, 'shell');
         await expect(driver.setStylusHandwriting(enabled)).to.be.fulfilled;
-        expect(
-          shellStub.calledWithExactly([
-            'settings',
-            'put',
-            'secure',
-            'stylus_handwriting_enabled',
-            expectedValue,
-          ]),
-        ).to.be.true;
+        expect(shellStub.calledWithExactly(['settings', 'put', 'secure', 'stylus_handwriting_enabled', expectedValue]))
+          .to.be.true;
       });
     });
   });

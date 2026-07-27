@@ -1,7 +1,13 @@
 import {util} from '@appium/support';
+import type {StringRecord} from '@appium/types';
 import {Chromedriver} from 'appium-chromedriver';
 import {errors, PROTOCOLS} from 'appium/driver.js';
-import type {StringRecord} from '@appium/types';
+
+import type {AndroidDriver} from '../../driver.js';
+import {APP_STATE} from '../app-management.js';
+import {BIDI_EVENT_NAME} from '../bidi/constants.js';
+import {makeContextUpdatedEvent, makeObsoleteContextUpdatedEvent} from '../bidi/models.js';
+import type {WebviewsMapping} from '../types.js';
 import {
   CHROMIUM_WIN,
   KNOWN_CHROME_PACKAGE_NAMES,
@@ -15,11 +21,6 @@ import {
   setupNewChromedriver,
   shouldDismissChromeWelcome,
 } from './helpers.js';
-import {APP_STATE} from '../app-management.js';
-import {BIDI_EVENT_NAME} from '../bidi/constants.js';
-import {makeContextUpdatedEvent, makeObsoleteContextUpdatedEvent} from '../bidi/models.js';
-import type {AndroidDriver} from '../../driver.js';
-import type {WebviewsMapping} from '../types.js';
 
 // https://github.com/appium/appium/issues/20710
 const DEFAULT_NATIVE_WINDOW_HANDLE = '1';
@@ -83,10 +84,7 @@ export async function setContext(this: AndroidDriver, name?: string | null): Pro
  * @param waitForWebviewMs - Optional timeout in milliseconds to wait for webviews to appear
  * @returns An array of webview mapping objects containing detailed information about each webview
  */
-export async function mobileGetContexts(
-  this: AndroidDriver,
-  waitForWebviewMs?: number,
-): Promise<WebviewsMapping[]> {
+export async function mobileGetContexts(this: AndroidDriver, waitForWebviewMs?: number): Promise<WebviewsMapping[]> {
   const _opts = {
     androidDeviceSocket: this.opts.androidDeviceSocket,
     ensureWebviewsHavePages: true,
@@ -256,10 +254,7 @@ export async function startChromedriverProxy(
         opts.chromeAndroidPackage = androidPackage[1];
       }
       if (!opts.extractChromeAndroidPackageFromContextName) {
-        if (
-          this.opts.enableWebviewDetailsCollection !== undefined &&
-          !this.opts.enableWebviewDetailsCollection
-        ) {
+        if (this.opts.enableWebviewDetailsCollection !== undefined && !this.opts.enableWebviewDetailsCollection) {
           // When enableWebviewDetailsCollection capability is explicitly disabled, try to identify
           // chromeAndroidPackage based on contexts, known chrome variant packages and queryAppState result
           // since webviewsMapping does not have info object
@@ -269,11 +264,7 @@ export async function startChromedriverProxy(
               continue;
             }
             const appState = await this.queryAppState(knownPackage);
-            if (
-              [APP_STATE.RUNNING_IN_BACKGROUND, APP_STATE.RUNNING_IN_FOREGROUND].includes(
-                appState as any,
-              )
-            ) {
+            if ([APP_STATE.RUNNING_IN_BACKGROUND, APP_STATE.RUNNING_IN_FOREGROUND].includes(appState as any)) {
               opts.chromeAndroidPackage = knownPackage;
               this.log.debug(
                 `Identified chromeAndroidPackage as '${opts.chromeAndroidPackage}' ` +
@@ -286,9 +277,7 @@ export async function startChromedriverProxy(
           for (const wm of webviewsMapping) {
             if (wm.webviewName === context && wm?.info?.['Android-Package'] !== undefined) {
               // XXX: should be a type guard here
-              opts.chromeAndroidPackage = (wm.info as NonNullable<WebviewsMapping['info']>)[
-                'Android-Package'
-              ];
+              opts.chromeAndroidPackage = (wm.info as NonNullable<WebviewsMapping['info']>)['Android-Package'];
               this.log.debug(
                 `Identified chromeAndroidPackage as '${opts.chromeAndroidPackage}' ` +
                   `for context '${context}' by CDP`,
@@ -308,9 +297,7 @@ export async function startChromedriverProxy(
         try {
           await this.onChromedriverStop(context);
         } catch (err) {
-          this.log.warn(
-            `Error handling chromedriver stop event for context ${context}: ${(err as Error).message}`,
-          );
+          this.log.warn(`Error handling chromedriver stop event for context ${context}: ${(err as Error).message}`);
         }
       }
     });
@@ -320,9 +307,7 @@ export async function startChromedriverProxy(
   // hook up the local variables so we can proxy this biz
   this.chromedriver = cd;
   this.proxyReqRes = this.chromedriver.proxyReq.bind(this.chromedriver);
-  this.proxyCommand = this.chromedriver.jwproxy.command.bind(
-    this.chromedriver.jwproxy,
-  ) as typeof this.proxyCommand;
+  this.proxyCommand = this.chromedriver.jwproxy.command.bind(this.chromedriver.jwproxy) as typeof this.proxyCommand;
   this.jwpProxyActive = true;
 }
 
@@ -353,9 +338,7 @@ export async function onChromedriverStop(this: AndroidDriver, context: string): 
   } else {
     // if a Chromedriver in the non-active context barfs, we don't really
     // care, we'll just make a new one next time we need the context.
-    this.log.warn(
-      "Chromedriver quit unexpectedly, but it wasn't the active " + 'context, ignoring',
-    );
+    this.log.warn("Chromedriver quit unexpectedly, but it wasn't the active " + 'context, ignoring');
     delete this.sessionChromedrivers[context];
   }
 }
@@ -411,9 +394,7 @@ export async function notifyBiDiContextChange(this: AndroidDriver): Promise<void
  */
 export async function mobileGetChromeCapabilities(this: AndroidDriver): Promise<StringRecord> {
   if (!this.isWebContext()) {
-    throw new errors.InvalidContextError(
-      'mobile: getChromeCapabilities can only be called in a webview context',
-    );
+    throw new errors.InvalidContextError('mobile: getChromeCapabilities can only be called in a webview context');
   }
 
   const currentContext = await this.getCurrentContext();
@@ -455,9 +436,7 @@ export async function startChromeSession(this: AndroidDriver): Promise<void> {
       try {
         await this.onChromedriverStop(CHROMIUM_WIN);
       } catch (err) {
-        this.log.warn(
-          `Error handling chromedriver stop event for context ${CHROMIUM_WIN}: ${(err as Error).message}`,
-        );
+        this.log.warn(`Error handling chromedriver stop event for context ${CHROMIUM_WIN}: ${(err as Error).message}`);
       }
     }
   });
@@ -468,9 +447,7 @@ export async function startChromeSession(this: AndroidDriver): Promise<void> {
   this.curContext = CHROMIUM_WIN;
   this.sessionChromedrivers[CHROMIUM_WIN] = chromedriver;
   this.proxyReqRes = chromedriver.proxyReq.bind(chromedriver);
-  this.proxyCommand = chromedriver.jwproxy.command.bind(
-    chromedriver.jwproxy,
-  ) as typeof this.proxyCommand;
+  this.proxyCommand = chromedriver.jwproxy.command.bind(chromedriver.jwproxy) as typeof this.proxyCommand;
   this.jwpProxyActive = true;
 
   if (shouldDismissChromeWelcome.bind(this)()) {

@@ -1,21 +1,18 @@
-import {DEFAULT_WS_PATHNAME_PREFIX, BaseDriver} from 'appium/driver.js';
-import os from 'node:os';
-import {WebSocket, WebSocketServer} from 'ws';
-import type {AppiumServer, WSServer} from '@appium/types';
 import type {EventEmitter} from 'node:events';
+import os from 'node:os';
+
+import {util} from '@appium/support';
+import type {AppiumServer, WSServer} from '@appium/types';
 import type {ADB} from 'appium-adb';
 import type {Chromedriver} from 'appium-chromedriver';
-import {
-  GET_SERVER_LOGS_FEATURE,
-  toLogRecord,
-  nativeLogEntryToSeleniumEntry,
-  type LogEntry,
-} from '../utils.js';
-import {NATIVE_WIN} from './context/helpers.js';
+import {DEFAULT_WS_PATHNAME_PREFIX, BaseDriver} from 'appium/driver.js';
+import {WebSocket, WebSocketServer} from 'ws';
+
+import type {AndroidDriver} from '../driver.js';
+import {GET_SERVER_LOGS_FEATURE, toLogRecord, nativeLogEntryToSeleniumEntry, type LogEntry} from '../utils.js';
 import {BIDI_EVENT_NAME} from './bidi/constants.js';
 import {makeLogEntryAddedEvent} from './bidi/models.js';
-import type {AndroidDriver} from '../driver.js';
-import {util} from '@appium/support';
+import {NATIVE_WIN} from './context/helpers.js';
 
 export const supportedLogTypes = {
   logcat: {
@@ -58,8 +55,7 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
   }
 
   this.log.info(
-    `Starting logcat broadcasting on web socket server ` +
-      `${JSON.stringify(server.address())} to ${pathname}`,
+    `Starting logcat broadcasting on web socket server ` + `${JSON.stringify(server.address())} to ${pathname}`,
   );
   // https://github.com/websockets/ws/blob/master/doc/ws.md
   const wss = new WebSocketServer({
@@ -126,8 +122,7 @@ export async function mobileStopLogsBroadcast(this: AndroidDriver): Promise<void
   }
 
   this.log.debug(
-    `Stopping logcat broadcasting on web socket server ` +
-      `${JSON.stringify(server.address())} to ${pathname}`,
+    `Stopping logcat broadcasting on web socket server ` + `${JSON.stringify(server.address())} to ${pathname}`,
   );
   await server.removeWebSocketHandler(pathname);
 }
@@ -141,10 +136,7 @@ export async function getLogTypes(this: AndroidDriver): Promise<string[]> {
   // XXX why doesn't `super` work here?
   const nativeLogTypes = await BaseDriver.prototype.getLogTypes.call(this);
   if (this.isWebContext()) {
-    const webLogTypes = (await (this.chromedriver as Chromedriver).jwproxy.command(
-      '/log/types',
-      'GET',
-    )) as string[];
+    const webLogTypes = (await (this.chromedriver as Chromedriver).jwproxy.command('/log/types', 'GET')) as string[];
     return [...nativeLogTypes, ...webLogTypes];
   }
   return nativeLogTypes;

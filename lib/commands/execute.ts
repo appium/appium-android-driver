@@ -1,8 +1,9 @@
-import {errors, PROTOCOLS} from 'appium/driver.js';
 import {util} from '@appium/support';
 import type {StringRecord, Element} from '@appium/types';
-import type {AndroidDriver} from '../driver.js';
 import type {Chromedriver} from 'appium-chromedriver';
+import {errors, PROTOCOLS} from 'appium/driver.js';
+
+import type {AndroidDriver} from '../driver.js';
 
 const EXECUTE_SCRIPT_PREFIX = 'mobile:';
 
@@ -17,11 +18,7 @@ type ExecuteMethodArgs = readonly any[] | readonly [StringRecord] | Readonly<Str
  * @returns Promise that resolves to the script execution result.
  * @throws {errors.NotImplementedError} If not in a web context and script doesn't start with 'mobile:'.
  */
-export async function execute(
-  this: AndroidDriver,
-  script: string,
-  args?: ExecuteMethodArgs,
-): Promise<any> {
+export async function execute(this: AndroidDriver, script: string, args?: ExecuteMethodArgs): Promise<any> {
   if (script?.startsWith(EXECUTE_SCRIPT_PREFIX)) {
     const formattedScript = script.trim().replace(/^mobile:\s*/, `${EXECUTE_SCRIPT_PREFIX} `);
     const executeMethodArgs = preprocessExecuteMethodArgs(args);
@@ -31,9 +28,7 @@ export async function execute(
     throw new errors.NotImplementedError();
   }
   const endpoint =
-    (this.chromedriver as Chromedriver).jwproxy.downstreamProtocol === PROTOCOLS.MJSONWP
-      ? '/execute'
-      : '/execute/sync';
+    (this.chromedriver as Chromedriver).jwproxy.downstreamProtocol === PROTOCOLS.MJSONWP ? '/execute' : '/execute/sync';
   return await (this.chromedriver as Chromedriver).jwproxy.command(endpoint, 'POST', {
     script,
     args,
@@ -62,9 +57,7 @@ function preprocessExecuteMethodArgs(args?: ExecuteMethodArgs): StringRecord {
    * Automatically unwraps the `elementId` prop _if and only if_ the execute method expects it.
    */
   if ('elementId' in executeMethodArgs) {
-    executeMethodArgs.elementId = util.unwrapElement(
-      executeMethodArgs.elementId as Element | string,
-    );
+    executeMethodArgs.elementId = util.unwrapElement(executeMethodArgs.elementId as Element | string);
   }
 
   return executeMethodArgs;

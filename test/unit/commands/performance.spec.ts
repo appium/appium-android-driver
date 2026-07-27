@@ -1,6 +1,11 @@
-import sinon from 'sinon';
+import {describe, it, beforeEach, afterEach} from 'node:test';
+
+import {ADB} from 'appium-adb';
+import {expect, use} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import esmock from 'esmock';
-import {AndroidDriver} from '../../../lib/driver.js';
+import sinon from 'sinon';
+
 import {
   SUPPORTED_PERFORMANCE_DATA_TYPES,
   NETWORK_KEYS,
@@ -14,10 +19,7 @@ import type {
   getMemoryInfo as GetMemoryInfo,
   getNetworkTrafficInfo as GetNetworkTrafficInfo,
 } from '../../../lib/commands/performance.js';
-import {ADB} from 'appium-adb';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {AndroidDriver} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 
@@ -66,8 +68,7 @@ describe('performance data', function () {
   });
   describe('getCPUInfo', function () {
     it('should return cpu data', async function () {
-      (adb.shell as sinon.SinonStub).withArgs(['dumpsys', 'cpuinfo'])
-        .resolves(`Load: 8.85 / 8.85 / 7.96
+      (adb.shell as sinon.SinonStub).withArgs(['dumpsys', 'cpuinfo']).resolves(`Load: 8.85 / 8.85 / 7.96
       CPU usage from 339020ms to 38831ms ago (2020-09-05 12:55:08.950 to 2020-09-05 13:00:09.140) with 99% awake:
         0.6% 811/com.android.systemui: 0.3% user + 0.3% kernel / faults: 564 minor 1 major
         0.6% 282/android.hardware.bluetooth@1.1-service.sim: 0% user + 0.6% kernel
@@ -121,17 +122,13 @@ describe('performance data', function () {
   });
   describe('getBatteryInfo', function () {
     it('should return battery info', async function () {
-      (adb.shell as sinon.SinonStub)
-        .withArgs(['dumpsys', 'battery', '|', 'grep', 'level'])
-        .resolves('  level: 47');
+      (adb.shell as sinon.SinonStub).withArgs(['dumpsys', 'battery', '|', 'grep', 'level']).resolves('  level: 47');
       await expect(getBatteryInfo.bind(driver)()).to.become([BATTERY_KEYS, ['47']]);
       expect(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE)).to.be.true;
     });
     it('should throw error if data is not valid', async function () {
       (adb.shell as sinon.SinonStub).resolves('invalid data');
-      await expect(getBatteryInfo.bind(driver)(1)).to.be.rejectedWith(
-        /Unable to parse battery data/,
-      );
+      await expect(getBatteryInfo.bind(driver)(1)).to.be.rejectedWith(/Unable to parse battery data/);
     });
     it('should throw error if no data', async function () {
       (adb.shell as sinon.SinonStub).resolves(null);
@@ -139,15 +136,7 @@ describe('performance data', function () {
     });
   });
   describe('getMemoryInfo', function () {
-    const shellArgs = [
-      'dumpsys',
-      'meminfo',
-      `'${PACKAGE_NAME}'`,
-      '|',
-      'grep',
-      '-E',
-      "'Native|Dalvik|EGL|GL|TOTAL'",
-    ];
+    const shellArgs = ['dumpsys', 'meminfo', `'${PACKAGE_NAME}'`, '|', 'grep', '-E', "'Native|Dalvik|EGL|GL|TOTAL'"];
     const dumpsysDataAPI30 = `
                          Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
                        Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
@@ -224,15 +213,11 @@ describe('performance data', function () {
     });
     it('should throw error if data is not valid', async function () {
       (adb.shell as sinon.SinonStub).resolves('TOTAL nodex nodex nodex nodex nodex nodex nodex');
-      await expect(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1)).to.be.rejectedWith(
-        /Unable to parse memory data/,
-      );
+      await expect(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1)).to.be.rejectedWith(/Unable to parse memory data/);
     });
     it('should throw error if no data', async function () {
       (adb.shell as sinon.SinonStub).resolves(null);
-      await expect(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1)).to.be.rejectedWith(
-        /No data from dumpsys/,
-      );
+      await expect(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1)).to.be.rejectedWith(/No data from dumpsys/);
     });
   });
   describe('getNetworkTrafficInfo', function () {
@@ -277,15 +262,11 @@ describe('performance data', function () {
     });
     it('should throw error if data is not valid', async function () {
       (adb.shell as sinon.SinonStub).resolves('nodex');
-      await expect(getNetworkTrafficInfo.bind(driver)(1)).to.be.rejectedWith(
-        /Unable to parse network traffic data/,
-      );
+      await expect(getNetworkTrafficInfo.bind(driver)(1)).to.be.rejectedWith(/Unable to parse network traffic data/);
     });
     it('should throw error if no data', async function () {
       (adb.shell as sinon.SinonStub).resolves(null);
-      await expect(getNetworkTrafficInfo.bind(driver)(1)).to.be.rejectedWith(
-        /No data from dumpsys/,
-      );
+      await expect(getNetworkTrafficInfo.bind(driver)(1)).to.be.rejectedWith(/No data from dumpsys/);
     });
   });
 });

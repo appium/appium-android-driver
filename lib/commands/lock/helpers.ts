@@ -1,7 +1,8 @@
 import {util} from '@appium/support';
-import {sleep, waitForCondition} from 'asyncbox';
-import type {ADB} from 'appium-adb';
 import type {Position, StringRecord} from '@appium/types';
+import type {ADB} from 'appium-adb';
+import {sleep, waitForCondition} from 'asyncbox';
+
 import type {AndroidDriver, AndroidDriverCaps} from '../../driver.js';
 import type {UnlockType, FastUnlockOptions} from '../types.js';
 
@@ -10,13 +11,7 @@ export const PIN_UNLOCK_KEY_EVENT = 'pinWithKeyEvent';
 export const PASSWORD_UNLOCK = 'password';
 export const PATTERN_UNLOCK = 'pattern';
 export const FINGERPRINT_UNLOCK = 'fingerprint';
-const UNLOCK_TYPES = [
-  PIN_UNLOCK,
-  PIN_UNLOCK_KEY_EVENT,
-  PASSWORD_UNLOCK,
-  PATTERN_UNLOCK,
-  FINGERPRINT_UNLOCK,
-] as const;
+const UNLOCK_TYPES = [PIN_UNLOCK, PIN_UNLOCK_KEY_EVENT, PASSWORD_UNLOCK, PATTERN_UNLOCK, FINGERPRINT_UNLOCK] as const;
 export const KEYCODE_NUMPAD_ENTER = 66;
 export const UNLOCK_WAIT_TIME = 100;
 export const INPUT_KEYS_WAIT_TIME = 100;
@@ -62,27 +57,20 @@ export function validateUnlockCapabilities<T extends AndroidDriverCaps>(caps: T)
     }
   } else if (unlockType === PATTERN_UNLOCK) {
     if (!/^[1-9]{2,9}$/.test(String(unlockKey)?.trim())) {
-      throw new Error(
-        `Unlock key value '${unlockKey}' must only include from two to nine digits in range 1..9`,
-      );
+      throw new Error(`Unlock key value '${unlockKey}' must only include from two to nine digits in range 1..9`);
     }
     if (/([1-9]).*?\1/.test(String(unlockKey)?.trim())) {
-      throw new Error(
-        `Unlock key value '${unlockKey}' must define a valid pattern where repeats are not allowed`,
-      );
+      throw new Error(`Unlock key value '${unlockKey}' must define a valid pattern where repeats are not allowed`);
     }
   } else if (unlockType === PASSWORD_UNLOCK) {
     // Dont trim password key, you can use blank spaces in your android password
     // ¯\_(ツ)_/¯
     if (!/.{4,}/g.test(String(unlockKey))) {
-      throw new Error(
-        `The minimum allowed length of unlock key value '${unlockKey}' is 4 characters`,
-      );
+      throw new Error(`The minimum allowed length of unlock key value '${unlockKey}' is 4 characters`);
     }
   } else {
     throw new Error(
-      `Invalid unlock type '${unlockType}'. ` +
-        `Only the following unlock types are supported: ${UNLOCK_TYPES}`,
+      `Invalid unlock type '${unlockType}'. ` + `Only the following unlock types are supported: ${UNLOCK_TYPES}`,
     );
   }
   return caps;
@@ -139,10 +127,7 @@ export function stringKeyToArr(key: string): string[] {
  *
  * @param capabilities - Driver capabilities containing unlockKey
  */
-export async function fingerprintUnlock(
-  this: AndroidDriver,
-  capabilities: AndroidDriverCaps,
-): Promise<void> {
+export async function fingerprintUnlock(this: AndroidDriver, capabilities: AndroidDriverCaps): Promise<void> {
   await this.adb.fingerprint(String(capabilities.unlockKey));
   await sleep(UNLOCK_WAIT_TIME);
 }
@@ -152,10 +137,7 @@ export async function fingerprintUnlock(
  *
  * @param capabilities - Driver capabilities containing unlockKey
  */
-export async function pinUnlock(
-  this: AndroidDriver,
-  capabilities: AndroidDriverCaps,
-): Promise<void> {
+export async function pinUnlock(this: AndroidDriver, capabilities: AndroidDriverCaps): Promise<void> {
   this.log.info(`Trying to unlock device using pin ${capabilities.unlockKey}`);
   await this.adb.dismissKeyguard();
   const keys = stringKeyToArr(String(capabilities.unlockKey));
@@ -183,10 +165,7 @@ export async function pinUnlock(
  *
  * @param capabilities - Driver capabilities containing unlockKey
  */
-export async function pinUnlockWithKeyEvent(
-  this: AndroidDriver,
-  capabilities: AndroidDriverCaps,
-): Promise<void> {
+export async function pinUnlockWithKeyEvent(this: AndroidDriver, capabilities: AndroidDriverCaps): Promise<void> {
   this.log.info(`Trying to unlock device using pin with keycode ${capabilities.unlockKey}`);
   await this.adb.dismissKeyguard();
   const keys = stringKeyToArr(String(capabilities.unlockKey));
@@ -206,10 +185,7 @@ export async function pinUnlockWithKeyEvent(
  *
  * @param capabilities - Driver capabilities containing unlockKey
  */
-export async function passwordUnlock(
-  this: AndroidDriver,
-  capabilities: AndroidDriverCaps,
-): Promise<void> {
+export async function passwordUnlock(this: AndroidDriver, capabilities: AndroidDriverCaps): Promise<void> {
   const {unlockKey} = capabilities;
   this.log.info(`Trying to unlock device using password ${unlockKey}`);
   await this.adb.dismissKeyguard();
@@ -241,8 +217,7 @@ export function getPatternKeyPosition(key: number, initPos: Position, piece: num
   */
   const cols = 3;
   const pins = 9;
-  const xPos = (key: number, x: number, piece: number) =>
-    Math.round(x + (key % cols || cols) * piece - piece / 2);
+  const xPos = (key: number, x: number, piece: number) => Math.round(x + (key % cols || cols) * piece - piece / 2);
   const yPos = (key: number, y: number, piece: number) =>
     Math.round(y + (Math.ceil((key % pins || pins) / cols) * piece - piece / 2));
   return {
@@ -259,11 +234,7 @@ export function getPatternKeyPosition(key: number, initPos: Position, piece: num
  * @param piece - The size of each pattern piece
  * @returns An array of W3C action objects for pattern unlock
  */
-export function getPatternActions(
-  keys: string[] | number[],
-  initPos: Position,
-  piece: number,
-): StringRecord[] {
+export function getPatternActions(keys: string[] | number[], initPos: Position, piece: number): StringRecord[] {
   // https://www.w3.org/TR/webdriver2/#actions
   const pointerActions: StringRecord[] = [];
   const intKeys = keys.map((key) => (typeof key === 'string' ? parseInt(key, 10) : key));
@@ -330,10 +301,7 @@ export function getPatternActions(
  * @param timeoutMs - Optional timeout in milliseconds (default: 2000)
  * @throws {Error} If the device fails to unlock within the timeout
  */
-export async function verifyUnlock(
-  this: AndroidDriver,
-  timeoutMs: number | null = null,
-): Promise<void> {
+export async function verifyUnlock(this: AndroidDriver, timeoutMs: number | null = null): Promise<void> {
   try {
     await waitForCondition(async () => !(await this.adb.isScreenLocked()), {
       waitMs: timeoutMs ?? 2000,
@@ -350,10 +318,7 @@ export async function verifyUnlock(
  *
  * @param capabilities - Driver capabilities containing unlockKey
  */
-export async function patternUnlock(
-  this: AndroidDriver,
-  capabilities: AndroidDriverCaps,
-): Promise<void> {
+export async function patternUnlock(this: AndroidDriver, capabilities: AndroidDriverCaps): Promise<void> {
   const {unlockKey} = capabilities;
   this.log.info(`Trying to unlock device using pattern ${unlockKey}`);
   await this.adb.dismissKeyguard();

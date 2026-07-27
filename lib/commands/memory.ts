@@ -1,4 +1,5 @@
 import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../driver.js';
 import type {TrimMemoryLevel} from './types.js';
 
@@ -12,11 +13,7 @@ import type {TrimMemoryLevel} from './types.js';
  * @returns Promise that resolves when the trim memory event is sent.
  * @throws {errors.InvalidArgumentError} If pkg or level arguments are not provided.
  */
-export async function mobileSendTrimMemory(
-  this: AndroidDriver,
-  pkg: string,
-  level: TrimMemoryLevel,
-): Promise<void> {
+export async function mobileSendTrimMemory(this: AndroidDriver, pkg: string, level: TrimMemoryLevel): Promise<void> {
   if (!pkg) {
     throw new errors.InvalidArgumentError(`The 'pkg' argument must be provided`);
   }

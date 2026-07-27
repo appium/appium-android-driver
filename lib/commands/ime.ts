@@ -1,4 +1,5 @@
 import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../driver.js';
 import {SET_STYLUS_HANDWRITING_FEATURE} from '../utils.js';
 
@@ -76,11 +77,5 @@ export async function deactivateIMEEngine(this: AndroidDriver): Promise<void> {
  */
 export async function setStylusHandwriting(this: AndroidDriver, enabled: boolean): Promise<void> {
   this.assertFeatureEnabled(SET_STYLUS_HANDWRITING_FEATURE);
-  await this.adb.shell([
-    'settings',
-    'put',
-    'secure',
-    'stylus_handwriting_enabled',
-    enabled ? '1' : '0',
-  ]);
+  await this.adb.shell(['settings', 'put', 'secure', 'stylus_handwriting_enabled', enabled ? '1' : '0']);
 }

@@ -1,12 +1,14 @@
-import sinon from 'sinon';
+import {EventEmitter} from 'node:events';
+import os from 'node:os';
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
+
 import {ADB} from 'appium-adb';
 import type {LogEntry} from 'appium-adb';
-import os from 'node:os';
-import {EventEmitter} from 'node:events';
-import {AndroidDriver} from '../../../lib/driver.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {describe, it, before, beforeEach, afterEach} from 'node:test';
+import sinon from 'sinon';
+
+import {AndroidDriver} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 
@@ -32,18 +34,14 @@ describe('commands - logging', function () {
       expect(driver.getLog).to.be.an.instanceof(Function);
     });
     it('should get logcat logs', async function () {
-      const logEntries: LogEntry[] = [
-        {timestamp: Date.now(), level: 'ALL', message: 'logs'} as LogEntry,
-      ];
+      const logEntries: LogEntry[] = [{timestamp: Date.now(), level: 'ALL', message: 'logs'} as LogEntry];
       const getLogcatLogsStub = sinon.stub(driver.adb, 'getLogcatLogs').resolves(logEntries);
       expect(await driver.getLog('logcat')).to.deep.equal(logEntries);
       expect(getLogcatLogsStub.called).to.be.true;
       getLogcatLogsStub.restore();
     });
     it('should get bugreport logs', async function () {
-      const bugreportStub = sinon
-        .stub(driver.adb, 'bugreport')
-        .returns(Promise.resolve(`line1${os.EOL}line2`));
+      const bugreportStub = sinon.stub(driver.adb, 'bugreport').returns(Promise.resolve(`line1${os.EOL}line2`));
       const [record1, record2] = await driver.getLog('bugreport');
       expect(record1.message).to.eql('line1');
       expect(record2.message).to.eql('line2');

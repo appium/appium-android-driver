@@ -1,22 +1,14 @@
 import {util} from '@appium/support';
-import {requireEmulator} from './utils.js';
 import {errors} from 'appium/driver.js';
+
 import type {AndroidDriver} from '../../driver.js';
-import type {
-  GsmAction,
-  GsmSignalStrength,
-  GsmVoiceState,
-  PowerACState,
-  NetworkSpeed,
-} from '../types.js';
+import type {GsmAction, GsmSignalStrength, GsmVoiceState, PowerACState, NetworkSpeed} from '../types.js';
+import {requireEmulator} from './utils.js';
 
 /**
  * @deprecated Use mobile: extension
  */
-export async function fingerprint(
-  this: AndroidDriver,
-  fingerprintId: string | number,
-): Promise<void> {
+export async function fingerprint(this: AndroidDriver, fingerprintId: string | number): Promise<void> {
   requireEmulator.bind(this)('fingerprint is only available for emulators');
   await this.adb.fingerprint(String(fingerprintId));
 }
@@ -30,21 +22,14 @@ export async function fingerprint(
  * for a fingerprint, you can run the adb command and pass it the `finger_id`
  * to simulate the fingerprint scan.
  */
-export async function mobileFingerprint(
-  this: AndroidDriver,
-  fingerprintId: string | number,
-): Promise<void> {
+export async function mobileFingerprint(this: AndroidDriver, fingerprintId: string | number): Promise<void> {
   await this.fingerprint(fingerprintId);
 }
 
 /**
  * @deprecated Use mobile: extension
  */
-export async function sendSMS(
-  this: AndroidDriver,
-  phoneNumber: string,
-  message: string,
-): Promise<void> {
+export async function sendSMS(this: AndroidDriver, phoneNumber: string, message: string): Promise<void> {
   requireEmulator.bind(this)('sendSMS is only available for emulators');
   await this.adb.sendSMS(phoneNumber, message);
 }
@@ -55,22 +40,14 @@ export async function sendSMS(
  * @param phoneNumber - The phone number to send SMS to
  * @param message - The message payload
  */
-export async function mobileSendSms(
-  this: AndroidDriver,
-  phoneNumber: string,
-  message: string,
-): Promise<void> {
+export async function mobileSendSms(this: AndroidDriver, phoneNumber: string, message: string): Promise<void> {
   await this.sendSMS(phoneNumber, message);
 }
 
 /**
  * @deprecated Use mobile: extension
  */
-export async function gsmCall(
-  this: AndroidDriver,
-  phoneNumber: string,
-  action: GsmAction,
-): Promise<void> {
+export async function gsmCall(this: AndroidDriver, phoneNumber: string, action: GsmAction): Promise<void> {
   requireEmulator.bind(this)('gsmCall is only available for emulators');
   await this.adb.gsmCall(phoneNumber, action);
 }
@@ -81,21 +58,14 @@ export async function gsmCall(
  * @param phoneNumber - The phone number to call to
  * @param action - Action to take
  */
-export async function mobileGsmCall(
-  this: AndroidDriver,
-  phoneNumber: string,
-  action: GsmAction,
-): Promise<void> {
+export async function mobileGsmCall(this: AndroidDriver, phoneNumber: string, action: GsmAction): Promise<void> {
   await this.gsmCall(phoneNumber, action);
 }
 
 /**
  * @deprecated Use mobile: extension
  */
-export async function gsmSignal(
-  this: AndroidDriver,
-  signalStrength: GsmSignalStrength,
-): Promise<void> {
+export async function gsmSignal(this: AndroidDriver, signalStrength: GsmSignalStrength): Promise<void> {
   requireEmulator.bind(this)('gsmSignal is only available for emulators');
   await this.adb.gsmSignal(signalStrength);
 }
@@ -105,10 +75,7 @@ export async function gsmSignal(
  *
  * @param strength - The signal strength value
  */
-export async function mobileGsmSignal(
-  this: AndroidDriver,
-  strength: GsmSignalStrength,
-): Promise<void> {
+export async function mobileGsmSignal(this: AndroidDriver, strength: GsmSignalStrength): Promise<void> {
   await this.gsmSignal(strength);
 }
 
@@ -187,11 +154,7 @@ export async function mobileNetworkSpeed(this: AndroidDriver, speed: NetworkSpee
  * @param value - Value to set to the sensor
  * @throws {errors.InvalidArgumentError} If sensorType or value is not provided
  */
-export async function sensorSet(
-  this: AndroidDriver,
-  sensorType: string,
-  value: string | number,
-): Promise<void> {
+export async function sensorSet(this: AndroidDriver, sensorType: string, value: string | number): Promise<void> {
   requireEmulator.bind(this)('sensorSet is only available for emulators');
   if (!util.hasValue(sensorType)) {
     throw new errors.InvalidArgumentError(`'sensorType' argument is required`);
