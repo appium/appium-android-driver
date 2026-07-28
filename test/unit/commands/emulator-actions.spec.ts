@@ -22,14 +22,8 @@ describe('Emulator Actions', function () {
       assert.strictEqual(sensorSetStub.calledWith('light', 0), true);
     });
     it('should be reject if arguments are missing', async function () {
-      await assert.rejects(
-        driver.execute('mobile: sensorSet', [{sensor: 'light', value: 0}]),
-        /sensorType/,
-      );
-      await assert.rejects(
-        driver.execute('mobile:  sensorSet', [{sensorType: 'light', val: 0}]),
-        /value/,
-      );
+      await assert.rejects(driver.execute('mobile: sensorSet', [{sensor: 'light', value: 0}]), /sensorType/);
+      await assert.rejects(driver.execute('mobile:  sensorSet', [{sensorType: 'light', val: 0}]), /value/);
     });
   });
 });

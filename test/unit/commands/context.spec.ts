@@ -320,10 +320,7 @@ describe('Context', function () {
       const suspendChromedriverProxyStub = sandbox.stub(driver, 'suspendChromedriverProxy');
       await driver.stopChromedriverProxies();
       assert.strictEqual(suspendChromedriverProxyStub.calledOnce, true);
-      assert.strictEqual(
-        stubbedChromedriver.removeAllListeners.calledWithExactly(Chromedriver.EVENT_CHANGED),
-        true,
-      );
+      assert.strictEqual(stubbedChromedriver.removeAllListeners.calledWithExactly(Chromedriver.EVENT_CHANGED), true);
       assert.strictEqual(stubbedChromedriver.removeAllListeners.calledTwice, true);
       assert.strictEqual(stubbedChromedriver.stop.calledTwice, true);
       assert.strictEqual(Object.keys(driver.sessionChromedrivers).length, 0);

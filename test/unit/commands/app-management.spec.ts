@@ -1,5 +1,5 @@
-import {describe, it, beforeEach, afterEach} from 'node:test';
 import assert from 'node:assert/strict';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {fs} from '@appium/support';
 import {ADB} from 'appium-adb';
@@ -132,10 +132,7 @@ describe('App Management', function () {
       driver.helpers = {
         configureApp: sandbox.stub().rejects(new Error('does not exist or is not accessible')),
       } as any;
-      await assert.rejects(
-        driver.installApp('non/existent/app.apk', {}),
-        /does not exist or is not accessible/,
-      );
+      await assert.rejects(driver.installApp('non/existent/app.apk', {}), /does not exist or is not accessible/);
     });
   });
   describe('background', function () {

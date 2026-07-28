@@ -121,10 +121,7 @@ describe('Network', function () {
       await assert.rejects(driver.mobileGetConnectivity('bad' as any), errors.InvalidArgumentError);
     });
     it('should raise unsupported services in array', async function () {
-      await assert.rejects(
-        driver.mobileGetConnectivity(['bad', 'array'] as any),
-        errors.InvalidArgumentError,
-      );
+      await assert.rejects(driver.mobileGetConnectivity(['bad', 'array'] as any), errors.InvalidArgumentError);
     });
     it('should raise unsupported services with an empty array', async function () {
       assert.deepStrictEqual(await driver.mobileGetConnectivity(), {});
@@ -167,10 +164,7 @@ describe('Network', function () {
       (driver.isEmulator as sinon.SinonStub).returns('is_emu');
       (settingsApp.setDataState as sinon.SinonStub).resolves('');
       await driver.toggleData();
-      assert.strictEqual(
-        (settingsApp.setDataState as sinon.SinonStub).calledWithExactly(true, 'is_emu'),
-        true,
-      );
+      assert.strictEqual((settingsApp.setDataState as sinon.SinonStub).calledWithExactly(true, 'is_emu'), true);
     });
   });
   describe('toggleWiFi', function () {
@@ -179,10 +173,7 @@ describe('Network', function () {
       (driver.isEmulator as sinon.SinonStub).returns('is_emu');
       (settingsApp.setWifiState as sinon.SinonStub).resolves('');
       await driver.toggleWiFi();
-      assert.strictEqual(
-        (settingsApp.setWifiState as sinon.SinonStub).calledWithExactly(true, 'is_emu'),
-        true,
-      );
+      assert.strictEqual((settingsApp.setWifiState as sinon.SinonStub).calledWithExactly(true, 'is_emu'), true);
     });
   });
   describe('toggleFlightMode', function () {

@@ -26,10 +26,7 @@ describe('recording the screen', {timeout: 60000}, function () {
       sandbox.stub(driver, 'isEmulator').returns(true);
       sandbox.stub(adb, 'getApiLevel').resolves(26);
 
-      await assert.rejects(
-        driver.startRecordingScreen(),
-        /Screen recording does not work on emulators/,
-      );
+      await assert.rejects(driver.startRecordingScreen(), /Screen recording does not work on emulators/);
     });
   });
 });

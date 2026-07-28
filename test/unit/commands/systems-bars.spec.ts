@@ -1,5 +1,5 @@
-import {describe, it, before} from 'node:test';
 import assert from 'node:assert/strict';
+import {describe, it, before} from 'node:test';
 
 import {parseWindowProperties, parseWindows} from '../../../lib/commands/system-bars.js';
 import {AndroidDriver} from '../../../lib/driver.js';
