@@ -1,16 +1,13 @@
 import {EventEmitter} from 'node:events';
+import assert from 'node:assert/strict';
 import os from 'node:os';
 import {describe, it, before, beforeEach, afterEach} from 'node:test';
 
 import {ADB} from 'appium-adb';
 import type {LogEntry} from 'appium-adb';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('commands - logging', function () {
   let driver: AndroidDriver;
@@ -21,31 +18,31 @@ describe('commands - logging', function () {
   });
   describe('getLogTypes', function () {
     it('should respond to the command', function () {
-      expect(driver.getLogTypes).to.be.an.instanceof(Function);
+      assert.ok(driver.getLogTypes instanceof Function);
     });
     it('should get log types', async function () {
       const types = await driver.getLogTypes();
       // all the types should be returned
-      expect(types).to.have.members(['logcat', 'bugreport', 'server']);
+      assert.deepStrictEqual([...types].sort(), ['logcat', 'bugreport', 'server'].sort());
     });
   });
   describe('getLog', function () {
     it('should respond to the command', function () {
-      expect(driver.getLog).to.be.an.instanceof(Function);
+      assert.ok(driver.getLog instanceof Function);
     });
     it('should get logcat logs', async function () {
       const logEntries: LogEntry[] = [{timestamp: Date.now(), level: 'ALL', message: 'logs'} as LogEntry];
       const getLogcatLogsStub = sinon.stub(driver.adb, 'getLogcatLogs').resolves(logEntries);
-      expect(await driver.getLog('logcat')).to.deep.equal(logEntries);
-      expect(getLogcatLogsStub.called).to.be.true;
+      assert.deepStrictEqual(await driver.getLog('logcat'), logEntries);
+      assert.strictEqual(getLogcatLogsStub.called, true);
       getLogcatLogsStub.restore();
     });
     it('should get bugreport logs', async function () {
       const bugreportStub = sinon.stub(driver.adb, 'bugreport').returns(Promise.resolve(`line1${os.EOL}line2`));
       const [record1, record2] = await driver.getLog('bugreport');
-      expect(record1.message).to.eql('line1');
-      expect(record2.message).to.eql('line2');
-      expect(bugreportStub.called).to.be.true;
+      assert.deepStrictEqual(record1.message, 'line1');
+      assert.deepStrictEqual(record2.message, 'line2');
+      assert.strictEqual(bugreportStub.called, true);
       bugreportStub.restore();
     });
   });
@@ -95,14 +92,14 @@ describe('commands - logging', function () {
       const listener = setLogcatListenerStub.lastCall.args[0];
       listener({timestamp: Date.now(), level: 'ALL', message: 'hello'} as LogEntry);
 
-      expect(socket1.send.calledWithExactly('hello')).to.be.true;
-      expect(socket2.send.calledWithExactly('hello')).to.be.true;
+      assert.strictEqual(socket1.send.calledWithExactly('hello'), true);
+      assert.strictEqual(socket2.send.calledWithExactly('hello'), true);
 
       socket1.emit('close', 1000, Buffer.from(''));
-      expect(removeLogcatListenerStub.called).to.be.false;
+      assert.strictEqual(removeLogcatListenerStub.called, false);
 
       socket2.emit('close', 1000, Buffer.from(''));
-      expect(removeLogcatListenerStub.calledOnce).to.be.true;
+      assert.strictEqual(removeLogcatListenerStub.calledOnce, true);
     });
 
     it('should not broadcast to sockets that already closed', async function () {
@@ -121,8 +118,8 @@ describe('commands - logging', function () {
       const listener = (broadcastDriver.adb.setLogcatListener as sinon.SinonStub).lastCall.args[0];
       listener({timestamp: Date.now(), level: 'ALL', message: 'hello'} as LogEntry);
 
-      expect(socket1.send.called).to.be.false;
-      expect(socket2.send.calledWithExactly('hello')).to.be.true;
+      assert.strictEqual(socket1.send.called, false);
+      assert.strictEqual(socket2.send.calledWithExactly('hello'), true);
     });
   });
 });

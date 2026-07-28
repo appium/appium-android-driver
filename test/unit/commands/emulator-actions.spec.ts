@@ -1,12 +1,9 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 let driver: AndroidDriver;
 const sandbox = sinon.createSandbox();
@@ -22,13 +19,15 @@ describe('Emulator Actions', function () {
     it('should call sensorSet', async function () {
       const sensorSetStub = sandbox.stub(driver, 'sensorSet');
       await driver.execute('mobile:sensorSet', [{sensorType: 'light', value: 0}]);
-      expect(sensorSetStub.calledWith('light', 0)).to.be.true;
+      assert.strictEqual(sensorSetStub.calledWith('light', 0), true);
     });
     it('should be reject if arguments are missing', async function () {
-      await expect(driver.execute('mobile: sensorSet', [{sensor: 'light', value: 0}])).to.eventually.be.rejectedWith(
+      await assert.rejects(
+        driver.execute('mobile: sensorSet', [{sensor: 'light', value: 0}]),
         /sensorType/,
       );
-      await expect(driver.execute('mobile:  sensorSet', [{sensorType: 'light', val: 0}])).to.eventually.be.rejectedWith(
+      await assert.rejects(
+        driver.execute('mobile:  sensorSet', [{sensorType: 'light', val: 0}]),
         /value/,
       );
     });

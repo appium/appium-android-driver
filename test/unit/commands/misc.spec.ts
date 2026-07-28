@@ -1,13 +1,10 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {ADB} from 'appium-adb';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 let driver: AndroidDriver;
 const sandbox = sinon.createSandbox();
@@ -27,13 +24,13 @@ describe('General', function () {
       driver.opts = {appPackage: 'pkg'} as any;
       const startUriStub = sandbox.stub(driver.adb, 'startUri');
       await driver.setUrl('url');
-      expect(startUriStub.calledWithExactly('url', 'pkg')).to.be.true;
+      assert.strictEqual(startUriStub.calledWithExactly('url', 'pkg'), true);
     });
   });
   describe('getDisplayDensity', function () {
     it('should return the display density of a device', async function () {
       driver.adb.shell = (() => Promise.resolve('123')) as any;
-      expect(await driver.getDisplayDensity()).to.equal(123);
+      assert.strictEqual(await driver.getDisplayDensity(), 123);
     });
     it('should return the display density of an emulator', async function () {
       driver.adb.shell = ((cmd: any) => {
@@ -47,15 +44,15 @@ describe('General', function () {
         }
         return Promise.resolve('');
       }) as any;
-      expect(await driver.getDisplayDensity()).to.equal(456);
+      assert.strictEqual(await driver.getDisplayDensity(), 456);
     });
     it("should throw an error if the display density property can't be found", async function () {
       driver.adb.shell = (() => Promise.resolve('')) as any;
-      await expect(driver.getDisplayDensity()).to.be.rejectedWith(/Failed to get display density property/);
+      await assert.rejects(driver.getDisplayDensity(), /Failed to get display density property/);
     });
     it('should throw and error if the display density is not a number', async function () {
       driver.adb.shell = (() => Promise.resolve('abc')) as any;
-      await expect(driver.getDisplayDensity()).to.be.rejectedWith(/Failed to get display density property/);
+      await assert.rejects(driver.getDisplayDensity(), /Failed to get display density property/);
     });
   });
 });

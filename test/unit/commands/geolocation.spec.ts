@@ -1,14 +1,10 @@
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {ADB} from 'appium-adb';
-import {use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {setMockLocationApp} from '../../../lib/commands/geolocation.js';
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('Geolocation', function () {
   let driver: AndroidDriver;

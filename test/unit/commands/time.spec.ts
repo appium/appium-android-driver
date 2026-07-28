@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {ADB} from 'appium-adb';
-import {expect, use} from 'chai'; // expect is used
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {getDeviceTime} from '../../../lib/commands/time.js';
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('Time Commands', function () {
   let driver: AndroidDriver;
@@ -29,7 +26,7 @@ describe('Time Commands', function () {
 
       const result = await getDeviceTime.call(driver, 'YYYY-MM-DD HH:mm:ss Z');
 
-      expect(result).to.equal('2026-07-08 15:30:45 +02:00');
+      assert.strictEqual(result, '2026-07-08 15:30:45 +02:00');
     });
 
     it('use the default format when no format is provided', async function () {
@@ -37,7 +34,7 @@ describe('Time Commands', function () {
 
       const result = await getDeviceTime.call(driver);
 
-      expect(result).to.equal('2026-07-08T15:30:45+02:00');
+      assert.strictEqual(result, '2026-07-08T15:30:45+02:00');
     });
 
     it('return the original timestamp when parsing fails', async function () {
@@ -45,7 +42,7 @@ describe('Time Commands', function () {
 
       const result = await getDeviceTime.call(driver, 'YYYY-MM-DD HH:mm:ss');
 
-      expect(result).to.equal('invalid-date');
+      assert.strictEqual(result, 'invalid-date');
     });
   });
 });

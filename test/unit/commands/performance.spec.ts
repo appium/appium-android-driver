@@ -1,8 +1,7 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {ADB} from 'appium-adb';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import esmock from 'esmock';
 import sinon from 'sinon';
 
@@ -20,8 +19,6 @@ import type {
   getNetworkTrafficInfo as GetNetworkTrafficInfo,
 } from '../../../lib/commands/performance.js';
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 const PACKAGE_NAME = 'io.appium.android.apis';
 const RETRY_PAUSE = 1000;
@@ -63,7 +60,7 @@ describe('performance data', function () {
   describe('getPerformanceDataTypes', function () {
     it('should get the list of available getPerformance data type', async function () {
       const types = await driver.getPerformanceDataTypes();
-      expect(types).to.eql(Object.keys(SUPPORTED_PERFORMANCE_DATA_TYPES));
+      assert.deepStrictEqual(types, Object.keys(SUPPORTED_PERFORMANCE_DATA_TYPES));
     });
   });
   describe('getCPUInfo', function () {
@@ -112,27 +109,27 @@ describe('performance data', function () {
         +0% 7508/kworker/u4:2-phy0: 0% user + 0% kernel
       0.2% TOTAL: 0% user + 0.1% kernel + 0% iowait + 0% softirq
       `);
-      expect(await getCPUInfo.bind(driver)(PACKAGE_NAME)).to.eql([CPU_KEYS, ['14.3', '28.2']]);
-      expect(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE)).to.be.true;
+      assert.deepStrictEqual(await getCPUInfo.bind(driver)(PACKAGE_NAME), [CPU_KEYS, ['14.3', '28.2']]);
+      assert.strictEqual(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE), true);
     });
     it('should throw error if cpu data is not in valid format', async function () {
       (adb.shell as sinon.SinonStub).resolves('invalid data');
-      await expect(getCPUInfo.bind(driver)(PACKAGE_NAME, 1)).to.eventually.be.rejected;
+      await assert.rejects(getCPUInfo.bind(driver)(PACKAGE_NAME, 1));
     });
   });
   describe('getBatteryInfo', function () {
     it('should return battery info', async function () {
       (adb.shell as sinon.SinonStub).withArgs(['dumpsys', 'battery', '|', 'grep', 'level']).resolves('  level: 47');
-      await expect(getBatteryInfo.bind(driver)()).to.become([BATTERY_KEYS, ['47']]);
-      expect(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE)).to.be.true;
+      assert.deepStrictEqual(await getBatteryInfo.bind(driver)(), [BATTERY_KEYS, ['47']]);
+      assert.strictEqual(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE), true);
     });
     it('should throw error if data is not valid', async function () {
       (adb.shell as sinon.SinonStub).resolves('invalid data');
-      await expect(getBatteryInfo.bind(driver)(1)).to.be.rejectedWith(/Unable to parse battery data/);
+      await assert.rejects(getBatteryInfo.bind(driver)(1), /Unable to parse battery data/);
     });
     it('should throw error if no data', async function () {
       (adb.shell as sinon.SinonStub).resolves(null);
-      await expect(getBatteryInfo.bind(driver)(1)).to.be.rejectedWith(/No data from dumpsys/);
+      await assert.rejects(getBatteryInfo.bind(driver)(1), /No data from dumpsys/);
     });
   });
   describe('getMemoryInfo', function () {
@@ -202,22 +199,22 @@ describe('performance data', function () {
       ];
       (adb.getApiLevel as sinon.SinonStub).resolves(30);
       (adb.shell as sinon.SinonStub).withArgs(shellArgs).resolves(dumpsysDataAPI30);
-      expect(await getMemoryInfo.bind(driver)(PACKAGE_NAME)).to.deep.equal(expectedResult30);
-      expect(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE)).to.be.true;
+      assert.deepStrictEqual(await getMemoryInfo.bind(driver)(PACKAGE_NAME), expectedResult30);
+      assert.strictEqual(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE), true);
     });
     it('should return memory info for 18<API<30', async function () {
       (adb.getApiLevel as sinon.SinonStub).resolves(19);
       (adb.shell as sinon.SinonStub).withArgs(shellArgs).resolves(dumpsysDataAPI19);
-      expect(await getMemoryInfo.bind(driver)(PACKAGE_NAME)).to.deep.equal(expectedResult);
-      expect(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE)).to.be.true;
+      assert.deepStrictEqual(await getMemoryInfo.bind(driver)(PACKAGE_NAME), expectedResult);
+      assert.strictEqual(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE), true);
     });
     it('should throw error if data is not valid', async function () {
       (adb.shell as sinon.SinonStub).resolves('TOTAL nodex nodex nodex nodex nodex nodex nodex');
-      await expect(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1)).to.be.rejectedWith(/Unable to parse memory data/);
+      await assert.rejects(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1), /Unable to parse memory data/);
     });
     it('should throw error if no data', async function () {
       (adb.shell as sinon.SinonStub).resolves(null);
-      await expect(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1)).to.be.rejectedWith(/No data from dumpsys/);
+      await assert.rejects(getMemoryInfo.bind(driver)(PACKAGE_NAME, 1), /No data from dumpsys/);
     });
   });
   describe('getNetworkTrafficInfo', function () {
@@ -240,33 +237,33 @@ describe('performance data', function () {
             bucketStart=start2 activeTime=time2 rxBytes=rb2 rxPackets=rp2 txBytes=tb2 txPackets=tp2 operations=op2`;
     it('should return network stats', async function () {
       (adb.shell as sinon.SinonStub).withArgs(shellArgs).resolves(data);
-      expect(await getNetworkTrafficInfo.bind(driver)()).to.deep.equal([
+      assert.deepStrictEqual(await getNetworkTrafficInfo.bind(driver)(), [
         NETWORK_KEYS[1],
         ['start1', undefined, 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
         ['start2', undefined, 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur'],
       ]);
-      expect(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE)).to.be.true;
+      assert.strictEqual(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE), true);
     });
     it('should be able to parse data in old format', async function () {
       (adb.shell as sinon.SinonStub).withArgs(shellArgs).resolves(dataInOldFormat);
-      expect(await getNetworkTrafficInfo.bind(driver)()).to.deep.equal([
+      assert.deepStrictEqual(await getNetworkTrafficInfo.bind(driver)(), [
         NETWORK_KEYS[0],
         ['start1', 'time1', 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
         ['start2', 'time2', 'rb2', 'rp2', 'tb2', 'tp2', 'op2', 'dur'],
       ]);
-      expect(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE)).to.be.true;
+      assert.strictEqual(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE), true);
     });
     it('should be fulfilled if history is empty', async function () {
       (adb.shell as sinon.SinonStub).resolves(header);
-      expect(await getNetworkTrafficInfo.bind(driver)()).to.deep.equal([]);
+      assert.deepStrictEqual(await getNetworkTrafficInfo.bind(driver)(), []);
     });
     it('should throw error if data is not valid', async function () {
       (adb.shell as sinon.SinonStub).resolves('nodex');
-      await expect(getNetworkTrafficInfo.bind(driver)(1)).to.be.rejectedWith(/Unable to parse network traffic data/);
+      await assert.rejects(getNetworkTrafficInfo.bind(driver)(1), /Unable to parse network traffic data/);
     });
     it('should throw error if no data', async function () {
       (adb.shell as sinon.SinonStub).resolves(null);
-      await expect(getNetworkTrafficInfo.bind(driver)(1)).to.be.rejectedWith(/No data from dumpsys/);
+      await assert.rejects(getNetworkTrafficInfo.bind(driver)(1), /No data from dumpsys/);
     });
   });
 });

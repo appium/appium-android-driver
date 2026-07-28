@@ -1,12 +1,8 @@
 import {describe, it, before} from 'node:test';
-
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import assert from 'node:assert/strict';
 
 import {parseWindowProperties, parseWindows} from '../../../lib/commands/system-bars.js';
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('System Bars', function () {
   let driver: AndroidDriver;
@@ -17,7 +13,7 @@ describe('System Bars', function () {
 
   describe('parseWindowProperties', function () {
     it('should return visible true if the surface is visible', function () {
-      expect(
+      assert.deepStrictEqual(
         parseWindowProperties.bind(driver)(
           'yolo',
           `
@@ -58,16 +54,17 @@ describe('System Bars', function () {
       mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
       `.split('\n'),
         ),
-      ).to.eql({
-        visible: true,
-        x: 0,
-        y: 1794,
-        width: 1080,
-        height: 126,
-      });
+        {
+          visible: true,
+          x: 0,
+          y: 1794,
+          width: 1080,
+          height: 126,
+        },
+      );
     });
     it('should return visible false if the surface is not visible', function () {
-      expect(
+      assert.deepStrictEqual(
         parseWindowProperties.bind(driver)(
           'foo',
           `
@@ -108,18 +105,19 @@ describe('System Bars', function () {
       mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
       `.split('\n'),
         ),
-      ).to.eql({
-        visible: false,
-        x: 0,
-        y: 1794,
-        width: 1080,
-        height: 126,
-      });
+        {
+          visible: false,
+          x: 0,
+          y: 1794,
+          width: 1080,
+          height: 126,
+        },
+      );
     });
     it('should throw an error if no info is found', function () {
-      expect(() => {
+      assert.throws(() => {
         parseWindowProperties.bind(driver)('bar', []);
-      }).to.throw(Error);
+      }, Error);
     });
   });
 
@@ -1148,12 +1146,12 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
 
   describe('parseWindows', function () {
     it('should throw an error if no windows were found', function () {
-      expect(() => {
+      assert.throws(() => {
         parseWindows.bind(driver)('');
-      }).to.throw(Error);
+      }, Error);
     });
     it('should return defaults if only non matching windows were found', function () {
-      expect(
+      assert.deepStrictEqual(
         parseWindows.bind(driver)(`
       WINDOW MANAGER WINDOWS (dumpsys window windows)
         Window #0 Window{d1b7133 u0 pip-dismiss-overlay}:
@@ -1187,19 +1185,20 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
           isVisible=false
           mRequestedInsetsState: InsetsState: {mDisplayFrame=Rect(0, 0 - 0, 0), mSources= {  }
       `),
-      ).to.eql({
-        statusBar: {visible: false, x: 0, y: 0, width: 0, height: 0},
-        navigationBar: {visible: false, x: 0, y: 0, width: 0, height: 0},
-      });
+        {
+          statusBar: {visible: false, x: 0, y: 0, width: 0, height: 0},
+          navigationBar: {visible: false, x: 0, y: 0, width: 0, height: 0},
+        },
+      );
     });
     it('should return status and navigation bar for Android 11 and below', function () {
-      expect(parseWindows.bind(driver)(validWindowOutputA11)).to.eql(validSystemBarsA11);
+      assert.deepStrictEqual(parseWindows.bind(driver)(validWindowOutputA11), validSystemBarsA11);
     });
     it('should return status and navigation bar for Android 12', function () {
-      expect(parseWindows.bind(driver)(validWindowOutputA12)).to.eql(validSystemBarsA12);
+      assert.deepStrictEqual(parseWindows.bind(driver)(validWindowOutputA12), validSystemBarsA12);
     });
     it('should return status and navigation bar for Android 13 and above', function () {
-      expect(parseWindows.bind(driver)(validWindowOutputA13)).to.eql(validSystemBarsA13);
+      assert.deepStrictEqual(parseWindows.bind(driver)(validWindowOutputA13), validSystemBarsA13);
     });
   });
 
@@ -1212,13 +1211,13 @@ WINDOW MANAGER WINDOWS (dumpsys window windows)
       driver.adb.shell = (() => {
         throw new Error();
       }) as any;
-      await expect(driver.getSystemBars()).to.be.rejected;
+      await assert.rejects(driver.getSystemBars());
     });
     it('should return the parsed system bar info below Android 11', async function () {
       driver = new AndroidDriver();
       driver.adb = {} as any;
       driver.adb.shell = (() => Promise.resolve(validWindowOutputA11)) as any;
-      expect(await driver.getSystemBars()).to.eql(validSystemBarsA11);
+      assert.deepStrictEqual(await driver.getSystemBars(), validSystemBarsA11);
     });
   });
 });

@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach, before, after} from 'node:test';
 
 import {ADB} from 'appium-adb';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import esmock from 'esmock';
 import sinon from 'sinon';
 
 import {prepareAvdArgs, prepareEmulator} from '../../../lib/commands/device/utils.js';
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('Device Helpers', function () {
   let driver: AndroidDriver;
@@ -29,27 +26,27 @@ describe('Device Helpers', function () {
     it('should be true if driver opts contain avd', function () {
       const driver = new AndroidDriver();
       driver.opts = {avd: 'yolo'} as any;
-      expect(driver.isEmulator()).to.be.true;
+      assert.strictEqual(driver.isEmulator(), true);
     });
     it('should be true if driver opts contain emulator udid', function () {
       const driver = new AndroidDriver();
       driver.opts = {udid: 'Emulator-5554'} as any;
-      expect(driver.isEmulator()).to.be.true;
+      assert.strictEqual(driver.isEmulator(), true);
     });
     it('should be false if driver opts do not contain emulator udid', function () {
       const driver = new AndroidDriver();
       driver.opts = {udid: 'ABCD1234'} as any;
-      expect(driver.isEmulator()).to.be.false;
+      assert.strictEqual(driver.isEmulator(), false);
     });
     it('should be true if device id in adb contains emulator', function () {
       const driver = new AndroidDriver();
       driver.adb = {curDeviceId: 'emulator-5554'} as any;
-      expect(driver.isEmulator()).to.be.true;
+      assert.strictEqual(driver.isEmulator(), true);
     });
     it('should be false if device id in adb does not contain emulator', function () {
       const driver = new AndroidDriver();
       driver.adb = {curDeviceId: 'ABCD1234'} as any;
-      expect(driver.isEmulator()).to.be.false;
+      assert.strictEqual(driver.isEmulator(), false);
     });
   });
   describe('prepareEmulator', function () {
@@ -141,28 +138,28 @@ describe('Device Helpers', function () {
     });
     it('should fail if avd name is not specified', async function () {
       driver.opts = {} as any;
-      await expect(prepareEmulator.bind(driver)(adb)).to.eventually.be.rejected;
+      await assert.rejects(prepareEmulator.bind(driver)(adb));
     });
   });
   describe('prepareAvdArgs', function () {
     it('should set the correct avdArgs', function () {
       driver.opts = {avdArgs: '-wipe-data'} as any;
-      expect(prepareAvdArgs.bind(driver)()).to.eql(['-wipe-data']);
+      assert.deepStrictEqual(prepareAvdArgs.bind(driver)(), ['-wipe-data']);
     });
     it('should add headless arg', function () {
       driver.opts = {avdArgs: '-wipe-data', isHeadless: true} as any;
       const args = prepareAvdArgs.bind(driver)();
-      expect(args).to.eql(['-wipe-data', '-no-window']);
+      assert.deepStrictEqual(args, ['-wipe-data', '-no-window']);
     });
     it('should add network speed arg', function () {
       driver.opts = {avdArgs: '-wipe-data', networkSpeed: 'edge'} as any;
       const args = prepareAvdArgs.bind(driver)();
-      expect(args).to.eql(['-wipe-data', '-netspeed', 'edge']);
+      assert.deepStrictEqual(args, ['-wipe-data', '-netspeed', 'edge']);
     });
     it('should not include empty avdArgs', function () {
       driver.opts = {avdArgs: '', isHeadless: true} as any;
       const args = prepareAvdArgs.bind(driver)();
-      expect(args).to.eql(['-no-window']);
+      assert.deepStrictEqual(args, ['-no-window']);
     });
   });
 
@@ -219,7 +216,7 @@ describe('Device Helpers', function () {
         udid: 'foomulator',
       } as any;
       driver.adb = await ADB.createADB();
-      await expect(driver.getDeviceInfoFromCaps()).to.be.rejectedWith('foomulator');
+      await assert.rejects(driver.getDeviceInfoFromCaps(), /foomulator/);
     });
     it('should get deviceId and emPort when udid is present', async function () {
       const driver = new AndroidDriver();
@@ -228,15 +225,15 @@ describe('Device Helpers', function () {
       } as any;
       driver.adb = await ADB.createADB();
       const {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      expect(udid).to.equal('emulator-1234');
-      expect(emPort).to.equal(1234);
+      assert.strictEqual(udid, 'emulator-1234');
+      assert.strictEqual(emPort, 1234);
     });
     it('should get first deviceId and emPort if avd, platformVersion, and udid are not given', async function () {
       const driver = new AndroidDriver();
       driver.adb = await ADB.createADB();
       const {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      expect(udid).to.equal('emulator-1234');
-      expect(emPort).to.equal(1234);
+      assert.strictEqual(udid, 'emulator-1234');
+      assert.strictEqual(emPort, 1234);
     });
     it('should get deviceId and emPort when avd is present', async function () {
       const driver = new AndroidDriver();
@@ -245,8 +242,8 @@ describe('Device Helpers', function () {
       } as any;
       driver.adb = await ADB.createADB();
       const {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      expect(udid).to.equal('emulator-1234');
-      expect(emPort).to.equal(1234);
+      assert.strictEqual(udid, 'emulator-1234');
+      assert.strictEqual(emPort, 1234);
     });
     it('should fail if the given platformVersion is not found', async function () {
       const driver = new AndroidDriver();
@@ -254,8 +251,9 @@ describe('Device Helpers', function () {
         platformVersion: '1234567890',
       } as any;
       driver.adb = await ADB.createADB();
-      await expect(driver.getDeviceInfoFromCaps()).to.be.rejectedWith(
-        'Unable to find an active device or emulator with OS 1234567890',
+      await assert.rejects(
+        driver.getDeviceInfoFromCaps(),
+        /Unable to find an active device or emulator with OS 1234567890/,
       );
     });
     it('should get deviceId and emPort if platformVersion is found and unique', async function () {
@@ -265,8 +263,8 @@ describe('Device Helpers', function () {
       } as any;
       driver.adb = await ADB.createADB();
       const {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      expect(udid).to.equal('roamulet-9000');
-      expect(emPort).to.equal(1234);
+      assert.strictEqual(udid, 'roamulet-9000');
+      assert.strictEqual(emPort, 1234);
     });
     it('should get deviceId and emPort if platformVersion is shorter than os version', async function () {
       const driver = new AndroidDriver();
@@ -275,8 +273,8 @@ describe('Device Helpers', function () {
       } as any;
       driver.adb = await ADB.createADB();
       const {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      expect(udid).to.equal('roamulet-2019');
-      expect(emPort).to.equal(1234);
+      assert.strictEqual(udid, 'roamulet-2019');
+      assert.strictEqual(emPort, 1234);
     });
     it('should get the first deviceId and emPort if platformVersion is found multiple times', async function () {
       const driver = new AndroidDriver();
@@ -285,8 +283,8 @@ describe('Device Helpers', function () {
       } as any;
       driver.adb = await ADB.createADB();
       const {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      expect(udid).to.equal('rotalume-1338');
-      expect(emPort).to.equal(1234);
+      assert.strictEqual(udid, 'rotalume-1338');
+      assert.strictEqual(emPort, 1234);
     });
     it('should get the deviceId and emPort of most recent version if we have partial match', async function () {
       const driver = new AndroidDriver();
@@ -295,8 +293,8 @@ describe('Device Helpers', function () {
       } as any;
       driver.adb = await ADB.createADB();
       const {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      expect(udid).to.equal('rotalume-1338');
-      expect(emPort).to.equal(1234);
+      assert.strictEqual(udid, 'rotalume-1338');
+      assert.strictEqual(emPort, 1234);
     });
     it('should get deviceId and emPort by udid if udid and platformVersion are given', async function () {
       const driver = new AndroidDriver();
@@ -306,8 +304,8 @@ describe('Device Helpers', function () {
       } as any;
       driver.adb = await ADB.createADB();
       const {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      expect(udid).to.equal('0123456789');
-      expect(emPort).to.equal(1234);
+      assert.strictEqual(udid, '0123456789');
+      assert.strictEqual(emPort, 1234);
     });
     it('should require adb_listen_all_network with adbListenAllNetwork', async function () {
       const driver = new AndroidDriver();
@@ -316,7 +314,7 @@ describe('Device Helpers', function () {
         adbListenAllNetwork: true,
       } as any;
       driver.adb = await ADB.createADB();
-      await expect(driver.getDeviceInfoFromCaps()).to.be.rejected;
+      await assert.rejects(driver.getDeviceInfoFromCaps());
     });
     it('should get deviceId and emPort when udid is present with adbListenAllNetwork', async function () {
       const driver = new AndroidDriver();
@@ -327,8 +325,8 @@ describe('Device Helpers', function () {
       sandbox.stub(driver, 'assertFeatureEnabled').withArgs('adb_listen_all_network').onFirstCall();
       driver.adb = await ADB.createADB();
       const {udid, emPort} = await driver.getDeviceInfoFromCaps();
-      expect(udid).to.equal('emulator-1234');
-      expect(emPort).to.equal(1234);
+      assert.strictEqual(udid, 'emulator-1234');
+      assert.strictEqual(emPort, 1234);
     });
   });
   describe('createADB', function () {
@@ -369,7 +367,7 @@ describe('Device Helpers', function () {
         allowOfflineDevices: true,
       } as any;
       await driver.createADB();
-      expect(
+      assert.strictEqual(
         (ADB.createADB as sinon.SinonStub).calledWithExactly({
           adbPort: '222',
           suppressKillServer: true,
@@ -387,14 +385,15 @@ describe('Device Helpers', function () {
           allowDelayAdb: undefined,
           listenAllNetwork: undefined,
         }),
-      ).to.be.true;
-      expect(curDeviceId).to.equal('111222');
-      expect(emulatorPort).to.equal(111);
+        true,
+      );
+      assert.strictEqual(curDeviceId, '111222');
+      assert.strictEqual(emulatorPort, 111);
     });
     it('should not set emulator port if emPort is undefined', async function () {
       emulatorPort = 5555;
       await driver.createADB();
-      expect(emulatorPort).to.equal(5555);
+      assert.strictEqual(emulatorPort, 5555);
     });
 
     describe('adbListenAllNetwork', function () {
@@ -402,7 +401,7 @@ describe('Device Helpers', function () {
         driver.opts = {
           adbListenAllNetwork: true,
         } as any;
-        await expect(driver.createADB()).to.be.rejected;
+        await assert.rejects(driver.createADB());
       });
       it('should succeeded in creating adb', async function () {
         driver.opts = {
@@ -537,7 +536,7 @@ describe('Device Helpers', function () {
         setMockLocationApp: sandbox.stub().withArgs('io.appium.settings'),
       });
       await initDevice.bind(driver)();
-      expect(pushStub.called).to.be.false;
+      assert.strictEqual(pushStub.called, false);
     });
     it('should throw if skipSettingsAppReinstall is set but the Settings app is not installed', async function () {
       const driver = new AndroidDriver();
@@ -548,8 +547,8 @@ describe('Device Helpers', function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('io.appium.settings').resolves(false);
       const pushStub = sandbox.stub();
       const initDevice = await mockInitDevice({pushSettingsApp: pushStub});
-      await expect(initDevice.bind(driver)()).to.be.rejectedWith(/not installed/);
-      expect(pushStub.called).to.be.false;
+      await assert.rejects(initDevice.bind(driver)(), /not installed/);
+      assert.strictEqual(pushStub.called, false);
     });
   });
 });

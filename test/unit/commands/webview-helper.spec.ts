@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import {ADB} from 'appium-adb';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {DEVTOOLS_SOCKET_PATTERN} from '../../../lib/commands/context/helpers.js';
 import * as webviewHelpers from '../../../lib/commands/context/helpers.js';
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 const sandbox = sinon.createSandbox();
 
@@ -29,13 +26,13 @@ describe('Webview Helpers', function () {
 
   describe('DEVTOOLS_SOCKET_PATTERN', function () {
     it('patting patterns with webview_devtools_remote_22138', function () {
-      expect(DEVTOOLS_SOCKET_PATTERN.test('@webview_devtools_remote_22138')).to.be.true;
+      assert.strictEqual(DEVTOOLS_SOCKET_PATTERN.test('@webview_devtools_remote_22138'), true);
     });
     it('patting patterns with webview_devtools_remote_m6x_27719', function () {
-      expect(DEVTOOLS_SOCKET_PATTERN.test('@webview_devtools_remote_m6x_27719')).to.be.true;
+      assert.strictEqual(DEVTOOLS_SOCKET_PATTERN.test('@webview_devtools_remote_m6x_27719'), true);
     });
     it('patting patterns with chrome_devtools_remote', function () {
-      expect(DEVTOOLS_SOCKET_PATTERN.test('@chrome_devtools_remote')).to.be.true;
+      assert.strictEqual(DEVTOOLS_SOCKET_PATTERN.test('@chrome_devtools_remote'), true);
     });
   });
 
@@ -64,13 +61,13 @@ describe('Webview Helpers', function () {
       });
 
       it('then the unix sockets are queried', function () {
-        expect(stubbedShell.calledOnce).to.be.true;
-        expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
+        assert.strictEqual(stubbedShell.calledOnce, true);
+        assert.deepStrictEqual(stubbedShell.getCall(0).args[0], ['cat', '/proc/net/unix']);
       });
 
       it('then the webview is returned', function () {
-        expect(webViews.length).to.equal(1);
-        expect(webViews).to.deep.equal(['WEBVIEW_123']);
+        assert.strictEqual(webViews.length, 1);
+        assert.deepStrictEqual(webViews, ['WEBVIEW_123']);
       });
     });
 
@@ -99,13 +96,13 @@ describe('Webview Helpers', function () {
       });
 
       it('then the unix sockets are queried', function () {
-        expect(stubbedShell.calledOnce).to.be.true;
-        expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
+        assert.strictEqual(stubbedShell.calledOnce, true);
+        assert.deepStrictEqual(stubbedShell.getCall(0).args[0], ['cat', '/proc/net/unix']);
       });
 
       it('then the webview is returned', function () {
-        expect(webViews.length).to.equal(1);
-        expect(webViews).to.deep.equal(['CHROMIUM']);
+        assert.strictEqual(webViews.length, 1);
+        assert.deepStrictEqual(webViews, ['CHROMIUM']);
       });
     });
 
@@ -130,12 +127,12 @@ describe('Webview Helpers', function () {
       });
 
       it('then the unix sockets are queried', function () {
-        expect(stubbedShell.calledOnce).to.be.true;
-        expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
+        assert.strictEqual(stubbedShell.calledOnce, true);
+        assert.deepStrictEqual(stubbedShell.getCall(0).args[0], ['cat', '/proc/net/unix']);
       });
 
       it('then no webviews are returned', function () {
-        expect(webViews.length).to.equal(0);
+        assert.strictEqual(webViews.length, 0);
       });
     });
 
@@ -166,13 +163,13 @@ describe('Webview Helpers', function () {
         });
 
         it('then the unix sockets are queried', function () {
-          expect(stubbedShell.calledOnce).to.be.true;
-          expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
+          assert.strictEqual(stubbedShell.calledOnce, true);
+          assert.deepStrictEqual(stubbedShell.getCall(0).args[0], ['cat', '/proc/net/unix']);
         });
 
         it('then the webview is returned', function () {
-          expect(webViews.length).to.equal(1);
-          expect(webViews).to.deep.equal(['WEBVIEW_com.application.myapp']);
+          assert.strictEqual(webViews.length, 1);
+          assert.deepStrictEqual(webViews, ['WEBVIEW_com.application.myapp']);
         });
       });
 
@@ -189,13 +186,13 @@ describe('Webview Helpers', function () {
         });
 
         it('then the unix sockets are queried', function () {
-          expect(stubbedShell.calledOnce).to.be.true;
-          expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
+          assert.strictEqual(stubbedShell.calledOnce, true);
+          assert.deepStrictEqual(stubbedShell.getCall(0).args[0], ['cat', '/proc/net/unix']);
         });
 
         it('then the webview is returned', function () {
-          expect(webViews.length).to.equal(1);
-          expect(webViews).to.deep.equal(['WEBVIEW_com.application.myapp']);
+          assert.strictEqual(webViews.length, 1);
+          assert.deepStrictEqual(webViews, ['WEBVIEW_com.application.myapp']);
         });
       });
 
@@ -208,12 +205,12 @@ describe('Webview Helpers', function () {
         });
 
         it('then the unix sockets are queried', function () {
-          expect(stubbedShell.calledOnce).to.be.true;
-          expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
+          assert.strictEqual(stubbedShell.calledOnce, true);
+          assert.deepStrictEqual(stubbedShell.getCall(0).args[0], ['cat', '/proc/net/unix']);
         });
 
         it('then no webviews are returned', function () {
-          expect(webViews.length).to.equal(0);
+          assert.strictEqual(webViews.length, 0);
         });
       });
     });
@@ -245,12 +242,12 @@ describe('Webview Helpers', function () {
         });
 
         it('then the unix sockets are queried', function () {
-          expect(stubbedShell.calledOnce).to.be.true;
-          expect(stubbedShell.getCall(0).args[0]).to.deep.equal(['cat', '/proc/net/unix']);
+          assert.strictEqual(stubbedShell.calledOnce, true);
+          assert.deepStrictEqual(stubbedShell.getCall(0).args[0], ['cat', '/proc/net/unix']);
         });
 
         it('then the stetho socket is skipped and no webviews are returned', function () {
-          expect(webViews.length).to.equal(0);
+          assert.strictEqual(webViews.length, 0);
         });
       });
     });

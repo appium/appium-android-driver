@@ -1,10 +1,9 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {ADB} from 'appium-adb';
 import {Chromedriver} from 'appium-chromedriver';
 import {errors} from 'appium/driver.js';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import esmock from 'esmock';
 import sinon from 'sinon';
 
@@ -17,8 +16,6 @@ import {
   setupNewChromedriver,
 } from '../../../lib/commands/context/helpers.js';
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 let driver: AndroidDriver;
 let stubbedChromedriver: any;
@@ -49,11 +46,11 @@ describe('Context', function () {
   describe('getCurrentContext', function () {
     it('should return current context', async function () {
       driver.curContext = 'current_context';
-      await expect(driver.getCurrentContext()).to.become('current_context');
+      assert.strictEqual(await driver.getCurrentContext(), 'current_context');
     });
     it('should return NATIVE_APP if no context is set', async function () {
       driver.curContext = null as any;
-      await expect(driver.getCurrentContext()).to.become(webviewHelpers.NATIVE_WIN);
+      assert.strictEqual(await driver.getCurrentContext(), webviewHelpers.NATIVE_WIN);
     });
   });
   describe('getContexts', function () {
@@ -71,8 +68,8 @@ describe('Context', function () {
       driver = new AndroidDriver({browserName: 'Chrome'} as any);
       driver.getContexts = getContexts;
       driver.assignContexts = assignContexts;
-      expect(await driver.getContexts()).to.include(CHROMIUM_WIN);
-      expect(getWebViewsMappingStub.calledOnce).to.be.true;
+      assert.ok((await driver.getContexts()).includes(CHROMIUM_WIN));
+      assert.strictEqual(getWebViewsMappingStub.calledOnce, true);
     });
     it('should use ADB to figure out which webviews are available', async function () {
       const parseWebviewNamesStub = sandbox.stub().returns(['DEFAULT', 'VW', 'ANOTHER']);
@@ -83,9 +80,9 @@ describe('Context', function () {
       });
       driver.getContexts = getContexts;
       driver.assignContexts = assignContexts;
-      expect(await driver.getContexts()).to.not.include(CHROMIUM_WIN);
-      expect(parseWebviewNamesStub.calledOnce).to.be.true;
-      expect(getWebViewsMappingStub.calledOnce).to.be.true;
+      assert.ok(!(await driver.getContexts()).includes(CHROMIUM_WIN));
+      assert.strictEqual(parseWebviewNamesStub.calledOnce, true);
+      assert.strictEqual(getWebViewsMappingStub.calledOnce, true);
     });
   });
   describe('setContext', function () {
@@ -114,14 +111,15 @@ describe('Context', function () {
         parseWebviewNames: sandbox.stub().returns(['DEFAULT', 'VW', 'ANOTHER']),
       });
       await driver.setContext(null as any);
-      expect(
+      assert.strictEqual(
         (driver.switchContext as sinon.SinonStub).calledWithExactly('DEFAULT', [
           {webviewName: 'DEFAULT', pages: ['PAGE']},
           {webviewName: 'WV', pages: ['PAGE']},
           {webviewName: 'ANOTHER', pages: ['PAGE']},
         ]),
-      ).to.be.true;
-      expect(driver.curContext).to.equal('DEFAULT');
+        true,
+      );
+      assert.strictEqual(driver.curContext, 'DEFAULT');
     });
     it('should switch to default web view if name is WEBVIEW', async function () {
       sandbox.stub(driver, 'defaultWebviewName').returns('WV');
@@ -129,24 +127,25 @@ describe('Context', function () {
         parseWebviewNames: sandbox.stub().returns(['DEFAULT', 'WV', 'ANOTHER']),
       });
       await driver.setContext(WEBVIEW_WIN);
-      expect(
+      assert.strictEqual(
         (driver.switchContext as sinon.SinonStub).calledWithExactly('WV', [
           {webviewName: 'DEFAULT', pages: ['PAGE']},
           {webviewName: 'WV', pages: ['PAGE']},
           {webviewName: 'ANOTHER', pages: ['PAGE']},
         ]),
-      ).to.be.true;
-      expect(driver.curContext).to.equal('WV');
+        true,
+      );
+      assert.strictEqual(driver.curContext, 'WV');
     });
     it('should throw error if context does not exist', async function () {
       await mockContextExports({});
-      await expect(driver.setContext('fake')).to.be.rejectedWith(errors.NoSuchContextError);
+      await assert.rejects(driver.setContext('fake'), errors.NoSuchContextError);
     });
     it('should not switch to context if already in it', async function () {
       await mockContextExports({});
       driver.curContext = 'ANOTHER';
       await driver.setContext('ANOTHER');
-      expect((driver.switchContext as sinon.SinonStub).notCalled).to.be.true;
+      assert.strictEqual((driver.switchContext as sinon.SinonStub).notCalled, true);
     });
   });
   describe('switchContext', function () {
@@ -159,19 +158,20 @@ describe('Context', function () {
     it('should start chrome driver proxy if requested context is webview', async function () {
       (driver.isChromedriverContext as sinon.SinonStub).returns(true);
       await driver.switchContext('context', ['current_cntx', 'context'] as any);
-      expect(
+      assert.strictEqual(
         (driver.startChromedriverProxy as sinon.SinonStub).calledWithExactly('context', [
           'current_cntx',
           'context',
         ] as any),
-      ).to.be.true;
+        true,
+      );
     });
     it('should stop chromedriver proxy if current context is webview and requested context is not', async function () {
       driver.opts = {recreateChromeDriverSessions: true} as any;
       (driver.isChromedriverContext as sinon.SinonStub).withArgs('requested_cntx').returns(false);
       (driver.isChromedriverContext as sinon.SinonStub).withArgs('current_cntx').returns(true);
       await driver.switchContext('requested_cntx', []);
-      expect((driver.stopChromedriverProxies as sinon.SinonStub).calledOnce).to.be.true;
+      assert.strictEqual((driver.stopChromedriverProxies as sinon.SinonStub).calledOnce, true);
     });
     it('should suspend chrome driver proxy if current context is webview and requested context is not', async function () {
       driver.opts = {recreateChromeDriverSessions: false} as any;
@@ -179,33 +179,33 @@ describe('Context', function () {
       (driver.isChromedriverContext as sinon.SinonStub).withArgs('current_cntx').returns(true);
       const suspendChromedriverProxyStub2 = sandbox.stub(driver, 'suspendChromedriverProxy');
       await driver.switchContext('requested_cntx', []);
-      expect(suspendChromedriverProxyStub2.calledOnce).to.be.true;
+      assert.strictEqual(suspendChromedriverProxyStub2.calledOnce, true);
     });
     it('should throw error if requested and current context are not webview', async function () {
       (driver.isChromedriverContext as sinon.SinonStub).withArgs('requested_cntx').returns(false);
       (driver.isChromedriverContext as sinon.SinonStub).withArgs('current_cntx').returns(false);
-      await expect(driver.switchContext('requested_cntx', [])).to.be.rejectedWith(/switching to context/);
+      await assert.rejects(driver.switchContext('requested_cntx', []), /switching to context/);
     });
   });
   describe('defaultContextName', function () {
     it('should return NATIVE_WIN', function () {
-      expect(driver.defaultContextName()).to.equal(NATIVE_WIN);
+      assert.strictEqual(driver.defaultContextName(), NATIVE_WIN);
     });
   });
   describe('defaultWebviewName', function () {
     it('should return WEBVIEW with package if "autoWebviewName" option is not set', function () {
       driver.opts = {appPackage: 'pkg'} as any;
-      expect(driver.defaultWebviewName()).to.equal(WEBVIEW_BASE + 'pkg');
+      assert.strictEqual(driver.defaultWebviewName(), WEBVIEW_BASE + 'pkg');
     });
     it('should return WEBVIEW with value from "autoWebviewName" option', function () {
       driver.opts = {appPackage: 'pkg', autoWebviewName: 'foo'} as any;
-      expect(driver.defaultWebviewName()).to.equal(WEBVIEW_BASE + 'foo');
+      assert.strictEqual(driver.defaultWebviewName(), WEBVIEW_BASE + 'foo');
     });
   });
   describe('isWebContext', function () {
     it('should return true if current context is not native', function () {
       driver.curContext = 'current_context';
-      expect(driver.isWebContext()).to.be.true;
+      assert.strictEqual(driver.isWebContext(), true);
     });
   });
   describe('startChromedriverProxy', function () {
@@ -214,83 +214,85 @@ describe('Context', function () {
     });
     it('should start new chromedriver session', async function () {
       await driver.startChromedriverProxy('WEBVIEW_1', []);
-      expect(driver.sessionChromedrivers.WEBVIEW_1).to.equal(driver.chromedriver);
-      expect(
+      assert.strictEqual(driver.sessionChromedrivers.WEBVIEW_1, driver.chromedriver);
+      assert.strictEqual(
         (driver.chromedriver!.start as sinon.SinonStub).getCall(0).args[0].chromeOptions.androidDeviceSerial,
-      ).to.equal('device_id');
-      expect((driver.chromedriver!.proxyReq.bind as sinon.SinonStub).calledWithExactly(driver.chromedriver)).to.be.true;
-      expect(driver.proxyReqRes).to.equal('proxy');
-      expect(driver.jwpProxyActive).to.be.true;
+        'device_id',
+      );
+      assert.strictEqual(
+        (driver.chromedriver!.proxyReq.bind as sinon.SinonStub).calledWithExactly(driver.chromedriver),
+        true,
+      );
+      assert.strictEqual(driver.proxyReqRes, 'proxy');
+      assert.strictEqual(driver.jwpProxyActive, true);
     });
     it('should be able to extract package from context name', async function () {
       driver.opts.appPackage = 'pkg';
       driver.opts.extractChromeAndroidPackageFromContextName = true;
       await driver.startChromedriverProxy('WEBVIEW_com.pkg', []);
-      expect((driver.chromedriver!.start as sinon.SinonStub).getCall(0).args[0].chromeOptions).to.deep.include({
-        androidPackage: 'com.pkg',
-      });
+      const chromeOptions = (driver.chromedriver!.start as sinon.SinonStub).getCall(0).args[0].chromeOptions;
+      assert.strictEqual(chromeOptions.androidPackage, 'com.pkg');
     });
     it('should use package from opts if package extracted from context is empty', async function () {
       driver.opts.appPackage = 'pkg';
       driver.opts.extractChromeAndroidPackageFromContextName = true;
       await driver.startChromedriverProxy('WEBVIEW_', []);
-      expect((driver.chromedriver!.start as sinon.SinonStub).getCall(0).args[0].chromeOptions).to.deep.include({
-        androidPackage: 'pkg',
-      });
+      const chromeOptions = (driver.chromedriver!.start as sinon.SinonStub).getCall(0).args[0].chromeOptions;
+      assert.strictEqual(chromeOptions.androidPackage, 'pkg');
     });
     it('should grant all runtime permissions to the Chrome package when chromedriverGrantPermissions is set', async function () {
       driver.opts.appPackage = 'com.pkg';
       driver.opts.chromedriverGrantPermissions = true;
       const grantStub = sandbox.stub(driver.adb, 'grantAllPermissions').resolves();
       await driver.startChromedriverProxy('WEBVIEW_1', []);
-      expect(grantStub.calledOnceWithExactly('com.pkg')).to.be.true;
+      assert.strictEqual(grantStub.calledOnceWithExactly('com.pkg'), true);
     });
     it('should not grant permissions when chromedriverGrantPermissions is not set', async function () {
       driver.opts.appPackage = 'com.pkg';
       const grantStub = sandbox.stub(driver.adb, 'grantAllPermissions').resolves();
       await driver.startChromedriverProxy('WEBVIEW_1', []);
-      expect(grantStub.called).to.be.false;
+      assert.strictEqual(grantStub.called, false);
     });
     it('should throw when chromedriverGrantPermissions is set but the Chrome package cannot be resolved', async function () {
       driver.opts.chromedriverGrantPermissions = true;
       const grantStub = sandbox.stub(driver.adb, 'grantAllPermissions').resolves();
-      await expect(driver.startChromedriverProxy('WEBVIEW_1', [])).to.be.rejectedWith(/could not be resolved/);
-      expect(grantStub.called).to.be.false;
+      await assert.rejects(driver.startChromedriverProxy('WEBVIEW_1', []), /could not be resolved/);
+      assert.strictEqual(grantStub.called, false);
     });
     it('should handle chromedriver event with STATE_STOPPED state', async function () {
       await driver.startChromedriverProxy('WEBVIEW_1', []);
       driver.chromedriver!.emit(Chromedriver.EVENT_CHANGED, {
         state: Chromedriver.STATE_STOPPED,
       });
-      expect((driver.onChromedriverStop as sinon.SinonStub).calledWithExactly('WEBVIEW_1')).to.be.true;
+      assert.strictEqual((driver.onChromedriverStop as sinon.SinonStub).calledWithExactly('WEBVIEW_1'), true);
     });
     it('should ignore events if status is not STATE_STOPPED', async function () {
       await driver.startChromedriverProxy('WEBVIEW_1', []);
       driver.chromedriver!.emit(Chromedriver.EVENT_CHANGED, {
         state: 'unhandled_state',
       } as Parameters<Chromedriver['emit']>[1]);
-      expect((driver.onChromedriverStop as sinon.SinonStub).notCalled).to.be.true;
+      assert.strictEqual((driver.onChromedriverStop as sinon.SinonStub).notCalled, true);
     });
     it('should reconnect if session already exists', async function () {
       stubbedChromedriver.hasWorkingWebview = sinon.stub().returns(true);
       driver.sessionChromedrivers = {WEBVIEW_1: stubbedChromedriver};
       await driver.startChromedriverProxy('WEBVIEW_1', []);
-      expect((driver.chromedriver!.restart as sinon.SinonStub).notCalled).to.be.true;
-      expect(driver.chromedriver).to.equal(stubbedChromedriver);
+      assert.strictEqual((driver.chromedriver!.restart as sinon.SinonStub).notCalled, true);
+      assert.strictEqual(driver.chromedriver, stubbedChromedriver);
     });
     it('should restart if chromedriver has not working web view', async function () {
       stubbedChromedriver.hasWorkingWebview = sinon.stub().returns(false);
       driver.sessionChromedrivers = {WEBVIEW_1: stubbedChromedriver};
       await driver.startChromedriverProxy('WEBVIEW_1', []);
-      expect((driver.chromedriver!.restart as sinon.SinonStub).calledOnce).to.be.true;
+      assert.strictEqual((driver.chromedriver!.restart as sinon.SinonStub).calledOnce, true);
     });
   });
   describe('suspendChromedriverProxy', function () {
     it('should suspend chrome driver proxy', async function () {
       driver.suspendChromedriverProxy();
-      expect(driver.chromedriver == null).to.be.true;
-      expect(driver.proxyReqRes == null).to.be.true;
-      expect(driver.jwpProxyActive).to.be.false;
+      assert.strictEqual(driver.chromedriver == null, true);
+      assert.strictEqual(driver.proxyReqRes == null, true);
+      assert.strictEqual(driver.jwpProxyActive, false);
     });
   });
   describe('onChromedriverStop', function () {
@@ -299,14 +301,14 @@ describe('Context', function () {
       driver.curContext = 'WEBVIEW_1';
       await driver.onChromedriverStop('WEBVIEW_1');
       const arg0 = startUnexpectedShutdownStub.getCall(0).args[0]!;
-      expect(arg0).to.be.an('error');
-      expect((arg0 as Error).message).to.include('Chromedriver quit unexpectedly during session');
+      assert.ok(arg0 instanceof Error);
+      assert.ok((arg0 as Error).message.includes('Chromedriver quit unexpectedly during session'));
     });
     it('should delete session if chromedriver in non-active context', async function () {
       driver.curContext = 'WEBVIEW_1';
       driver.sessionChromedrivers = {WEBVIEW_2: 'CHROMIUM' as any};
       await driver.onChromedriverStop('WEBVIEW_2');
-      expect(driver.sessionChromedrivers).to.be.empty;
+      assert.strictEqual(Object.keys(driver.sessionChromedrivers).length, 0);
     });
   });
   describe('stopChromedriverProxies', function () {
@@ -317,17 +319,20 @@ describe('Context', function () {
       };
       const suspendChromedriverProxyStub = sandbox.stub(driver, 'suspendChromedriverProxy');
       await driver.stopChromedriverProxies();
-      expect(suspendChromedriverProxyStub.calledOnce).to.be.true;
-      expect(stubbedChromedriver.removeAllListeners.calledWithExactly(Chromedriver.EVENT_CHANGED)).to.be.true;
-      expect(stubbedChromedriver.removeAllListeners.calledTwice).to.be.true;
-      expect(stubbedChromedriver.stop.calledTwice).to.be.true;
-      expect(driver.sessionChromedrivers).to.be.empty;
+      assert.strictEqual(suspendChromedriverProxyStub.calledOnce, true);
+      assert.strictEqual(
+        stubbedChromedriver.removeAllListeners.calledWithExactly(Chromedriver.EVENT_CHANGED),
+        true,
+      );
+      assert.strictEqual(stubbedChromedriver.removeAllListeners.calledTwice, true);
+      assert.strictEqual(stubbedChromedriver.stop.calledTwice, true);
+      assert.strictEqual(Object.keys(driver.sessionChromedrivers).length, 0);
     });
   });
   describe('isChromedriverContext', function () {
     it('should return true if context is webview or chromium', function () {
-      expect(driver.isChromedriverContext(WEBVIEW_WIN + '_1')).to.be.true;
-      expect(driver.isChromedriverContext(CHROMIUM_WIN)).to.be.true;
+      assert.strictEqual(driver.isChromedriverContext(WEBVIEW_WIN + '_1'), true);
+      assert.strictEqual(driver.isChromedriverContext(CHROMIUM_WIN), true);
     });
   });
   describe('setupNewChromedriver', function () {
@@ -339,7 +344,7 @@ describe('Context', function () {
         } as any,
         deviceId(),
       );
-      expect(chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage).to.equal('apkg');
+      assert.strictEqual(chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage, 'apkg');
     });
     it('should use prefixed chromeOptions', async function () {
       const chromedriver: any = await setupNewChromedriver.bind(driver)(
@@ -350,7 +355,7 @@ describe('Context', function () {
         } as any,
         deviceId(),
       );
-      expect(chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage).to.equal('apkg');
+      assert.strictEqual(chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage, 'apkg');
     });
     it('should merge chromeOptions', async function () {
       const chromedriver: any = await setupNewChromedriver.bind(driver)(
@@ -367,23 +372,23 @@ describe('Context', function () {
         } as any,
         deviceId(),
       );
-      expect(chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage).to.equal('apkg');
-      expect(chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity).to.equal('aact');
-      expect(chromedriver.start.getCall(0).args[0].chromeOptions.androidWaitPackage).to.equal('bpkg');
+      assert.strictEqual(chromedriver.start.getCall(0).args[0].chromeOptions.androidPackage, 'apkg');
+      assert.strictEqual(chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity, 'aact');
+      assert.strictEqual(chromedriver.start.getCall(0).args[0].chromeOptions.androidWaitPackage, 'bpkg');
     });
     it('should be able to set androidActivity chrome option', async function () {
       const chromedriver: any = await setupNewChromedriver.bind(driver)(
         {chromeAndroidActivity: 'act'} as any,
         deviceId(),
       );
-      expect(chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity).to.equal('act');
+      assert.strictEqual(chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity, 'act');
     });
     it('should be able to set androidProcess chrome option', async function () {
       const chromedriver: any = await setupNewChromedriver.bind(driver)(
         {chromeAndroidProcess: 'proc'} as any,
         deviceId(),
       );
-      expect(chromedriver.start.getCall(0).args[0].chromeOptions.androidProcess).to.equal('proc');
+      assert.strictEqual(chromedriver.start.getCall(0).args[0].chromeOptions.androidProcess, 'proc');
     });
     it('should be able to set loggingPrefs capability', async function () {
       const chromedriver: any = await setupNewChromedriver.bind(driver)(
@@ -392,7 +397,7 @@ describe('Context', function () {
         } as any,
         deviceId(),
       );
-      expect(chromedriver.start.getCall(0).args[0].loggingPrefs).to.deep.equal({
+      assert.deepStrictEqual(chromedriver.start.getCall(0).args[0].loggingPrefs, {
         performance: 'ALL',
       });
     });
@@ -403,7 +408,7 @@ describe('Context', function () {
         } as any,
         deviceId(),
       );
-      expect(chromedriver.start.getCall(0).args[0].loggingPrefs).to.deep.equal({
+      assert.deepStrictEqual(chromedriver.start.getCall(0).args[0].loggingPrefs, {
         performance: 'ALL',
         browser: 'INFO',
       });
@@ -416,44 +421,44 @@ describe('Context', function () {
         } as any,
         deviceId(),
       );
-      expect(chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity).to.equal('app_act');
+      assert.strictEqual(chromedriver.start.getCall(0).args[0].chromeOptions.androidActivity, 'app_act');
     });
     it('should be able to set pageLoad strategy', async function () {
       const chromedriver: any = await setupNewChromedriver.bind(driver)(
         {pageLoadStrategy: 'strategy'} as any,
         deviceId(),
       );
-      expect(chromedriver.start.getCall(0).args[0].pageLoadStrategy).to.equal('strategy');
+      assert.strictEqual(chromedriver.start.getCall(0).args[0].pageLoadStrategy, 'strategy');
     });
   });
 
   describe('getChromePkg', function () {
     it('should return pakage for chromium', function () {
-      expect(webviewHelpers.getChromePkg('chromium')).to.deep.equal({
+      assert.deepStrictEqual(webviewHelpers.getChromePkg('chromium'), {
         pkg: 'org.chromium.chrome.shell',
         activity: '.ChromeShellActivity',
       });
     });
     it('should return pakage for chromebeta', function () {
-      expect(webviewHelpers.getChromePkg('chromebeta')).to.deep.equal({
+      assert.deepStrictEqual(webviewHelpers.getChromePkg('chromebeta'), {
         pkg: 'com.chrome.beta',
         activity: 'com.google.android.apps.chrome.Main',
       });
     });
     it('should return pakage for browser', function () {
-      expect(webviewHelpers.getChromePkg('browser')).to.deep.equal({
+      assert.deepStrictEqual(webviewHelpers.getChromePkg('browser'), {
         pkg: 'com.android.browser',
         activity: 'com.android.browser.BrowserActivity',
       });
     });
     it('should return pakage for chromium-browser', function () {
-      expect(webviewHelpers.getChromePkg('chromium-browser')).to.deep.equal({
+      assert.deepStrictEqual(webviewHelpers.getChromePkg('chromium-browser'), {
         pkg: 'org.chromium.chrome',
         activity: 'com.google.android.apps.chrome.Main',
       });
     });
     it('should return pakage for chromium-webview', function () {
-      expect(webviewHelpers.getChromePkg('chromium-webview')).to.deep.equal({
+      assert.deepStrictEqual(webviewHelpers.getChromePkg('chromium-webview'), {
         pkg: 'org.chromium.webview_shell',
         activity: 'org.chromium.webview_shell.WebViewBrowserActivity',
       });

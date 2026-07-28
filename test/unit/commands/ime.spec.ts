@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {ADB} from 'appium-adb';
 import {errors} from 'appium/driver.js';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('IME', function () {
   let driver: AndroidDriver;
@@ -23,19 +20,19 @@ describe('IME', function () {
   });
   describe('isIMEActivated', function () {
     it('should allways return true', async function () {
-      await await expect(driver.isIMEActivated()).to.eventually.be.true;
+      assert.strictEqual(await driver.isIMEActivated(), true);
     });
   });
   describe('availableIMEEngines', function () {
     it('should return available IMEEngines', async function () {
       sandbox.stub(driver.adb, 'availableIMEs').resolves(['IME1', 'IME2']);
-      await await expect(driver.availableIMEEngines()).to.eventually.be.deep.equal(['IME1', 'IME2']);
+      assert.deepStrictEqual(await driver.availableIMEEngines(), ['IME1', 'IME2']);
     });
   });
   describe('getActiveIMEEngine', function () {
     it('should return active IME engine', async function () {
       sandbox.stub(driver.adb, 'defaultIME').resolves('default_ime_engine');
-      await expect(driver.getActiveIMEEngine()).to.become('default_ime_engine');
+      assert.deepStrictEqual(await driver.getActiveIMEEngine(), 'default_ime_engine');
     });
   });
   describe('activateIMEEngine', function () {
@@ -43,21 +40,21 @@ describe('IME', function () {
       sandbox.stub(driver.adb, 'availableIMEs').resolves(['IME1', 'IME2']);
       const enableIMEStub = sandbox.stub(driver.adb, 'enableIME');
       const setIMEStub = sandbox.stub(driver.adb, 'setIME');
-      await expect(driver.activateIMEEngine('IME2')).to.be.fulfilled;
-      expect(enableIMEStub.calledWithExactly('IME2')).to.be.true;
-      expect(setIMEStub.calledWithExactly('IME2')).to.be.true;
+      await assert.doesNotReject(driver.activateIMEEngine('IME2'));
+      assert.strictEqual(enableIMEStub.calledWithExactly('IME2'), true);
+      assert.strictEqual(setIMEStub.calledWithExactly('IME2'), true);
     });
     it('should throws error if IME not found', async function () {
       sandbox.stub(driver.adb, 'availableIMEs').resolves(['IME1', 'IME2']);
-      await expect(driver.activateIMEEngine('IME3')).to.be.rejectedWith(errors.IMENotAvailableError);
+      await assert.rejects(driver.activateIMEEngine('IME3'), errors.IMENotAvailableError);
     });
   });
   describe('deactivateIMEEngine', function () {
     it('should deactivate IME engine', async function () {
       sandbox.stub(driver, 'getActiveIMEEngine').resolves('active_ime_engine');
       const disableIMEStub = sandbox.stub(driver.adb, 'disableIME');
-      await expect(driver.deactivateIMEEngine()).to.be.fulfilled;
-      expect(disableIMEStub.calledWithExactly('active_ime_engine')).to.be.true;
+      await assert.doesNotReject(driver.deactivateIMEEngine());
+      assert.strictEqual(disableIMEStub.calledWithExactly('active_ime_engine'), true);
     });
   });
   describe('setStylusHandwriting', function () {
@@ -69,9 +66,11 @@ describe('IME', function () {
       it(`should set stylus handwriting input method to ${enabled}`, async function () {
         sandbox.stub(driver, 'assertFeatureEnabled').withArgs('set_stylus_handwriting').onFirstCall();
         const shellStub = sandbox.stub(driver.adb, 'shell');
-        await expect(driver.setStylusHandwriting(enabled)).to.be.fulfilled;
-        expect(shellStub.calledWithExactly(['settings', 'put', 'secure', 'stylus_handwriting_enabled', expectedValue]))
-          .to.be.true;
+        await assert.doesNotReject(driver.setStylusHandwriting(enabled));
+        assert.strictEqual(
+          shellStub.calledWithExactly(['settings', 'put', 'secure', 'stylus_handwriting_enabled', expectedValue]),
+          true,
+        );
       });
     });
   });

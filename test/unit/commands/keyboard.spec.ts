@@ -1,13 +1,10 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {ADB} from 'appium-adb';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 let driver: AndroidDriver;
 const sandbox = sinon.createSandbox();
@@ -27,13 +24,13 @@ describe('Keyboard', function () {
       driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
         return Promise.resolve({isKeyboardShown: true, canCloseKeyboard: true});
       };
-      expect(await driver.isKeyboardShown()).to.equal(true);
+      assert.strictEqual(await driver.isKeyboardShown(), true);
     });
     it('should return false if the keyboard is not shown', async function () {
       driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
         return Promise.resolve({isKeyboardShown: false, canCloseKeyboard: true});
       };
-      expect(await driver.isKeyboardShown()).to.equal(false);
+      assert.strictEqual(await driver.isKeyboardShown(), false);
     });
   });
   describe('hideKeyboard', function () {
@@ -47,8 +44,8 @@ describe('Keyboard', function () {
           canCloseKeyboard: callIdx <= 1,
         });
       };
-      await await expect(driver.hideKeyboard()).to.eventually.be.fulfilled;
-      expect(keyeventStub1.calledWithExactly(111)).to.be.true;
+      await assert.doesNotReject(driver.hideKeyboard());
+      assert.strictEqual(keyeventStub1.calledWithExactly(111), true);
     });
     it('should throw if cannot close keyboard', {timeout: 10000}, async function () {
       driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
@@ -58,8 +55,8 @@ describe('Keyboard', function () {
         });
       };
       const keyeventStub = sandbox.stub(driver.adb, 'keyevent');
-      await await expect(driver.hideKeyboard()).to.eventually.be.rejected;
-      expect(keyeventStub.notCalled).to.be.true;
+      await assert.rejects(driver.hideKeyboard());
+      assert.strictEqual(keyeventStub.notCalled, true);
     });
     it('should not throw if no keyboard is present', async function () {
       driver.adb.isSoftKeyboardPresent = function isSoftKeyboardPresent() {
@@ -68,7 +65,7 @@ describe('Keyboard', function () {
           canCloseKeyboard: false,
         });
       };
-      await await expect(driver.hideKeyboard()).to.eventually.be.fulfilled;
+      await assert.doesNotReject(driver.hideKeyboard());
     });
   });
 });

@@ -1,15 +1,12 @@
 import {describe, it, beforeEach, afterEach} from 'node:test';
+import assert from 'node:assert/strict';
 
 import {fs} from '@appium/support';
 import {ADB} from 'appium-adb';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import esmock from 'esmock';
 import sinon from 'sinon';
 
 import {AndroidDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 let driver: AndroidDriver;
 const sandbox = sinon.createSandbox();
@@ -28,51 +25,51 @@ describe('App Management', function () {
   describe('getCurrentActivity', function () {
     it('should get current activity', async function () {
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').resolves({appActivity: 'act'});
-      await expect(driver.getCurrentActivity()).to.eventually.equal('act');
+      assert.strictEqual(await driver.getCurrentActivity(), 'act');
     });
   });
   describe('getCurrentPackage', function () {
     it('should get current activity', async function () {
       sandbox.stub(driver.adb, 'getFocusedPackageAndActivity').resolves({appPackage: 'pkg'});
-      await expect(driver.getCurrentPackage()).to.eventually.equal('pkg');
+      assert.strictEqual(await driver.getCurrentPackage(), 'pkg');
     });
   });
   describe('isAppInstalled', function () {
     it('should return true if app is installed', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').resolves(true);
-      expect(await driver.isAppInstalled('pkg')).to.be.true;
+      assert.strictEqual(await driver.isAppInstalled('pkg'), true);
     });
     it('should return true if app is installed with undefined user', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').resolves(true);
-      expect(await driver.isAppInstalled('pkg', {})).to.be.true;
+      assert.strictEqual(await driver.isAppInstalled('pkg', {}), true);
     });
     it('should return true if app is installed with user string', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg', {user: '1'}).resolves(true);
-      expect(await driver.isAppInstalled('pkg', {user: '1'})).to.be.true;
+      assert.strictEqual(await driver.isAppInstalled('pkg', {user: '1'}), true);
     });
     it('should return true if app is installed with user number', async function () {
       const stub = sandbox.stub(driver.adb, 'isAppInstalled');
       stub.withArgs('pkg', sinon.match({user: '1'})).resolves(true);
       stub.withArgs('pkg', sinon.match({user: sinon.match.any})).resolves(true);
-      expect(await driver.isAppInstalled('pkg', {user: 1} as any)).to.be.true;
+      assert.strictEqual(await driver.isAppInstalled('pkg', {user: 1} as any), true);
     });
   });
   describe('mobileIsAppInstalled', function () {
     it('should return true if app is installed', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').resolves(true);
-      expect(await driver.mobileIsAppInstalled('pkg')).to.be.true;
+      assert.strictEqual(await driver.mobileIsAppInstalled('pkg'), true);
     });
     it('should return true if app is installed with undefined user', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg').resolves(true);
-      expect(await driver.mobileIsAppInstalled('pkg')).to.be.true;
+      assert.strictEqual(await driver.mobileIsAppInstalled('pkg'), true);
     });
     it('should return true if app is installed with user string', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg', {user: '1'}).resolves(true);
-      expect(await driver.mobileIsAppInstalled('pkg', '1')).to.be.true;
+      assert.strictEqual(await driver.mobileIsAppInstalled('pkg', '1'), true);
     });
     it('should return true if app is installed with user number', async function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('pkg', {user: '1'}).resolves(true);
-      expect(await driver.mobileIsAppInstalled('pkg', 1)).to.be.true;
+      assert.strictEqual(await driver.mobileIsAppInstalled('pkg', 1), true);
     });
   });
   describe('mobileListApps', function () {
@@ -82,7 +79,7 @@ describe('App Management', function () {
         {appPackage: 'pkg2', versionCode: '10'},
       ];
       sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({}).resolves(packages);
-      expect(await driver.mobileListApps()).to.deep.equal({
+      assert.deepStrictEqual(await driver.mobileListApps(), {
         pkg1: {packageName: 'pkg1', versionCode: 10},
         pkg2: {packageName: 'pkg2', versionCode: 10},
       });
@@ -93,7 +90,7 @@ describe('App Management', function () {
         .stub(driver.adb, 'listInstalledPackages')
         .withArgs({user: '1'})
         .resolves(packages as any);
-      expect(await driver.mobileListApps('1')).to.deep.equal({
+      assert.deepStrictEqual(await driver.mobileListApps('1'), {
         pkg1: {packageName: 'pkg1', versionCode: null},
         pkg2: {packageName: 'pkg2', versionCode: null},
       });
@@ -101,14 +98,14 @@ describe('App Management', function () {
     it('should return list of installed packages with user string', async function () {
       const packages = [{appPackage: 'pkg1', versionCode: '10'}];
       sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).resolves(packages);
-      expect(await driver.mobileListApps('1')).to.deep.equal({
+      assert.deepStrictEqual(await driver.mobileListApps('1'), {
         pkg1: {packageName: 'pkg1', versionCode: 10},
       });
     });
     it('should return list of installed packages with user number', async function () {
       const packages = [{appPackage: 'pkg1', versionCode: '10'}];
       sandbox.stub(driver.adb, 'listInstalledPackages').withArgs({user: '1'}).resolves(packages);
-      expect(await driver.mobileListApps(1)).to.deep.equal({
+      assert.deepStrictEqual(await driver.mobileListApps(1), {
         pkg1: {packageName: 'pkg1', versionCode: 10},
       });
     });
@@ -116,7 +113,7 @@ describe('App Management', function () {
   describe('removeApp', function () {
     it('should remove app', async function () {
       sandbox.stub(driver.adb, 'uninstallApk').withArgs('pkg').resolves(true);
-      expect(await driver.removeApp('pkg')).to.be.true;
+      assert.strictEqual(await driver.removeApp('pkg'), true);
     });
   });
   describe('installApp', function () {
@@ -127,15 +124,16 @@ describe('App Management', function () {
       const rimrafStub = sandbox.stub(fs, 'rimraf').resolves();
       const installStub = sandbox.stub(driver.adb, 'install').resolves();
       await driver.installApp(app, {});
-      expect(configureAppStub.calledOnce).to.be.true;
-      expect(rimrafStub.notCalled).to.be.true;
-      expect(installStub.calledOnce).to.be.true;
+      assert.strictEqual(configureAppStub.calledOnce, true);
+      assert.strictEqual(rimrafStub.notCalled, true);
+      assert.strictEqual(installStub.calledOnce, true);
     });
     it('should throw an error if APK does not exist', async function () {
       driver.helpers = {
         configureApp: sandbox.stub().rejects(new Error('does not exist or is not accessible')),
       } as any;
-      await expect(driver.installApp('non/existent/app.apk', {})).to.be.rejectedWith(
+      await assert.rejects(
+        driver.installApp('non/existent/app.apk', {}),
         /does not exist or is not accessible/,
       );
     });
@@ -169,12 +167,12 @@ describe('App Management', function () {
       const activateAppStub = sandbox.stub(driver.adb, 'activateApp');
       const background = await mockBackground(sleepStub);
       await background.bind(driver)(10);
-      expect(getFocusedStub.calledOnce).to.be.true;
-      expect(goToHomeStub.calledOnce).to.be.true;
-      expect(sleepStub.calledOnce).to.be.true;
-      expect(sleepStub.firstCall.args[0]).to.equal(10_000);
-      expect(activateAppStub.calledWithExactly(appPackage)).to.be.true;
-      expect(startAppStub.notCalled).to.be.true;
+      assert.strictEqual(getFocusedStub.calledOnce, true);
+      assert.strictEqual(goToHomeStub.calledOnce, true);
+      assert.strictEqual(sleepStub.calledOnce, true);
+      assert.strictEqual(sleepStub.firstCall.args[0], 10_000);
+      assert.strictEqual(activateAppStub.calledWithExactly(appPackage), true);
+      assert.strictEqual(startAppStub.notCalled, true);
     });
     it('should bring app to background and back if started after session init', async function () {
       const appPackage = 'newpkg';
@@ -208,11 +206,11 @@ describe('App Management', function () {
       const activateAppStub2 = sandbox.stub(driver.adb, 'activateApp');
       const background = await mockBackground(sleepStub);
       await background.bind(driver)(10);
-      expect(getFocusedStub2.calledOnce).to.be.true;
-      expect(goToHomeStub2.calledOnce).to.be.true;
-      expect(sleepStub.firstCall.args[0]).to.equal(10_000);
-      expect(startAppStub2.calledWithExactly(params)).to.be.true;
-      expect(activateAppStub2.notCalled).to.be.true;
+      assert.strictEqual(getFocusedStub2.calledOnce, true);
+      assert.strictEqual(goToHomeStub2.calledOnce, true);
+      assert.strictEqual(sleepStub.firstCall.args[0], 10_000);
+      assert.strictEqual(startAppStub2.calledWithExactly(params), true);
+      assert.strictEqual(activateAppStub2.notCalled, true);
     });
     it('should bring app to background and back if waiting for other pkg / activity', async function () {
       const appPackage = 'somepkg';
@@ -239,19 +237,19 @@ describe('App Management', function () {
       const activateAppStub3 = sandbox.stub(driver.adb, 'activateApp');
       const background = await mockBackground(sleepStub);
       await background.bind(driver)(10);
-      expect(getFocusedStub3.calledOnce).to.be.true;
-      expect(goToHomeStub3.calledOnce).to.be.true;
-      expect(sleepStub.firstCall.args[0]).to.equal(10_000);
-      expect(activateAppStub3.calledWithExactly(appWaitPackage)).to.be.true;
-      expect(startAppStub3.notCalled).to.be.true;
+      assert.strictEqual(getFocusedStub3.calledOnce, true);
+      assert.strictEqual(goToHomeStub3.calledOnce, true);
+      assert.strictEqual(sleepStub.firstCall.args[0], 10_000);
+      assert.strictEqual(activateAppStub3.calledWithExactly(appWaitPackage), true);
+      assert.strictEqual(startAppStub3.notCalled, true);
     });
     it('should not bring app back if seconds are negative', async function () {
       const goToHomeStub4 = sandbox.stub(driver.adb, 'goToHome');
       const startAppStub4 = sandbox.stub(driver.adb, 'startApp');
       const background = await mockBackground(sandbox.stub());
       await background.bind(driver)(-1);
-      expect(goToHomeStub4.calledOnce).to.be.true;
-      expect(startAppStub4.notCalled).to.be.true;
+      assert.strictEqual(goToHomeStub4.calledOnce, true);
+      assert.strictEqual(startAppStub4.notCalled, true);
     });
   });
   describe('startActivity', function () {
@@ -273,14 +271,14 @@ describe('App Management', function () {
       params.stopApp = false;
       const startAppStub5 = sandbox.stub(driver.adb, 'startApp');
       await driver.startActivity('pkg', 'act', 'wpkg', 'wact', 'act', 'cat', 'flgs', 'opt', true);
-      expect(startAppStub5.calledWithExactly(params)).to.be.true;
+      assert.strictEqual(startAppStub5.calledWithExactly(params), true);
     });
     it('should use dontStopAppOnReset from opts if it is not passed as param', async function () {
       driver.opts.dontStopAppOnReset = true;
       params.stopApp = false;
       const startAppStub6 = sandbox.stub(driver.adb, 'startApp');
       await driver.startActivity('pkg', 'act', 'wpkg', 'wact', 'act', 'cat', 'flgs', 'opt');
-      expect(startAppStub6.calledWithExactly(params)).to.be.true;
+      assert.strictEqual(startAppStub6.calledWithExactly(params), true);
     });
     it('should use appPackage and appActivity if appWaitPackage and appWaitActivity are undefined', async function () {
       params.waitPkg = 'pkg';
@@ -288,7 +286,7 @@ describe('App Management', function () {
       params.stopApp = true;
       const startAppStub7 = sandbox.stub(driver.adb, 'startApp');
       await driver.startActivity('pkg', 'act', undefined, undefined, 'act', 'cat', 'flgs', 'opt', false);
-      expect(startAppStub7.calledWithExactly(params)).to.be.true;
+      assert.strictEqual(startAppStub7.calledWithExactly(params), true);
     });
   });
 
@@ -301,7 +299,7 @@ describe('App Management', function () {
     });
 
     it('should complain if opts arent passed correctly', async function () {
-      await expect(driver.resetAUT({} as any)).to.be.rejectedWith(/appPackage/);
+      await assert.rejects(driver.resetAUT({} as any), /appPackage/);
     });
     it('should be able to do full reset', async function () {
       sandbox.stub(driver.adb, 'install').withArgs(localApkPath).onFirstCall();
@@ -345,7 +343,7 @@ describe('App Management', function () {
     });
 
     it('should complain if appPackage is not passed', async function () {
-      await expect(driver.installAUT({} as any)).to.be.rejectedWith(/appPackage/);
+      await assert.rejects(driver.installAUT({} as any), /appPackage/);
     });
     it('should install/upgrade and reset app if fast reset is set to true', async function () {
       sandbox
@@ -411,7 +409,7 @@ describe('App Management', function () {
     it('should call adb.installOrUpgrade twice if otherApps has two item', async function () {
       sandbox.stub(driver.adb, 'installOrUpgrade');
       await driver.installOtherApks([fakeApk, otherFakeApk], opts as any);
-      expect((driver.adb.installOrUpgrade as sinon.SinonStub).calledTwice).to.be.true;
+      assert.strictEqual((driver.adb.installOrUpgrade as sinon.SinonStub).calledTwice, true);
     });
   });
 });

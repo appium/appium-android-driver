@@ -1,8 +1,7 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {ADB} from 'appium-adb';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import esmock from 'esmock';
 import sinon from 'sinon';
 
@@ -18,8 +17,6 @@ import {
 } from '../../../lib/commands/lock/helpers.js';
 import {AndroidDriver} from '../../../lib/driver.js';
 import type {AndroidDriverCaps} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 const HELPERS_PATH = '../../../lib/commands/lock/helpers.js';
 const EXPORTS_PATH = '../../../lib/commands/lock/exports.js';
@@ -58,7 +55,7 @@ describe('Lock', function () {
     it('should raise an error on undefined unlockKey when unlockType is defined', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').throws();
-      await expect(unlockWithOptions.bind(driver)({unlockType: 'pin'} as AndroidDriverCaps)).to.be.rejected;
+      await assert.rejects(unlockWithOptions.bind(driver)({unlockType: 'pin'} as AndroidDriverCaps));
     });
     it('should call pinUnlock if unlockType is pin', async function () {
       sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().resolves(true);
@@ -138,21 +135,21 @@ describe('Lock', function () {
 
     it('should verify the unlock keys for pin/pinWithKeyEvent', function () {
       for (const invalidValue of [undefined, ' ', '1abc']) {
-        expect(() => validateUnlockCapabilities(toCaps('pin', invalidValue) as any)).to.throw;
-        expect(() => validateUnlockCapabilities(toCaps('pinWithKeyEvent', invalidValue) as any)).to.throw;
+        assert.throws(() => validateUnlockCapabilities(toCaps('pin', invalidValue) as any));
+        assert.throws(() => validateUnlockCapabilities(toCaps('pinWithKeyEvent', invalidValue) as any));
       }
       validateUnlockCapabilities(toCaps('pin', '1111') as any);
       validateUnlockCapabilities(toCaps('pinWithKeyEvent', '1111') as any);
     });
     it('should verify the unlock keys for fingerprint', function () {
       for (const invalidValue of [undefined, ' ', '1abc']) {
-        expect(() => validateUnlockCapabilities(toCaps('fingerprint', invalidValue) as any)).to.throw;
+        assert.throws(() => validateUnlockCapabilities(toCaps('fingerprint', invalidValue) as any));
       }
       validateUnlockCapabilities(toCaps('fingerprint', '1') as any);
     });
     it('should verify the unlock keys for pattern', function () {
       for (const invalidValue of [undefined, '1abc', '', '1', '1213', '01234', ' ']) {
-        expect(() => validateUnlockCapabilities(toCaps('pattern', invalidValue) as any)).to.throw;
+        assert.throws(() => validateUnlockCapabilities(toCaps('pattern', invalidValue) as any));
       }
       for (const validValue of ['1234', '123456789']) {
         validateUnlockCapabilities(toCaps('pattern', validValue) as any);
@@ -160,28 +157,28 @@ describe('Lock', function () {
     });
     it('should verify the unlock keys for password', function () {
       for (const invalidValue of [undefined, '123', '   ']) {
-        expect(() => validateUnlockCapabilities(toCaps('password', invalidValue) as any)).to.throw;
+        assert.throws(() => validateUnlockCapabilities(toCaps('password', invalidValue) as any));
       }
       for (const validValue of ['121c3', 'appium', 'appium-android-driver', '@#$%&-+()*"\':;!?,_ ./~`|={}\\[]']) {
         validateUnlockCapabilities(toCaps('password', validValue) as any);
       }
     });
     it('should throw error if unlock type is invalid', function () {
-      expect(() => validateUnlockCapabilities(toCaps('invalid_unlock_type', '1') as any)).to.throw;
+      assert.throws(() => validateUnlockCapabilities(toCaps('invalid_unlock_type', '1') as any));
     });
   });
   describe('encodePassword', function () {
     it('should verify the password with blank space is encoded', function () {
-      expect(encodePassword('a p p i u m')).to.equal('a%sp%sp%si%su%sm');
-      expect(encodePassword('   ')).to.equal('%s%s%s');
+      assert.strictEqual(encodePassword('a p p i u m'), 'a%sp%sp%si%su%sm');
+      assert.strictEqual(encodePassword('   '), '%s%s%s');
     });
   });
   describe('stringKeyToArr', function () {
     it('should cast string keys to array', function () {
-      expect(stringKeyToArr('1234')).to.eql(['1', '2', '3', '4']);
-      expect(stringKeyToArr(' 1234 ')).to.eql(['1', '2', '3', '4']);
-      expect(stringKeyToArr('1 2 3 4')).to.eql(['1', '2', '3', '4']);
-      expect(stringKeyToArr('1  2  3  4')).to.eql(['1', '2', '3', '4']);
+      assert.deepStrictEqual(stringKeyToArr('1234'), ['1', '2', '3', '4']);
+      assert.deepStrictEqual(stringKeyToArr(' 1234 '), ['1', '2', '3', '4']);
+      assert.deepStrictEqual(stringKeyToArr('1 2 3 4'), ['1', '2', '3', '4']);
+      assert.deepStrictEqual(stringKeyToArr('1  2  3  4'), ['1', '2', '3', '4']);
     });
   });
   describe('fingerprintUnlock', function () {
@@ -193,8 +190,8 @@ describe('Lock', function () {
       const {fingerprintUnlock} = await esmock(HELPERS_PATH, import.meta.url, {
         asyncbox: {sleep: sleepStub},
       });
-      await expect(fingerprintUnlock.bind(driver)(caps)).to.be.fulfilled;
-      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
+      await assert.doesNotReject(fingerprintUnlock.bind(driver)(caps));
+      assert.strictEqual(sleepStub.calledWith(UNLOCK_WAIT_TIME), true);
     });
   });
   describe('pinUnlock', function () {
@@ -234,12 +231,12 @@ describe('Lock', function () {
 
       await pinUnlock.bind(driver)(caps);
 
-      expect(clickStub.getCall(0).args[0]).to.equal(1);
-      expect(clickStub.getCall(1).args[0]).to.equal(3);
-      expect(clickStub.getCall(2).args[0]).to.equal(5);
-      expect(clickStub.getCall(3).args[0]).to.equal(7);
-      expect(clickStub.getCall(4).args[0]).to.equal(9);
-      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
+      assert.strictEqual(clickStub.getCall(0).args[0], 1);
+      assert.strictEqual(clickStub.getCall(1).args[0], 3);
+      assert.strictEqual(clickStub.getCall(2).args[0], 5);
+      assert.strictEqual(clickStub.getCall(3).args[0], 7);
+      assert.strictEqual(clickStub.getCall(4).args[0], 9);
+      assert.strictEqual(sleepStub.calledWith(UNLOCK_WAIT_TIME), true);
     });
   });
   describe('passwordUnlock', function () {
@@ -257,7 +254,7 @@ describe('Lock', function () {
         asyncbox: {sleep: sleepStub},
       });
       await passwordUnlock.bind(driver)(caps);
-      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
+      assert.strictEqual(sleepStub.calledWith(UNLOCK_WAIT_TIME), true);
     });
   });
   describe('getPatternKeyPosition', function () {
@@ -267,31 +264,31 @@ describe('Lock', function () {
       });
       const cols = [101, 238, 375];
       const rows = [391, 528, 665];
-      expect(pins[0].x).to.be.within(cols[0] - 5, cols[0] + 5);
-      expect(pins[1].x).to.be.within(cols[1] - 5, cols[1] + 5);
-      expect(pins[2].x).to.be.within(cols[2] - 5, cols[2] + 5);
-      expect(pins[3].x).to.be.within(cols[0] - 5, cols[0] + 5);
-      expect(pins[4].x).to.be.within(cols[1] - 5, cols[1] + 5);
-      expect(pins[5].x).to.be.within(cols[2] - 5, cols[2] + 5);
-      expect(pins[6].x).to.be.within(cols[0] - 5, cols[0] + 5);
-      expect(pins[7].x).to.be.within(cols[1] - 5, cols[1] + 5);
-      expect(pins[8].x).to.be.within(cols[2] - 5, cols[2] + 5);
-      expect(pins[0].y).to.be.within(rows[0] - 5, rows[0] + 5);
-      expect(pins[1].y).to.be.within(rows[0] - 5, rows[0] + 5);
-      expect(pins[2].y).to.be.within(rows[0] - 5, rows[0] + 5);
-      expect(pins[3].y).to.be.within(rows[1] - 5, rows[1] + 5);
-      expect(pins[4].y).to.be.within(rows[1] - 5, rows[1] + 5);
-      expect(pins[5].y).to.be.within(rows[1] - 5, rows[1] + 5);
-      expect(pins[6].y).to.be.within(rows[2] - 5, rows[2] + 5);
-      expect(pins[7].y).to.be.within(rows[2] - 5, rows[2] + 5);
-      expect(pins[8].y).to.be.within(rows[2] - 5, rows[2] + 5);
+      assert.ok(pins[0].x >= cols[0] - 5 && pins[0].x <= cols[0] + 5);
+      assert.ok(pins[1].x >= cols[1] - 5 && pins[1].x <= cols[1] + 5);
+      assert.ok(pins[2].x >= cols[2] - 5 && pins[2].x <= cols[2] + 5);
+      assert.ok(pins[3].x >= cols[0] - 5 && pins[3].x <= cols[0] + 5);
+      assert.ok(pins[4].x >= cols[1] - 5 && pins[4].x <= cols[1] + 5);
+      assert.ok(pins[5].x >= cols[2] - 5 && pins[5].x <= cols[2] + 5);
+      assert.ok(pins[6].x >= cols[0] - 5 && pins[6].x <= cols[0] + 5);
+      assert.ok(pins[7].x >= cols[1] - 5 && pins[7].x <= cols[1] + 5);
+      assert.ok(pins[8].x >= cols[2] - 5 && pins[8].x <= cols[2] + 5);
+      assert.ok(pins[0].y >= rows[0] - 5 && pins[0].y <= rows[0] + 5);
+      assert.ok(pins[1].y >= rows[0] - 5 && pins[1].y <= rows[0] + 5);
+      assert.ok(pins[2].y >= rows[0] - 5 && pins[2].y <= rows[0] + 5);
+      assert.ok(pins[3].y >= rows[1] - 5 && pins[3].y <= rows[1] + 5);
+      assert.ok(pins[4].y >= rows[1] - 5 && pins[4].y <= rows[1] + 5);
+      assert.ok(pins[5].y >= rows[1] - 5 && pins[5].y <= rows[1] + 5);
+      assert.ok(pins[6].y >= rows[2] - 5 && pins[6].y <= rows[2] + 5);
+      assert.ok(pins[7].y >= rows[2] - 5 && pins[7].y <= rows[2] + 5);
+      assert.ok(pins[8].y >= rows[2] - 5 && pins[8].y <= rows[2] + 5);
     });
   });
   describe('getPatternActions', function () {
     it('should generate press, moveTo, relase gesture scheme to unlock by pattern', function () {
       const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
       const actions = getPatternActions(keys, {x: 0, y: 0}, 1);
-      expect(actions).to.eql([
+      assert.deepStrictEqual(actions, [
         {
           type: 'pointer',
           id: 'patternUnlock',
@@ -317,7 +314,7 @@ describe('Lock', function () {
     it('should verify pattern gestures moves to non consecutives pins', function () {
       const keys = ['7', '2', '9', '8', '5', '6', '1', '4', '3'];
       const actions = getPatternActions(keys, {x: 0, y: 0}, 1);
-      expect(actions).to.eql([
+      assert.deepStrictEqual(actions, [
         {
           type: 'pointer',
           id: 'patternUnlock',
@@ -369,7 +366,7 @@ describe('Lock', function () {
         asyncbox: {sleep: sleepStub},
       });
       await patternUnlock.bind(driver)(caps);
-      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
+      assert.strictEqual(sleepStub.calledWith(UNLOCK_WAIT_TIME), true);
     });
     it('should be able to unlock device using pattern (API level < 21)', async function () {
       sandbox.stub(driver.adb, 'getApiLevel').resolves(20);
@@ -382,7 +379,7 @@ describe('Lock', function () {
         asyncbox: {sleep: sleepStub},
       });
       await patternUnlock.bind(driver)(caps);
-      expect(sleepStub.calledWith(UNLOCK_WAIT_TIME)).to.be.true;
+      assert.strictEqual(sleepStub.calledWith(UNLOCK_WAIT_TIME), true);
     });
   });
 });

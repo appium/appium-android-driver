@@ -65,7 +65,7 @@ export function validateUnlockCapabilities<T extends AndroidDriverCaps>(caps: T)
   } else if (unlockType === PASSWORD_UNLOCK) {
     // Dont trim password key, you can use blank spaces in your android password
     // ¯\_(ツ)_/¯
-    if (!/.{4,}/g.test(String(unlockKey))) {
+    if (!isNonEmptyString(unlockKey) || !/.{4,}/g.test(unlockKey)) {
       throw new Error(`The minimum allowed length of unlock key value '${unlockKey}' is 4 characters`);
     }
   } else {
