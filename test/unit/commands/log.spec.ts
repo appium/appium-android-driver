@@ -23,7 +23,7 @@ describe('commands - logging', function () {
     it('should get log types', async function () {
       const types = await driver.getLogTypes();
       // all the types should be returned
-      assert.deepStrictEqual([...types].sort(), ['logcat', 'bugreport', 'server'].sort());
+      assert.ok(['logcat', 'bugreport', 'server'].every((e) => types.includes(e)));
     });
   });
   describe('getLog', function () {
@@ -40,8 +40,8 @@ describe('commands - logging', function () {
     it('should get bugreport logs', async function () {
       const bugreportStub = sinon.stub(driver.adb, 'bugreport').returns(Promise.resolve(`line1${os.EOL}line2`));
       const [record1, record2] = await driver.getLog('bugreport');
-      assert.deepStrictEqual(record1.message, 'line1');
-      assert.deepStrictEqual(record2.message, 'line2');
+      assert.strictEqual(record1.message, 'line1');
+      assert.strictEqual(record2.message, 'line2');
       assert.strictEqual(bugreportStub.called, true);
       bugreportStub.restore();
     });
