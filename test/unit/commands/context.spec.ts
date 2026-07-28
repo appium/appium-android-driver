@@ -290,8 +290,8 @@ describe('Context', function () {
   describe('suspendChromedriverProxy', function () {
     it('should suspend chrome driver proxy', async function () {
       driver.suspendChromedriverProxy();
-      assert.strictEqual(driver.chromedriver == null, true);
-      assert.strictEqual(driver.proxyReqRes == null, true);
+      assert.ok(driver.chromedriver == null);
+      assert.ok(driver.proxyReqRes == null);
       assert.strictEqual(driver.jwpProxyActive, false);
     });
   });
