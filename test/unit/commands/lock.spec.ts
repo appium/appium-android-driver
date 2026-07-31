@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
+import type {TestContext} from 'node:test';
 
 import {ADB} from 'appium-adb';
-import esmock from 'esmock';
+import * as asyncbox from 'asyncbox';
 import sinon from 'sinon';
 
 import {unlockWithOptions} from '../../../lib/commands/lock/exports.js';
@@ -15,11 +16,17 @@ import {
   getPatternKeyPosition,
   getPatternActions,
 } from '../../../lib/commands/lock/helpers.js';
+import * as lockHelpers from '../../../lib/commands/lock/helpers.js';
 import {AndroidDriver} from '../../../lib/driver.js';
 import type {AndroidDriverCaps} from '../../../lib/driver.js';
 
 const HELPERS_PATH = '../../../lib/commands/lock/helpers.js';
 const EXPORTS_PATH = '../../../lib/commands/lock/exports.js';
+
+let importCounter = 0;
+function importFresh(specifier: string) {
+  return import(`${specifier}?mock=${importCounter++}`);
+}
 
 describe('Lock', function () {
   let driver: AndroidDriver;
@@ -35,8 +42,9 @@ describe('Lock', function () {
   });
 
   describe('unlockWithOptions', function () {
-    async function mockUnlockWithOptions(helpersOverrides: Record<string, any>) {
-      return (await esmock(EXPORTS_PATH, import.meta.url, {[HELPERS_PATH]: helpersOverrides})).unlockWithOptions;
+    async function mockUnlockWithOptions(t: TestContext, helpersOverrides: Record<string, any>) {
+      t.mock.module(HELPERS_PATH, {namedExports: {...lockHelpers, ...helpersOverrides}});
+      return (await importFresh(EXPORTS_PATH)).unlockWithOptions;
     }
 
     it('should return if screen is already unlocked', async function () {
@@ -57,21 +65,21 @@ describe('Lock', function () {
       sandbox.stub(driver.adb, 'isLockManagementSupported').throws();
       await assert.rejects(unlockWithOptions.bind(driver)({unlockType: 'pin'} as AndroidDriverCaps));
     });
-    it('should call pinUnlock if unlockType is pin', async function () {
+    it('should call pinUnlock if unlockType is pin', async function (t) {
       sandbox.stub(driver.adb, 'isScreenLocked').onFirstCall().resolves(true);
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
-      const mockedUnlockWithOptions = await mockUnlockWithOptions({pinUnlock: sandbox.stub()});
+      const mockedUnlockWithOptions = await mockUnlockWithOptions(t, {pinUnlock: sandbox.stub()});
       await mockedUnlockWithOptions.bind(driver)({
         unlockType: 'pin',
         unlockKey: '1111',
       } as AndroidDriverCaps);
     });
-    it('should call pinUnlock if unlockType is pinWithKeyEvent', async function () {
+    it('should call pinUnlock if unlockType is pinWithKeyEvent', async function (t) {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
-      const mockedUnlockWithOptions = await mockUnlockWithOptions({
+      const mockedUnlockWithOptions = await mockUnlockWithOptions(t, {
         pinUnlockWithKeyEvent: sandbox.stub(),
       });
       await mockedUnlockWithOptions.bind(driver)({
@@ -79,10 +87,10 @@ describe('Lock', function () {
         unlockKey: '1111',
       } as AndroidDriverCaps);
     });
-    it('should call fastUnlock if unlockKey is provided', async function () {
+    it('should call fastUnlock if unlockKey is provided', async function (t) {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(true);
-      const mockedUnlockWithOptions = await mockUnlockWithOptions({
+      const mockedUnlockWithOptions = await mockUnlockWithOptions(t, {
         verifyUnlock: sandbox.stub(),
         fastUnlock: sandbox.stub(),
       });
@@ -91,10 +99,10 @@ describe('Lock', function () {
         unlockType: 'password',
       } as AndroidDriverCaps);
     });
-    it('should call passwordUnlock if unlockType is password', async function () {
+    it('should call passwordUnlock if unlockType is password', async function (t) {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
-      const mockedUnlockWithOptions = await mockUnlockWithOptions({
+      const mockedUnlockWithOptions = await mockUnlockWithOptions(t, {
         passwordUnlock: sandbox.stub(),
       });
       await mockedUnlockWithOptions.bind(driver)({
@@ -102,10 +110,10 @@ describe('Lock', function () {
         unlockKey: 'appium',
       } as AndroidDriverCaps);
     });
-    it('should call patternUnlock if unlockType is pattern', async function () {
+    it('should call patternUnlock if unlockType is pattern', async function (t) {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').onCall(0).resolves(false);
-      const mockedUnlockWithOptions = await mockUnlockWithOptions({
+      const mockedUnlockWithOptions = await mockUnlockWithOptions(t, {
         patternUnlock: sandbox.stub(),
       });
       await mockedUnlockWithOptions.bind(driver)({
@@ -113,10 +121,10 @@ describe('Lock', function () {
         unlockKey: '123456789',
       } as AndroidDriverCaps);
     });
-    it('should call fingerprintUnlock if unlockType is fingerprint', async function () {
+    it('should call fingerprintUnlock if unlockType is fingerprint', async function (t) {
       sandbox.stub(driver.adb, 'isScreenLocked').onCall(0).resolves(true);
       sandbox.stub(driver.adb, 'isLockManagementSupported').throws();
-      const mockedUnlockWithOptions = await mockUnlockWithOptions({
+      const mockedUnlockWithOptions = await mockUnlockWithOptions(t, {
         fingerprintUnlock: sandbox.stub(),
       });
       await mockedUnlockWithOptions.bind(driver)({
@@ -182,14 +190,13 @@ describe('Lock', function () {
     });
   });
   describe('fingerprintUnlock', function () {
-    it('should be able to unlock device via fingerprint if API level >= 23', async function () {
+    it('should be able to unlock device via fingerprint if API level >= 23', async function (t) {
       const caps = {unlockKey: '123'} as AndroidDriverCaps;
       sandbox.stub(driver.adb, 'getApiLevel').resolves(23);
       sandbox.stub(driver.adb, 'fingerprint').withArgs(caps.unlockKey).onFirstCall();
       const sleepStub = sandbox.stub();
-      const {fingerprintUnlock} = await esmock(HELPERS_PATH, import.meta.url, {
-        asyncbox: {sleep: sleepStub},
-      });
+      t.mock.module('asyncbox', {namedExports: {...asyncbox, sleep: sleepStub}});
+      const {fingerprintUnlock} = await importFresh(HELPERS_PATH);
       await assert.doesNotReject(fingerprintUnlock.bind(driver)(caps));
       assert.strictEqual(sleepStub.calledWith(UNLOCK_WAIT_TIME), true);
     });
@@ -210,7 +217,7 @@ describe('Lock', function () {
     afterEach(function () {
       sandbox.verifyAndRestore();
     });
-    it('should be able to unlock device using pin (API level >= 21)', async function () {
+    it('should be able to unlock device using pin (API level >= 21)', async function (t) {
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox.stub(driver.adb, 'getApiLevel').resolves(21);
       sandbox
@@ -225,9 +232,8 @@ describe('Lock', function () {
       }
       const clickStub = sandbox.stub(driver, 'click');
       const sleepStub = sandbox.stub();
-      const {pinUnlock} = await esmock(HELPERS_PATH, import.meta.url, {
-        asyncbox: {sleep: sleepStub},
-      });
+      t.mock.module('asyncbox', {namedExports: {...asyncbox, sleep: sleepStub}});
+      const {pinUnlock} = await importFresh(HELPERS_PATH);
 
       await pinUnlock.bind(driver)(caps);
 
@@ -240,7 +246,7 @@ describe('Lock', function () {
     });
   });
   describe('passwordUnlock', function () {
-    it('should be able to unlock device using password', async function () {
+    it('should be able to unlock device using password', async function (t) {
       const caps = {unlockKey: 'psswrd'} as any;
       sandbox.stub(driver.adb, 'dismissKeyguard').onFirstCall();
       sandbox
@@ -250,9 +256,8 @@ describe('Lock', function () {
       sandbox.stub(driver.adb, 'isScreenLocked').resolves(true);
       sandbox.stub(driver.adb, 'keyevent').withArgs(66).onFirstCall();
       const sleepStub = sandbox.stub();
-      const {passwordUnlock} = await esmock(HELPERS_PATH, import.meta.url, {
-        asyncbox: {sleep: sleepStub},
-      });
+      t.mock.module('asyncbox', {namedExports: {...asyncbox, sleep: sleepStub}});
+      const {passwordUnlock} = await importFresh(HELPERS_PATH);
       await passwordUnlock.bind(driver)(caps);
       assert.strictEqual(sleepStub.calledWith(UNLOCK_WAIT_TIME), true);
     });
@@ -355,29 +360,27 @@ describe('Lock', function () {
         .resolves(size);
       sandbox.stub(driver, 'performActions').resolves();
     });
-    it('should be able to unlock device using pattern (API level >= 21)', async function () {
+    it('should be able to unlock device using pattern (API level >= 21)', async function (t) {
       sandbox.stub(driver.adb, 'getApiLevel').resolves(21);
       sandbox
         .stub(driver, 'findElOrEls')
         .withArgs('id', 'com.android.systemui:id/lockPatternView', false)
         .resolves(el as any);
       const sleepStub = sandbox.stub();
-      const {patternUnlock} = await esmock(HELPERS_PATH, import.meta.url, {
-        asyncbox: {sleep: sleepStub},
-      });
+      t.mock.module('asyncbox', {namedExports: {...asyncbox, sleep: sleepStub}});
+      const {patternUnlock} = await importFresh(HELPERS_PATH);
       await patternUnlock.bind(driver)(caps);
       assert.strictEqual(sleepStub.calledWith(UNLOCK_WAIT_TIME), true);
     });
-    it('should be able to unlock device using pattern (API level < 21)', async function () {
+    it('should be able to unlock device using pattern (API level < 21)', async function (t) {
       sandbox.stub(driver.adb, 'getApiLevel').resolves(20);
       sandbox
         .stub(driver, 'findElOrEls')
         .withArgs('id', 'com.android.keyguard:id/lockPatternView', false)
         .resolves(el as any);
       const sleepStub = sandbox.stub();
-      const {patternUnlock} = await esmock(HELPERS_PATH, import.meta.url, {
-        asyncbox: {sleep: sleepStub},
-      });
+      t.mock.module('asyncbox', {namedExports: {...asyncbox, sleep: sleepStub}});
+      const {patternUnlock} = await importFresh(HELPERS_PATH);
       await patternUnlock.bind(driver)(caps);
       assert.strictEqual(sleepStub.calledWith(UNLOCK_WAIT_TIME), true);
     });

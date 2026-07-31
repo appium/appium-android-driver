@@ -1,15 +1,23 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
+import type {TestContext} from 'node:test';
 
 import {fs} from '@appium/support';
 import {ADB} from 'appium-adb';
-import esmock from 'esmock';
+import * as asyncbox from 'asyncbox';
 import sinon from 'sinon';
 
 import {AndroidDriver} from '../../../lib/driver.js';
 
+const APP_MANAGEMENT_PATH = '../../../lib/commands/app-management.js';
+
 let driver: AndroidDriver;
 const sandbox = sinon.createSandbox();
+
+let importCounter = 0;
+function importFresh(specifier: string) {
+  return import(`${specifier}?mock=${importCounter++}`);
+}
 
 describe('App Management', function () {
   beforeEach(function () {
@@ -136,15 +144,12 @@ describe('App Management', function () {
     });
   });
   describe('background', function () {
-    async function mockBackground(sleepStub: sinon.SinonStub) {
-      return (
-        await esmock('../../../lib/commands/app-management.js', import.meta.url, {
-          asyncbox: {longSleep: sleepStub},
-        })
-      ).background;
+    async function mockBackground(t: TestContext, sleepStub: sinon.SinonStub) {
+      t.mock.module('asyncbox', {namedExports: {...asyncbox, longSleep: sleepStub}});
+      return (await importFresh(APP_MANAGEMENT_PATH)).background;
     }
 
-    it('should bring app to background and back', async function () {
+    it('should bring app to background and back', async function (t) {
       const appPackage = 'wpkg';
       const appActivity = 'wacv';
       driver.opts = {
@@ -162,7 +167,7 @@ describe('App Management', function () {
       const sleepStub = sandbox.stub();
       const startAppStub = sandbox.stub(driver.adb, 'startApp');
       const activateAppStub = sandbox.stub(driver.adb, 'activateApp');
-      const background = await mockBackground(sleepStub);
+      const background = await mockBackground(t, sleepStub);
       await background.bind(driver)(10);
       assert.strictEqual(getFocusedStub.calledOnce, true);
       assert.strictEqual(goToHomeStub.calledOnce, true);
@@ -171,7 +176,7 @@ describe('App Management', function () {
       assert.strictEqual(activateAppStub.calledWithExactly(appPackage), true);
       assert.strictEqual(startAppStub.notCalled, true);
     });
-    it('should bring app to background and back if started after session init', async function () {
+    it('should bring app to background and back if started after session init', async function (t) {
       const appPackage = 'newpkg';
       const appActivity = 'newacv';
       driver.opts = {
@@ -201,7 +206,7 @@ describe('App Management', function () {
       const sleepStub = sandbox.stub();
       const startAppStub2 = sandbox.stub(driver.adb, 'startApp');
       const activateAppStub2 = sandbox.stub(driver.adb, 'activateApp');
-      const background = await mockBackground(sleepStub);
+      const background = await mockBackground(t, sleepStub);
       await background.bind(driver)(10);
       assert.strictEqual(getFocusedStub2.calledOnce, true);
       assert.strictEqual(goToHomeStub2.calledOnce, true);
@@ -209,7 +214,7 @@ describe('App Management', function () {
       assert.strictEqual(startAppStub2.calledWithExactly(params), true);
       assert.strictEqual(activateAppStub2.notCalled, true);
     });
-    it('should bring app to background and back if waiting for other pkg / activity', async function () {
+    it('should bring app to background and back if waiting for other pkg / activity', async function (t) {
       const appPackage = 'somepkg';
       const appActivity = 'someacv';
       const appWaitPackage = 'somewaitpkg';
@@ -232,7 +237,7 @@ describe('App Management', function () {
       const sleepStub = sandbox.stub();
       const startAppStub3 = sandbox.stub(driver.adb, 'startApp');
       const activateAppStub3 = sandbox.stub(driver.adb, 'activateApp');
-      const background = await mockBackground(sleepStub);
+      const background = await mockBackground(t, sleepStub);
       await background.bind(driver)(10);
       assert.strictEqual(getFocusedStub3.calledOnce, true);
       assert.strictEqual(goToHomeStub3.calledOnce, true);
@@ -240,10 +245,10 @@ describe('App Management', function () {
       assert.strictEqual(activateAppStub3.calledWithExactly(appWaitPackage), true);
       assert.strictEqual(startAppStub3.notCalled, true);
     });
-    it('should not bring app back if seconds are negative', async function () {
+    it('should not bring app back if seconds are negative', async function (t) {
       const goToHomeStub4 = sandbox.stub(driver.adb, 'goToHome');
       const startAppStub4 = sandbox.stub(driver.adb, 'startApp');
-      const background = await mockBackground(sandbox.stub());
+      const background = await mockBackground(t, sandbox.stub());
       await background.bind(driver)(-1);
       assert.strictEqual(goToHomeStub4.calledOnce, true);
       assert.strictEqual(startAppStub4.notCalled, true);

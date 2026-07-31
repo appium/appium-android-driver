@@ -1,12 +1,25 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach, before, after} from 'node:test';
+import type {TestContext} from 'node:test';
 
 import {ADB} from 'appium-adb';
-import esmock from 'esmock';
 import sinon from 'sinon';
 
+import * as deviceUtils from '../../../lib/commands/device/utils.js';
 import {prepareAvdArgs, prepareEmulator} from '../../../lib/commands/device/utils.js';
+import * as geolocation from '../../../lib/commands/geolocation.js';
+import * as keyboardHelpers from '../../../lib/commands/keyboard.js';
 import {AndroidDriver} from '../../../lib/driver.js';
+
+const DEVICE_COMMON_PATH = '../../../lib/commands/device/common.js';
+const DEVICE_UTILS_PATH = '../../../lib/commands/device/utils.js';
+const GEOLOCATION_PATH = '../../../lib/commands/geolocation.js';
+const KEYBOARD_PATH = '../../../lib/commands/keyboard.js';
+
+let importCounter = 0;
+function importFresh(specifier: string) {
+  return import(`${specifier}?mock=${importCounter++}`);
+}
 
 describe('Device Helpers', function () {
   let driver: AndroidDriver;
@@ -413,31 +426,33 @@ describe('Device Helpers', function () {
     });
   });
   describe('initDevice', function () {
-    async function mockInitDevice(overrides: {
-      pushSettingsApp?: sinon.SinonStub;
-      setMockLocationApp?: sinon.SinonStub;
-      hideKeyboardCompletely?: sinon.SinonStub;
-    }) {
-      const importMocks: Record<string, any> = {};
+    async function mockInitDevice(
+      t: TestContext,
+      overrides: {
+        pushSettingsApp?: sinon.SinonStub;
+        setMockLocationApp?: sinon.SinonStub;
+        hideKeyboardCompletely?: sinon.SinonStub;
+      },
+    ) {
       if (overrides.pushSettingsApp) {
-        importMocks['../../../lib/commands/device/utils.js'] = {
-          pushSettingsApp: overrides.pushSettingsApp,
-        };
+        t.mock.module(DEVICE_UTILS_PATH, {
+          namedExports: {...deviceUtils, pushSettingsApp: overrides.pushSettingsApp},
+        });
       }
       if (overrides.setMockLocationApp) {
-        importMocks['../../../lib/commands/geolocation.js'] = {
-          setMockLocationApp: overrides.setMockLocationApp,
-        };
+        t.mock.module(GEOLOCATION_PATH, {
+          namedExports: {...geolocation, setMockLocationApp: overrides.setMockLocationApp},
+        });
       }
       if (overrides.hideKeyboardCompletely) {
-        importMocks['../../../lib/commands/keyboard.js'] = {
-          hideKeyboardCompletely: overrides.hideKeyboardCompletely,
-        };
+        t.mock.module(KEYBOARD_PATH, {
+          namedExports: {...keyboardHelpers, hideKeyboardCompletely: overrides.hideKeyboardCompletely},
+        });
       }
-      return (await esmock('../../../lib/commands/device/common.js', import.meta.url, importMocks)).initDevice;
+      return (await importFresh(DEVICE_COMMON_PATH)).initDevice;
     }
 
-    it('should init a real device', async function () {
+    it('should init a real device', async function (t) {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.opts = {language: 'en', locale: 'us', localeScript: 'Script'} as any;
@@ -447,26 +462,26 @@ describe('Device Helpers', function () {
         .stub(driver, 'ensureDeviceLocale')
         .withArgs(driver.opts.language, driver.opts.locale, driver.opts.localeScript)
         .onFirstCall();
-      const initDevice = await mockInitDevice({
+      const initDevice = await mockInitDevice(t, {
         pushSettingsApp: sandbox.stub(),
         setMockLocationApp: sandbox.stub().withArgs('io.appium.settings'),
       });
       await initDevice.bind(driver)();
     });
-    it('should init device without locale and language', async function () {
+    it('should init device without locale and language', async function (t) {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.opts = {} as any;
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(driver, 'ensureDeviceLocale').throws();
-      const initDevice = await mockInitDevice({
+      const initDevice = await mockInitDevice(t, {
         pushSettingsApp: sandbox.stub(),
         setMockLocationApp: sandbox.stub().withArgs('io.appium.settings'),
       });
       await initDevice.bind(driver)();
     });
-    it('should init device with either locale or language', async function () {
+    it('should init device with either locale or language', async function (t) {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.opts = {language: 'en'} as any;
@@ -476,53 +491,53 @@ describe('Device Helpers', function () {
         .stub(driver, 'ensureDeviceLocale')
         .withArgs(driver.opts.language, driver.opts.locale, driver.opts.localeScript)
         .onFirstCall();
-      const initDevice = await mockInitDevice({
+      const initDevice = await mockInitDevice(t, {
         pushSettingsApp: sandbox.stub(),
         setMockLocationApp: sandbox.stub().withArgs('io.appium.settings'),
       });
       await initDevice.bind(driver)();
     });
-    it('should not install mock location on emulator', async function () {
+    it('should not install mock location on emulator', async function (t) {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.opts = {avd: 'avd'} as any;
       sandbox.stub(driver.adb, 'waitForDevice').onFirstCall();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(driver, 'ensureDeviceLocale').throws();
-      const initDevice = await mockInitDevice({
+      const initDevice = await mockInitDevice(t, {
         pushSettingsApp: sandbox.stub(),
         setMockLocationApp: sandbox.stub().throws(),
       });
       await initDevice.bind(driver)();
     });
-    it('should set empty IME if hideKeyboard is set to true', async function () {
+    it('should set empty IME if hideKeyboard is set to true', async function (t) {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.opts = {hideKeyboard: true} as any;
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(driver, 'ensureDeviceLocale').throws();
-      const initDevice = await mockInitDevice({
+      const initDevice = await mockInitDevice(t, {
         pushSettingsApp: sandbox.stub(),
         setMockLocationApp: sandbox.stub(),
         hideKeyboardCompletely: sandbox.stub(),
       });
       await initDevice.bind(driver)();
     });
-    it('should init device without starting logcat', async function () {
+    it('should init device without starting logcat', async function (t) {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.opts = {skipLogcatCapture: true} as any;
       sandbox.stub(driver.adb, 'waitForDevice').throws();
       sandbox.stub(driver.adb, 'startLogcat').throws();
       sandbox.stub(driver, 'ensureDeviceLocale').throws();
-      const initDevice = await mockInitDevice({
+      const initDevice = await mockInitDevice(t, {
         pushSettingsApp: sandbox.stub(),
         setMockLocationApp: sandbox.stub().withArgs('io.appium.settings'),
       });
       await initDevice.bind(driver)();
     });
-    it('should not reinstall the Settings app when skipSettingsAppReinstall is set and the app is present', async function () {
+    it('should not reinstall the Settings app when skipSettingsAppReinstall is set and the app is present', async function (t) {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.opts = {skipSettingsAppReinstall: true} as any;
@@ -531,14 +546,14 @@ describe('Device Helpers', function () {
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('io.appium.settings').resolves(true);
       sandbox.stub(driver, 'ensureDeviceLocale').throws();
       const pushStub = sandbox.stub();
-      const initDevice = await mockInitDevice({
+      const initDevice = await mockInitDevice(t, {
         pushSettingsApp: pushStub,
         setMockLocationApp: sandbox.stub().withArgs('io.appium.settings'),
       });
       await initDevice.bind(driver)();
       assert.strictEqual(pushStub.called, false);
     });
-    it('should throw if skipSettingsAppReinstall is set but the Settings app is not installed', async function () {
+    it('should throw if skipSettingsAppReinstall is set but the Settings app is not installed', async function (t) {
       const driver = new AndroidDriver();
       driver.adb = new ADB();
       driver.opts = {skipSettingsAppReinstall: true} as any;
@@ -546,7 +561,7 @@ describe('Device Helpers', function () {
       sandbox.stub(driver.adb, 'startLogcat').onFirstCall();
       sandbox.stub(driver.adb, 'isAppInstalled').withArgs('io.appium.settings').resolves(false);
       const pushStub = sandbox.stub();
-      const initDevice = await mockInitDevice({pushSettingsApp: pushStub});
+      const initDevice = await mockInitDevice(t, {pushSettingsApp: pushStub});
       await assert.rejects(initDevice.bind(driver)(), /not installed/);
       assert.strictEqual(pushStub.called, false);
     });

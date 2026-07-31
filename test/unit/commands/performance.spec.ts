@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
+import type {TestContext} from 'node:test';
 
 import {ADB} from 'appium-adb';
-import esmock from 'esmock';
+import * as asyncbox from 'asyncbox';
 import sinon from 'sinon';
 
 import {
@@ -23,6 +24,12 @@ import {AndroidDriver} from '../../../lib/driver.js';
 const PACKAGE_NAME = 'io.appium.android.apis';
 const RETRY_PAUSE = 1000;
 const RETRY_COUNT = 2;
+const PERFORMANCE_PATH = '../../../lib/commands/performance.js';
+
+let importCounter = 0;
+function importFresh(specifier: string) {
+  return import(`${specifier}?mock=${importCounter++}`);
+}
 
 const sandbox = sinon.createSandbox();
 let adb: sinon.SinonStubbedInstance<ADB>;
@@ -34,7 +41,8 @@ let getMemoryInfo: typeof GetMemoryInfo;
 let getNetworkTrafficInfo: typeof GetNetworkTrafficInfo;
 
 describe('performance data', function () {
-  beforeEach(async function () {
+  beforeEach(async function (c) {
+    const t = c as TestContext;
     const adbInstance = new ADB();
     driver = new AndroidDriver();
     driver.adb = adbInstance;
@@ -46,13 +54,8 @@ describe('performance data', function () {
     ) {
       return await fn();
     });
-    ({getBatteryInfo, getCPUInfo, getMemoryInfo, getNetworkTrafficInfo} = await esmock(
-      '../../../lib/commands/performance.js',
-      import.meta.url,
-      {
-        asyncbox: {retryInterval: retryIntervalStub},
-      },
-    ));
+    t.mock.module('asyncbox', {namedExports: {...asyncbox, retryInterval: retryIntervalStub}});
+    ({getBatteryInfo, getCPUInfo, getMemoryInfo, getNetworkTrafficInfo} = await importFresh(PERFORMANCE_PATH));
   });
   afterEach(function () {
     sandbox.restore();

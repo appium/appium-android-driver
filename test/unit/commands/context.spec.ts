@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
+import type {TestContext} from 'node:test';
 
 import {ADB} from 'appium-adb';
 import {Chromedriver} from 'appium-chromedriver';
 import {errors} from 'appium/driver.js';
-import esmock from 'esmock';
 import sinon from 'sinon';
 
 import * as webviewHelpers from '../../../lib/commands/context/helpers.js';
@@ -17,9 +17,17 @@ import {
 } from '../../../lib/commands/context/helpers.js';
 import {AndroidDriver} from '../../../lib/driver.js';
 
+const CONTEXT_EXPORTS_PATH = '../../../lib/commands/context/exports.js';
+const CONTEXT_HELPERS_PATH = '../../../lib/commands/context/helpers.js';
+
 let driver: AndroidDriver;
 let stubbedChromedriver: any;
 const sandbox = sinon.createSandbox();
+
+let importCounter = 0;
+function importFresh(specifier: string) {
+  return import(`${specifier}?mock=${importCounter++}`);
+}
 
 describe('Context', function () {
   beforeEach(function () {
@@ -54,15 +62,14 @@ describe('Context', function () {
     });
   });
   describe('getContexts', function () {
-    async function mockContextExports(helpersOverrides: Record<string, any>) {
-      return esmock('../../../lib/commands/context/exports.js', import.meta.url, {
-        '../../../lib/commands/context/helpers.js': helpersOverrides,
-      });
+    async function mockContextExports(t: TestContext, helpersOverrides: Record<string, any>) {
+      t.mock.module(CONTEXT_HELPERS_PATH, {namedExports: {...webviewHelpers, ...helpersOverrides}});
+      return importFresh(CONTEXT_EXPORTS_PATH);
     }
 
-    it('should get Chromium context where appropriate', async function () {
+    it('should get Chromium context where appropriate', async function (t) {
       const getWebViewsMappingStub = sandbox.stub();
-      const {getContexts, assignContexts} = await mockContextExports({
+      const {getContexts, assignContexts} = await mockContextExports(t, {
         getWebViewsMapping: getWebViewsMappingStub,
       });
       driver = new AndroidDriver({browserName: 'Chrome'} as any);
@@ -71,10 +78,10 @@ describe('Context', function () {
       assert.ok((await driver.getContexts()).includes(CHROMIUM_WIN));
       assert.strictEqual(getWebViewsMappingStub.calledOnce, true);
     });
-    it('should use ADB to figure out which webviews are available', async function () {
+    it('should use ADB to figure out which webviews are available', async function (t) {
       const parseWebviewNamesStub = sandbox.stub().returns(['DEFAULT', 'VW', 'ANOTHER']);
       const getWebViewsMappingStub = sandbox.stub();
-      const {getContexts, assignContexts} = await mockContextExports({
+      const {getContexts, assignContexts} = await mockContextExports(t, {
         getWebViewsMapping: getWebViewsMappingStub,
         parseWebviewNames: parseWebviewNamesStub,
       });
@@ -86,18 +93,20 @@ describe('Context', function () {
     });
   });
   describe('setContext', function () {
-    async function mockContextExports(helpersOverrides: Record<string, any>) {
+    async function mockContextExports(t: TestContext, helpersOverrides: Record<string, any>) {
       const getWebViewsMappingStub = sandbox.stub().resolves([
         {webviewName: 'DEFAULT', pages: ['PAGE'] as any},
         {webviewName: 'WV', pages: ['PAGE'] as any},
         {webviewName: 'ANOTHER', pages: ['PAGE'] as any},
       ] as any);
-      const {setContext, assignContexts} = await esmock('../../../lib/commands/context/exports.js', import.meta.url, {
-        '../../../lib/commands/context/helpers.js': {
+      t.mock.module(CONTEXT_HELPERS_PATH, {
+        namedExports: {
+          ...webviewHelpers,
           getWebViewsMapping: getWebViewsMappingStub,
           ...helpersOverrides,
         },
       });
+      const {setContext, assignContexts} = await importFresh(CONTEXT_EXPORTS_PATH);
       driver.setContext = setContext;
       driver.assignContexts = assignContexts;
     }
@@ -105,9 +114,9 @@ describe('Context', function () {
     beforeEach(function () {
       sandbox.stub(driver, 'switchContext');
     });
-    it('should switch to default context if name is null', async function () {
+    it('should switch to default context if name is null', async function (t) {
       sandbox.stub(driver, 'defaultContextName').returns('DEFAULT');
-      await mockContextExports({
+      await mockContextExports(t, {
         parseWebviewNames: sandbox.stub().returns(['DEFAULT', 'VW', 'ANOTHER']),
       });
       await driver.setContext(null as any);
@@ -121,9 +130,9 @@ describe('Context', function () {
       );
       assert.strictEqual(driver.curContext, 'DEFAULT');
     });
-    it('should switch to default web view if name is WEBVIEW', async function () {
+    it('should switch to default web view if name is WEBVIEW', async function (t) {
       sandbox.stub(driver, 'defaultWebviewName').returns('WV');
-      await mockContextExports({
+      await mockContextExports(t, {
         parseWebviewNames: sandbox.stub().returns(['DEFAULT', 'WV', 'ANOTHER']),
       });
       await driver.setContext(WEBVIEW_WIN);
@@ -137,12 +146,12 @@ describe('Context', function () {
       );
       assert.strictEqual(driver.curContext, 'WV');
     });
-    it('should throw error if context does not exist', async function () {
-      await mockContextExports({});
+    it('should throw error if context does not exist', async function (t) {
+      await mockContextExports(t, {});
       await assert.rejects(driver.setContext('fake'), errors.NoSuchContextError);
     });
-    it('should not switch to context if already in it', async function () {
-      await mockContextExports({});
+    it('should not switch to context if already in it', async function (t) {
+      await mockContextExports(t, {});
       driver.curContext = 'ANOTHER';
       await driver.setContext('ANOTHER');
       assert.strictEqual((driver.switchContext as sinon.SinonStub).notCalled, true);
