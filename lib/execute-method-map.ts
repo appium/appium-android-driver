@@ -446,7 +446,7 @@ export const executeMethodMap = {
   'mobile: getAppStrings': {
     command: 'getStrings',
     params: {
-      optional: ['language'],
+      optional: ['language', 'stringFile'],
     },
   },
 } as const satisfies ExecuteMethodMap<any>;

@@ -1,17 +1,22 @@
-import {fs, tempDir, util} from '@appium/support';
-import type {StringRecord} from '@appium/types';
+import { fs, tempDir, util } from '@appium/support';
+import type { StringRecord } from '@appium/types';
 
-import type {AndroidDriver, AndroidDriverOpts} from '../driver.js';
-import type {Locale} from './types.js';
+import type { AndroidDriver, AndroidDriverOpts } from '../driver.js';
+import type { Locale } from './types.js';
 
 /**
  * Gets the localized strings from the application.
  *
  * @param language The language code to retrieve strings for. If not provided,
  * the device's current language will be used.
+ * @param stringFile path to APK to extract string resources from
  * @returns Promise that resolves to a mapping of string keys to their localized values.
  */
-export async function getStrings(this: AndroidDriver, language: string | null = null): Promise<StringRecord> {
+export async function getStrings(
+  this: AndroidDriver,
+  language: string | null = null,
+  stringFile: string | null = null
+): Promise<StringRecord> {
   if (!language) {
     language = await this.adb.getDeviceLanguage();
     this.log.info(`No language specified, returning strings for: ${language}`);
@@ -27,7 +32,11 @@ export async function getStrings(this: AndroidDriver, language: string | null = 
     return result;
   };
 
-  return preprocessStringsMap(await extractStringsFromResources.bind(this)(language));
+  const options: AndroidDriverOpts = stringFile
+    ? { ...this.opts, app: stringFile }
+    : this.opts;
+
+  return preprocessStringsMap(await extractStringsFromResources.bind(this)(language, options));
 }
 
 /**
@@ -53,7 +62,7 @@ export async function ensureDeviceLocale(
     }
   } catch (e) {
     this.log.debug((e as Error).stack);
-    let errMsg = `Cannot set the device locale to '${toLocaleAbbr({language, country, script})}'.`;
+    let errMsg = `Cannot set the device locale to '${toLocaleAbbr({ language, country, script })}'.`;
     let suggestions: string[] = [];
     try {
       suggestions = (await fetchLocaleSuggestions.bind(this)(language, country)).map(toLocaleAbbr);
@@ -63,7 +72,7 @@ export async function ensureDeviceLocale(
     if (suggestions.length > 0) {
       errMsg += ` You may want to apply one of the following locales instead: ${suggestions}`;
     }
-    throw new Error(errMsg, {cause: e});
+    throw new Error(errMsg, { cause: e });
   }
 }
 
@@ -86,7 +95,7 @@ async function extractStringsFromResources(
       } catch (e) {
         throw new Error(
           `Could not extract app strings, failed to pull an apk from '${caps.appPackage}'. Original error: ${(e as Error).message}`,
-          {cause: e},
+          { cause: e },
         );
       }
     }
@@ -113,7 +122,7 @@ async function fetchLocaleSuggestions(this: AndroidDriver, language?: string, co
   return util.isEmpty(suggestedLocales) ? supportedLocales : suggestedLocales;
 }
 
-function toLocaleAbbr({language, country, script}: Locale): string {
+function toLocaleAbbr({ language, country, script }: Locale): string {
   return `${language}_${country}${script ? '-' + script : ''}`;
 }
 
