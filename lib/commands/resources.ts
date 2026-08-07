@@ -1,8 +1,8 @@
-import { fs, tempDir, util } from '@appium/support';
-import type { StringRecord } from '@appium/types';
+import {fs, tempDir, util} from '@appium/support';
+import type {StringRecord} from '@appium/types';
 
-import type { AndroidDriver, AndroidDriverOpts } from '../driver.js';
-import type { Locale } from './types.js';
+import type {AndroidDriver, AndroidDriverOpts} from '../driver.js';
+import type {Locale} from './types.js';
 
 /**
  * Gets the localized strings from the application.
@@ -15,7 +15,7 @@ import type { Locale } from './types.js';
 export async function getStrings(
   this: AndroidDriver,
   language: string | null = null,
-  stringFile: string | null = null
+  stringFile: string | null = null,
 ): Promise<StringRecord> {
   if (!language) {
     language = await this.adb.getDeviceLanguage();
@@ -32,11 +32,9 @@ export async function getStrings(
     return result;
   };
 
-  const options: AndroidDriverOpts = stringFile
-    ? { ...this.opts, app: stringFile }
-    : this.opts;
+  const options: AndroidDriverOpts = stringFile ? {...this.opts, app: stringFile} : this.opts;
 
-  return preprocessStringsMap(await extractStringsFromResources.bind(this)(language, options));
+  return preprocessStringsMap(await extractStringsFromResources(this, language, options));
 }
 
 /**
@@ -62,7 +60,7 @@ export async function ensureDeviceLocale(
     }
   } catch (e) {
     this.log.debug((e as Error).stack);
-    let errMsg = `Cannot set the device locale to '${toLocaleAbbr({ language, country, script })}'.`;
+    let errMsg = `Cannot set the device locale to '${toLocaleAbbr({language, country, script})}'.`;
     let suggestions: string[] = [];
     try {
       suggestions = (await fetchLocaleSuggestions.bind(this)(language, country)).map(toLocaleAbbr);
@@ -72,18 +70,18 @@ export async function ensureDeviceLocale(
     if (suggestions.length > 0) {
       errMsg += ` You may want to apply one of the following locales instead: ${suggestions}`;
     }
-    throw new Error(errMsg, { cause: e });
+    throw new Error(errMsg, {cause: e});
   }
 }
 
 // #region Internal helpers
 
 async function extractStringsFromResources(
-  this: AndroidDriver,
+  driver: AndroidDriver,
   language: string | null,
   opts: AndroidDriverOpts | null = null,
 ): Promise<StringRecord> {
-  const caps = opts ?? this.opts;
+  const caps = opts ?? driver.opts;
 
   let app: string | undefined = caps.app;
   let tmpRoot: string | undefined;
@@ -91,11 +89,11 @@ async function extractStringsFromResources(
     if (!app && caps.appPackage) {
       tmpRoot = await tempDir.openDir();
       try {
-        app = await this.adb.pullApk(caps.appPackage, tmpRoot);
+        app = await driver.adb.pullApk(caps.appPackage, tmpRoot);
       } catch (e) {
         throw new Error(
           `Could not extract app strings, failed to pull an apk from '${caps.appPackage}'. Original error: ${(e as Error).message}`,
-          { cause: e },
+          {cause: e},
         );
       }
     }
@@ -104,7 +102,7 @@ async function extractStringsFromResources(
       throw new Error(`Could not extract app strings, no app or package specified`);
     }
 
-    return (await this.adb.extractStringsFromApk(app, language ?? null)).apkStrings;
+    return (await driver.adb.extractStringsFromApk(app, language ?? null)).apkStrings;
   } finally {
     if (tmpRoot) {
       await fs.rimraf(tmpRoot);
@@ -112,8 +110,8 @@ async function extractStringsFromResources(
   }
 }
 
-async function fetchLocaleSuggestions(this: AndroidDriver, language?: string, country?: string): Promise<Locale[]> {
-  const supportedLocales = await this.settingsApp.listSupportedLocales();
+async function fetchLocaleSuggestions(driver: AndroidDriver, language?: string, country?: string): Promise<Locale[]> {
+  const supportedLocales = await driver.settingsApp.listSupportedLocales();
   const suggestedLocales = supportedLocales.filter(
     (locale) =>
       language?.toLowerCase() === locale.language?.toLowerCase() ||
@@ -122,7 +120,7 @@ async function fetchLocaleSuggestions(this: AndroidDriver, language?: string, co
   return util.isEmpty(suggestedLocales) ? supportedLocales : suggestedLocales;
 }
 
-function toLocaleAbbr({ language, country, script }: Locale): string {
+function toLocaleAbbr({language, country, script}: Locale): string {
   return `${language}_${country}${script ? '-' + script : ''}`;
 }
 
