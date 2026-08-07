@@ -63,7 +63,7 @@ export async function ensureDeviceLocale(
     let errMsg = `Cannot set the device locale to '${toLocaleAbbr({language, country, script})}'.`;
     let suggestions: string[] = [];
     try {
-      suggestions = (await fetchLocaleSuggestions.bind(this)(language, country)).map(toLocaleAbbr);
+      suggestions = (await fetchLocaleSuggestions(this, language, country)).map(toLocaleAbbr);
     } catch (e1) {
       this.log.debug((e1 as Error).stack);
     }
