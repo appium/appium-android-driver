@@ -51,17 +51,17 @@
     "test": "node --enable-source-maps --experimental-test-module-mocks --test --test-force-exit --test-timeout=60000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^7.2.5",
-    "appium-adb": "^16.0.0",
-    "appium-chromedriver": "^9.0.1",
-    "asyncbox": "^6.1.0",
-    "axios": "^1.16.0",
+    "@appium/support": "^7.2.6",
+    "appium-adb": "^16.0.4",
+    "appium-chromedriver": "^9.0.15",
+    "asyncbox": "^6.4.3",
+    "axios": "^1.18.0",
     "dayjs": "^1.11.21",
     "io.appium.settings": "^8.0.1",
     "lru-cache": "^11.1.0",
     "portscanner": "^2.2.0",
     "semver": "^7.0.0",
-    "teen_process": "^4.0.7",
+    "teen_process": "^4.2.0",
     "ws": "^8.0.0"
   },
   "devDependencies": {
