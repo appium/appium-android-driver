@@ -199,9 +199,9 @@ export type AndroidDriverOpts = DriverOpts<AndroidDriverConstraints>;
 const EMULATOR_PATTERN = /\bemulator\b/i;
 
 type AndroidExternalDriver = ExternalDriver<AndroidDriverConstraints>;
-class AndroidDriver
-  extends BaseDriver<AndroidDriverConstraints, StringRecord>
-  implements ExternalDriver<AndroidDriverConstraints, string, StringRecord>
+class AndroidDriver<C extends AndroidDriverConstraints = AndroidDriverConstraints>
+  extends BaseDriver<C, StringRecord>
+  implements ExternalDriver<C, string, StringRecord>
 {
   static newMethodMap = newMethodMap;
   static executeMethodMap = executeMethodMap;
@@ -229,7 +229,7 @@ class AndroidDriver
     max: 20,
     updateAgeOnGet: true,
   });
-  opts: AndroidDriverOpts;
+  opts: DriverOpts<C>;
 
   getContexts = getContexts;
   getCurrentContext = getCurrentContext;
@@ -447,12 +447,12 @@ class AndroidDriver
     super(opts, shouldValidateCaps);
 
     this.locatorStrategies = ['xpath', 'id', 'class name', 'accessibility id', '-android uiautomator'];
-    this.desiredCapConstraints = structuredClone(ANDROID_DRIVER_CONSTRAINTS);
+    this.desiredCapConstraints = structuredClone(ANDROID_DRIVER_CONSTRAINTS) as C;
     this.sessionChromedrivers = {};
     this.jwpProxyActive = false;
 
     this.curContext = this.defaultContextName();
-    this.opts = opts as AndroidDriverOpts;
+    this.opts = opts as DriverOpts<C>;
     this._cachedActivityArgs = {};
   }
 
@@ -468,7 +468,8 @@ class AndroidDriver
   }
 
   get isChromeSession(): boolean {
-    return Object.keys(CHROME_BROWSER_PACKAGE_ACTIVITY).includes((this.opts.browserName || '').toLowerCase());
+    const browserName = (this.opts as AndroidDriverOpts).browserName;
+    return Object.keys(CHROME_BROWSER_PACKAGE_ACTIVITY).includes((browserName || '').toLowerCase());
   }
 
   isEmulator(): boolean {
@@ -476,24 +477,25 @@ class AndroidDriver
     return !!this.opts?.avd || possibleNames.some((x) => EMULATOR_PATTERN.test(String(x)));
   }
 
-  override validateDesiredCaps(caps: any): caps is AndroidDriverCaps {
+  override validateDesiredCaps(caps: any): caps is DriverCaps<C> {
     if (!super.validateDesiredCaps(caps)) {
       return false;
     }
 
-    if (caps.browserName) {
-      if (caps.app) {
+    const androidCaps = caps as AndroidDriverCaps;
+    if (androidCaps.browserName) {
+      if (androidCaps.app) {
         // warn if the capabilities have both `app` and `browser, although this is common with selenium grid
         this.log.warn(`The desired capabilities should generally not include both an 'app' and a 'browserName'`);
       }
-      if (caps.appPackage) {
+      if (androidCaps.appPackage) {
         throw this.log.errorWithException(`The desired should not include both of an 'appPackage' and a 'browserName'`);
       }
     }
 
-    if (caps.uninstallOtherPackages) {
+    if (androidCaps.uninstallOtherPackages) {
       try {
-        parseArray(caps.uninstallOtherPackages);
+        parseArray(androidCaps.uninstallOtherPackages);
       } catch (e) {
         throw this.log.errorWithException(
           `Could not parse "uninstallOtherPackages" capability: ${(e as Error).message}`,
