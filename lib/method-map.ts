@@ -40,6 +40,12 @@ export const newMethodMap = {
   '/session/:sessionId/contexts': {
     GET: {command: 'getContexts'},
   },
+  '/session/:sessionId/rotation': {
+    // Not implemented locally - the UiAutomator2 server supports this endpoint
+    // natively, so the request is proxied straight through for that driver.
+    GET: {command: 'getRotation'},
+    POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}},
+  },
   '/session/:sessionId/keys': {
     POST: {
       command: 'keys',
