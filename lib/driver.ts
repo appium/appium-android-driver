@@ -163,8 +163,6 @@ import {
   mobileListSms,
   openNotifications,
   setUrl,
-  getOrientation,
-  setOrientation,
 } from './commands/misc.js';
 import {
   getNetworkConnection,
@@ -403,8 +401,6 @@ class AndroidDriver
   mobileListSms = mobileListSms;
   openNotifications = openNotifications;
   setUrl = setUrl;
-  getOrientation = getOrientation;
-  setOrientation = setOrientation;
 
   getNetworkConnection = getNetworkConnection;
   isWifiOn = isWifiOn;
