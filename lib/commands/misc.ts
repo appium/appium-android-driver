@@ -1,4 +1,6 @@
-import type {Size, Rect, StringRecord} from '@appium/types';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+import type {Orientation, Size, Rect, StringRecord} from '@appium/types';
 import {errors} from 'appium/driver.js';
 
 import type {AndroidDriver} from '../driver.js';
@@ -98,5 +100,26 @@ export async function mobileListSms(this: AndroidDriver, opts?: ListSmsOpts): Pr
  * @throws {errors.NotImplementedError} This method is not implemented.
  */
 export async function openNotifications(this: AndroidDriver): Promise<void> {
+  throw new errors.NotImplementedError('Not implemented');
+}
+
+/**
+ * Gets the current device orientation.
+ *
+ * @returns Promise that resolves to the current orientation.
+ * @throws {errors.NotImplementedError} This method is not implemented.
+ */
+export async function getOrientation(this: AndroidDriver): Promise<Orientation> {
+  throw new errors.NotImplementedError('Not implemented');
+}
+
+/**
+ * Sets the device orientation.
+ *
+ * @param orientation The desired orientation.
+ * @returns Promise that resolves when the orientation is set.
+ * @throws {errors.NotImplementedError} This method is not implemented.
+ */
+export async function setOrientation(this: AndroidDriver, orientation: Orientation): Promise<void> {
   throw new errors.NotImplementedError('Not implemented');
 }

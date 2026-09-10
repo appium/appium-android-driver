@@ -26,6 +26,21 @@ export const newMethodMap = {
       deprecated: true,
     },
   },
+  '/session/:sessionId/orientation': {
+    GET: {command: 'getOrientation', deprecated: true},
+    POST: {
+      command: 'setOrientation',
+      payloadParams: {required: ['orientation']},
+      deprecated: true,
+    },
+  },
+  '/session/:sessionId/context': {
+    GET: {command: 'getCurrentContext', deprecated: true},
+    POST: {command: 'setContext', payloadParams: {required: ['name']}, deprecated: true},
+  },
+  '/session/:sessionId/contexts': {
+    GET: {command: 'getContexts', deprecated: true},
+  },
   '/session/:sessionId/keys': {
     POST: {
       command: 'keys',
