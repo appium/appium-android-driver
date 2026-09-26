@@ -1,3 +1,10 @@
+## [14.2.2](https://github.com/appium/appium-android-driver/compare/v14.2.1...v14.2.2) (2026-09-26)
+
+### Bug Fixes
+
+* preserve container file transfers and newline paths ([#1101](https://github.com/appium/appium-android-driver/issues/1101)) ([3685fe6](https://github.com/appium/appium-android-driver/commit/3685fe62d2d36c69cbac521e4645a0c10a0a948f))
+* preserve file operations on older Android ([#1102](https://github.com/appium/appium-android-driver/issues/1102)) ([43c8bb2](https://github.com/appium/appium-android-driver/commit/43c8bb2e575cde5258c8de737f30c3b555b17d01))
+
 ## [14.2.1](https://github.com/appium/appium-android-driver/compare/v14.2.0...v14.2.1) (2026-09-26)
 
 ### Bug Fixes
