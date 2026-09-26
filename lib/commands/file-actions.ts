@@ -7,8 +7,7 @@ import {errors} from 'appium/driver.js';
 import type {AndroidDriver} from '../driver.js';
 
 const CONTAINER_PATH_MARKER = '@';
-// https://regex101.com/r/PLdB0G/2
-const CONTAINER_PATH_PATTERN = new RegExp(`^${CONTAINER_PATH_MARKER}([^/]+)/(.+)`);
+const CONTAINER_PATH_PATTERN = new RegExp(`^${CONTAINER_PATH_MARKER}([^/]+)/(.+)`, 's');
 const ANDROID_MEDIA_RESCAN_INTENT = 'android.intent.action.MEDIA_SCANNER_SCAN_FILE';
 
 /**
@@ -33,37 +32,44 @@ export async function pullFile(this: AndroidDriver, remotePath: string): Promise
     );
   }
   let tmpDestination: string | null = null;
-  if (remotePath.startsWith(CONTAINER_PATH_MARKER)) {
-    const [packageId, pathInContainer] = parseContainerPath(remotePath);
-    this.log.debug(
-      `Parsed package identifier '${packageId}' from '${remotePath}'. Will get the data from '${pathInContainer}'`,
-    );
-    tmpDestination = `/data/local/tmp/${path.posix.basename(pathInContainer)}`;
-    try {
-      await this.adb.shell(['run-as', util.quote(packageId), `chmod 777 '${escapePath(pathInContainer)}'`]);
-      await this.adb.shell([
-        'run-as',
-        util.quote(packageId),
-        `cp -f '${escapePath(pathInContainer)}' '${escapePath(tmpDestination)}'`,
-      ]);
-    } catch (e) {
-      throw this.log.errorWithException(
-        `Cannot access the container of '${packageId}' application. ` +
-          `Is the application installed and has 'debuggable' build option set to true? ` +
-          `Original error: ${(e as Error).message}`,
-      );
-    }
-  }
   const localFile = await tempDir.path({prefix: 'appium', suffix: '.tmp'});
   try {
+    if (remotePath.startsWith(CONTAINER_PATH_MARKER)) {
+      const [packageId, pathInContainer] = parseContainerPath(remotePath);
+      this.log.debug(
+        `Parsed package identifier '${packageId}' from '${remotePath}'. Will get the data from '${pathInContainer}'`,
+      );
+      try {
+        tmpDestination = await this.adb.shell(['mktemp', '/data/local/tmp/appium-pull-XXXXXX']);
+        // The shell user opens the destination; run-as only needs to read the source.
+        // App users cannot create files in /data/local/tmp on non-rooted devices.
+        await this.adb.shell([
+          'run-as',
+          util.quote(packageId),
+          'cat',
+          util.quote(pathInContainer),
+          '>',
+          util.quote(tmpDestination),
+        ]);
+      } catch (e) {
+        throw this.log.errorWithException(
+          `Cannot access the container of '${packageId}' application. ` +
+            `Is the application installed and has 'debuggable' build option set to true? ` +
+            `Original error: ${(e as Error).message}`,
+        );
+      }
+    }
     await this.adb.pull(tmpDestination || remotePath, localFile);
     return (await util.toInMemoryBase64(localFile)).toString();
   } finally {
-    if (await fs.exists(localFile)) {
-      await fs.unlink(localFile);
-    }
-    if (tmpDestination) {
-      await this.adb.shell(['rm', '-f', util.quote(tmpDestination)]);
+    try {
+      if (await fs.exists(localFile)) {
+        await fs.unlink(localFile);
+      }
+    } finally {
+      if (tmpDestination) {
+        await this.adb.shell(['rm', '-f', util.quote(tmpDestination)]);
+      }
     }
   }
 }
