@@ -274,7 +274,14 @@ async function scanMedia(this: AndroidDriver, remotePath: string): Promise<void>
     if ((await this.adb.getApiLevel()) >= 29) {
       await this.settingsApp.scanMedia(remotePath);
     } else {
-      await this.adb.shell(['am', 'broadcast', '-a', ANDROID_MEDIA_RESCAN_INTENT, '-d', `file://${remotePath}`]);
+      await this.adb.shell([
+        'am',
+        'broadcast',
+        '-a',
+        ANDROID_MEDIA_RESCAN_INTENT,
+        '-d',
+        util.quote(`file://${remotePath}`),
+      ]);
     }
   } catch (e) {
     const err = e as {stderr?: string; message?: string};
@@ -298,7 +305,9 @@ function createFSTests(adb: ADB) {
   const performRemoteFsCheck = async (p: string, op: 'd' | 'f' | 'e', runAs?: string): Promise<boolean> => {
     const passFlag = '__PASS__';
     const checkCmd = `[ -${op} '${escapePath(p)}' ] && echo ${passFlag}`;
-    const fullCmd = runAs ? `run-as ${util.quote(runAs)} ${checkCmd}` : checkCmd;
+    // Older Android images provide [ as a shell builtin, not an executable
+    // that run-as can invoke directly.
+    const fullCmd = runAs ? `run-as ${util.quote(runAs)} sh -c '${escapePath(checkCmd)}'` : checkCmd;
     try {
       return (await adb.shell([fullCmd])).includes(passFlag);
     } catch {
