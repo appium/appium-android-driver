@@ -132,8 +132,11 @@ describe('File Actions', function () {
       const shell = sandbox.stub(driver.adb, 'shell').resolves('');
       shell.onCall(1).resolves('__PASS__');
       shell.onCall(2).resolves('__PASS__');
-      await driver.mobileDeleteFile(remotePath);
-      assert.strictEqual(shell.calledWithExactly([`run-as ${pkg} [ -e '${fullPath}' ] && echo __PASS__`]), true);
+      assert.strictEqual(await driver.mobileDeleteFile(remotePath), true);
+      assert.strictEqual(
+        shell.calledWithExactly([`run-as ${pkg} sh -c '[ -e '"'"'${fullPath}'"'"' ] && echo __PASS__'`]),
+        true,
+      );
       assert.strictEqual(shell.calledWithExactly(['run-as', pkg, `rm -f '${fullPath}'`]), true);
     });
   });
