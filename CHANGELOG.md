@@ -1,3 +1,9 @@
+## [14.2.1](https://github.com/appium/appium-android-driver/compare/v14.2.0...v14.2.1) (2026-09-26)
+
+### Bug Fixes
+
+* preserve literal paths in Android file actions ([#1100](https://github.com/appium/appium-android-driver/issues/1100)) ([de47b29](https://github.com/appium/appium-android-driver/commit/de47b293d9b978cfbaf6e7268909a06faab85d08))
+
 ## [14.2.0](https://github.com/appium/appium-android-driver/compare/v14.1.0...v14.2.0) (2026-09-10)
 
 ### Features
