@@ -136,6 +136,27 @@ describe('File action argument preservation', {skip: process.platform === 'win32
     sandbox.restore();
   });
 
+  for (const apiLevel of [26, 28]) {
+    it(`preserves the media scan URI on API ${apiLevel}`, async function () {
+      const target = `/data/local/tmp/${fileName}\nnext.txt`;
+      sandbox.stub(support.tempDir, 'path').resolves('local-file');
+      sandbox.stub(support.fs, 'exists').resolves(false);
+      sandbox.stub(support.fs, 'writeFile').resolves();
+      sandbox.stub(driver.adb, 'push').resolves();
+      sandbox.stub(driver.adb, 'getApiLevel').resolves(apiLevel);
+      const shell = sandbox.stub(driver.adb, 'shell').resolves('');
+      await driver.pushFile(target, 'YXBwaXVt');
+      assert.deepStrictEqual(await parseDeviceCommand(shell.firstCall.args[0]), [
+        'am',
+        'broadcast',
+        '-a',
+        'android.intent.action.MEDIA_SCANNER_SCAN_FILE',
+        '-d',
+        `file://${target}`,
+      ]);
+    });
+  }
+
   for (const operation of ['pull', 'push'] as const) {
     it(`preserves package names and paths through ${operation} and cleanup`, async function () {
       sandbox.stub(support.tempDir, 'path').resolves('local-file');
@@ -187,10 +208,16 @@ describe('File action argument preservation', {skip: process.platform === 'win32
       const prefix = inContainer ? ['run-as', packageId] : [];
       assert.deepStrictEqual(commands, [
         ...(inContainer ? [[...prefix, 'ls']] : []),
-        [...prefix, '[', '-e', target, ']'],
-        [...prefix, '[', '-f', target, ']'],
+        inContainer
+          ? [...prefix, 'sh', '-c', `[ -e '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`]
+          : ['[', '-e', target, ']'],
+        inContainer
+          ? [...prefix, 'sh', '-c', `[ -f '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`]
+          : ['[', '-f', target, ']'],
         [...prefix, 'rm', '-f', target],
-        [...prefix, '[', '-e', target, ']'],
+        inContainer
+          ? [...prefix, 'sh', '-c', `[ -e '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`]
+          : ['[', '-e', target, ']'],
       ]);
     });
   }
