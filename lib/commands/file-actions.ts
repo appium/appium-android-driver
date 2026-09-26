@@ -40,10 +40,10 @@ export async function pullFile(this: AndroidDriver, remotePath: string): Promise
     );
     tmpDestination = `/data/local/tmp/${path.posix.basename(pathInContainer)}`;
     try {
-      await this.adb.shell(['run-as', packageId, `chmod 777 '${escapePath(pathInContainer)}'`]);
+      await this.adb.shell(['run-as', util.quote(packageId), `chmod 777 '${escapePath(pathInContainer)}'`]);
       await this.adb.shell([
         'run-as',
-        packageId,
+        util.quote(packageId),
         `cp -f '${escapePath(pathInContainer)}' '${escapePath(tmpDestination)}'`,
       ]);
     } catch (e) {
@@ -63,7 +63,7 @@ export async function pullFile(this: AndroidDriver, remotePath: string): Promise
       await fs.unlink(localFile);
     }
     if (tmpDestination) {
-      await this.adb.shell(['rm', '-f', tmpDestination]);
+      await this.adb.shell(['rm', '-f', util.quote(tmpDestination)]);
     }
   }
 }
@@ -112,13 +112,17 @@ export async function pushFile(this: AndroidDriver, remotePath: string, base64Da
       );
       tmpDestination = `/data/local/tmp/${path.posix.basename(pathInContainer)}`;
       try {
-        await this.adb.shell(['run-as', packageId, `mkdir -p '${escapePath(path.posix.dirname(pathInContainer))}'`]);
-        await this.adb.shell(['run-as', packageId, `touch '${escapePath(pathInContainer)}'`]);
-        await this.adb.shell(['run-as', packageId, `chmod 777 '${escapePath(pathInContainer)}'`]);
+        await this.adb.shell([
+          'run-as',
+          util.quote(packageId),
+          `mkdir -p '${escapePath(path.posix.dirname(pathInContainer))}'`,
+        ]);
+        await this.adb.shell(['run-as', util.quote(packageId), `touch '${escapePath(pathInContainer)}'`]);
+        await this.adb.shell(['run-as', util.quote(packageId), `chmod 777 '${escapePath(pathInContainer)}'`]);
         await this.adb.push(localFile, tmpDestination);
         await this.adb.shell([
           'run-as',
-          packageId,
+          util.quote(packageId),
           `cp -f '${escapePath(tmpDestination)}' '${escapePath(pathInContainer)}'`,
         ]);
       } catch (e) {
@@ -141,7 +145,7 @@ export async function pushFile(this: AndroidDriver, remotePath: string, base64Da
       await fs.unlink(localFile);
     }
     if (tmpDestination) {
-      await this.adb.shell(['rm', '-f', tmpDestination]);
+      await this.adb.shell(['rm', '-f', util.quote(tmpDestination)]);
     }
   }
 }
@@ -205,7 +209,7 @@ async function deleteFileOrFolder(this: AndroidDriver, adb: ADB, remotePath: str
 
   if (pkgId) {
     try {
-      await adb.shell(['run-as', pkgId, 'ls']);
+      await adb.shell(['run-as', util.quote(pkgId), 'ls']);
     } catch (e) {
       throw this.log.errorWithException(
         `Cannot access the container of '${pkgId}' application. ` +
@@ -228,9 +232,9 @@ async function deleteFileOrFolder(this: AndroidDriver, adb: ADB, remotePath: str
   }
 
   if (pkgId) {
-    await adb.shell(['run-as', pkgId, `rm -f${expectsFile ? '' : 'r'} '${escapePath(dstPath)}'`]);
+    await adb.shell(['run-as', util.quote(pkgId), `rm -f${expectsFile ? '' : 'r'} '${escapePath(dstPath)}'`]);
   } else {
-    await adb.shell(['rm', `-f${expectsFile ? '' : 'r'}`, dstPath]);
+    await adb.shell(['rm', `-f${expectsFile ? '' : 'r'}`, util.quote(dstPath)]);
   }
   if (await isPresent(dstPath, pkgId)) {
     throw this.log.errorWithException(`The item at '${dstPath}' still exists after being deleted. Is it writable?`);
@@ -284,7 +288,7 @@ async function scanMedia(this: AndroidDriver, remotePath: string): Promise<void>
  * so they are safe to be passed as arguments of shell commands
  */
 function escapePath(p: string): string {
-  return p.replace(/'/g, `\\'`);
+  return p.replace(/'/g, `'"'"'`);
 }
 
 /**
@@ -294,7 +298,7 @@ function createFSTests(adb: ADB) {
   const performRemoteFsCheck = async (p: string, op: 'd' | 'f' | 'e', runAs?: string): Promise<boolean> => {
     const passFlag = '__PASS__';
     const checkCmd = `[ -${op} '${escapePath(p)}' ] && echo ${passFlag}`;
-    const fullCmd = runAs ? `run-as ${runAs} ${checkCmd}` : checkCmd;
+    const fullCmd = runAs ? `run-as ${util.quote(runAs)} ${checkCmd}` : checkCmd;
     try {
       return (await adb.shell([fullCmd])).includes(passFlag);
     } catch {
