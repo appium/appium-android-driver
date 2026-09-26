@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
-import {execFileSync} from 'node:child_process';
+import {execFile} from 'node:child_process';
 import {describe, it, beforeEach, afterEach} from 'node:test';
+import {promisify} from 'node:util';
 
 import * as support from '@appium/support';
 import {ADB} from 'appium-adb';
@@ -152,7 +153,7 @@ describe('File action argument preservation', {skip: process.platform === 'win32
         await driver.pushFile(remotePath, 'YXBwaXVt');
         assert.strictEqual(push.calledWithExactly('local-file', tempPath), true);
       }
-      const commands = shell.getCalls().map(({args}) => parseDeviceCommand(args[0]));
+      const commands = await Promise.all(shell.getCalls().map(({args}) => parseDeviceCommand(args[0])));
       const expected =
         operation === 'pull'
           ? [
@@ -177,10 +178,12 @@ describe('File action argument preservation', {skip: process.platform === 'win32
       shell.onCall(offset).resolves('__PASS__');
       shell.onCall(offset + 1).resolves('__PASS__');
       await driver.mobileDeleteFile(inContainer ? remotePath : target);
-      const commands = shell.getCalls().map(({args}) => {
-        const cmd = (Array.isArray(args[0]) ? args[0].join(' ') : args[0]).replace(/ && echo __PASS__$/, '');
-        return parseDeviceCommand(cmd);
-      });
+      const commands = await Promise.all(
+        shell.getCalls().map(({args}) => {
+          const cmd = (Array.isArray(args[0]) ? args[0].join(' ') : args[0]).replace(/ && echo __PASS__$/, '');
+          return parseDeviceCommand(cmd);
+        }),
+      );
       const prefix = inContainer ? ['run-as', packageId] : [];
       assert.deepStrictEqual(commands, [
         ...(inContainer ? [[...prefix, 'ls']] : []),
@@ -193,13 +196,13 @@ describe('File action argument preservation', {skip: process.platform === 'win32
   }
 });
 
-function parseDeviceCommand(command: string | string[]): string[] {
-  const output = execFileSync(
+async function parseDeviceCommand(command: string | string[]): Promise<string[]> {
+  const {stdout} = await promisify(execFile)(
     '/bin/sh',
     ['-c', `set -- ${Array.isArray(command) ? command.join(' ') : command}; printf '%s\\0' "$@"`],
     {
       env: {...process.env, APPIUM_QUOTE_TEST: 'unexpected-expansion'},
     },
   );
-  return output.toString().split('\0').slice(0, -1);
+  return stdout.toString().split('\0').slice(0, -1);
 }
