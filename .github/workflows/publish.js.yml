@@ -2,6 +2,17 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no publishing, tagging, or git changes)'
+        required: true
+        type: boolean
+        default: true
+      dist_tag:
+        description: 'npm dist-tag to publish under. Set to "beta" to release this run''s branch as a beta prerelease; leave empty for a normal release.'
+        required: false
+        type: string
+        default: ''
   push:
     branches: [ master ]
 
@@ -29,7 +40,16 @@ jobs:
       name: Linter
     - run: npm run test
       name: Unit Test
-    - run: npx semantic-release
+    - run: |
+        dry_run_flag=""
+        if [ "$DRY_RUN" = "true" ]; then
+          dry_run_flag="--dry-run"
+        fi
+        npx semantic-release $dry_run_flag
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        DRY_RUN: ${{ inputs.dry_run }}
+        # Only opts release.config.mjs into treating this run's branch as the beta channel
+        # when dist_tag was explicitly set to "beta" - see release.config.mjs's betaBranch.
+        BETA_BRANCH_NAME: ${{ inputs.dist_tag == 'beta' && github.ref_name || '' }}
       name: Release
