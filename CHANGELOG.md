@@ -1,3 +1,15 @@
+## [15.0.0-beta.1](https://github.com/appium/appium-android-driver/compare/v14.2.2...v15.0.0-beta.1) (2026-09-30)
+
+### ⚠ BREAKING CHANGES
+
+* requires Appium >=4.0.0-beta.0 and drops Node 20 support
+(minimum is now ^22.22.2 || ^24.15.0 || >=26.0.0), matching Appium 4's own
+minimum supported Node engine.
+
+### Features
+
+* target Appium 4 beta ([#1104](https://github.com/appium/appium-android-driver/issues/1104)) ([fcc3cb1](https://github.com/appium/appium-android-driver/commit/fcc3cb1c88fef247a33a19121a98acd75fa4b160))
+
 ## [14.2.2](https://github.com/appium/appium-android-driver/compare/v14.2.1...v14.2.2) (2026-09-26)
 
 ### Bug Fixes
