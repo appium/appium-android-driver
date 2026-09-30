@@ -25,13 +25,19 @@ function importFresh(specifier: string) {
 // are frozen and can't be stubbed in place (unlike `fs`, which stays a plain object) - so
 // `tempDir.path`/`util.toInMemoryBase64` overrides are swapped in via module mocking instead,
 // and file-actions.js is re-imported so it resolves the mocked `@appium/support`.
+//
+// `support` (an `import * as` namespace) carries a `default` key alongside its named exports;
+// spreading it into `namedExports` as-is trips a Node 22 module-mock bug ("Unexpected token
+// 'default'"), fixed by Node 24 - so `default` is stripped out here.
+const {default: _supportDefault, ...supportNamedExports} = support;
+
 async function mockFileActions(
   t: TestContext,
   overrides: {tempDirPath?: sinon.SinonStub; toInMemoryBase64?: sinon.SinonStub} = {},
 ) {
   t.mock.module('@appium/support', {
     namedExports: {
-      ...support,
+      ...supportNamedExports,
       tempDir: overrides.tempDirPath ? {...support.tempDir, path: overrides.tempDirPath} : support.tempDir,
       util: overrides.toInMemoryBase64 ? {...support.util, toInMemoryBase64: overrides.toInMemoryBase64} : support.util,
     },
