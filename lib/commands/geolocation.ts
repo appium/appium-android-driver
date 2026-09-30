@@ -1,12 +1,12 @@
 import path from 'node:path';
 
 import {fs, tempDir} from '@appium/support';
-import type {Location} from '@appium/types';
 import {asyncmap} from 'asyncbox';
 import {SETTINGS_HELPER_ID} from 'io.appium.settings';
 
 import type {AndroidDriver} from '../driver.js';
 import {getThirdPartyPackages} from './app-management.js';
+import type {GeoLocation} from './types.js';
 
 // The value close to zero, but not zero, is needed
 // to trick JSON generation and send a float value instead of an integer,
@@ -22,7 +22,7 @@ const MOCK_APP_IDS_STORE = '/data/local/tmp/mock_apps.json';
  * @param location The geolocation object containing latitude, longitude, and altitude.
  * @returns Promise that resolves to the current geolocation after setting it.
  */
-export async function setGeoLocation(this: AndroidDriver, location: Location): Promise<Location> {
+export async function setGeoLocation(this: AndroidDriver, location: GeoLocation): Promise<GeoLocation> {
   await this.settingsApp.setGeoLocation(location, this.isEmulator());
   try {
     return await this.getGeoLocation();
@@ -98,7 +98,7 @@ export async function mobileRefreshGpsCache(this: AndroidDriver, timeoutMs?: num
  *
  * @returns Promise that resolves to the current geolocation object.
  */
-export async function getGeoLocation(this: AndroidDriver): Promise<Location> {
+export async function getGeoLocation(this: AndroidDriver): Promise<GeoLocation> {
   const {latitude, longitude, altitude} = await this.settingsApp.getGeoLocation();
   return {
     latitude: parseFloat(String(latitude)) || GEO_EPSILON,
@@ -112,7 +112,7 @@ export async function getGeoLocation(this: AndroidDriver): Promise<Location> {
  *
  * @returns Promise that resolves to the current geolocation object.
  */
-export async function mobileGetGeolocation(this: AndroidDriver): Promise<Location> {
+export async function mobileGetGeolocation(this: AndroidDriver): Promise<GeoLocation> {
   return await this.getGeoLocation();
 }
 

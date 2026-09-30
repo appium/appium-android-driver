@@ -1,16 +1,43 @@
 import assert from 'node:assert/strict';
 import {execFile} from 'node:child_process';
 import {describe, it, beforeEach, afterEach} from 'node:test';
+import type {TestContext} from 'node:test';
 import {promisify} from 'node:util';
 
 import * as support from '@appium/support';
 import {ADB} from 'appium-adb';
 import sinon from 'sinon';
 
+import type * as FileActions from '../../../lib/commands/file-actions.js';
 import {AndroidDriver} from '../../../lib/driver.js';
+
+const FILE_ACTIONS_PATH = '../../../lib/commands/file-actions.js';
 
 let driver: AndroidDriver;
 const sandbox = sinon.createSandbox();
+
+let importCounter = 0;
+function importFresh(specifier: string) {
+  return import(`${specifier}?mock=${importCounter++}`);
+}
+
+// `@appium/support`'s `tempDir`/`util` namespaces are real ESM module namespace objects, which
+// are frozen and can't be stubbed in place (unlike `fs`, which stays a plain object) - so
+// `tempDir.path`/`util.toInMemoryBase64` overrides are swapped in via module mocking instead,
+// and file-actions.js is re-imported so it resolves the mocked `@appium/support`.
+async function mockFileActions(
+  t: TestContext,
+  overrides: {tempDirPath?: sinon.SinonStub; toInMemoryBase64?: sinon.SinonStub} = {},
+) {
+  t.mock.module('@appium/support', {
+    namedExports: {
+      ...support,
+      tempDir: overrides.tempDirPath ? {...support.tempDir, path: overrides.tempDirPath} : support.tempDir,
+      util: overrides.toInMemoryBase64 ? {...support.util, toInMemoryBase64: overrides.toInMemoryBase64} : support.util,
+    },
+  });
+  return (await importFresh(FILE_ACTIONS_PATH)) as typeof FileActions;
+}
 
 describe('File Actions', function () {
   beforeEach(function () {
@@ -22,31 +49,33 @@ describe('File Actions', function () {
   });
 
   describe('pullFile', function () {
-    it('should be able to pull file from device', async function () {
+    it('should be able to pull file from device', async function (t) {
       const localFile = 'local/tmp_file';
-      sandbox.stub(support.tempDir, 'path').resolves(localFile);
+      const tempDirPath = sandbox.stub().resolves(localFile);
+      const toInMemoryBase64 = sandbox.stub().withArgs(localFile).resolves(Buffer.from('YXBwaXVt', 'utf8'));
+      const {pullFile} = await mockFileActions(t, {tempDirPath, toInMemoryBase64});
       const pullStub1 = sandbox.stub(driver.adb, 'pull');
-      sandbox.stub(support.util, 'toInMemoryBase64').withArgs(localFile).resolves(Buffer.from('YXBwaXVt', 'utf8'));
       sandbox.stub(support.fs, 'exists').withArgs(localFile).resolves(true);
       const unlinkStub4 = sandbox.stub(support.fs, 'unlink');
-      assert.strictEqual(await driver.pullFile('remote_path'), 'YXBwaXVt');
+      assert.strictEqual(await pullFile.call(driver, 'remote_path'), 'YXBwaXVt');
       assert.strictEqual(pullStub1.calledWithExactly('remote_path', localFile), true);
       assert.strictEqual(unlinkStub4.calledWithExactly(localFile), true);
     });
 
-    it('should be able to pull file located in application container from the device', async function () {
+    it('should be able to pull file located in application container from the device', async function (t) {
       const localFile = 'local/tmp_file';
       const packageId = 'com.myapp';
       const remotePath = 'path/in/container';
       const tmpPath = '/data/local/tmp/appium-pull-test';
-      sandbox.stub(support.tempDir, 'path').resolves(localFile);
+      const tempDirPath = sandbox.stub().resolves(localFile);
+      const toInMemoryBase64 = sandbox.stub().withArgs(localFile).resolves(Buffer.from('YXBwaXVt', 'utf8'));
+      const {pullFile} = await mockFileActions(t, {tempDirPath, toInMemoryBase64});
       const pullStub = sandbox.stub(driver.adb, 'pull');
       const shellStub2 = sandbox.stub(driver.adb, 'shell');
       shellStub2.withArgs(['mktemp', '/data/local/tmp/appium-pull-XXXXXX']).resolves(tmpPath);
-      sandbox.stub(support.util, 'toInMemoryBase64').withArgs(localFile).resolves(Buffer.from('YXBwaXVt', 'utf8'));
       sandbox.stub(support.fs, 'exists').withArgs(localFile).resolves(true);
       const unlinkStub3 = sandbox.stub(support.fs, 'unlink');
-      assert.strictEqual(await driver.pullFile(`@${packageId}/${remotePath}`), 'YXBwaXVt');
+      assert.strictEqual(await pullFile.call(driver, `@${packageId}/${remotePath}`), 'YXBwaXVt');
       assert.strictEqual(pullStub.calledWithExactly(tmpPath, localFile), true);
       assert.strictEqual(
         shellStub2.calledWithExactly([
@@ -64,13 +93,14 @@ describe('File Actions', function () {
     });
 
     for (const failure of ['read container', 'pull', 'encode', 'unlink'] as const) {
-      it(`cleans up the remote temporary file when ${failure} fails`, async function () {
+      it(`cleans up the remote temporary file when ${failure} fails`, async function (t) {
         const localFile = 'local/tmp_file';
         const tmpPath = '/data/local/tmp/appium-pull-test';
-        sandbox.stub(support.tempDir, 'path').resolves(localFile);
+        const tempDirPath = sandbox.stub().resolves(localFile);
+        const encode = sandbox.stub().resolves(Buffer.from('YXBwaXVt'));
+        const {pullFile} = await mockFileActions(t, {tempDirPath, toInMemoryBase64: encode});
         sandbox.stub(support.fs, 'exists').resolves(true);
         const unlink = sandbox.stub(support.fs, 'unlink').resolves();
-        const encode = sandbox.stub(support.util, 'toInMemoryBase64').resolves(Buffer.from('YXBwaXVt'));
         const pull = sandbox.stub(driver.adb, 'pull').resolves();
         const shell = sandbox.stub(driver.adb, 'shell').resolves('');
         shell.onFirstCall().resolves(tmpPath);
@@ -84,7 +114,7 @@ describe('File Actions', function () {
         } else {
           unlink.rejects(error);
         }
-        await assert.rejects(driver.pullFile('@com.myapp/files/test'), /transfer failed/);
+        await assert.rejects(pullFile.call(driver, '@com.myapp/files/test'), /transfer failed/);
         assert.deepStrictEqual(shell.lastCall.args, [['rm', '-f', tmpPath]]);
         if (failure === 'read container') {
           assert.strictEqual(pull.called, false);
@@ -99,14 +129,15 @@ describe('File Actions', function () {
     const remotePath = `@${pkg}/${relativePath}`;
     const fullPath = `/data/data/${pkg}/${relativePath}`;
 
-    it('preserves the complete path when pulling', async function () {
-      sandbox.stub(support.tempDir, 'path').resolves('local-file');
+    it('preserves the complete path when pulling', async function (t) {
+      const tempDirPath = sandbox.stub().resolves('local-file');
+      const toInMemoryBase64 = sandbox.stub().resolves(Buffer.from('YXBwaXVt'));
+      const {pullFile} = await mockFileActions(t, {tempDirPath, toInMemoryBase64});
       sandbox.stub(support.fs, 'exists').resolves(false);
-      sandbox.stub(support.util, 'toInMemoryBase64').resolves(Buffer.from('YXBwaXVt'));
       sandbox.stub(driver.adb, 'pull').resolves();
       const shell = sandbox.stub(driver.adb, 'shell').resolves('');
       shell.onFirstCall().resolves('/data/local/tmp/appium-pull-test');
-      await driver.pullFile(remotePath);
+      await pullFile.call(driver, remotePath);
       assert.deepStrictEqual(shell.secondCall.args[0], [
         'run-as',
         pkg,
@@ -117,13 +148,14 @@ describe('File Actions', function () {
       ]);
     });
 
-    it('preserves the complete path when pushing', async function () {
-      sandbox.stub(support.tempDir, 'path').resolves('local-file');
+    it('preserves the complete path when pushing', async function (t) {
+      const tempDirPath = sandbox.stub().resolves('local-file');
+      const {pushFile} = await mockFileActions(t, {tempDirPath});
       sandbox.stub(support.fs, 'writeFile').resolves();
       sandbox.stub(support.fs, 'exists').resolves(false);
       const push = sandbox.stub(driver.adb, 'push').resolves();
       const shell = sandbox.stub(driver.adb, 'shell').resolves('');
-      await driver.pushFile(remotePath, 'YXBwaXVt');
+      await pushFile.call(driver, remotePath, 'YXBwaXVt');
       assert.strictEqual(push.calledWithExactly('local-file', '/data/local/tmp/line\nbreak.txt'), true);
       assert.strictEqual(shell.calledWithExactly(['run-as', pkg, `touch '${fullPath}'`]), true);
     });
@@ -142,34 +174,36 @@ describe('File Actions', function () {
   });
 
   describe('pushFile', function () {
-    it('should be able to push file to device', async function () {
+    it('should be able to push file to device', async function (t) {
       const localFile = 'local/tmp_file';
       const content = 'appium';
-      sandbox.stub(support.tempDir, 'path').resolves(localFile);
+      const tempDirPath = sandbox.stub().resolves(localFile);
+      const {pushFile} = await mockFileActions(t, {tempDirPath});
       const pushStub1 = sandbox.stub(driver.adb, 'push');
       sandbox.stub(driver.adb, 'shell');
       const writeFileStub1 = sandbox.stub(support.fs, 'writeFile');
       sandbox.stub(support.fs, 'exists').withArgs(localFile).resolves(true);
       const unlinkStub1 = sandbox.stub(support.fs, 'unlink');
-      await driver.pushFile('remote_path', 'YXBwaXVt');
+      await pushFile.call(driver, 'remote_path', 'YXBwaXVt');
       assert.strictEqual(writeFileStub1.calledWithExactly(localFile, content, 'binary'), true);
       assert.strictEqual(unlinkStub1.calledWithExactly(localFile), true);
       assert.strictEqual(pushStub1.calledWithExactly(localFile, 'remote_path'), true);
     });
 
-    it('should be able to push file located in application container to the device', async function () {
+    it('should be able to push file located in application container to the device', async function (t) {
       const localFile = 'local/tmp_file';
       const content = 'appium';
       const packageId = 'com.myapp';
       const remotePath = 'path/in/container';
       const tmpPath = '/data/local/tmp/container';
-      sandbox.stub(support.tempDir, 'path').resolves(localFile);
+      const tempDirPath = sandbox.stub().resolves(localFile);
+      const {pushFile} = await mockFileActions(t, {tempDirPath});
       const pushStub2 = sandbox.stub(driver.adb, 'push');
       const writeFileStub = sandbox.stub(support.fs, 'writeFile');
       sandbox.stub(support.fs, 'exists').withArgs(localFile).resolves(true);
       const unlinkStub2 = sandbox.stub(support.fs, 'unlink');
       const shellStub = sandbox.stub(driver.adb, 'shell');
-      await driver.pushFile(`@${packageId}/${remotePath}`, 'YXBwaXVt');
+      await pushFile.call(driver, `@${packageId}/${remotePath}`, 'YXBwaXVt');
       assert.strictEqual(writeFileStub.calledWithExactly(localFile, content, 'binary'), true);
       assert.strictEqual(pushStub2.calledWithExactly(localFile, tmpPath), true);
       assert.strictEqual(
@@ -214,15 +248,16 @@ describe('File action argument preservation', {skip: process.platform === 'win32
   });
 
   for (const apiLevel of [26, 28]) {
-    it(`preserves the media scan URI on API ${apiLevel}`, async function () {
+    it(`preserves the media scan URI on API ${apiLevel}`, async function (t) {
       const target = `/data/local/tmp/${fileName}\nnext.txt`;
-      sandbox.stub(support.tempDir, 'path').resolves('local-file');
+      const tempDirPath = sandbox.stub().resolves('local-file');
+      const {pushFile} = await mockFileActions(t, {tempDirPath});
       sandbox.stub(support.fs, 'exists').resolves(false);
       sandbox.stub(support.fs, 'writeFile').resolves();
       sandbox.stub(driver.adb, 'push').resolves();
       sandbox.stub(driver.adb, 'getApiLevel').resolves(apiLevel);
       const shell = sandbox.stub(driver.adb, 'shell').resolves('');
-      await driver.pushFile(target, 'YXBwaXVt');
+      await pushFile.call(driver, target, 'YXBwaXVt');
       assert.deepStrictEqual(await parseDeviceCommand(shell.firstCall.args[0]), [
         'am',
         'broadcast',
@@ -235,21 +270,22 @@ describe('File action argument preservation', {skip: process.platform === 'win32
   }
 
   for (const operation of ['pull', 'push'] as const) {
-    it(`preserves package names and paths through ${operation} and cleanup`, async function () {
-      sandbox.stub(support.tempDir, 'path').resolves('local-file');
+    it(`preserves package names and paths through ${operation} and cleanup`, async function (t) {
+      const tempDirPath = sandbox.stub().resolves('local-file');
+      const toInMemoryBase64 = sandbox.stub().resolves(Buffer.from('YXBwaXVt'));
+      const {pullFile, pushFile} = await mockFileActions(t, {tempDirPath, toInMemoryBase64});
       sandbox.stub(support.fs, 'exists').resolves(true);
       sandbox.stub(support.fs, 'unlink').resolves();
       sandbox.stub(support.fs, 'writeFile').resolves();
-      sandbox.stub(support.util, 'toInMemoryBase64').resolves(Buffer.from('YXBwaXVt'));
       const pull = sandbox.stub(driver.adb, 'pull').resolves();
       const push = sandbox.stub(driver.adb, 'push').resolves();
       const shell = sandbox.stub(driver.adb, 'shell').resolves('');
       if (operation === 'pull') {
         shell.onFirstCall().resolves(tempPath);
-        await driver.pullFile(remotePath);
+        await pullFile.call(driver, remotePath);
         assert.strictEqual(pull.calledWithExactly(tempPath, 'local-file'), true);
       } else {
-        await driver.pushFile(remotePath, 'YXBwaXVt');
+        await pushFile.call(driver, remotePath, 'YXBwaXVt');
         assert.strictEqual(push.calledWithExactly('local-file', tempPath), true);
       }
       const commands = await Promise.all(

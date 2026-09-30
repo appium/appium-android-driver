@@ -285,6 +285,16 @@ export type PerformanceDataType = 'batteryinfo' | 'cpuinfo' | 'memoryinfo' | 'ne
 export type NfcAction = 'enable' | 'disable';
 
 /**
+ * A device geolocation. `altitude` matches `@appium/types`'s removed `Location` interface
+ * (it was dropped from Appium 4 along with the legacy geolocation endpoint).
+ */
+export interface GeoLocation {
+  latitude: number;
+  longitude: number;
+  altitude?: number;
+}
+
+/**
  * Represents a device locale with language, country, and optional script.
  */
 export interface Locale {
