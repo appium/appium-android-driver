@@ -121,5 +121,45 @@ describe('commands - logging', function () {
       assert.strictEqual(socket1.send.called, false);
       assert.strictEqual(socket2.send.calledWithExactly('hello'), true);
     });
+
+    it('should attach a single logcat listener for all connected sockets', async function () {
+      const logcat = new EventEmitter();
+      broadcastDriver.adb.logcat = logcat as any;
+
+      await broadcastDriver.mobileStartLogsBroadcast();
+
+      const wss = addWebSocketHandlerStub.getCall(0).args[1];
+      const socket1 = makeFakeSocket();
+      const socket2 = makeFakeSocket();
+      wss.emit('connection', socket1);
+      wss.emit('connection', socket2);
+
+      logcat.emit('output', {timestamp: Date.now(), level: 'ALL', message: 'hello'});
+      assert.deepStrictEqual(socket1.send.args, [['hello']]);
+      assert.deepStrictEqual(socket2.send.args, [['hello']]);
+      assert.strictEqual(logcat.listenerCount('output'), 1);
+
+      socket1.emit('close', 1000, Buffer.from(''));
+      socket2.emit('close', 1000, Buffer.from(''));
+      assert.strictEqual(logcat.listenerCount('output'), 0);
+    });
+
+    it('should log the close code of a disconnected socket', async function () {
+      sandbox.stub(broadcastDriver.adb, 'setLogcatListener');
+      sandbox.stub(broadcastDriver.adb, 'removeLogcatListener');
+      const debugSpy = sandbox.spy(broadcastDriver.log, 'debug');
+
+      await broadcastDriver.mobileStartLogsBroadcast();
+
+      const wss = addWebSocketHandlerStub.getCall(0).args[1];
+      const socket = makeFakeSocket();
+      wss.emit('connection', socket);
+      socket.emit('close', 1001, Buffer.from('going away'));
+
+      assert.strictEqual(
+        debugSpy.calledWithExactly('Logcat listener web socket is closed. Code: 1001. Reason: going away.'),
+        true,
+      );
+    });
   });
 });

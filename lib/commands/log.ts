@@ -81,8 +81,8 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
           }
         }
       };
+      this.adb.setLogcatListener(this._logcatWebsocketListener);
     }
-    this.adb.setLogcatListener(this._logcatWebsocketListener);
 
     ws.on('close', (code, reason) => {
       connectedSockets.delete(ws);
@@ -94,7 +94,7 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
       }
 
       let closeMsg = 'Logcat listener web socket is closed.';
-      if (!util.isEmpty(code)) {
+      if (code) {
         closeMsg += ` Code: ${code}.`;
       }
       if (!util.isEmpty(reason)) {
