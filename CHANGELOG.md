@@ -1,3 +1,9 @@
+## [14.2.3](https://github.com/appium/appium-android-driver/compare/v14.2.2...v14.2.3) (2026-10-06)
+
+### Bug Fixes
+
+* register the logcat broadcast listener once ([#1105](https://github.com/appium/appium-android-driver/issues/1105)) ([1730519](https://github.com/appium/appium-android-driver/commit/1730519dd94daeb5efdd8e5450f705eefdb95322))
+
 ## [14.2.2](https://github.com/appium/appium-android-driver/compare/v14.2.1...v14.2.2) (2026-09-26)
 
 ### Bug Fixes
