@@ -1,3 +1,9 @@
+## [15.0.0-beta.2](https://github.com/appium/appium-android-driver/compare/v15.0.0-beta.1...v15.0.0-beta.2) (2026-10-09)
+
+### Miscellaneous Chores
+
+* bump @appium/* packages to latest betas ([#1106](https://github.com/appium/appium-android-driver/issues/1106)) ([b8205a9](https://github.com/appium/appium-android-driver/commit/b8205a9d10e6c253e3dc28adf9327c75fe76f08d))
+
 ## [15.0.0-beta.1](https://github.com/appium/appium-android-driver/compare/v14.2.2...v15.0.0-beta.1) (2026-09-30)
 
 ### ⚠ BREAKING CHANGES

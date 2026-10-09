@@ -1,6 +1,6 @@
 {
   "name": "appium-android-driver",
-  "version": "15.0.0-beta.1",
+  "version": "15.0.0-beta.2",
   "description": "Android UiAutomator and Chrome support for Appium",
   "keywords": [
     "android",
