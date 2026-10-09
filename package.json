@@ -51,7 +51,7 @@
     "test": "node --enable-source-maps --experimental-test-module-mocks --test --test-force-exit --test-timeout=60000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^8.0.0-beta.1",
+    "@appium/support": "^8.0.0-beta.3",
     "appium-adb": "^16.0.4",
     "appium-chromedriver": "^9.0.15",
     "asyncbox": "^6.4.3",
@@ -65,10 +65,10 @@
     "ws": "^8.0.0"
   },
   "devDependencies": {
-    "@appium/oxc-config": "^2.0.0-beta.0",
-    "@appium/semantic-release-config": "^2.0.0-beta.0",
-    "@appium/tsconfig": "^2.0.0-beta.0",
-    "@appium/types": "^2.0.0-beta.1",
+    "@appium/oxc-config": "^2.0.0-beta.2",
+    "@appium/semantic-release-config": "^2.0.0-beta.1",
+    "@appium/tsconfig": "^2.0.0-beta.1",
+    "@appium/types": "^2.0.0-beta.3",
     "@types/node": "^26.0.0",
     "@types/portscanner": "^2.1.1",
     "@types/semver": "^7.5.0",
@@ -77,7 +77,7 @@
     "sinon": "^22.0.0"
   },
   "peerDependencies": {
-    "appium": "^4.0.0-beta.0"
+    "appium": "^4.0.0-beta.4"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
