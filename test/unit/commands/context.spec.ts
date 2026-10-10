@@ -341,6 +341,31 @@ describe('Context', function () {
       assert.strictEqual(driver.isChromedriverContext(CHROMIUM_WIN), true);
     });
   });
+  describe('startChromeSession', function () {
+    for (const chromedriverForwardBiDi of [true, false]) {
+      it(`should ${chromedriverForwardBiDi ? 'enable' : 'disable'} BiDi forwarding according to the capability`, async function () {
+        const webSocketUrl = 'ws://127.0.0.1:9515/session/chrome-session';
+        const sessionCaps = {webSocketUrl};
+        Object.assign(driver.opts, {
+          browserName: 'Chrome',
+          appPackage: 'com.android.chrome',
+          chromedriverPort: 9515,
+          webSocketUrl: true,
+          chromedriverForwardBiDi,
+        });
+        (Chromedriver.prototype.start as sinon.SinonStub).resolves(sessionCaps);
+
+        await driver.startChromeSession();
+
+        assert.strictEqual(driver.bidiProxyUrl, chromedriverForwardBiDi ? webSocketUrl : null);
+        assert.deepStrictEqual(driver._chromedriverCapsCache.get(CHROMIUM_WIN), sessionCaps);
+        assert.strictEqual(driver.curContext, CHROMIUM_WIN);
+        assert.strictEqual(driver.sessionChromedrivers[CHROMIUM_WIN], driver.chromedriver);
+        const requestedCaps = (Chromedriver.prototype.start as sinon.SinonStub).firstCall.args[0];
+        assert.strictEqual(requestedCaps.webSocketUrl, chromedriverForwardBiDi ? true : undefined);
+      });
+    }
+  });
   describe('setupNewChromedriver', function () {
     const deviceId = () => driver.adb.curDeviceId as string;
     it('should be able to set app package from chrome options', async function () {
