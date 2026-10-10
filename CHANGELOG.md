@@ -1,3 +1,9 @@
+## [14.2.4](https://github.com/appium/appium-android-driver/compare/v14.2.3...v14.2.4) (2026-10-10)
+
+### Bug Fixes
+
+* forward BiDi in Chrome browser sessions ([#1107](https://github.com/appium/appium-android-driver/issues/1107)) ([ae71f46](https://github.com/appium/appium-android-driver/commit/ae71f461009584d9b5490b5fe76552d4a8253066))
+
 ## [14.2.3](https://github.com/appium/appium-android-driver/compare/v14.2.2...v14.2.3) (2026-10-06)
 
 ### Bug Fixes
