@@ -151,9 +151,6 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
   recreateChromeDriverSessions: {
     isBoolean: true,
   },
-  autoLaunch: {
-    isBoolean: true,
-  },
   nativeWebScreenshot: {
     isBoolean: true,
   },
@@ -207,6 +204,22 @@ export const ANDROID_DRIVER_CONSTRAINTS = {
     isString: true,
   },
   localeScript: {
+    isString: true,
+  },
+  locale: {
+    isString: true,
+  },
+  language: {
+    isString: true,
+  },
+  autoWebview: {
+    isBoolean: true,
+  },
+  orientation: {
+    isString: true,
+    inclusionCaseInsensitive: ['LANDSCAPE', 'PORTRAIT'],
+  },
+  udid: {
     isString: true,
   },
   skipDeviceInitialization: {
