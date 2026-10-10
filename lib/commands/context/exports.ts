@@ -429,7 +429,7 @@ export async function startChromeSession(this: AndroidDriver): Promise<void> {
   } else {
     opts.chromeAndroidActivity = this.opts.appActivity;
   }
-  const chromedriver = await setupNewChromedriver.bind(this)(opts, this.adb.curDeviceId as string);
+  const chromedriver = await setupNewChromedriver.bind(this)(opts, this.adb.curDeviceId as string, CHROMIUM_WIN);
   this.chromedriver = chromedriver;
   chromedriver.on(Chromedriver.EVENT_CHANGED, async (msg) => {
     if (msg.state === Chromedriver.STATE_STOPPED) {
