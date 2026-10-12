@@ -39,7 +39,7 @@ export async function mobileBluetooth(this: AndroidDriver, action: BluetoothActi
       break;
     default:
       throw new errors.InvalidArgumentError(
-        `You must provide a valid 'action' argument. Supported actions are: ${Object.values(SUPPORTED_ACTIONS)}`,
+        `You must provide a valid 'action' argument. Supported actions are: ${Object.values(SUPPORTED_ACTIONS).join(', ')}`,
       );
   }
 }

@@ -136,9 +136,9 @@ export async function mobileGetConnectivity(
   const unsupportedServices = svcs.filter((svc) => !SUPPORTED_SERVICE_NAMES.includes(svc));
   if (unsupportedServices.length > 0) {
     throw new errors.InvalidArgumentError(
-      `${util.pluralize('Service name', unsupportedServices.length, false)} ${unsupportedServices} ` +
+      `${util.pluralize('Service name', unsupportedServices.length, false)} ${unsupportedServices.join(', ')} ` +
         `${unsupportedServices.length === 1 ? 'is' : 'are'} not known. Only the following services are ` +
-        `suported: ${SUPPORTED_SERVICE_NAMES}`,
+        `suported: ${SUPPORTED_SERVICE_NAMES.join(', ')}`,
     );
   }
 

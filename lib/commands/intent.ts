@@ -409,7 +409,7 @@ function parseIntentSpec(opts: IntentOpts = {}): string[] {
     }
     for (const item of extras) {
       if (!Array.isArray(item)) {
-        throw new errors.InvalidArgumentError(`Extra argument '${item}' must be an array`);
+        throw new errors.InvalidArgumentError(`Extra argument '${String(item)}' must be an array`);
       }
       const [type, key, value] = item;
       if (!SUPPORTED_EXTRA_TYPES.includes(type as any)) {

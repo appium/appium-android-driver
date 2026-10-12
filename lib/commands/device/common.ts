@@ -58,7 +58,7 @@ export async function getDeviceInfoFromCaps(this: AndroidDriver): Promise<ADBDev
 
       // a platform version was given. lets try to find a device with the same os
       const platformVersion = semver.coerce(this.opts.platformVersion) || this.opts.platformVersion;
-      this.log.info(`Looking for a device with Android '${platformVersion}'`);
+      this.log.info(`Looking for a device with Android '${String(platformVersion)}'`);
 
       // in case we fail to find something, give the user a useful log that has
       // the device udids and os versions so they know what's available

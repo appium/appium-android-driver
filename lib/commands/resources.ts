@@ -76,7 +76,7 @@ export async function ensureDeviceLocale(
       this.log.debug((e1 as Error).stack);
     }
     if (suggestions.length > 0) {
-      errMsg += ` You may want to apply one of the following locales instead: ${suggestions}`;
+      errMsg += ` You may want to apply one of the following locales instead: ${suggestions.join(', ')}`;
     }
     throw new Error(errMsg, {cause: e});
   }

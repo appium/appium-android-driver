@@ -637,7 +637,7 @@ export async function uninstallOtherPackages(
     appPackages = await getThirdPartyPackages.bind(this)(filterPackages);
   }
 
-  this.log.debug(`Uninstalling packages: ${appPackages}`);
+  this.log.debug(`Uninstalling packages: ${appPackages.join(', ')}`);
   await Promise.all(appPackages.map((appPackage) => this.adb.uninstallApk(appPackage)));
 }
 
@@ -659,7 +659,7 @@ export async function getThirdPartyPackages(this: AndroidDriver, filterPackages:
       .trim()
       .replace(/package:/g, '')
       .split(EOL);
-    this.log.debug(`'${appPackagesArray}' filtered with '${filterPackages}'`);
+    this.log.debug(`'${appPackagesArray.join(', ')}' filtered with '${filterPackages.join(', ')}'`);
     return appPackagesArray.filter((pkg) => !filterPackagesSet.has(pkg));
   } catch (err) {
     const error = err as Error;

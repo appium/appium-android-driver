@@ -34,7 +34,7 @@ export async function mobileNfc(this: AndroidDriver, action: NfcAction): Promise
       break;
     default:
       throw new errors.InvalidArgumentError(
-        `You must provide a valid 'action' argument. Supported actions are: ${Object.values(SUPPORTED_ACTIONS)}`,
+        `You must provide a valid 'action' argument. Supported actions are: ${Object.values(SUPPORTED_ACTIONS).join(', ')}`,
       );
   }
 }

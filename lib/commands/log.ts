@@ -82,7 +82,7 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
       const remoteIp = util.isEmpty(req.headers['x-forwarded-for'])
         ? req.socket.remoteAddress
         : req.headers['x-forwarded-for'];
-      this.log.debug(`Established a new logcat listener web socket connection from ${remoteIp}`);
+      this.log.debug(`Established a new logcat listener web socket connection from ${String(remoteIp)}`);
     } else {
       this.log.debug('Established a new logcat listener web socket connection');
     }

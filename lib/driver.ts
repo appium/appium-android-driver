@@ -190,7 +190,6 @@ import type {AndroidDriverConstraints} from './constraints.js';
 import {executeMethodMap} from './execute-method-map.js';
 import {newMethodMap} from './method-map.js';
 import {parseArray, removeAllSessionWebSocketHandlers} from './utils.js';
-// oxlint-enable import/no-duplicates
 // Bare imports make sure `declare module` augmentations in the command modules
 // reach the emitted `driver.d.ts` import graph of downstream drivers.
 import './commands/app-management.js';
@@ -227,6 +226,7 @@ import './commands/shell.js';
 import './commands/streamscreen.js';
 import './commands/system-bars.js';
 import './commands/time.js';
+// oxlint-enable import/no-duplicates
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
 export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;

@@ -97,7 +97,9 @@ export async function mobileChangePermissions(
         action?.toLowerCase() as AppOpsAction,
       );
     default:
-      throw new errors.InvalidArgumentError(`'target' argument must be one of: ${Object.values(PERMISSION_TARGET)}`);
+      throw new errors.InvalidArgumentError(
+        `'target' argument must be one of: ${Object.values(PERMISSION_TARGET).join(', ')}`,
+      );
   }
 }
 /**

@@ -53,7 +53,7 @@ export function parseArray(cap: string | string[]): string[] {
     return [cap];
   }
 
-  throw new Error(`must provide a string or JSON Array; received ${cap}`);
+  throw new Error(`must provide a string or JSON Array; received ${String(cap)}`);
 }
 
 /**

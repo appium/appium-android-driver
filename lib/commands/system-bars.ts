@@ -98,7 +98,7 @@ export async function mobilePerformStatusBarCommand(
   if (!action) {
     throw new errors.InvalidArgumentError(
       `The '${command}' status bar command is unknown. Only the following commands ` +
-        `are supported: ${Object.keys(statusBarCommands)}`,
+        `are supported: ${Object.keys(statusBarCommands).join(', ')}`,
     );
   }
   return await action();
@@ -191,7 +191,7 @@ export function parseWindows(this: AndroidDriver, lines: string): SystemBarsResu
     this.log.info(
       `No windows have been found whose title matches to ` +
         `'${namePrefix}'. Assuming it is invisible. ` +
-        `Only the following windows are available: ${Object.keys(windows)}`,
+        `Only the following windows are available: ${Object.keys(windows).join(', ')}`,
     );
     result[window as keyof SystemBarsResult] = structuredClone(DEFAULT_WINDOW_PROPERTIES);
   }

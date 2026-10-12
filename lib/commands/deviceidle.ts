@@ -43,7 +43,7 @@ export async function mobileDeviceidle(
       break;
     default:
       throw new errors.InvalidArgumentError(
-        `action must be one of ${JSON.stringify(SUPPORTED_ACTIONS)}. Got '${action}' instead`,
+        `action must be one of ${JSON.stringify(SUPPORTED_ACTIONS)}. Got '${String(action)}' instead`,
       );
   }
   await this.adb.shellChunks(argsGenerator, packagesArr);

@@ -233,7 +233,7 @@ async function resetMockLocation(this: AndroidDriver): Promise<void> {
       return;
     }
 
-    this.log.debug(`Resetting mock_location permission for the following apps: ${resultPkgs}`);
+    this.log.debug(`Resetting mock_location permission for the following apps: ${resultPkgs.join(', ')}`);
     await asyncmap(resultPkgs, async (pkgId) => {
       try {
         await this.adb.shell(['appops', 'set', pkgId, 'android:mock_location', 'deny']);
