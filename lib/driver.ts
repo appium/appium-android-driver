@@ -335,10 +335,7 @@ class AndroidDriver<C extends AndroidDriverConstraints = AndroidDriverConstraint
   override async getLogTypes(): Promise<string[]> {
     const nativeLogTypes = await super.getLogTypes();
     if (this.isWebContext() && this.chromedriver) {
-      const webLogTypes = (await this.chromedriver.jwproxy.command(
-        '/log/types',
-        'GET',
-      )) as string[];
+      const webLogTypes = (await this.chromedriver.jwproxy.command('/log/types', 'GET')) as string[];
       return [...nativeLogTypes, ...webLogTypes];
     }
     return nativeLogTypes;
