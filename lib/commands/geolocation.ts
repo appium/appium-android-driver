@@ -4,9 +4,29 @@ import {fs, tempDir} from '@appium/support';
 import {asyncmap} from 'asyncbox';
 import {SETTINGS_HELPER_ID} from 'io.appium.settings';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import {getThirdPartyPackages} from './app-management.js';
 import type {GeoLocation} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    setGeoLocation(...args: Parameters<typeof setGeoLocation>): ReturnType<typeof setGeoLocation>;
+    getGeoLocation(...args: Parameters<typeof getGeoLocation>): ReturnType<typeof getGeoLocation>;
+    mobileRefreshGpsCache(...args: Parameters<typeof mobileRefreshGpsCache>): ReturnType<typeof mobileRefreshGpsCache>;
+    toggleLocationServices(
+      ...args: Parameters<typeof toggleLocationServices>
+    ): ReturnType<typeof toggleLocationServices>;
+    isLocationServicesEnabled(
+      ...args: Parameters<typeof isLocationServicesEnabled>
+    ): ReturnType<typeof isLocationServicesEnabled>;
+    mobileGetGeolocation(...args: Parameters<typeof mobileGetGeolocation>): ReturnType<typeof mobileGetGeolocation>;
+    mobileSetGeolocation(...args: Parameters<typeof mobileSetGeolocation>): ReturnType<typeof mobileSetGeolocation>;
+    mobileResetGeolocation(
+      ...args: Parameters<typeof mobileResetGeolocation>
+    ): ReturnType<typeof mobileResetGeolocation>;
+  }
+}
 
 // The value close to zero, but not zero, is needed
 // to trick JSON generation and send a float value instead of an integer,
@@ -149,7 +169,7 @@ export async function mobileResetGeolocation(this: AndroidDriver): Promise<void>
   if (this.isEmulator()) {
     throw new Error('Geolocation reset does not work on emulators');
   }
-  await resetMockLocation.bind(this);
+  await resetMockLocation.bind(this)();
 }
 
 // #region Internal helpers

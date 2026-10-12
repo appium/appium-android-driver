@@ -1,6 +1,13 @@
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileDeviceidle(...args: Parameters<typeof mobileDeviceidle>): ReturnType<typeof mobileDeviceidle>;
+  }
+}
 
 const SUPPORTED_ACTIONS = ['whitelistAdd', 'whitelistRemove'] as const;
 

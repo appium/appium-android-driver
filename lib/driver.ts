@@ -13,6 +13,7 @@ import {BaseDriver} from 'appium/driver.js';
 import {SettingsApp} from 'io.appium.settings';
 import {LRUCache} from 'lru-cache';
 
+// oxlint-disable import/no-duplicates -- see the bare imports below
 import {
   getThirdPartyPackages,
   uninstallOtherPackages,
@@ -145,8 +146,6 @@ import {
   supportedLogTypes,
   mobileStartLogsBroadcast,
   mobileStopLogsBroadcast,
-  getLogTypes,
-  getLog,
   assignBiDiLogListener,
 } from './commands/log.js';
 import {
@@ -191,6 +190,43 @@ import type {AndroidDriverConstraints} from './constraints.js';
 import {executeMethodMap} from './execute-method-map.js';
 import {newMethodMap} from './method-map.js';
 import {parseArray, removeAllSessionWebSocketHandlers} from './utils.js';
+// oxlint-enable import/no-duplicates
+// Bare imports make sure `declare module` augmentations in the command modules
+// reach the emitted `driver.d.ts` import graph of downstream drivers.
+import './commands/app-management.js';
+import './commands/appearance.js';
+import './commands/bluetooth.js';
+import './commands/context/exports.js';
+import './commands/device/common.js';
+import './commands/device/emulator-actions.js';
+import './commands/device/emulator-console.js';
+import './commands/deviceidle.js';
+import './commands/element.js';
+import './commands/execute.js';
+import './commands/file-actions.js';
+import './commands/find.js';
+import './commands/geolocation.js';
+import './commands/gestures.js';
+import './commands/image-injection.js';
+import './commands/ime.js';
+import './commands/intent.js';
+import './commands/keyboard.js';
+import './commands/legacy.js';
+import './commands/lock/exports.js';
+import './commands/log.js';
+import './commands/media-projection.js';
+import './commands/memory.js';
+import './commands/misc.js';
+import './commands/network.js';
+import './commands/nfc.js';
+import './commands/performance.js';
+import './commands/permissions.js';
+import './commands/recordscreen.js';
+import './commands/resources.js';
+import './commands/shell.js';
+import './commands/streamscreen.js';
+import './commands/system-bars.js';
+import './commands/time.js';
 
 export type AndroidDriverCaps = DriverCaps<AndroidDriverConstraints>;
 export type W3CAndroidDriverCaps = W3CDriverCaps<AndroidDriverConstraints>;
@@ -231,217 +267,7 @@ class AndroidDriver<C extends AndroidDriverConstraints = AndroidDriverConstraint
   });
   opts: DriverOpts<C>;
 
-  getContexts = getContexts;
-  getCurrentContext = getCurrentContext;
-  defaultContextName = defaultContextName;
-  assignContexts = assignContexts;
-  switchContext = switchContext;
-  defaultWebviewName = defaultWebviewName;
-  isChromedriverContext = isChromedriverContext;
-  startChromedriverProxy = startChromedriverProxy;
-  stopChromedriverProxies = stopChromedriverProxies;
-  suspendChromedriverProxy = suspendChromedriverProxy;
-  startChromeSession = startChromeSession;
-  onChromedriverStop = onChromedriverStop;
-  isWebContext = isWebContext;
-  mobileGetContexts = mobileGetContexts;
-  mobileGetChromeCapabilities = mobileGetChromeCapabilities;
-  setContext = setContext as any as (this: AndroidDriver, name?: string) => Promise<void>;
-  setWindow = setWindow;
-  getWindowHandle = getWindowHandle;
-  getWindowHandles = getWindowHandles;
-  notifyBiDiContextChange = notifyBiDiContextChange;
-
-  getDeviceInfoFromCaps = getDeviceInfoFromCaps;
-  createADB = createADB;
-  getLaunchInfo = getLaunchInfo;
-  initDevice = initDevice;
-
-  fingerprint = fingerprint;
-  mobileFingerprint = mobileFingerprint;
-  sendSMS = sendSMS;
-  mobileSendSms = mobileSendSms;
-  gsmCall = gsmCall;
-  mobileGsmCall = mobileGsmCall;
-  gsmSignal = gsmSignal;
-  mobileGsmSignal = mobileGsmSignal;
-  gsmVoice = gsmVoice;
-  mobileGsmVoice = mobileGsmVoice;
-  powerAC = powerAC;
-  mobilePowerAc = mobilePowerAc;
-  powerCapacity = powerCapacity;
-  mobilePowerCapacity = mobilePowerCapacity;
-  networkSpeed = networkSpeed;
-  mobileNetworkSpeed = mobileNetworkSpeed;
-  sensorSet = sensorSet;
-
-  mobileExecEmuConsoleCommand = mobileExecEmuConsoleCommand;
-
-  getThirdPartyPackages = getThirdPartyPackages;
-  uninstallOtherPackages = uninstallOtherPackages;
-  installOtherApks = installOtherApks;
-  installAUT = installAUT;
-  resetAUT = resetAUT;
-  background = background;
-  getCurrentActivity = getCurrentActivity;
-  getCurrentPackage = getCurrentPackage;
-  mobileClearApp = mobileClearApp;
-  mobileInstallApp = mobileInstallApp;
-  installApp = installApp;
-  mobileIsAppInstalled = mobileIsAppInstalled;
-  mobileRemoveApp = mobileRemoveApp;
-  mobileTerminateApp = mobileTerminateApp;
-  mobileListApps = mobileListApps;
-  terminateApp = terminateApp;
-  removeApp = removeApp;
-  activateApp = activateApp;
-  queryAppState = queryAppState;
-  isAppInstalled = isAppInstalled;
-  mobileBackgroundApp = mobileBackgroundApp;
-
-  mobileGetUiMode = mobileGetUiMode;
-  mobileSetUiMode = mobileSetUiMode;
-
-  mobileDeviceidle = mobileDeviceidle;
-
-  mobileBluetooth = mobileBluetooth;
-
-  getAttribute = getAttribute;
-  getName = getName;
-  elementDisplayed = elementDisplayed;
-  elementEnabled = elementEnabled;
-  elementSelected = elementSelected;
-  setElementValue = setElementValue;
-  doSetElementValue = doSetElementValue;
-  replaceValue = replaceValue;
-  setValueImmediate = setValueImmediate;
-  setValue = setValue;
-  click = click;
-  getLocationInView = getLocationInView;
-  getText = getText;
-  getLocation = getLocation;
-  getSize = getSize;
-
-  execute = execute;
-
-  pullFile = pullFile;
-  pullFolder = pullFolder;
-  pushFile = pushFile;
-  mobileDeleteFile = mobileDeleteFile;
-
-  findElOrEls = findElOrEls;
-  doFindElementOrEls = doFindElementOrEls;
-
-  setGeoLocation = setGeoLocation;
-  getGeoLocation = getGeoLocation;
-  mobileRefreshGpsCache = mobileRefreshGpsCache;
-  toggleLocationServices = toggleLocationServices;
-  isLocationServicesEnabled = isLocationServicesEnabled;
-  mobileGetGeolocation = mobileGetGeolocation;
-  mobileSetGeolocation = mobileSetGeolocation;
-  mobileResetGeolocation = mobileResetGeolocation;
-
-  performActions = performActions;
-
-  isIMEActivated = isIMEActivated;
-  availableIMEEngines = availableIMEEngines;
-  getActiveIMEEngine = getActiveIMEEngine;
-  activateIMEEngine = activateIMEEngine;
-  deactivateIMEEngine = deactivateIMEEngine;
-  setStylusHandwriting = setStylusHandwriting;
-
-  startActivity = startActivity as unknown as (
-    appPackage: string,
-    appActivity: string,
-    appWaitPackage?: string,
-    appWaitActivity?: string,
-    intentAction?: string,
-    intentCategory?: string,
-    intentFlags?: string,
-    optionalIntentArguments?: string,
-    dontStopAppOnReset?: boolean,
-  ) => Promise<void>;
-  mobileStartActivity = mobileStartActivity;
-  mobileBroadcast = mobileBroadcast;
-  mobileStartService = mobileStartService;
-  mobileStopService = mobileStopService;
-
-  hideKeyboard = hideKeyboard;
-  isKeyboardShown = isKeyboardShown;
-  keys = keys;
-  doSendKeys = doSendKeys;
-  pressKeyCode = pressKeyCode;
-  longPressKeyCode = longPressKeyCode;
-  mobilePerformEditorAction = mobilePerformEditorAction;
-
-  lock = lock;
-  unlock = unlock;
-  mobileUnlock = mobileUnlock;
-  isLocked = isLocked;
-
   supportedLogTypes = supportedLogTypes;
-  mobileStartLogsBroadcast = mobileStartLogsBroadcast;
-  mobileStopLogsBroadcast = mobileStopLogsBroadcast;
-  getLogTypes = getLogTypes;
-  getLog = getLog;
-  assignBiDiLogListener = assignBiDiLogListener;
-
-  mobileIsMediaProjectionRecordingRunning = mobileIsMediaProjectionRecordingRunning;
-  mobileStartMediaProjectionRecording = mobileStartMediaProjectionRecording;
-  mobileStopMediaProjectionRecording = mobileStopMediaProjectionRecording;
-
-  mobileSendTrimMemory = mobileSendTrimMemory;
-
-  mobileInjectEmulatorCameraImage = mobileInjectEmulatorCameraImage;
-
-  getWindowRect = getWindowRect;
-  getWindowSize = getWindowSize;
-  getDisplayDensity = getDisplayDensity;
-  mobileGetNotifications = mobileGetNotifications;
-  mobileListSms = mobileListSms;
-  openNotifications = openNotifications;
-  setUrl = setUrl;
-
-  getNetworkConnection = getNetworkConnection;
-  isWifiOn = isWifiOn;
-  mobileGetConnectivity = mobileGetConnectivity;
-  mobileSetConnectivity = mobileSetConnectivity;
-  setNetworkConnection = setNetworkConnection;
-  setWifiState = setWifiState;
-  setDataState = setDataState;
-  toggleData = toggleData;
-  toggleFlightMode = toggleFlightMode;
-  toggleWiFi = toggleWiFi;
-
-  getPerformanceData = getPerformanceData;
-  getPerformanceDataTypes = getPerformanceDataTypes;
-  mobileGetPerformanceData = mobileGetPerformanceData;
-
-  mobileChangePermissions = mobileChangePermissions;
-  mobileGetPermissions = mobileGetPermissions;
-
-  startRecordingScreen = startRecordingScreen;
-  stopRecordingScreen = stopRecordingScreen;
-
-  getStrings = getStrings;
-  ensureDeviceLocale = ensureDeviceLocale;
-
-  mobileShell = mobileShell;
-
-  mobileNfc = mobileNfc;
-
-  mobileStartScreenStreaming = mobileStartScreenStreaming;
-  mobileStopScreenStreaming = mobileStopScreenStreaming;
-
-  getSystemBars = getSystemBars;
-  mobilePerformStatusBarCommand = mobilePerformStatusBarCommand;
-
-  getDeviceTime = getDeviceTime;
-  mobileGetDeviceTime = mobileGetDeviceTime;
-
-  reset = reset;
-  closeApp = closeApp;
-  launchApp = launchApp;
 
   constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
@@ -506,6 +332,25 @@ class AndroidDriver<C extends AndroidDriverConstraints = AndroidDriverConstraint
     return true;
   }
 
+  override async getLogTypes(): Promise<string[]> {
+    const nativeLogTypes = await super.getLogTypes();
+    if (this.isWebContext() && this.chromedriver) {
+      const webLogTypes = (await this.chromedriver.jwproxy.command(
+        '/log/types',
+        'GET',
+      )) as string[];
+      return [...nativeLogTypes, ...webLogTypes];
+    }
+    return nativeLogTypes;
+  }
+
+  override async getLog(logType: string): Promise<any> {
+    if (this.isWebContext() && this.chromedriver && !Object.keys(this.supportedLogTypes).includes(logType)) {
+      return await this.chromedriver.jwproxy.command('/log', 'POST', {type: logType});
+    }
+    return await super.getLog(logType);
+  }
+
   override async deleteSession(sessionId?: string | null) {
     await removeAllSessionWebSocketHandlers.bind(this)();
 
@@ -523,5 +368,240 @@ class AndroidDriver<C extends AndroidDriverConstraints = AndroidDriverConstraint
     await super.deleteSession(sessionId);
   }
 }
+
+Object.assign(AndroidDriver.prototype, {
+  // app-management
+  getThirdPartyPackages,
+  uninstallOtherPackages,
+  installOtherApks,
+  installAUT,
+  resetAUT,
+  background,
+  getCurrentActivity,
+  getCurrentPackage,
+  mobileClearApp,
+  mobileInstallApp,
+  installApp,
+  mobileIsAppInstalled,
+  mobileRemoveApp,
+  mobileTerminateApp,
+  mobileListApps,
+  terminateApp,
+  removeApp,
+  activateApp,
+  queryAppState,
+  isAppInstalled,
+  mobileBackgroundApp,
+
+  // appearance
+  mobileGetUiMode,
+  mobileSetUiMode,
+
+  // bluetooth
+  mobileBluetooth,
+
+  // context/exports
+  getContexts,
+  getCurrentContext,
+  defaultContextName,
+  assignContexts,
+  switchContext,
+  defaultWebviewName,
+  isChromedriverContext,
+  startChromedriverProxy,
+  stopChromedriverProxies,
+  suspendChromedriverProxy,
+  startChromeSession,
+  onChromedriverStop,
+  isWebContext,
+  mobileGetContexts,
+  mobileGetChromeCapabilities,
+  setContext,
+  setWindow,
+  getWindowHandle,
+  getWindowHandles,
+  notifyBiDiContextChange,
+
+  // device/common
+  getDeviceInfoFromCaps,
+  createADB,
+  getLaunchInfo,
+  initDevice,
+
+  // device/emulator-actions
+  fingerprint,
+  mobileFingerprint,
+  sendSMS,
+  mobileSendSms,
+  gsmCall,
+  mobileGsmCall,
+  gsmSignal,
+  mobileGsmSignal,
+  gsmVoice,
+  mobileGsmVoice,
+  powerAC,
+  mobilePowerAc,
+  powerCapacity,
+  mobilePowerCapacity,
+  networkSpeed,
+  mobileNetworkSpeed,
+  sensorSet,
+
+  // device/emulator-console
+  mobileExecEmuConsoleCommand,
+
+  // deviceidle
+  mobileDeviceidle,
+
+  // element
+  getAttribute,
+  getName,
+  elementDisplayed,
+  elementEnabled,
+  elementSelected,
+  setElementValue,
+  doSetElementValue,
+  replaceValue,
+  setValueImmediate,
+  setValue,
+  click,
+  getLocationInView,
+  getText,
+  getLocation,
+  getSize,
+
+  // execute
+  execute,
+
+  // file-actions
+  pullFile,
+  pullFolder,
+  pushFile,
+  mobileDeleteFile,
+
+  // find
+  findElOrEls,
+  doFindElementOrEls,
+
+  // geolocation
+  setGeoLocation,
+  getGeoLocation,
+  mobileRefreshGpsCache,
+  toggleLocationServices,
+  isLocationServicesEnabled,
+  mobileGetGeolocation,
+  mobileSetGeolocation,
+  mobileResetGeolocation,
+
+  // gestures
+  performActions,
+
+  // image-injection
+  mobileInjectEmulatorCameraImage,
+
+  // ime
+  isIMEActivated,
+  availableIMEEngines,
+  getActiveIMEEngine,
+  activateIMEEngine,
+  deactivateIMEEngine,
+  setStylusHandwriting,
+
+  // intent
+  startActivity,
+  mobileStartActivity,
+  mobileBroadcast,
+  mobileStartService,
+  mobileStopService,
+
+  // keyboard
+  hideKeyboard,
+  isKeyboardShown,
+  keys,
+  doSendKeys,
+  pressKeyCode,
+  longPressKeyCode,
+  mobilePerformEditorAction,
+
+  // legacy
+  reset,
+  closeApp,
+  launchApp,
+
+  // lock/exports
+  lock,
+  unlock,
+  mobileUnlock,
+  isLocked,
+
+  // log
+  mobileStartLogsBroadcast,
+  mobileStopLogsBroadcast,
+  assignBiDiLogListener,
+
+  // media-projection
+  mobileIsMediaProjectionRecordingRunning,
+  mobileStartMediaProjectionRecording,
+  mobileStopMediaProjectionRecording,
+
+  // memory
+  mobileSendTrimMemory,
+
+  // misc
+  getWindowRect,
+  getWindowSize,
+  getDisplayDensity,
+  mobileGetNotifications,
+  mobileListSms,
+  openNotifications,
+  setUrl,
+
+  // network
+  getNetworkConnection,
+  isWifiOn,
+  mobileGetConnectivity,
+  mobileSetConnectivity,
+  setNetworkConnection,
+  setWifiState,
+  setDataState,
+  toggleData,
+  toggleFlightMode,
+  toggleWiFi,
+
+  // nfc
+  mobileNfc,
+
+  // performance
+  getPerformanceData,
+  getPerformanceDataTypes,
+  mobileGetPerformanceData,
+
+  // permissions
+  mobileChangePermissions,
+  mobileGetPermissions,
+
+  // recordscreen
+  startRecordingScreen,
+  stopRecordingScreen,
+
+  // resources
+  getStrings,
+  ensureDeviceLocale,
+
+  // shell
+  mobileShell,
+
+  // streamscreen
+  mobileStartScreenStreaming,
+  mobileStopScreenStreaming,
+
+  // system-bars
+  getSystemBars,
+  mobilePerformStatusBarCommand,
+
+  // time
+  getDeviceTime,
+  mobileGetDeviceTime,
+});
 
 export {AndroidDriver};

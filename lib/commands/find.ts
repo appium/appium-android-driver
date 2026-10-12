@@ -2,8 +2,17 @@ import {util} from '@appium/support';
 import type {Element} from '@appium/types';
 import {errors, isErrorType} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {FindElementOpts} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    findElOrEls(strategy: string, selector: string, mult: true, context?: string): Promise<Element[]>;
+    findElOrEls(strategy: string, selector: string, mult: false, context?: string): Promise<Element>;
+    doFindElementOrEls(...args: Parameters<typeof doFindElementOrEls>): ReturnType<typeof doFindElementOrEls>;
+  }
+}
 
 /**
  * @param strategy The element location strategy to use (e.g., 'id', 'xpath', 'class name').

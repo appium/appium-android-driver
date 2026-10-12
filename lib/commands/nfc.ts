@@ -1,7 +1,14 @@
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {NfcAction} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileNfc(...args: Parameters<typeof mobileNfc>): ReturnType<typeof mobileNfc>;
+  }
+}
 
 const SUPPORTED_ACTIONS = {
   ENABLE: 'enable',

@@ -1,8 +1,18 @@
 import {util} from '@appium/support';
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import {ADB_SHELL_FEATURE} from '../utils.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileChangePermissions(
+      ...args: Parameters<typeof mobileChangePermissions>
+    ): ReturnType<typeof mobileChangePermissions>;
+    mobileGetPermissions(...args: Parameters<typeof mobileGetPermissions>): ReturnType<typeof mobileGetPermissions>;
+  }
+}
 
 const ALL_PERMISSIONS_MAGIC = 'all';
 const PM_ACTION = Object.freeze({

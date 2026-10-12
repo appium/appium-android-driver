@@ -1,8 +1,23 @@
 import {errors} from 'appium/driver.js';
 import {UNICODE_IME, EMPTY_IME} from 'io.appium.settings';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {SendKeysOpts} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    hideKeyboard(...args: Parameters<typeof hideKeyboard>): ReturnType<typeof hideKeyboard>;
+    isKeyboardShown(...args: Parameters<typeof isKeyboardShown>): ReturnType<typeof isKeyboardShown>;
+    keys(...args: Parameters<typeof keys>): ReturnType<typeof keys>;
+    doSendKeys(...args: Parameters<typeof doSendKeys>): ReturnType<typeof doSendKeys>;
+    pressKeyCode(...args: Parameters<typeof pressKeyCode>): ReturnType<typeof pressKeyCode>;
+    longPressKeyCode(...args: Parameters<typeof longPressKeyCode>): ReturnType<typeof longPressKeyCode>;
+    mobilePerformEditorAction(
+      ...args: Parameters<typeof mobilePerformEditorAction>
+    ): ReturnType<typeof mobilePerformEditorAction>;
+  }
+}
 
 /**
  * Hides the on-screen keyboard.

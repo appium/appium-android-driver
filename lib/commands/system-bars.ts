@@ -2,8 +2,18 @@ import {util} from '@appium/support';
 import type {StringRecord} from '@appium/types';
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {StatusBarCommand, WindowProperties} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    getSystemBars(...args: Parameters<typeof getSystemBars>): ReturnType<typeof getSystemBars>;
+    mobilePerformStatusBarCommand(
+      ...args: Parameters<typeof mobilePerformStatusBarCommand>
+    ): ReturnType<typeof mobilePerformStatusBarCommand>;
+  }
+}
 
 const WINDOW_TITLE_PATTERN = /^\s+Window\s#\d+\sWindow\{[0-9a-f]+\s\w+\s([\w-]+)\}:$/;
 const FRAME_PATTERN = /\bm?[Ff]rame=\[([0-9.-]+),([0-9.-]+)\]\[([0-9.-]+),([0-9.-]+)\]/;

@@ -3,6 +3,7 @@ import type {StringRecord} from '@appium/types';
 import {Chromedriver} from 'appium-chromedriver';
 import {errors, PROTOCOLS} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../../constraints.js';
 import type {AndroidDriver} from '../../driver.js';
 import {APP_STATE} from '../app-management.js';
 import {BIDI_EVENT_NAME} from '../bidi/constants.js';
@@ -21,6 +22,41 @@ import {
   setupNewChromedriver,
   shouldDismissChromeWelcome,
 } from './helpers.js';
+
+declare module '../../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    getContexts(...args: Parameters<typeof getContexts>): ReturnType<typeof getContexts>;
+    getCurrentContext(...args: Parameters<typeof getCurrentContext>): ReturnType<typeof getCurrentContext>;
+    defaultContextName(...args: Parameters<typeof defaultContextName>): ReturnType<typeof defaultContextName>;
+    assignContexts(...args: Parameters<typeof assignContexts>): ReturnType<typeof assignContexts>;
+    switchContext(...args: Parameters<typeof switchContext>): ReturnType<typeof switchContext>;
+    defaultWebviewName(...args: Parameters<typeof defaultWebviewName>): ReturnType<typeof defaultWebviewName>;
+    isChromedriverContext(...args: Parameters<typeof isChromedriverContext>): ReturnType<typeof isChromedriverContext>;
+    startChromedriverProxy(
+      ...args: Parameters<typeof startChromedriverProxy>
+    ): ReturnType<typeof startChromedriverProxy>;
+    stopChromedriverProxies(
+      ...args: Parameters<typeof stopChromedriverProxies>
+    ): ReturnType<typeof stopChromedriverProxies>;
+    suspendChromedriverProxy(
+      ...args: Parameters<typeof suspendChromedriverProxy>
+    ): ReturnType<typeof suspendChromedriverProxy>;
+    startChromeSession(...args: Parameters<typeof startChromeSession>): ReturnType<typeof startChromeSession>;
+    onChromedriverStop(...args: Parameters<typeof onChromedriverStop>): ReturnType<typeof onChromedriverStop>;
+    isWebContext(...args: Parameters<typeof isWebContext>): ReturnType<typeof isWebContext>;
+    mobileGetContexts(...args: Parameters<typeof mobileGetContexts>): ReturnType<typeof mobileGetContexts>;
+    mobileGetChromeCapabilities(
+      ...args: Parameters<typeof mobileGetChromeCapabilities>
+    ): ReturnType<typeof mobileGetChromeCapabilities>;
+    setContext(name?: string): Promise<void>;
+    setWindow(...args: Parameters<typeof setWindow>): ReturnType<typeof setWindow>;
+    getWindowHandle(...args: Parameters<typeof getWindowHandle>): ReturnType<typeof getWindowHandle>;
+    getWindowHandles(...args: Parameters<typeof getWindowHandles>): ReturnType<typeof getWindowHandles>;
+    notifyBiDiContextChange(
+      ...args: Parameters<typeof notifyBiDiContextChange>
+    ): ReturnType<typeof notifyBiDiContextChange>;
+  }
+}
 
 // https://github.com/appium/appium/issues/20710
 const DEFAULT_NATIVE_WINDOW_HANDLE = '1';

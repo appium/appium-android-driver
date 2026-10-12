@@ -1,6 +1,13 @@
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileBluetooth(...args: Parameters<typeof mobileBluetooth>): ReturnType<typeof mobileBluetooth>;
+  }
+}
 
 const SUPPORTED_ACTIONS = {
   ENABLE: 'enable',

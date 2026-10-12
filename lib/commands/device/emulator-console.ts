@@ -1,6 +1,15 @@
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../../constraints.js';
 import type {AndroidDriver} from '../../driver.js';
+
+declare module '../../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileExecEmuConsoleCommand(
+      ...args: Parameters<typeof mobileExecEmuConsoleCommand>
+    ): ReturnType<typeof mobileExecEmuConsoleCommand>;
+  }
+}
 
 const EMU_CONSOLE_FEATURE = 'emulator_console';
 

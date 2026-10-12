@@ -2,8 +2,21 @@ import {util} from '@appium/support';
 import {retryInterval} from 'asyncbox';
 import type {ExecError} from 'teen_process';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {PerformanceDataType} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    getPerformanceData(...args: Parameters<typeof getPerformanceData>): ReturnType<typeof getPerformanceData>;
+    getPerformanceDataTypes(
+      ...args: Parameters<typeof getPerformanceDataTypes>
+    ): ReturnType<typeof getPerformanceDataTypes>;
+    mobileGetPerformanceData(
+      ...args: Parameters<typeof mobileGetPerformanceData>
+    ): ReturnType<typeof mobileGetPerformanceData>;
+  }
+}
 
 export const NETWORK_KEYS = [
   ['bucketStart', 'activeTime', 'rxBytes', 'rxPackets', 'txBytes', 'txPackets', 'operations', 'bucketDuration'],

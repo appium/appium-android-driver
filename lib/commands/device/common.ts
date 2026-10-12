@@ -5,6 +5,7 @@ import {retryInterval} from 'asyncbox';
 import {SETTINGS_HELPER_ID} from 'io.appium.settings';
 import * as semver from 'semver';
 
+import type {AndroidDriverConstraints} from '../../constraints.js';
 import type {AndroidDriver} from '../../driver.js';
 import {GET_SERVER_LOGS_FEATURE, nativeLogEntryToSeleniumEntry} from '../../utils.js';
 import {setMockLocationApp} from '../geolocation.js';
@@ -12,6 +13,15 @@ import {hideKeyboardCompletely, initUnicodeKeyboard} from '../keyboard.js';
 import {adjustTimeZone} from '../time.js';
 import type {ADBDeviceInfo, ADBLaunchInfo} from '../types.js';
 import {createBaseADB, prepareEmulator, pushSettingsApp} from './utils.js';
+
+declare module '../../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    getDeviceInfoFromCaps(...args: Parameters<typeof getDeviceInfoFromCaps>): ReturnType<typeof getDeviceInfoFromCaps>;
+    createADB(...args: Parameters<typeof createADB>): ReturnType<typeof createADB>;
+    getLaunchInfo(...args: Parameters<typeof getLaunchInfo>): ReturnType<typeof getLaunchInfo>;
+    initDevice(...args: Parameters<typeof initDevice>): ReturnType<typeof initDevice>;
+  }
+}
 
 /**
  * Gets device information from capabilities, including UDID and emulator port.
