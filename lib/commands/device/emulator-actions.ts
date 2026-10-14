@@ -1,9 +1,32 @@
 import {util} from '@appium/support';
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../../constraints.js';
 import type {AndroidDriver} from '../../driver.js';
 import type {GsmAction, GsmSignalStrength, GsmVoiceState, PowerACState, NetworkSpeed} from '../types.js';
 import {requireEmulator} from './utils.js';
+
+declare module '../../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    fingerprint(...args: Parameters<typeof fingerprint>): ReturnType<typeof fingerprint>;
+    mobileFingerprint(...args: Parameters<typeof mobileFingerprint>): ReturnType<typeof mobileFingerprint>;
+    sendSMS(...args: Parameters<typeof sendSMS>): ReturnType<typeof sendSMS>;
+    mobileSendSms(...args: Parameters<typeof mobileSendSms>): ReturnType<typeof mobileSendSms>;
+    gsmCall(...args: Parameters<typeof gsmCall>): ReturnType<typeof gsmCall>;
+    mobileGsmCall(...args: Parameters<typeof mobileGsmCall>): ReturnType<typeof mobileGsmCall>;
+    gsmSignal(...args: Parameters<typeof gsmSignal>): ReturnType<typeof gsmSignal>;
+    mobileGsmSignal(...args: Parameters<typeof mobileGsmSignal>): ReturnType<typeof mobileGsmSignal>;
+    gsmVoice(...args: Parameters<typeof gsmVoice>): ReturnType<typeof gsmVoice>;
+    mobileGsmVoice(...args: Parameters<typeof mobileGsmVoice>): ReturnType<typeof mobileGsmVoice>;
+    powerAC(...args: Parameters<typeof powerAC>): ReturnType<typeof powerAC>;
+    mobilePowerAc(...args: Parameters<typeof mobilePowerAc>): ReturnType<typeof mobilePowerAc>;
+    powerCapacity(...args: Parameters<typeof powerCapacity>): ReturnType<typeof powerCapacity>;
+    mobilePowerCapacity(...args: Parameters<typeof mobilePowerCapacity>): ReturnType<typeof mobilePowerCapacity>;
+    networkSpeed(...args: Parameters<typeof networkSpeed>): ReturnType<typeof networkSpeed>;
+    mobileNetworkSpeed(...args: Parameters<typeof mobileNetworkSpeed>): ReturnType<typeof mobileNetworkSpeed>;
+    sensorSet(...args: Parameters<typeof sensorSet>): ReturnType<typeof sensorSet>;
+  }
+}
 
 /**
  * @deprecated Use mobile: extension

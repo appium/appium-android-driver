@@ -1,3 +1,24 @@
+import type {AndroidDriverConstraints} from '../constraints.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    getAttribute(...args: Parameters<typeof getAttribute>): ReturnType<typeof getAttribute>;
+    getName(...args: Parameters<typeof getName>): ReturnType<typeof getName>;
+    elementDisplayed(...args: Parameters<typeof elementDisplayed>): ReturnType<typeof elementDisplayed>;
+    elementEnabled(...args: Parameters<typeof elementEnabled>): ReturnType<typeof elementEnabled>;
+    elementSelected(...args: Parameters<typeof elementSelected>): ReturnType<typeof elementSelected>;
+    setElementValue(...args: Parameters<typeof setElementValue>): ReturnType<typeof setElementValue>;
+    doSetElementValue(...args: Parameters<typeof doSetElementValue>): ReturnType<typeof doSetElementValue>;
+    replaceValue(...args: Parameters<typeof replaceValue>): ReturnType<typeof replaceValue>;
+    setValueImmediate(...args: Parameters<typeof setValueImmediate>): ReturnType<typeof setValueImmediate>;
+    setValue(...args: Parameters<typeof setValue>): ReturnType<typeof setValue>;
+    click(...args: Parameters<typeof click>): ReturnType<typeof click>;
+    getLocationInView(...args: Parameters<typeof getLocationInView>): ReturnType<typeof getLocationInView>;
+    getText(...args: Parameters<typeof getText>): ReturnType<typeof getText>;
+    getLocation(...args: Parameters<typeof getLocation>): ReturnType<typeof getLocation>;
+    getSize(...args: Parameters<typeof getSize>): ReturnType<typeof getSize>;
+  }
+}
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import type {Position, Size} from '@appium/types';

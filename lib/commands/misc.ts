@@ -1,8 +1,23 @@
 import type {Size, Rect, StringRecord} from '@appium/types';
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {SmsListResult, ListSmsOpts} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    getWindowRect(...args: Parameters<typeof getWindowRect>): ReturnType<typeof getWindowRect>;
+    getWindowSize(...args: Parameters<typeof getWindowSize>): ReturnType<typeof getWindowSize>;
+    getDisplayDensity(...args: Parameters<typeof getDisplayDensity>): ReturnType<typeof getDisplayDensity>;
+    mobileGetNotifications(
+      ...args: Parameters<typeof mobileGetNotifications>
+    ): ReturnType<typeof mobileGetNotifications>;
+    mobileListSms(...args: Parameters<typeof mobileListSms>): ReturnType<typeof mobileListSms>;
+    openNotifications(...args: Parameters<typeof openNotifications>): ReturnType<typeof openNotifications>;
+    setUrl(...args: Parameters<typeof setUrl>): ReturnType<typeof setUrl>;
+  }
+}
 
 /**
  * Gets the window size.

@@ -1,7 +1,14 @@
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {NfcAction} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileNfc(...args: Parameters<typeof mobileNfc>): ReturnType<typeof mobileNfc>;
+  }
+}
 
 const SUPPORTED_ACTIONS = {
   ENABLE: 'enable',
@@ -27,7 +34,7 @@ export async function mobileNfc(this: AndroidDriver, action: NfcAction): Promise
       break;
     default:
       throw new errors.InvalidArgumentError(
-        `You must provide a valid 'action' argument. Supported actions are: ${Object.values(SUPPORTED_ACTIONS)}`,
+        `You must provide a valid 'action' argument. Supported actions are: ${Object.values(SUPPORTED_ACTIONS).join(', ')}`,
       );
   }
 }

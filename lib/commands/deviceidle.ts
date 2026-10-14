@@ -1,6 +1,13 @@
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileDeviceidle(...args: Parameters<typeof mobileDeviceidle>): ReturnType<typeof mobileDeviceidle>;
+  }
+}
 
 const SUPPORTED_ACTIONS = ['whitelistAdd', 'whitelistRemove'] as const;
 
@@ -36,7 +43,7 @@ export async function mobileDeviceidle(
       break;
     default:
       throw new errors.InvalidArgumentError(
-        `action must be one of ${JSON.stringify(SUPPORTED_ACTIONS)}. Got '${action}' instead`,
+        `action must be one of ${JSON.stringify(SUPPORTED_ACTIONS)}. Got '${String(action)}' instead`,
       );
   }
   await this.adb.shellChunks(argsGenerator, packagesArr);

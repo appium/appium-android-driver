@@ -2,8 +2,18 @@ import {util} from '@appium/support';
 import type {StringRecord} from '@appium/types';
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {StatusBarCommand, WindowProperties} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    getSystemBars(...args: Parameters<typeof getSystemBars>): ReturnType<typeof getSystemBars>;
+    mobilePerformStatusBarCommand(
+      ...args: Parameters<typeof mobilePerformStatusBarCommand>
+    ): ReturnType<typeof mobilePerformStatusBarCommand>;
+  }
+}
 
 const WINDOW_TITLE_PATTERN = /^\s+Window\s#\d+\sWindow\{[0-9a-f]+\s\w+\s([\w-]+)\}:$/;
 const FRAME_PATTERN = /\bm?[Ff]rame=\[([0-9.-]+),([0-9.-]+)\]\[([0-9.-]+),([0-9.-]+)\]/;
@@ -88,7 +98,7 @@ export async function mobilePerformStatusBarCommand(
   if (!action) {
     throw new errors.InvalidArgumentError(
       `The '${command}' status bar command is unknown. Only the following commands ` +
-        `are supported: ${Object.keys(statusBarCommands)}`,
+        `are supported: ${Object.keys(statusBarCommands).join(', ')}`,
     );
   }
   return await action();
@@ -181,7 +191,7 @@ export function parseWindows(this: AndroidDriver, lines: string): SystemBarsResu
     this.log.info(
       `No windows have been found whose title matches to ` +
         `'${namePrefix}'. Assuming it is invisible. ` +
-        `Only the following windows are available: ${Object.keys(windows)}`,
+        `Only the following windows are available: ${Object.keys(windows).join(', ')}`,
     );
     result[window as keyof SystemBarsResult] = structuredClone(DEFAULT_WINDOW_PROPERTIES);
   }

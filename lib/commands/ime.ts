@@ -1,7 +1,19 @@
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import {SET_STYLUS_HANDWRITING_FEATURE} from '../utils.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    isIMEActivated(...args: Parameters<typeof isIMEActivated>): ReturnType<typeof isIMEActivated>;
+    availableIMEEngines(...args: Parameters<typeof availableIMEEngines>): ReturnType<typeof availableIMEEngines>;
+    getActiveIMEEngine(...args: Parameters<typeof getActiveIMEEngine>): ReturnType<typeof getActiveIMEEngine>;
+    activateIMEEngine(...args: Parameters<typeof activateIMEEngine>): ReturnType<typeof activateIMEEngine>;
+    deactivateIMEEngine(...args: Parameters<typeof deactivateIMEEngine>): ReturnType<typeof deactivateIMEEngine>;
+    setStylusHandwriting(...args: Parameters<typeof setStylusHandwriting>): ReturnType<typeof setStylusHandwriting>;
+  }
+}
 
 /**
  * Checks if an IME (Input Method Editor) is activated.

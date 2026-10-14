@@ -4,7 +4,17 @@ import {fs, util, zip, tempDir} from '@appium/support';
 import type {ADB} from 'appium-adb';
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    pullFile(...args: Parameters<typeof pullFile>): ReturnType<typeof pullFile>;
+    pullFolder(...args: Parameters<typeof pullFolder>): ReturnType<typeof pullFolder>;
+    pushFile(...args: Parameters<typeof pushFile>): ReturnType<typeof pushFile>;
+    mobileDeleteFile(...args: Parameters<typeof mobileDeleteFile>): ReturnType<typeof mobileDeleteFile>;
+  }
+}
 
 const CONTAINER_PATH_MARKER = '@';
 const CONTAINER_PATH_PATTERN = new RegExp(`^${CONTAINER_PATH_MARKER}([^/]+)/(.+)`, 's');

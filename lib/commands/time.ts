@@ -2,7 +2,15 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import utc from 'dayjs/plugin/utc.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    getDeviceTime(...args: Parameters<typeof getDeviceTime>): ReturnType<typeof getDeviceTime>;
+    mobileGetDeviceTime(...args: Parameters<typeof mobileGetDeviceTime>): ReturnType<typeof mobileGetDeviceTime>;
+  }
+}
 
 dayjs.extend(utc);
 dayjs.extend(customParseFormat);

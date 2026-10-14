@@ -6,8 +6,16 @@ import type {ADB} from 'appium-adb';
 import {waitForCondition} from 'asyncbox';
 import {exec} from 'teen_process';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {StartScreenRecordingOpts, StopScreenRecordingOpts, ScreenRecordingProperties} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    startRecordingScreen(...args: Parameters<typeof startRecordingScreen>): ReturnType<typeof startRecordingScreen>;
+    stopRecordingScreen(...args: Parameters<typeof stopRecordingScreen>): ReturnType<typeof stopRecordingScreen>;
+  }
+}
 
 const RETRY_PAUSE = 300;
 const RETRY_TIMEOUT = 5000;

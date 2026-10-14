@@ -4,15 +4,30 @@ import os from 'node:os';
 import {util} from '@appium/support';
 import type {AppiumServer, WSServer} from '@appium/types';
 import type {ADB} from 'appium-adb';
-import type {Chromedriver} from 'appium-chromedriver';
-import {DEFAULT_WS_PATHNAME_PREFIX, BaseDriver} from 'appium/driver.js';
+import {DEFAULT_WS_PATHNAME_PREFIX} from 'appium/driver.js';
 import {WebSocket, WebSocketServer} from 'ws';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import {GET_SERVER_LOGS_FEATURE, toLogRecord, nativeLogEntryToSeleniumEntry, type LogEntry} from '../utils.js';
 import {BIDI_EVENT_NAME} from './bidi/constants.js';
 import {makeLogEntryAddedEvent} from './bidi/models.js';
 import {NATIVE_WIN} from './context/helpers.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileStartLogsBroadcast(
+      ...args: Parameters<typeof mobileStartLogsBroadcast>
+    ): ReturnType<typeof mobileStartLogsBroadcast>;
+    mobileStopLogsBroadcast(
+      ...args: Parameters<typeof mobileStopLogsBroadcast>
+    ): ReturnType<typeof mobileStopLogsBroadcast>;
+    assignBiDiLogListener<EE extends EventEmitter>(
+      logEmitter: EE,
+      properties: BiDiListenerProperties,
+    ): [EE, LogListener];
+  }
+}
 
 export const supportedLogTypes = {
   logcat: {
@@ -67,7 +82,7 @@ export async function mobileStartLogsBroadcast(this: AndroidDriver): Promise<voi
       const remoteIp = util.isEmpty(req.headers['x-forwarded-for'])
         ? req.socket.remoteAddress
         : req.headers['x-forwarded-for'];
-      this.log.debug(`Established a new logcat listener web socket connection from ${remoteIp}`);
+      this.log.debug(`Established a new logcat listener web socket connection from ${String(remoteIp)}`);
     } else {
       this.log.debug('Established a new logcat listener web socket connection');
     }
@@ -126,21 +141,6 @@ export async function mobileStopLogsBroadcast(this: AndroidDriver): Promise<void
 }
 
 /**
- * Gets the list of available log types.
- *
- * @returns Promise that resolves to an array of log type names.
- */
-export async function getLogTypes(this: AndroidDriver): Promise<string[]> {
-  // XXX why doesn't `super` work here?
-  const nativeLogTypes = await BaseDriver.prototype.getLogTypes.call(this);
-  if (this.isWebContext()) {
-    const webLogTypes = (await (this.chromedriver as Chromedriver).jwproxy.command('/log/types', 'GET')) as string[];
-    return [...nativeLogTypes, ...webLogTypes];
-  }
-  return nativeLogTypes;
-}
-
-/**
  * Assigns a BiDi log listener to an event emitter.
  *
  * https://w3c.github.io/webdriver-bidi/#event-log-entryAdded
@@ -162,21 +162,6 @@ export function assignBiDiLogListener<EE extends EventEmitter>(
   };
   logEmitter.on(srcEventName, listener);
   return [logEmitter, listener];
-}
-
-/**
- * Gets logs of a specific type.
- *
- * @param logType The type of logs to retrieve.
- * @returns Promise that resolves to the logs for the specified type.
- */
-export async function getLog(this: AndroidDriver, logType: string): Promise<any> {
-  if (this.isWebContext() && !Object.keys(this.supportedLogTypes).includes(logType)) {
-    return await (this.chromedriver as Chromedriver).jwproxy.command('/log', 'POST', {
-      type: logType,
-    });
-  }
-  return await BaseDriver.prototype.getLog.call(this, logType);
 }
 
 // #region Internal helpers

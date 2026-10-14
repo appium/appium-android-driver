@@ -10,8 +10,20 @@ import {waitForCondition} from 'asyncbox';
 import {checkPortStatus} from 'portscanner';
 import {SubProcess, exec} from 'teen_process';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {DeviceInfo, InitGStreamerPipelineOpts} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileStartScreenStreaming(
+      ...args: Parameters<typeof mobileStartScreenStreaming>
+    ): ReturnType<typeof mobileStartScreenStreaming>;
+    mobileStopScreenStreaming(
+      ...args: Parameters<typeof mobileStopScreenStreaming>
+    ): ReturnType<typeof mobileStopScreenStreaming>;
+  }
+}
 
 const RECORDING_INTERVAL_SEC = 5;
 const STREAMING_STARTUP_TIMEOUT_MS = 5000;

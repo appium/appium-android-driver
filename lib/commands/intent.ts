@@ -1,8 +1,29 @@
 import {util} from '@appium/support';
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {IntentOpts} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    startActivity(
+      appPackage: string,
+      appActivity: string,
+      appWaitPackage?: string,
+      appWaitActivity?: string,
+      intentAction?: string,
+      intentCategory?: string,
+      intentFlags?: string,
+      optionalIntentArguments?: string,
+      dontStopAppOnReset?: boolean,
+    ): Promise<void>;
+    mobileStartActivity(...args: Parameters<typeof mobileStartActivity>): ReturnType<typeof mobileStartActivity>;
+    mobileBroadcast(...args: Parameters<typeof mobileBroadcast>): ReturnType<typeof mobileBroadcast>;
+    mobileStartService(...args: Parameters<typeof mobileStartService>): ReturnType<typeof mobileStartService>;
+    mobileStopService(...args: Parameters<typeof mobileStopService>): ReturnType<typeof mobileStopService>;
+  }
+}
 
 const NO_VALUE_ARG_TYPE = 'sn';
 const SUPPORTED_EXTRA_TYPES = [
@@ -388,7 +409,7 @@ function parseIntentSpec(opts: IntentOpts = {}): string[] {
     }
     for (const item of extras) {
       if (!Array.isArray(item)) {
-        throw new errors.InvalidArgumentError(`Extra argument '${item}' must be an array`);
+        throw new errors.InvalidArgumentError(`Extra argument '${String(item)}' must be an array`);
       }
       const [type, key, value] = item;
       if (!SUPPORTED_EXTRA_TYPES.includes(type as any)) {

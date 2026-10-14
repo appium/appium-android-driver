@@ -1,5 +1,6 @@
 import {sleep} from 'asyncbox';
 
+import type {AndroidDriverConstraints} from '../../constraints.js';
 import type {AndroidDriver, AndroidDriverCaps} from '../../driver.js';
 import type {UnlockType} from '../types.js';
 import {
@@ -18,6 +19,15 @@ import {
   toCredentialType,
   verifyUnlock,
 } from './helpers.js';
+
+declare module '../../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    lock(...args: Parameters<typeof lock>): ReturnType<typeof lock>;
+    unlock(...args: Parameters<typeof unlock>): ReturnType<typeof unlock>;
+    mobileUnlock(...args: Parameters<typeof mobileUnlock>): ReturnType<typeof mobileUnlock>;
+    isLocked(...args: Parameters<typeof isLocked>): ReturnType<typeof isLocked>;
+  }
+}
 
 /**
  * Locks the device and optionally unlocks it after a specified number of seconds.

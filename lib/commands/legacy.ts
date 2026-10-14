@@ -1,6 +1,15 @@
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    reset(...args: Parameters<typeof reset>): ReturnType<typeof reset>;
+    closeApp(...args: Parameters<typeof closeApp>): ReturnType<typeof closeApp>;
+    launchApp(...args: Parameters<typeof launchApp>): ReturnType<typeof launchApp>;
+  }
+}
 
 const ISSUE_URL = 'https://github.com/appium/appium/issues/15807';
 

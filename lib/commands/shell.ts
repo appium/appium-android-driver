@@ -3,8 +3,20 @@ import {errors} from 'appium/driver.js';
 import {exec} from 'teen_process';
 import type {ExecError} from 'teen_process';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import {ADB_SHELL_FEATURE} from '../utils.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileShell<T extends boolean>(
+      command: string,
+      args?: string[],
+      timeout?: number,
+      includeStderr?: T,
+    ): Promise<T extends true ? {stdout: string; stderr: string} : string>;
+  }
+}
 
 /**
  * Executes a shell command on the device via ADB.

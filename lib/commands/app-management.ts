@@ -4,8 +4,37 @@ import {util} from '@appium/support';
 import type {UninstallOptions, InstallOptions, StartAppOptions, ListInstalledPackagesOptions} from 'appium-adb';
 import {waitForCondition, longSleep} from 'asyncbox';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver, AndroidDriverOpts} from '../driver.js';
 import type {AppInfoMap, AppState, IsAppInstalledOptions, TerminateAppOpts} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    getThirdPartyPackages(...args: Parameters<typeof getThirdPartyPackages>): ReturnType<typeof getThirdPartyPackages>;
+    uninstallOtherPackages(
+      ...args: Parameters<typeof uninstallOtherPackages>
+    ): ReturnType<typeof uninstallOtherPackages>;
+    installOtherApks(...args: Parameters<typeof installOtherApks>): ReturnType<typeof installOtherApks>;
+    installAUT(...args: Parameters<typeof installAUT>): ReturnType<typeof installAUT>;
+    resetAUT(...args: Parameters<typeof resetAUT>): ReturnType<typeof resetAUT>;
+    background(...args: Parameters<typeof background>): ReturnType<typeof background>;
+    getCurrentActivity(...args: Parameters<typeof getCurrentActivity>): ReturnType<typeof getCurrentActivity>;
+    getCurrentPackage(...args: Parameters<typeof getCurrentPackage>): ReturnType<typeof getCurrentPackage>;
+    mobileClearApp(...args: Parameters<typeof mobileClearApp>): ReturnType<typeof mobileClearApp>;
+    mobileInstallApp(...args: Parameters<typeof mobileInstallApp>): ReturnType<typeof mobileInstallApp>;
+    installApp(...args: Parameters<typeof installApp>): ReturnType<typeof installApp>;
+    mobileIsAppInstalled(...args: Parameters<typeof mobileIsAppInstalled>): ReturnType<typeof mobileIsAppInstalled>;
+    mobileRemoveApp(...args: Parameters<typeof mobileRemoveApp>): ReturnType<typeof mobileRemoveApp>;
+    mobileTerminateApp(...args: Parameters<typeof mobileTerminateApp>): ReturnType<typeof mobileTerminateApp>;
+    mobileListApps(...args: Parameters<typeof mobileListApps>): ReturnType<typeof mobileListApps>;
+    terminateApp(...args: Parameters<typeof terminateApp>): ReturnType<typeof terminateApp>;
+    removeApp(...args: Parameters<typeof removeApp>): ReturnType<typeof removeApp>;
+    activateApp(...args: Parameters<typeof activateApp>): ReturnType<typeof activateApp>;
+    queryAppState(...args: Parameters<typeof queryAppState>): ReturnType<typeof queryAppState>;
+    isAppInstalled(...args: Parameters<typeof isAppInstalled>): ReturnType<typeof isAppInstalled>;
+    mobileBackgroundApp(...args: Parameters<typeof mobileBackgroundApp>): ReturnType<typeof mobileBackgroundApp>;
+  }
+}
 
 const APP_EXTENSIONS = ['.apk', '.apks'] as const;
 const PACKAGE_INSTALL_TIMEOUT_MS = 90000;
@@ -608,7 +637,7 @@ export async function uninstallOtherPackages(
     appPackages = await getThirdPartyPackages.bind(this)(filterPackages);
   }
 
-  this.log.debug(`Uninstalling packages: ${appPackages}`);
+  this.log.debug(`Uninstalling packages: ${appPackages.join(', ')}`);
   await Promise.all(appPackages.map((appPackage) => this.adb.uninstallApk(appPackage)));
 }
 
@@ -630,7 +659,7 @@ export async function getThirdPartyPackages(this: AndroidDriver, filterPackages:
       .trim()
       .replace(/package:/g, '')
       .split(EOL);
-    this.log.debug(`'${appPackagesArray}' filtered with '${filterPackages}'`);
+    this.log.debug(`'${appPackagesArray.join(', ')}' filtered with '${filterPackages.join(', ')}'`);
     return appPackagesArray.filter((pkg) => !filterPackagesSet.has(pkg));
   } catch (err) {
     const error = err as Error;

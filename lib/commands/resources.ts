@@ -1,8 +1,16 @@
 import {fs, tempDir, util} from '@appium/support';
 import type {StringRecord} from '@appium/types';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver, AndroidDriverOpts} from '../driver.js';
 import type {Locale} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    getStrings(...args: Parameters<typeof getStrings>): ReturnType<typeof getStrings>;
+    ensureDeviceLocale(...args: Parameters<typeof ensureDeviceLocale>): ReturnType<typeof ensureDeviceLocale>;
+  }
+}
 
 /**
  * Gets the localized strings from the application.
@@ -68,7 +76,7 @@ export async function ensureDeviceLocale(
       this.log.debug((e1 as Error).stack);
     }
     if (suggestions.length > 0) {
-      errMsg += ` You may want to apply one of the following locales instead: ${suggestions}`;
+      errMsg += ` You may want to apply one of the following locales instead: ${suggestions.join(', ')}`;
     }
     throw new Error(errMsg, {cause: e});
   }
