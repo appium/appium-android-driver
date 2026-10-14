@@ -34,7 +34,7 @@ export function ensureNetworkSpeed(this: AndroidDriver, networkSpeed: string): s
   }
   this.log.warn(
     `Wrong network speed param '${networkSpeed}', using default: ${this.adb.NETWORK_SPEED.FULL}. ` +
-      `Supported values: ${Object.values(this.adb.NETWORK_SPEED)}`,
+      `Supported values: ${Object.values(this.adb.NETWORK_SPEED).join(', ')}`,
   );
   return this.adb.NETWORK_SPEED.FULL;
 }
@@ -50,8 +50,8 @@ export function prepareAvdArgs(this: AndroidDriver): string[] {
   if (avdArgs) {
     if (Array.isArray(avdArgs)) {
       result.push(...avdArgs);
-    } else {
-      result.push(...util.shellParse(`${avdArgs}`).filter((entry): entry is string => typeof entry === 'string'));
+    } else if (typeof avdArgs === 'string') {
+      result.push(...util.shellParse(avdArgs).filter((entry): entry is string => typeof entry === 'string'));
     }
   }
   if (networkSpeed) {

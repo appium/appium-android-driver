@@ -6,8 +6,23 @@ import type {HTTPMethod, StringRecord} from '@appium/types';
 import type {ADB} from 'appium-adb';
 import dayjs from 'dayjs';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {FormFields} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileIsMediaProjectionRecordingRunning(
+      ...args: Parameters<typeof mobileIsMediaProjectionRecordingRunning>
+    ): ReturnType<typeof mobileIsMediaProjectionRecordingRunning>;
+    mobileStartMediaProjectionRecording(
+      ...args: Parameters<typeof mobileStartMediaProjectionRecording>
+    ): ReturnType<typeof mobileStartMediaProjectionRecording>;
+    mobileStopMediaProjectionRecording(
+      ...args: Parameters<typeof mobileStopMediaProjectionRecording>
+    ): ReturnType<typeof mobileStopMediaProjectionRecording>;
+  }
+}
 
 // https://github.com/appium/io.appium.settings#internal-audio--video-recording
 const DEFAULT_EXT = '.mp4';

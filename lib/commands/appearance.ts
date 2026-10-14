@@ -1,4 +1,12 @@
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileGetUiMode(...args: Parameters<typeof mobileGetUiMode>): ReturnType<typeof mobileGetUiMode>;
+    mobileSetUiMode(...args: Parameters<typeof mobileSetUiMode>): ReturnType<typeof mobileSetUiMode>;
+  }
+}
 
 const RESPONSE_PATTERN = /:\s+(\w+)/;
 

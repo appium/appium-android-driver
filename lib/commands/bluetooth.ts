@@ -1,6 +1,13 @@
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    mobileBluetooth(...args: Parameters<typeof mobileBluetooth>): ReturnType<typeof mobileBluetooth>;
+  }
+}
 
 const SUPPORTED_ACTIONS = {
   ENABLE: 'enable',
@@ -32,7 +39,7 @@ export async function mobileBluetooth(this: AndroidDriver, action: BluetoothActi
       break;
     default:
       throw new errors.InvalidArgumentError(
-        `You must provide a valid 'action' argument. Supported actions are: ${Object.values(SUPPORTED_ACTIONS)}`,
+        `You must provide a valid 'action' argument. Supported actions are: ${Object.values(SUPPORTED_ACTIONS).join(', ')}`,
       );
   }
 }

@@ -3,7 +3,14 @@ import type {StringRecord, Element} from '@appium/types';
 import type {Chromedriver} from 'appium-chromedriver';
 import {errors, PROTOCOLS} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    execute(...args: Parameters<typeof execute>): ReturnType<typeof execute>;
+  }
+}
 
 const EXECUTE_SCRIPT_PREFIX = 'mobile:';
 

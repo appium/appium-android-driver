@@ -1,8 +1,24 @@
 import {util} from '@appium/support';
 import {errors} from 'appium/driver.js';
 
+import type {AndroidDriverConstraints} from '../constraints.js';
 import type {AndroidDriver} from '../driver.js';
 import type {ServiceType, GetConnectivityResult} from './types.js';
+
+declare module '../driver.js' {
+  interface AndroidDriver<C extends AndroidDriverConstraints> {
+    getNetworkConnection(...args: Parameters<typeof getNetworkConnection>): ReturnType<typeof getNetworkConnection>;
+    isWifiOn(...args: Parameters<typeof isWifiOn>): ReturnType<typeof isWifiOn>;
+    mobileGetConnectivity(...args: Parameters<typeof mobileGetConnectivity>): ReturnType<typeof mobileGetConnectivity>;
+    mobileSetConnectivity(...args: Parameters<typeof mobileSetConnectivity>): ReturnType<typeof mobileSetConnectivity>;
+    setNetworkConnection(...args: Parameters<typeof setNetworkConnection>): ReturnType<typeof setNetworkConnection>;
+    setWifiState(...args: Parameters<typeof setWifiState>): ReturnType<typeof setWifiState>;
+    setDataState(...args: Parameters<typeof setDataState>): ReturnType<typeof setDataState>;
+    toggleData(...args: Parameters<typeof toggleData>): ReturnType<typeof toggleData>;
+    toggleFlightMode(...args: Parameters<typeof toggleFlightMode>): ReturnType<typeof toggleFlightMode>;
+    toggleWiFi(...args: Parameters<typeof toggleWiFi>): ReturnType<typeof toggleWiFi>;
+  }
+}
 
 const AIRPLANE_MODE_MASK = 0b001;
 const WIFI_MASK = 0b010;
@@ -120,9 +136,9 @@ export async function mobileGetConnectivity(
   const unsupportedServices = svcs.filter((svc) => !SUPPORTED_SERVICE_NAMES.includes(svc));
   if (unsupportedServices.length > 0) {
     throw new errors.InvalidArgumentError(
-      `${util.pluralize('Service name', unsupportedServices.length, false)} ${unsupportedServices} ` +
+      `${util.pluralize('Service name', unsupportedServices.length, false)} ${unsupportedServices.join(', ')} ` +
         `${unsupportedServices.length === 1 ? 'is' : 'are'} not known. Only the following services are ` +
-        `suported: ${SUPPORTED_SERVICE_NAMES}`,
+        `suported: ${SUPPORTED_SERVICE_NAMES.join(', ')}`,
     );
   }
 
