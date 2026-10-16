@@ -1,3 +1,21 @@
+## [15.0.0-beta.3](https://github.com/appium/appium-android-driver/compare/v15.0.0-beta.2...v15.0.0-beta.3) (2026-10-16)
+
+### ⚠ BREAKING CHANGES
+
+* Remove the deprecated autoLaunch constraint.
+
+### Features
+
+* add common caps and remove deprecated autoLaunch ([#1108](https://github.com/appium/appium-android-driver/issues/1108)) ([96baf84](https://github.com/appium/appium-android-driver/commit/96baf849dd49536f965130edb9f896c5919700bb))
+
+### Bug Fixes
+
+* forward BiDi in Chrome browser sessions ([#1109](https://github.com/appium/appium-android-driver/issues/1109)) ([a27a0af](https://github.com/appium/appium-android-driver/commit/a27a0af52526224d13d22284ec96b6d646d2626d))
+
+### Miscellaneous Chores
+
+* attach commands via prototype to allow overrides in descendants ([#1110](https://github.com/appium/appium-android-driver/issues/1110)) ([d88ae39](https://github.com/appium/appium-android-driver/commit/d88ae396b597947bad88655996d3d0b6190f2b82))
+
 ## [15.0.0-beta.2](https://github.com/appium/appium-android-driver/compare/v15.0.0-beta.1...v15.0.0-beta.2) (2026-10-09)
 
 ### Miscellaneous Chores
