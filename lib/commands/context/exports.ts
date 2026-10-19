@@ -66,11 +66,15 @@ export async function setContext(this: AndroidDriver, name?: string | null): Pro
     return;
   }
 
-  const webviewsMapping = await getWebViewsMapping.bind(this)(this.opts);
-  const contexts = this.assignContexts(webviewsMapping);
-  // if the context we want doesn't exist, fail
-  if (!contexts?.includes(newContext)) {
-    throw new errors.NoSuchContextError();
+  let webviewsMapping: WebviewsMapping[] = [];
+  // the native context always exists, so do not wait for the webview scan to switch to it
+  if (newContext !== NATIVE_WIN) {
+    webviewsMapping = await getWebViewsMapping.bind(this)(this.opts);
+    const contexts = this.assignContexts(webviewsMapping);
+    // if the context we want doesn't exist, fail
+    if (!contexts?.includes(newContext)) {
+      throw new errors.NoSuchContextError();
+    }
   }
 
   await this.switchContext(newContext, webviewsMapping);
