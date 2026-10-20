@@ -150,6 +150,15 @@ describe('Context', function () {
       await mockContextExports(t, {});
       await assert.rejects(driver.setContext('fake'), errors.NoSuchContextError);
     });
+    it('should switch to native context without scanning webviews', async function (t) {
+      const getWebViewsMappingStub = sandbox.stub();
+      await mockContextExports(t, {getWebViewsMapping: getWebViewsMappingStub});
+      driver.curContext = 'WV';
+      await driver.setContext(NATIVE_WIN);
+      assert.strictEqual(getWebViewsMappingStub.notCalled, true);
+      assert.strictEqual((driver.switchContext as sinon.SinonStub).calledWithExactly(NATIVE_WIN, []), true);
+      assert.strictEqual(driver.curContext, NATIVE_WIN);
+    });
     it('should not switch to context if already in it', async function (t) {
       await mockContextExports(t, {});
       driver.curContext = 'ANOTHER';
