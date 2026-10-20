@@ -1,3 +1,9 @@
+## [14.2.5](https://github.com/appium/appium-android-driver/compare/v14.2.4...v14.2.5) (2026-10-20)
+
+### Bug Fixes
+
+* skip the webview scan when switching to the native context ([#1111](https://github.com/appium/appium-android-driver/issues/1111)) ([78e796a](https://github.com/appium/appium-android-driver/commit/78e796a1cec8d68021bb41bf26ca7d6310597915))
+
 ## [14.2.4](https://github.com/appium/appium-android-driver/compare/v14.2.3...v14.2.4) (2026-10-10)
 
 ### Bug Fixes
