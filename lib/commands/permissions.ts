@@ -138,7 +138,7 @@ async function changePermissionsViaPm(
 
   let affectedPermissions = Array.isArray(permissions) ? permissions : [permissions];
   if (typeof permissions === 'string' && permissions.toLowerCase() === ALL_PERMISSIONS_MAGIC) {
-    const dumpsys = await this.adb.shell(['dumpsys', 'package', appPackage]);
+    const dumpsys = await this.adb.shell(['dumpsys', 'package', util.quote(appPackage)]);
     const grantedPermissions = await this.adb.getGrantedPermissions(appPackage, dumpsys);
     if (action === PM_ACTION.GRANT) {
       const reqPermissons = await this.adb.getReqPermissions(appPackage, dumpsys);
@@ -178,7 +178,7 @@ async function changePermissionsViaAppops(
   }
 
   const promises = (Array.isArray(permissions) ? permissions : [permissions]).map((permission) =>
-    this.adb.shell(['appops', 'set', appPackage, permission, action]),
+    this.adb.shell(['appops', 'set', util.quote(appPackage), util.quote(permission), action]),
   );
   await Promise.all(promises);
 }
