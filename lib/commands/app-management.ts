@@ -658,7 +658,8 @@ export async function getThirdPartyPackages(this: AndroidDriver, filterPackages:
     const appPackagesArray = packagesString
       .trim()
       .replace(/package:/g, '')
-      .split(EOL);
+      .split(EOL)
+      .filter(Boolean);
     this.log.debug(`'${appPackagesArray.join(', ')}' filtered with '${filterPackages.join(', ')}'`);
     return appPackagesArray.filter((pkg) => !filterPackagesSet.has(pkg));
   } catch (err) {
