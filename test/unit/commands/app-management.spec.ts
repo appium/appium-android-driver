@@ -414,4 +414,20 @@ describe('App Management', function () {
       assert.strictEqual((driver.adb.installOrUpgrade as sinon.SinonStub).calledTwice, true);
     });
   });
+  describe('getThirdPartyPackages', function () {
+    it('should return empty array when no third-party packages are installed', async function () {
+      sandbox.stub(driver.adb, 'shell').withArgs(['pm', 'list', 'packages', '-3']).resolves('  \n');
+      assert.deepStrictEqual(await driver.getThirdPartyPackages(), []);
+    });
+    it('should filter out excluded packages', async function () {
+      sandbox
+        .stub(driver.adb, 'shell')
+        .withArgs(['pm', 'list', 'packages', '-3'])
+        .resolves(['package:com.example.one', 'package:com.example.two', 'package:com.example.three'].join('\n'));
+      assert.deepStrictEqual(await driver.getThirdPartyPackages(['com.example.two']), [
+        'com.example.one',
+        'com.example.three',
+      ]);
+    });
+  });
 });
