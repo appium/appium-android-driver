@@ -375,9 +375,6 @@ export async function mobileStopService(
 function parseIntentSpec(opts: IntentOpts = {}): string[] {
   const {intent, action, uri, mimeType, identifier, categories, component, extras, flags} = opts;
   const resultArgs: string[] = [];
-  if (intent) {
-    resultArgs.push(intent);
-  }
   if (action) {
     resultArgs.push('-a', action);
   }
@@ -436,6 +433,9 @@ function parseIntentSpec(opts: IntentOpts = {}): string[] {
   }
   if (flags) {
     resultArgs.push('-f', flags);
+  }
+  if (intent) {
+    resultArgs.push(intent);
   }
   return resultArgs;
 }
