@@ -282,23 +282,15 @@ async function scanMedia(this: AndroidDriver, remotePath: string): Promise<void>
 }
 
 /**
- * A small helper, which escapes single quotes in paths,
- * so they are safe to be passed as arguments of shell commands
- */
-function escapePath(p: string): string {
-  return p.replace(/'/g, `'"'"'`);
-}
-
-/**
  * Factory providing filesystem test functions using ADB
  */
 function createFSTests(adb: ADB) {
   const performRemoteFsCheck = async (p: string, op: 'd' | 'f' | 'e', runAs?: string): Promise<boolean> => {
     const passFlag = '__PASS__';
-    const checkCmd = `[ -${op} '${escapePath(p)}' ] && echo ${passFlag}`;
+    const checkCmd = `[ -${op} "$1" ] && echo ${passFlag}`;
     // Older Android images provide [ as a shell builtin, not an executable
     // that run-as can invoke directly.
-    const args = runAs ? ['run-as', runAs, 'sh', '-c', checkCmd] : ['sh', '-c', checkCmd];
+    const args = [...(runAs ? ['run-as', runAs] : []), 'sh', '-c', checkCmd, 'sh', p];
     try {
       return (await adb.shell(args, {quoteArgs: true})).includes(passFlag);
     } catch {

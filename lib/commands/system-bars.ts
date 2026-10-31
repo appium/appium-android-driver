@@ -69,7 +69,12 @@ export async function mobilePerformStatusBarCommand(
       }
       return await this.adb.shell(['cmd', 'statusbar', cmd, ...argsCallableArray], {quoteArgs: true});
     };
-  const tileCommandArgsCallable = () => component as string;
+  const tileCommandArgsCallable = () => {
+    if (typeof component !== 'string' || !component.trim()) {
+      throw new errors.InvalidArgumentError(`'component' must be a non-empty string for '${command}'`);
+    }
+    return component;
+  };
   const statusBarCommands = Object.fromEntries(
     (
       [

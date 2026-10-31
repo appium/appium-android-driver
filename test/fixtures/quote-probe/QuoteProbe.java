@@ -1,0 +1,62 @@
+package io.appium.quoteargs;
+
+import android.app.*;
+import android.content.*;
+import android.os.*;
+import android.text.*;
+import android.widget.EditText;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
+import org.json.*;
+
+/** Tiny debuggable fixture: records values received by Android, rather than shell output. */
+public class QuoteProbe extends Activity {
+  static void write(Context context, String name, String value) {
+    try (FileOutputStream out = context.openFileOutput(name, Context.MODE_PRIVATE)) {
+      out.write(value.getBytes(StandardCharsets.UTF_8));
+    } catch (Exception e) { throw new RuntimeException(e); }
+  }
+  static void capture(Context context, String name, Intent intent) {
+    try {
+      JSONObject data = new JSONObject();
+      data.put("action", intent.getAction());
+      data.put("uri", intent.getDataString());
+      JSONObject extras = new JSONObject();
+      if (intent.getExtras() != null) for (String key : intent.getExtras().keySet()) {
+        extras.put(key, intent.getExtras().get(key));
+      }
+      data.put("extras", extras);
+      write(context, name, data.toString());
+    } catch (Exception e) { throw new RuntimeException(e); }
+  }
+  @Override public void onCreate(Bundle state) {
+    super.onCreate(state);
+    capture(this, "activity.json", getIntent());
+    EditText input = new EditText(this);
+    input.setSingleLine(true);
+    input.addTextChangedListener(new TextWatcher() {
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+        write(QuoteProbe.this, "text.txt", s.toString());
+      }
+      public void afterTextChanged(Editable e) {}
+    });
+    setContentView(input);
+    input.requestFocus();
+  }
+  public static class Receiver extends BroadcastReceiver {
+    @Override public void onReceive(Context context, Intent intent) { capture(context, "broadcast.json", intent); }
+  }
+  public static class ProbeService extends Service {
+    @Override public IBinder onBind(Intent intent) { return null; }
+    @Override public int onStartCommand(Intent intent, int flags, int startId) {
+      capture(this, "service.json", intent);
+      NotificationManager manager = getSystemService(NotificationManager.class);
+      manager.createNotificationChannel(new NotificationChannel("test", "Test", NotificationManager.IMPORTANCE_LOW));
+      startForeground(1, new Notification.Builder(this, "test").setContentTitle("Quote test").setSmallIcon(android.R.drawable.ic_dialog_info).build());
+      return START_NOT_STICKY;
+    }
+    @Override public void onDestroy() { write(this, "stopped.txt", "stopped"); super.onDestroy(); }
+  }
+  public static class Tile extends android.service.quicksettings.TileService {}
+}

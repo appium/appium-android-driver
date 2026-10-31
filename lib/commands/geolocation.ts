@@ -149,7 +149,7 @@ export async function mobileResetGeolocation(this: AndroidDriver): Promise<void>
   if (this.isEmulator()) {
     throw new Error('Geolocation reset does not work on emulators');
   }
-  await resetMockLocation.bind(this);
+  await resetMockLocation.call(this);
 }
 
 // #region Internal helpers

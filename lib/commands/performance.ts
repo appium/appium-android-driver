@@ -145,20 +145,16 @@ export async function mobileGetPerformanceData(
  */
 export async function getMemoryInfo(this: AndroidDriver, packageName: string, retries: number = 2): Promise<any[][]> {
   return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
-    // Quote argument values individually to preserve the pipe as shell syntax.
     const cmd = [
-      'dumpsys',
-      'meminfo',
-      util.quote(packageName),
-      '|',
-      'grep',
-      '-E',
-      util.quote(
-        `${MEMINFO_TITLES.NATIVE}|${MEMINFO_TITLES.DALVIK}|${MEMINFO_TITLES.EGL}` +
-          `|${MEMINFO_TITLES.GL}|${MEMINFO_TITLES.TOTAL}`,
-      ),
+      'sh',
+      '-c',
+      'dumpsys meminfo "$1" | grep -E "$2"',
+      'sh',
+      packageName,
+      `${MEMINFO_TITLES.NATIVE}|${MEMINFO_TITLES.DALVIK}|${MEMINFO_TITLES.EGL}` +
+        `|${MEMINFO_TITLES.GL}|${MEMINFO_TITLES.TOTAL}`,
     ];
-    const data = await this.adb.shell(cmd);
+    const data = await this.adb.shell(cmd, {quoteArgs: true});
     if (!data) {
       throw new Error('No data from dumpsys');
     }
@@ -432,9 +428,8 @@ export async function getCPUInfo(
  */
 export async function getBatteryInfo(this: AndroidDriver, retries: number = 2): Promise<any[][]> {
   return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
-    // Preserve the pipe as shell syntax rather than quoting it as a literal argument.
-    const cmd = ['dumpsys', 'battery', '|', 'grep', 'level'];
-    const data = await this.adb.shell(cmd);
+    const cmd = ['sh', '-c', 'dumpsys battery | grep level'];
+    const data = await this.adb.shell(cmd, {quoteArgs: true});
     if (!data) throw new Error('No data from dumpsys'); //eslint-disable-line curly
 
     const power = parseInt((data.split(':')[1] || '').trim(), 10);

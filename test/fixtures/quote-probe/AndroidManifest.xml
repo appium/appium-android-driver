@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="io.appium.quoteargs">
+  <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="28" />
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <application android:label="Appium Quote Args Test" android:debuggable="true">
+    <activity android:name=".QuoteProbe" android:exported="true" />
+    <receiver android:name=".QuoteProbe$Receiver" android:exported="true" />
+    <service android:name=".QuoteProbe$ProbeService" android:exported="true" />
+    <service android:name=".QuoteProbe$Tile" android:exported="true" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+      <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
+    </service>
+  </application>
+</manifest>

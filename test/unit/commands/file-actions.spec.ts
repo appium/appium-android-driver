@@ -1,13 +1,12 @@
 import assert from 'node:assert/strict';
-import {execFile} from 'node:child_process';
 import {describe, it, beforeEach, afterEach} from 'node:test';
-import {promisify} from 'node:util';
 
 import * as support from '@appium/support';
 import {ADB} from 'appium-adb';
 import sinon from 'sinon';
 
 import {AndroidDriver} from '../../../lib/driver.js';
+import {parseDeviceCommand, testShell} from '../../helpers/shell.js';
 
 let driver: AndroidDriver;
 const sandbox = sinon.createSandbox();
@@ -134,7 +133,7 @@ describe('File Actions', function () {
       shell.onCall(2).resolves('__PASS__');
       assert.strictEqual(await driver.mobileDeleteFile(remotePath), true);
       assert.strictEqual(
-        shell.calledWithExactly(['run-as', pkg, 'sh', '-c', `[ -e '${fullPath}' ] && echo __PASS__`], {
+        shell.calledWithExactly(['run-as', pkg, 'sh', '-c', '[ -e "$1" ] && echo __PASS__', 'sh', fullPath], {
           quoteArgs: true,
         }),
         true,
@@ -205,7 +204,7 @@ describe('File Actions', function () {
   });
 });
 
-describe('File action argument preservation', {skip: process.platform === 'win32'}, function () {
+describe('File action argument preservation', {skip: !testShell}, function () {
   const packageId = 'com.example.$APPIUM_QUOTE_TEST';
   const fileName = 'O\'Brien "notes" $APPIUM_QUOTE_TEST `printf unexpected`; (draft) [*].txt';
   const containerPath = `/data/data/${packageId}/${fileName}`;
@@ -288,31 +287,11 @@ describe('File action argument preservation', {skip: process.platform === 'win32
       const prefix = inContainer ? ['run-as', packageId] : [];
       assert.deepStrictEqual(commands, [
         ...(inContainer ? [[...prefix, 'ls']] : []),
-        inContainer
-          ? [...prefix, 'sh', '-c', `[ -e '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`]
-          : ['sh', '-c', `[ -e '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`],
-        inContainer
-          ? [...prefix, 'sh', '-c', `[ -f '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`]
-          : ['sh', '-c', `[ -f '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`],
+        [...prefix, 'sh', '-c', '[ -e "$1" ] && echo __PASS__', 'sh', target],
+        [...prefix, 'sh', '-c', '[ -f "$1" ] && echo __PASS__', 'sh', target],
         [...prefix, 'rm', '-f', target],
-        inContainer
-          ? [...prefix, 'sh', '-c', `[ -e '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`]
-          : ['sh', '-c', `[ -e '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`],
+        [...prefix, 'sh', '-c', '[ -e "$1" ] && echo __PASS__', 'sh', target],
       ]);
     });
   }
 });
-
-async function parseDeviceCommand(command: string | string[], opts?: {quoteArgs?: boolean}): Promise<string[]> {
-  if (opts?.quoteArgs) {
-    command = (Array.isArray(command) ? command : [command]).map((arg) => support.util.quote(arg));
-  }
-  const {stdout} = await promisify(execFile)(
-    '/bin/sh',
-    ['-c', `set -- ${Array.isArray(command) ? command.join(' ') : command}; printf '%s\\0' "$@"`],
-    {
-      env: {...process.env, APPIUM_QUOTE_TEST: 'unexpected-expansion'},
-    },
-  );
-  return stdout.toString().split('\0').slice(0, -1);
-}

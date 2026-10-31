@@ -48,10 +48,11 @@
     "rebuild": "npm run clean; npm run build",
     "format": "oxfmt -c oxfmt.config.mjs .",
     "format:check": "oxfmt -c oxfmt.config.mjs --check .",
-    "test": "node --enable-source-maps --experimental-test-module-mocks --test --test-force-exit --test-timeout=60000 \"./build/test/unit/**/*.spec.js\""
+    "test": "node --enable-source-maps --experimental-test-module-mocks --test --test-force-exit --test-timeout=60000 \"./build/test/unit/**/*.spec.js\"",
+    "test:emulator": "node --enable-source-maps --test --test-concurrency=1 --test-timeout=120000 \"./build/test/integration/quote-args.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^7.2.6",
+    "@appium/support": "^7.2.9",
     "appium-adb": "^16.2.0",
     "appium-chromedriver": "^9.0.15",
     "asyncbox": "^6.4.3",
