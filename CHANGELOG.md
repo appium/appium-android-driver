@@ -1,3 +1,27 @@
+## [15.0.0](https://github.com/appium/appium-android-driver/compare/v14.2.6...v15.0.0) (2026-10-31)
+
+### ⚠ BREAKING CHANGES
+
+* Remove the deprecated autoLaunch constraint.
+* requires Appium >=4.0.0-beta.0 and drops Node 20 support
+(minimum is now ^22.22.2 || ^24.15.0 || >=26.0.0), matching Appium 4's own
+minimum supported Node engine.
+
+### Features
+
+* add common caps and remove deprecated autoLaunch ([#1108](https://github.com/appium/appium-android-driver/issues/1108)) ([3e8655b](https://github.com/appium/appium-android-driver/commit/3e8655b9fc89f241b2933c3c7ef39f4162d82a44))
+* target Appium 4 beta ([#1104](https://github.com/appium/appium-android-driver/issues/1104)) ([1ae661b](https://github.com/appium/appium-android-driver/commit/1ae661b0c0b4fad3f528568b6f31d35ce5e97235))
+
+### Bug Fixes
+
+* filter empty entries in getThirdPartyPackages ([#1114](https://github.com/appium/appium-android-driver/issues/1114)) ([0a6acde](https://github.com/appium/appium-android-driver/commit/0a6acdeaa47f2bdec123087f0c63f3c8fb298d0a))
+* place positional intent argument after options in parseIntentSpec ([#1112](https://github.com/appium/appium-android-driver/issues/1112)) ([efddb50](https://github.com/appium/appium-android-driver/commit/efddb509886b2176367a9d63ac53df235fc1c577))
+
+### Miscellaneous Chores
+
+* attach commands via prototype to allow overrides in descendants ([#1110](https://github.com/appium/appium-android-driver/issues/1110)) ([9c7893e](https://github.com/appium/appium-android-driver/commit/9c7893e3fb025f191f0f69bd8e560498c33c0521))
+* bump @appium/* packages to latest betas ([#1106](https://github.com/appium/appium-android-driver/issues/1106)) ([dbd9b6a](https://github.com/appium/appium-android-driver/commit/dbd9b6ac4ae861574f8f52ef4e80af8573e94ce0))
+
 ## [14.2.6](https://github.com/appium/appium-android-driver/compare/v14.2.5...v14.2.6) (2026-10-31)
 
 ### Bug Fixes
