@@ -168,7 +168,6 @@ export async function mobileStartActivity(
       flags,
     }),
   );
-  // Preserve caller-side shell quoting and legacy intent command fragments.
   return await this.adb.shell(cmd);
 }
 
@@ -238,7 +237,6 @@ export async function mobileBroadcast(
       flags,
     }),
   );
-  // Preserve caller-side shell quoting and legacy intent command fragments.
   return await this.adb.shell(cmd);
 }
 
@@ -302,7 +300,6 @@ export async function mobileStartService(
       flags,
     }),
   );
-  // Preserve caller-side shell quoting and legacy intent command fragments.
   return await this.adb.shell(cmd);
 }
 
@@ -363,7 +360,6 @@ export async function mobileStopService(
     }),
   );
   try {
-    // Preserve caller-side shell quoting and legacy intent command fragments.
     return await this.adb.shell(cmd);
   } catch (e) {
     // https://github.com/appium/appium-uiautomator2-driver/issues/792

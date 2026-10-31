@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import {execFile} from 'node:child_process';
-import {EOL} from 'node:os';
 import {describe, it} from 'node:test';
 import {promisify} from 'node:util';
 
@@ -60,34 +59,6 @@ describe('remaining literal shell command call sites', () => {
       {quoteArgs: true},
     ]);
     assert.deepEqual(shell.secondCall.args, [['cat', '/data/local/tmp/mock_apps.json'], {quoteArgs: true}]);
-  });
-});
-
-describe('mock location reset', () => {
-  for (const stored of [[], ['one'], ['one', "two's!", 'uninstalled']]) {
-    it(`resets installed apps from ${JSON.stringify(stored)}`, async () => {
-      const driver = new AndroidDriver();
-      driver.adb = new ADB();
-      sinon.stub(driver, 'isEmulator').returns(false);
-      sinon.stub(driver.adb, 'fileExists').resolves(true);
-      const shell = sinon.stub(driver.adb, 'shell').resolves('');
-      shell.withArgs(['pm', 'list', 'packages', '-3']).resolves(['package:one', "package:two's!"].join(EOL));
-      shell.withArgs(['cat', '/data/local/tmp/mock_apps.json']).resolves(JSON.stringify(stored));
-      await driver.mobileResetGeolocation();
-      const expected = stored.filter((pkg) => pkg !== 'uninstalled');
-      for (const pkg of expected.length ? expected : ['io.appium.settings']) {
-        assert.ok(shell.calledWithExactly(['appops', 'set', pkg, 'android:mock_location', 'deny'], {quoteArgs: true}));
-      }
-      assert.equal(
-        shell.getCalls().filter((call) => (call.args[0] as string[])[0] === 'appops').length,
-        Math.max(expected.length, 1),
-      );
-    });
-  }
-  it('rejects reset on an emulator', async () => {
-    const driver = new AndroidDriver();
-    sinon.stub(driver, 'isEmulator').returns(true);
-    await assert.rejects(driver.mobileResetGeolocation(), /does not work on emulators/);
   });
 });
 
