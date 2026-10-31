@@ -5,6 +5,7 @@ import android.content.*;
 import android.os.*;
 import android.text.*;
 import android.widget.EditText;
+import android.webkit.WebView;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import org.json.*;
@@ -32,6 +33,24 @@ public class QuoteProbe extends Activity {
   @Override public void onCreate(Bundle state) {
     super.onCreate(state);
     capture(this, "activity.json", getIntent());
+    if (getIntent().getBooleanExtra("stream", false)) {
+      android.view.View view = new android.view.View(this);
+      setContentView(view);
+      android.animation.ValueAnimator animation = android.animation.ValueAnimator.ofArgb(0xffff0000, 0xff0000ff);
+      animation.setDuration(500);
+      animation.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+      animation.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+      animation.addUpdateListener(value -> view.setBackgroundColor((Integer) value.getAnimatedValue()));
+      animation.start();
+      return;
+    }
+    if (getIntent().getBooleanExtra("webview", false)) {
+      WebView.setWebContentsDebuggingEnabled(true);
+      WebView webview = new WebView(this);
+      setContentView(webview);
+      webview.loadDataWithBaseURL("https://appium.example/", "<html><head><title>Appium quote probe</title></head><body>Local test page</body></html>", "text/html", "UTF-8", null);
+      return;
+    }
     EditText input = new EditText(this);
     input.setSingleLine(true);
     // Test injected key events without IME startup or autocorrection changing the text.
