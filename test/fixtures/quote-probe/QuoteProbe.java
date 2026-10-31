@@ -34,6 +34,9 @@ public class QuoteProbe extends Activity {
     capture(this, "activity.json", getIntent());
     EditText input = new EditText(this);
     input.setSingleLine(true);
+    // Test injected key events without IME startup or autocorrection changing the text.
+    input.setRawInputType(InputType.TYPE_NULL);
+    input.setShowSoftInputOnFocus(false);
     input.addTextChangedListener(new TextWatcher() {
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
       public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -43,6 +46,10 @@ public class QuoteProbe extends Activity {
     });
     setContentView(input);
     input.requestFocus();
+  }
+  @Override public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+    write(this, "focused.txt", Boolean.toString(hasFocus));
   }
   public static class Receiver extends BroadcastReceiver {
     @Override public void onReceive(Context context, Intent intent) { capture(context, "broadcast.json", intent); }

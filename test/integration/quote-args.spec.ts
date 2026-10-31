@@ -4,6 +4,7 @@ import {before, after, describe, it} from 'node:test';
 import {ADB} from 'appium-adb';
 
 import {getThirdPartyPackages} from '../../lib/commands/app-management.js';
+import {pushSettingsApp} from '../../lib/commands/device/utils.js';
 import {setMockLocationApp} from '../../lib/commands/geolocation.js';
 import {passwordUnlock, pinUnlockWithKeyEvent} from '../../lib/commands/lock/helpers.js';
 import {getBatteryInfo, getMemoryInfo, getCPUInfo} from '../../lib/commands/performance.js';
@@ -37,6 +38,11 @@ describe('real Android shell argument regression tests', {skip: !serial}, () => 
     adb = await ADB.createADB({udid: serial});
     driver.adb = adb;
     assert.equal((await adb.shell(['getprop', 'sys.boot_completed'], {quoteArgs: true})).trim(), '1');
+    // Direct driver construction bypasses session setup. File pushes on API 29+
+    // use the Settings helper for media scans, so prepare it on fresh emulators.
+    if ((await adb.getApiLevel()) >= 29) {
+      await pushSettingsApp.call(driver, true);
+    }
     root = (await adb.shell(['mktemp', '-d', '/data/local/tmp/appium-quote-XXXXXX'], {quoteArgs: true})).trim();
   });
   after(async () => {
@@ -120,7 +126,9 @@ describe('real Android shell argument regression tests', {skip: !serial}, () => 
     assert.match(await driver.getDeviceTime(), /^\d{4}-\d{2}-\d{2}T/);
     assert.ok((await getBatteryInfo.call(driver, 1)).length > 0);
     assert.ok((await getMemoryInfo.call(driver, 'com.android.systemui', 1)).length > 0);
-    assert.ok((await getCPUInfo.call(driver, 'com.android.systemui', 1)).length > 0);
+    // A fresh emulator's CPU sample may predate SystemUI startup. system_server
+    // is already active during boot and is present in those initial samples.
+    assert.ok((await getCPUInfo.call(driver, 'system_server', 1)).length > 0);
   });
   it('keeps a malicious memory package name out of shell syntax', async () => {
     const marker = `${root}/injected`;
@@ -196,6 +204,13 @@ describe('real Android shell argument regression tests', {skip: !serial}, () => 
 
   describe('Android component receipt', {skip: pkg !== 'io.appium.quoteargs'}, () => {
     const component = 'io.appium.quoteargs/.QuoteProbe';
+    before(async () => {
+      // Creating the service's notification channel can trigger a permission
+      // dialog on Android 13+, stealing focus from the later input tests.
+      if ((await adb.getApiLevel()) >= 33) {
+        await adb.grantPermission(pkg!, 'android.permission.POST_NOTIFICATIONS');
+      }
+    });
     async function readFixture(name: string): Promise<string> {
       return Buffer.from(await driver.pullFile(`@${pkg}/files/${name}`), 'base64').toString();
     }
@@ -297,16 +312,28 @@ describe('real Android shell argument regression tests', {skip: !serial}, () => 
     });
     it('preserves password text and PIN keyevents in an actual input field', async () => {
       const dismiss = adb.dismissKeyguard.bind(adb);
-      // Let display wake animations finish before sending text to the fixture field.
-      adb.dismissKeyguard = async () => {
-        await dismiss();
-        await new Promise((resolve) => setTimeout(resolve, 750));
+      // This tests input arguments, not keyguard dismissal. Wake the display before
+      // launching the field rather than power-cycling it during each unlock call.
+      await dismiss();
+      adb.dismissKeyguard = async () => {};
+      const startInputActivity = async () => {
+        await driver.mobileDeleteFile(`@${pkg}/files/focused.txt`);
+        await driver.mobileStartActivity(true, true, undefined, undefined, undefined, '0', component);
+        for (let attempt = 0; attempt < 50; attempt++) {
+          try {
+            if ((await readFixture('focused.txt')) === 'true') {
+              return;
+            }
+          } catch {}
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        assert.fail('The fixture input window did not gain focus');
       };
       try {
-        await driver.mobileStartActivity(true, true, undefined, undefined, undefined, '0', component);
+        await startInputActivity();
         await passwordUnlock.call(driver, {unlockKey: "it's! a$b&c"} as Parameters<typeof passwordUnlock>[0]);
         assert.equal(await readFixture('text.txt'), "it's! a$b&c");
-        await driver.mobileStartActivity(true, true, undefined, undefined, undefined, '0', component);
+        await startInputActivity();
         await pinUnlockWithKeyEvent.call(driver, {unlockKey: '0123456789'} as Parameters<
           typeof pinUnlockWithKeyEvent
         >[0]);
