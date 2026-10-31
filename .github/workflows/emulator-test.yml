@@ -48,6 +48,9 @@ jobs:
           arch: x86_64
           target: google_apis
           disable-animations: true
+          # adjustTimeZone currently accepts Intl.supportedValuesOf('timeZone') entries,
+          # which excludes the emulator default Etc/UTC alias.
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -timezone America/Los_Angeles
           script: |
             adb -s "$ANDROID_SERIAL" install -r build/quote-probe/probe.apk
             npm run test:emulator
