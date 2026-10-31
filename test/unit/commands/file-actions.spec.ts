@@ -49,18 +49,22 @@ describe('File Actions', function () {
       assert.strictEqual(await driver.pullFile(`@${packageId}/${remotePath}`), 'YXBwaXVt');
       assert.strictEqual(pullStub.calledWithExactly(tmpPath, localFile), true);
       assert.strictEqual(
-        shellStub2.calledWithExactly([
-          'run-as',
-          packageId,
-          'cat',
-          `/data/data/${packageId}/${remotePath}`,
-          '>',
-          tmpPath,
-        ]),
+        shellStub2.calledWithExactly(
+          [
+            'sh',
+            '-c',
+            'run-as "$1" cat "$2" > "$3"',
+            'sh',
+            packageId,
+            `/data/data/${packageId}/${remotePath}`,
+            tmpPath,
+          ],
+          {quoteArgs: true},
+        ),
         true,
       );
       assert.strictEqual(unlinkStub3.calledWithExactly(localFile), true);
-      assert.strictEqual(shellStub2.calledWithExactly(['rm', '-f', tmpPath]), true);
+      assert.strictEqual(shellStub2.calledWithExactly(['rm', '-f', tmpPath], {quoteArgs: true}), true);
     });
 
     for (const failure of ['read container', 'pull', 'encode', 'unlink'] as const) {
@@ -85,7 +89,7 @@ describe('File Actions', function () {
           unlink.rejects(error);
         }
         await assert.rejects(driver.pullFile('@com.myapp/files/test'), /transfer failed/);
-        assert.deepStrictEqual(shell.lastCall.args, [['rm', '-f', tmpPath]]);
+        assert.deepStrictEqual(shell.lastCall.args, [['rm', '-f', tmpPath], {quoteArgs: true}]);
         if (failure === 'read container') {
           assert.strictEqual(pull.called, false);
         }
@@ -107,13 +111,9 @@ describe('File Actions', function () {
       const shell = sandbox.stub(driver.adb, 'shell').resolves('');
       shell.onFirstCall().resolves('/data/local/tmp/appium-pull-test');
       await driver.pullFile(remotePath);
-      assert.deepStrictEqual(shell.secondCall.args[0], [
-        'run-as',
-        pkg,
-        'cat',
-        support.util.quote(fullPath),
-        '>',
-        '/data/local/tmp/appium-pull-test',
+      assert.deepStrictEqual(shell.secondCall.args, [
+        ['sh', '-c', 'run-as "$1" cat "$2" > "$3"', 'sh', pkg, fullPath, '/data/local/tmp/appium-pull-test'],
+        {quoteArgs: true},
       ]);
     });
 
@@ -125,7 +125,7 @@ describe('File Actions', function () {
       const shell = sandbox.stub(driver.adb, 'shell').resolves('');
       await driver.pushFile(remotePath, 'YXBwaXVt');
       assert.strictEqual(push.calledWithExactly('local-file', '/data/local/tmp/line\nbreak.txt'), true);
-      assert.strictEqual(shell.calledWithExactly(['run-as', pkg, `touch '${fullPath}'`]), true);
+      assert.strictEqual(shell.calledWithExactly(['run-as', pkg, 'touch', fullPath], {quoteArgs: true}), true);
     });
 
     it('preserves the complete path when deleting', async function () {
@@ -134,10 +134,12 @@ describe('File Actions', function () {
       shell.onCall(2).resolves('__PASS__');
       assert.strictEqual(await driver.mobileDeleteFile(remotePath), true);
       assert.strictEqual(
-        shell.calledWithExactly([`run-as ${pkg} sh -c '[ -e '"'"'${fullPath}'"'"' ] && echo __PASS__'`]),
+        shell.calledWithExactly(['run-as', pkg, 'sh', '-c', `[ -e '${fullPath}' ] && echo __PASS__`], {
+          quoteArgs: true,
+        }),
         true,
       );
-      assert.strictEqual(shell.calledWithExactly(['run-as', pkg, `rm -f '${fullPath}'`]), true);
+      assert.strictEqual(shell.calledWithExactly(['run-as', pkg, 'rm', '-f', fullPath], {quoteArgs: true}), true);
     });
   });
 
@@ -173,27 +175,32 @@ describe('File Actions', function () {
       assert.strictEqual(writeFileStub.calledWithExactly(localFile, content, 'binary'), true);
       assert.strictEqual(pushStub2.calledWithExactly(localFile, tmpPath), true);
       assert.strictEqual(
-        shellStub.calledWithExactly(['run-as', packageId, `mkdir -p '/data/data/${packageId}/path/in'`]),
+        shellStub.calledWithExactly(['run-as', packageId, 'mkdir', '-p', `/data/data/${packageId}/path/in`], {
+          quoteArgs: true,
+        }),
         true,
       );
       assert.strictEqual(
-        shellStub.calledWithExactly(['run-as', packageId, `touch '/data/data/${packageId}/${remotePath}'`]),
+        shellStub.calledWithExactly(['run-as', packageId, 'touch', `/data/data/${packageId}/${remotePath}`], {
+          quoteArgs: true,
+        }),
         true,
       );
       assert.strictEqual(
-        shellStub.calledWithExactly(['run-as', packageId, `chmod 777 '/data/data/${packageId}/${remotePath}'`]),
+        shellStub.calledWithExactly(['run-as', packageId, 'chmod', '777', `/data/data/${packageId}/${remotePath}`], {
+          quoteArgs: true,
+        }),
         true,
       );
       assert.strictEqual(
-        shellStub.calledWithExactly([
-          'run-as',
-          packageId,
-          `cp -f '${tmpPath}' '/data/data/${packageId}/${remotePath}'`,
-        ]),
+        shellStub.calledWithExactly(
+          ['run-as', packageId, 'cp', '-f', tmpPath, `/data/data/${packageId}/${remotePath}`],
+          {quoteArgs: true},
+        ),
         true,
       );
       assert.strictEqual(unlinkStub2.calledWithExactly(localFile), true);
-      assert.strictEqual(shellStub.calledWithExactly(['rm', '-f', tmpPath]), true);
+      assert.strictEqual(shellStub.calledWithExactly(['rm', '-f', tmpPath], {quoteArgs: true}), true);
     });
   });
 });
@@ -223,7 +230,7 @@ describe('File action argument preservation', {skip: process.platform === 'win32
       sandbox.stub(driver.adb, 'getApiLevel').resolves(apiLevel);
       const shell = sandbox.stub(driver.adb, 'shell').resolves('');
       await driver.pushFile(target, 'YXBwaXVt');
-      assert.deepStrictEqual(await parseDeviceCommand(shell.firstCall.args[0]), [
+      assert.deepStrictEqual(await parseDeviceCommand(...shell.firstCall.args), [
         'am',
         'broadcast',
         '-a',
@@ -252,25 +259,12 @@ describe('File action argument preservation', {skip: process.platform === 'win32
         await driver.pushFile(remotePath, 'YXBwaXVt');
         assert.strictEqual(push.calledWithExactly('local-file', tempPath), true);
       }
-      const commands = await Promise.all(
-        shell.getCalls().map(async ({args}) => {
-          const cmd = args[0];
-          if (Array.isArray(cmd) && cmd.includes('>')) {
-            const index = cmd.indexOf('>');
-            return [
-              ...(await parseDeviceCommand(cmd.slice(0, index))),
-              '>',
-              ...(await parseDeviceCommand(cmd.slice(index + 1))),
-            ];
-          }
-          return await parseDeviceCommand(cmd);
-        }),
-      );
+      const commands = await Promise.all(shell.getCalls().map(({args}) => parseDeviceCommand(...args)));
       const expected =
         operation === 'pull'
           ? [
               ['mktemp', '/data/local/tmp/appium-pull-XXXXXX'],
-              ['run-as', packageId, 'cat', containerPath, '>', tempPath],
+              ['sh', '-c', 'run-as "$1" cat "$2" > "$3"', 'sh', packageId, containerPath, tempPath],
             ]
           : [
               ['run-as', packageId, 'mkdir', '-p', `/data/data/${packageId}`],
@@ -290,31 +284,29 @@ describe('File action argument preservation', {skip: process.platform === 'win32
       shell.onCall(offset).resolves('__PASS__');
       shell.onCall(offset + 1).resolves('__PASS__');
       await driver.mobileDeleteFile(inContainer ? remotePath : target);
-      const commands = await Promise.all(
-        shell.getCalls().map(({args}) => {
-          const cmd = (Array.isArray(args[0]) ? args[0].join(' ') : args[0]).replace(/ && echo __PASS__$/, '');
-          return parseDeviceCommand(cmd);
-        }),
-      );
+      const commands = await Promise.all(shell.getCalls().map(({args}) => parseDeviceCommand(...args)));
       const prefix = inContainer ? ['run-as', packageId] : [];
       assert.deepStrictEqual(commands, [
         ...(inContainer ? [[...prefix, 'ls']] : []),
         inContainer
           ? [...prefix, 'sh', '-c', `[ -e '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`]
-          : ['[', '-e', target, ']'],
+          : ['sh', '-c', `[ -e '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`],
         inContainer
           ? [...prefix, 'sh', '-c', `[ -f '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`]
-          : ['[', '-f', target, ']'],
+          : ['sh', '-c', `[ -f '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`],
         [...prefix, 'rm', '-f', target],
         inContainer
           ? [...prefix, 'sh', '-c', `[ -e '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`]
-          : ['[', '-e', target, ']'],
+          : ['sh', '-c', `[ -e '${target.replace(/'/g, `'"'"'`)}' ] && echo __PASS__`],
       ]);
     });
   }
 });
 
-async function parseDeviceCommand(command: string | string[]): Promise<string[]> {
+async function parseDeviceCommand(command: string | string[], opts?: {quoteArgs?: boolean}): Promise<string[]> {
+  if (opts?.quoteArgs) {
+    command = (Array.isArray(command) ? command : [command]).map((arg) => support.util.quote(arg));
+  }
   const {stdout} = await promisify(execFile)(
     '/bin/sh',
     ['-c', `set -- ${Array.isArray(command) ? command.join(' ') : command}; printf '%s\\0' "$@"`],

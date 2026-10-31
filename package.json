@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@appium/support": "^7.2.6",
-    "appium-adb": "^16.0.4",
+    "appium-adb": "^16.2.0",
     "appium-chromedriver": "^9.0.15",
     "asyncbox": "^6.4.3",
     "axios": "^1.18.0",

@@ -3,6 +3,8 @@ import {execFile} from 'node:child_process';
 import {describe, it} from 'node:test';
 import {promisify} from 'node:util';
 
+import {util} from '@appium/support';
+
 import {mobileChangePermissions} from '../../../lib/commands/permissions.js';
 import type {AndroidDriver} from '../../../lib/driver.js';
 
@@ -26,8 +28,9 @@ describe('permission shell arguments', function () {
             throw new Error('adb_shell is disabled');
           },
           adb: {
-            shell: async (args: string[]) => {
-              commands.push(args);
+            shell: async (args: string[], opts: {quoteArgs?: boolean}) => {
+              assert.strictEqual(opts.quoteArgs, true);
+              commands.push(args.map((arg) => util.quote(arg)));
               return 'package dump';
             },
             getGrantedPermissions: async (appPackage: string, dump: string) => {
@@ -73,9 +76,10 @@ describe('permission shell arguments', function () {
         checked = true;
       },
       adb: {
-        shell: async (args: string[]) => {
+        shell: async (args: string[], opts: {quoteArgs?: boolean}) => {
+          assert.strictEqual(opts.quoteArgs, true);
           assert.ok(checked);
-          command = args;
+          command = args.map((arg) => util.quote(arg));
         },
       },
     } as unknown as AndroidDriver;

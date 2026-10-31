@@ -43,14 +43,10 @@ export async function pullFile(this: AndroidDriver, remotePath: string): Promise
         tmpDestination = await this.adb.shell(['mktemp', '/data/local/tmp/appium-pull-XXXXXX']);
         // The shell user opens the destination; run-as only needs to read the source.
         // App users cannot create files in /data/local/tmp on non-rooted devices.
-        await this.adb.shell([
-          'run-as',
-          util.quote(packageId),
-          'cat',
-          util.quote(pathInContainer),
-          '>',
-          util.quote(tmpDestination),
-        ]);
+        await this.adb.shell(
+          ['sh', '-c', 'run-as "$1" cat "$2" > "$3"', 'sh', packageId, pathInContainer, tmpDestination],
+          {quoteArgs: true},
+        );
       } catch (e) {
         throw this.log.errorWithException(
           `Cannot access the container of '${packageId}' application. ` +
@@ -68,7 +64,7 @@ export async function pullFile(this: AndroidDriver, remotePath: string): Promise
       }
     } finally {
       if (tmpDestination) {
-        await this.adb.shell(['rm', '-f', util.quote(tmpDestination)]);
+        await this.adb.shell(['rm', '-f', tmpDestination], {quoteArgs: true});
       }
     }
   }
@@ -118,19 +114,13 @@ export async function pushFile(this: AndroidDriver, remotePath: string, base64Da
       );
       tmpDestination = `/data/local/tmp/${path.posix.basename(pathInContainer)}`;
       try {
-        await this.adb.shell([
-          'run-as',
-          util.quote(packageId),
-          `mkdir -p '${escapePath(path.posix.dirname(pathInContainer))}'`,
-        ]);
-        await this.adb.shell(['run-as', util.quote(packageId), `touch '${escapePath(pathInContainer)}'`]);
-        await this.adb.shell(['run-as', util.quote(packageId), `chmod 777 '${escapePath(pathInContainer)}'`]);
+        await this.adb.shell(['run-as', packageId, 'mkdir', '-p', path.posix.dirname(pathInContainer)], {
+          quoteArgs: true,
+        });
+        await this.adb.shell(['run-as', packageId, 'touch', pathInContainer], {quoteArgs: true});
+        await this.adb.shell(['run-as', packageId, 'chmod', '777', pathInContainer], {quoteArgs: true});
         await this.adb.push(localFile, tmpDestination);
-        await this.adb.shell([
-          'run-as',
-          util.quote(packageId),
-          `cp -f '${escapePath(tmpDestination)}' '${escapePath(pathInContainer)}'`,
-        ]);
+        await this.adb.shell(['run-as', packageId, 'cp', '-f', tmpDestination, pathInContainer], {quoteArgs: true});
       } catch (e) {
         throw this.log.errorWithException(
           `Cannot access the container of '${packageId}' application. ` +
@@ -151,7 +141,7 @@ export async function pushFile(this: AndroidDriver, remotePath: string, base64Da
       await fs.unlink(localFile);
     }
     if (tmpDestination) {
-      await this.adb.shell(['rm', '-f', util.quote(tmpDestination)]);
+      await this.adb.shell(['rm', '-f', tmpDestination], {quoteArgs: true});
     }
   }
 }
@@ -215,7 +205,7 @@ async function deleteFileOrFolder(this: AndroidDriver, adb: ADB, remotePath: str
 
   if (pkgId) {
     try {
-      await adb.shell(['run-as', util.quote(pkgId), 'ls']);
+      await adb.shell(['run-as', pkgId, 'ls'], {quoteArgs: true});
     } catch (e) {
       throw this.log.errorWithException(
         `Cannot access the container of '${pkgId}' application. ` +
@@ -238,9 +228,9 @@ async function deleteFileOrFolder(this: AndroidDriver, adb: ADB, remotePath: str
   }
 
   if (pkgId) {
-    await adb.shell(['run-as', util.quote(pkgId), `rm -f${expectsFile ? '' : 'r'} '${escapePath(dstPath)}'`]);
+    await adb.shell(['run-as', pkgId, 'rm', `-f${expectsFile ? '' : 'r'}`, dstPath], {quoteArgs: true});
   } else {
-    await adb.shell(['rm', `-f${expectsFile ? '' : 'r'}`, util.quote(dstPath)]);
+    await adb.shell(['rm', `-f${expectsFile ? '' : 'r'}`, dstPath], {quoteArgs: true});
   }
   if (await isPresent(dstPath, pkgId)) {
     throw this.log.errorWithException(`The item at '${dstPath}' still exists after being deleted. Is it writable?`);
@@ -280,14 +270,9 @@ async function scanMedia(this: AndroidDriver, remotePath: string): Promise<void>
     if ((await this.adb.getApiLevel()) >= 29) {
       await this.settingsApp.scanMedia(remotePath);
     } else {
-      await this.adb.shell([
-        'am',
-        'broadcast',
-        '-a',
-        ANDROID_MEDIA_RESCAN_INTENT,
-        '-d',
-        util.quote(`file://${remotePath}`),
-      ]);
+      await this.adb.shell(['am', 'broadcast', '-a', ANDROID_MEDIA_RESCAN_INTENT, '-d', `file://${remotePath}`], {
+        quoteArgs: true,
+      });
     }
   } catch (e) {
     const err = e as {stderr?: string; message?: string};
@@ -313,9 +298,9 @@ function createFSTests(adb: ADB) {
     const checkCmd = `[ -${op} '${escapePath(p)}' ] && echo ${passFlag}`;
     // Older Android images provide [ as a shell builtin, not an executable
     // that run-as can invoke directly.
-    const fullCmd = runAs ? `run-as ${util.quote(runAs)} sh -c '${escapePath(checkCmd)}'` : checkCmd;
+    const args = runAs ? ['run-as', runAs, 'sh', '-c', checkCmd] : ['sh', '-c', checkCmd];
     try {
-      return (await adb.shell([fullCmd])).includes(passFlag);
+      return (await adb.shell(args, {quoteArgs: true})).includes(passFlag);
     } catch {
       return false;
     }
