@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 import type {TestContext} from 'node:test';
 
+import {util} from '@appium/support';
 import {ADB} from 'appium-adb';
 import * as asyncbox from 'asyncbox';
 import sinon from 'sinon';
@@ -136,7 +137,15 @@ describe('performance data', function () {
     });
   });
   describe('getMemoryInfo', function () {
-    const shellArgs = ['dumpsys', 'meminfo', `'${PACKAGE_NAME}'`, '|', 'grep', '-E', "'Native|Dalvik|EGL|GL|TOTAL'"];
+    const shellArgs = [
+      'dumpsys',
+      'meminfo',
+      util.quote(PACKAGE_NAME),
+      '|',
+      'grep',
+      '-E',
+      util.quote('Native|Dalvik|EGL|GL|TOTAL'),
+    ];
     const dumpsysDataAPI30 = `
                          Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
                        Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free

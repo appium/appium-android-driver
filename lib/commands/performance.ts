@@ -145,16 +145,18 @@ export async function mobileGetPerformanceData(
  */
 export async function getMemoryInfo(this: AndroidDriver, packageName: string, retries: number = 2): Promise<any[][]> {
   return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
-    // This command contains a shell pipeline, so its arguments must not be quoted as literals.
+    // Quote argument values individually to preserve the pipe as shell syntax.
     const cmd = [
       'dumpsys',
       'meminfo',
-      `'${packageName}'`,
+      util.quote(packageName),
       '|',
       'grep',
       '-E',
-      `'${MEMINFO_TITLES.NATIVE}|${MEMINFO_TITLES.DALVIK}|${MEMINFO_TITLES.EGL}` +
-        `|${MEMINFO_TITLES.GL}|${MEMINFO_TITLES.TOTAL}'`,
+      util.quote(
+        `${MEMINFO_TITLES.NATIVE}|${MEMINFO_TITLES.DALVIK}|${MEMINFO_TITLES.EGL}` +
+          `|${MEMINFO_TITLES.GL}|${MEMINFO_TITLES.TOTAL}`,
+      ),
     ];
     const data = await this.adb.shell(cmd);
     if (!data) {
