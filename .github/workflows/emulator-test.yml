@@ -26,6 +26,8 @@ jobs:
           distribution: temurin
           java-version: 17
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Install dependencies and build driver
         run: |
           npm install --no-package-lock
