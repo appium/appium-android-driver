@@ -17,7 +17,7 @@ const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
  */
 export async function getDeviceTime(this: AndroidDriver, format: string = DATETIME_FORMAT_ISO8601): Promise<string> {
   this.log.debug(`Attempting to capture Android device date and time. The format specifier is '${format}'`);
-  const deviceTimestamp = (await this.adb.shell(['date', '+%Y-%m-%dT%T%z'])).trim();
+  const deviceTimestamp = (await this.adb.shell(['date', '+%Y-%m-%dT%T%z'], {quoteArgs: true})).trim();
   this.log.debug(`Got device timestamp: ${deviceTimestamp}`);
   const parsedTimestamp = dayjs.utc(deviceTimestamp, 'YYYY-MM-DDTHH:mm:ssZZ');
   if (!parsedTimestamp.isValid()) {
@@ -58,7 +58,7 @@ export async function adjustTimeZone(this: AndroidDriver, zoneName: string): Pro
   // different Android API versions.
   // See, for example,
   // https://cs.android.com/android/platform/superproject/+/master:frameworks/base/apex/jobscheduler/framework/java/android/app/IAlarmManager.aidl;l=1?q=IAlarmManager
-  await this.adb.shell(['service', 'call', 'alarm', '3', 's16', zoneName]);
+  await this.adb.shell(['service', 'call', 'alarm', '3', 's16', zoneName], {quoteArgs: true});
 }
 
 function parseOffset(timestamp: string): number {

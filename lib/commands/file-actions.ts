@@ -40,7 +40,7 @@ export async function pullFile(this: AndroidDriver, remotePath: string): Promise
         `Parsed package identifier '${packageId}' from '${remotePath}'. Will get the data from '${pathInContainer}'`,
       );
       try {
-        tmpDestination = await this.adb.shell(['mktemp', '/data/local/tmp/appium-pull-XXXXXX']);
+        tmpDestination = await this.adb.shell(['mktemp', '/data/local/tmp/appium-pull-XXXXXX'], {quoteArgs: true});
         // The shell user opens the destination; run-as only needs to read the source.
         // App users cannot create files in /data/local/tmp on non-rooted devices.
         await this.adb.shell(

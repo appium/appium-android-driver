@@ -68,7 +68,9 @@ describe('IME', function () {
         const shellStub = sandbox.stub(driver.adb, 'shell');
         await assert.doesNotReject(driver.setStylusHandwriting(enabled));
         assert.strictEqual(
-          shellStub.calledWithExactly(['settings', 'put', 'secure', 'stylus_handwriting_enabled', expectedValue]),
+          shellStub.calledWithExactly(['settings', 'put', 'secure', 'stylus_handwriting_enabled', expectedValue], {
+            quoteArgs: true,
+          }),
           true,
         );
       });

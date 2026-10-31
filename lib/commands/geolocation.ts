@@ -162,7 +162,7 @@ export async function mobileResetGeolocation(this: AndroidDriver): Promise<void>
  */
 export async function setMockLocationApp(this: AndroidDriver, appId: string): Promise<void> {
   try {
-    await this.adb.shell(['appops', 'set', appId, 'android:mock_location', 'allow']);
+    await this.adb.shell(['appops', 'set', appId, 'android:mock_location', 'allow'], {quoteArgs: true});
   } catch (err) {
     this.log.warn(`Unable to set mock location for app '${appId}': ${(err as Error).message}`);
     return;
@@ -171,7 +171,7 @@ export async function setMockLocationApp(this: AndroidDriver, appId: string): Pr
     let pkgIds: string[] = [];
     if (await this.adb.fileExists(MOCK_APP_IDS_STORE)) {
       try {
-        pkgIds = JSON.parse(await this.adb.shell(['cat', MOCK_APP_IDS_STORE]));
+        pkgIds = JSON.parse(await this.adb.shell(['cat', MOCK_APP_IDS_STORE], {quoteArgs: true}));
       } catch {}
     }
     if (pkgIds.includes(appId)) {
@@ -202,21 +202,23 @@ async function resetMockLocation(this: AndroidDriver): Promise<void> {
     let pkgIds: string[] = [];
     if (await this.adb.fileExists(MOCK_APP_IDS_STORE)) {
       try {
-        pkgIds = JSON.parse(await this.adb.shell(['cat', MOCK_APP_IDS_STORE]));
+        pkgIds = JSON.parse(await this.adb.shell(['cat', MOCK_APP_IDS_STORE], {quoteArgs: true}));
       } catch {}
     }
     const thirdPartyPkgIds = new Set(await thirdPartyPkgIdsPromise);
     // Only include currently installed packages
     const resultPkgs = pkgIds.filter((pkg) => thirdPartyPkgIds.has(pkg));
     if (resultPkgs.length <= 1) {
-      await this.adb.shell(['appops', 'set', resultPkgs[0] ?? SETTINGS_HELPER_ID, 'android:mock_location', 'deny']);
+      await this.adb.shell(['appops', 'set', resultPkgs[0] ?? SETTINGS_HELPER_ID, 'android:mock_location', 'deny'], {
+        quoteArgs: true,
+      });
       return;
     }
 
     this.log.debug(`Resetting mock_location permission for the following apps: ${resultPkgs}`);
     await asyncmap(resultPkgs, async (pkgId) => {
       try {
-        await this.adb.shell(['appops', 'set', pkgId, 'android:mock_location', 'deny']);
+        await this.adb.shell(['appops', 'set', pkgId, 'android:mock_location', 'deny'], {quoteArgs: true});
       } catch {}
     });
   } catch (err) {

@@ -37,7 +37,7 @@ interface SystemBarsResult {
 export async function getSystemBars(this: AndroidDriver): Promise<StringRecord> {
   let stdout: string;
   try {
-    stdout = await this.adb.shell(['dumpsys', 'window', 'windows']);
+    stdout = await this.adb.shell(['dumpsys', 'window', 'windows'], {quoteArgs: true});
   } catch (e) {
     throw new Error(`Cannot retrieve system bars details. Original error: ${(e as Error).message}`, {
       cause: e,
@@ -67,7 +67,7 @@ export async function mobilePerformStatusBarCommand(
       if (!Array.isArray(argsCallableArray)) {
         argsCallableArray = [argsCallableArray];
       }
-      return await this.adb.shell(['cmd', 'statusbar', cmd, ...argsCallableArray]);
+      return await this.adb.shell(['cmd', 'statusbar', cmd, ...argsCallableArray], {quoteArgs: true});
     };
   const tileCommandArgsCallable = () => component as string;
   const statusBarCommands = Object.fromEntries(

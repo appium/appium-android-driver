@@ -145,6 +145,7 @@ export async function mobileGetPerformanceData(
  */
 export async function getMemoryInfo(this: AndroidDriver, packageName: string, retries: number = 2): Promise<any[][]> {
   return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
+    // This command contains a shell pipeline, so its arguments must not be quoted as literals.
     const cmd = [
       'dumpsys',
       'meminfo',
@@ -207,7 +208,7 @@ export async function getNetworkTrafficInfo(this: AndroidDriver, retries: number
     let operations: string | undefined;
 
     const cmd = ['dumpsys', 'netstats'];
-    let data = await this.adb.shell(cmd);
+    let data = await this.adb.shell(cmd, {quoteArgs: true});
     if (!data) throw new Error('No data from dumpsys'); //eslint-disable-line curly
 
     // In case of network traffic information, it is different for the return data between emulator and real device.
@@ -392,7 +393,7 @@ export async function getCPUInfo(
   return await retryInterval(retries, RETRY_PAUSE_MS, async () => {
     let output: string;
     try {
-      output = await this.adb.shell(['dumpsys', 'cpuinfo']);
+      output = await this.adb.shell(['dumpsys', 'cpuinfo'], {quoteArgs: true});
     } catch (e) {
       const err = e as ExecError;
       if (err.stderr) {
@@ -429,6 +430,7 @@ export async function getCPUInfo(
  */
 export async function getBatteryInfo(this: AndroidDriver, retries: number = 2): Promise<any[][]> {
   return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
+    // Preserve the pipe as shell syntax rather than quoting it as a literal argument.
     const cmd = ['dumpsys', 'battery', '|', 'grep', 'level'];
     const data = await this.adb.shell(cmd);
     if (!data) throw new Error('No data from dumpsys'); //eslint-disable-line curly

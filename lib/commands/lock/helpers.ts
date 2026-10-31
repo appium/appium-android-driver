@@ -175,7 +175,7 @@ export async function pinUnlockWithKeyEvent(this: AndroidDriver, capabilities: A
   for (const pin of keys) {
     // 'pin' is number (0-9) in string.
     // Number '0' is keycode '7'. number '9' is keycode '16'.
-    await this.adb.shell(['input', 'keyevent', String(parseInt(pin, 10) + NUMBER_ZERO_KEYCODE)]);
+    await this.adb.shell(['input', 'keyevent', String(parseInt(pin, 10) + NUMBER_ZERO_KEYCODE)], {quoteArgs: true});
   }
   await waitForUnlock(this.adb);
 }
@@ -192,10 +192,10 @@ export async function passwordUnlock(this: AndroidDriver, capabilities: AndroidD
   // Replace blank spaces with %s
   const key = encodePassword(String(unlockKey));
   // Why adb ? It was less flaky
-  await this.adb.shell(['input', 'text', key]);
+  await this.adb.shell(['input', 'text', key], {quoteArgs: true});
   // Why sleeps ? Avoid some flakyness waiting for the input to receive the keys
   await sleep(INPUT_KEYS_WAIT_TIME);
-  await this.adb.shell(['input', 'keyevent', String(KEYCODE_NUMPAD_ENTER)]);
+  await this.adb.shell(['input', 'keyevent', String(KEYCODE_NUMPAD_ENTER)], {quoteArgs: true});
   // Waits a bit for the device to be unlocked
   await waitForUnlock(this.adb);
 }

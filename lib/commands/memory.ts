@@ -21,5 +21,5 @@ export async function mobileSendTrimMemory(this: AndroidDriver, pkg: string, lev
     throw new errors.InvalidArgumentError(`The 'level' argument must be provided`);
   }
 
-  await this.adb.shell(['am', 'send-trim-memory', pkg, level]);
+  await this.adb.shell(['am', 'send-trim-memory', pkg, level], {quoteArgs: true});
 }

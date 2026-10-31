@@ -158,7 +158,7 @@ export async function mobileStartActivity(
       flags,
     }),
   );
-  return await this.adb.shell(cmd);
+  return await this.adb.shell(cmd, {quoteArgs: true});
 }
 
 /**
@@ -223,7 +223,7 @@ export async function mobileBroadcast(
       flags,
     }),
   );
-  return await this.adb.shell(cmd);
+  return await this.adb.shell(cmd, {quoteArgs: true});
 }
 
 /**
@@ -282,7 +282,7 @@ export async function mobileStartService(
       flags,
     }),
   );
-  return await this.adb.shell(cmd);
+  return await this.adb.shell(cmd, {quoteArgs: true});
 }
 
 /**
@@ -338,7 +338,7 @@ export async function mobileStopService(
     }),
   );
   try {
-    return await this.adb.shell(cmd);
+    return await this.adb.shell(cmd, {quoteArgs: true});
   } catch (e) {
     // https://github.com/appium/appium-uiautomator2-driver/issues/792
     const err = e as {code?: number; stderr?: string};
