@@ -122,9 +122,7 @@ describe('performance data', function () {
   });
   describe('getBatteryInfo', function () {
     it('should return battery info', async function () {
-      (adb.shell as sinon.SinonStub)
-        .withArgs(['sh', '-c', 'dumpsys battery | grep level'], {quoteArgs: true})
-        .resolves('  level: 47');
+      (adb.shell as sinon.SinonStub).withArgs(['dumpsys', 'battery', '|', 'grep', 'level']).resolves('  level: 47');
       assert.deepStrictEqual(await getBatteryInfo.bind(driver)(), [BATTERY_KEYS, ['47']]);
       assert.strictEqual(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE), true);
     });
@@ -138,14 +136,7 @@ describe('performance data', function () {
     });
   });
   describe('getMemoryInfo', function () {
-    const shellArgs = [
-      'sh',
-      '-c',
-      'dumpsys meminfo "$1" | grep -E "$2"',
-      'sh',
-      PACKAGE_NAME,
-      'Native|Dalvik|EGL|GL|TOTAL',
-    ];
+    const shellArgs = ['dumpsys', 'meminfo', `'${PACKAGE_NAME}'`, '|', 'grep', '-E', "'Native|Dalvik|EGL|GL|TOTAL'"];
     const dumpsysDataAPI30 = `
                          Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
                        Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
@@ -210,13 +201,13 @@ describe('performance data', function () {
         ],
       ];
       (adb.getApiLevel as sinon.SinonStub).resolves(30);
-      (adb.shell as sinon.SinonStub).withArgs(shellArgs, {quoteArgs: true}).resolves(dumpsysDataAPI30);
+      (adb.shell as sinon.SinonStub).withArgs(shellArgs).resolves(dumpsysDataAPI30);
       assert.deepStrictEqual(await getMemoryInfo.bind(driver)(PACKAGE_NAME), expectedResult30);
       assert.strictEqual(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE), true);
     });
     it('should return memory info for 18<API<30', async function () {
       (adb.getApiLevel as sinon.SinonStub).resolves(19);
-      (adb.shell as sinon.SinonStub).withArgs(shellArgs, {quoteArgs: true}).resolves(dumpsysDataAPI19);
+      (adb.shell as sinon.SinonStub).withArgs(shellArgs).resolves(dumpsysDataAPI19);
       assert.deepStrictEqual(await getMemoryInfo.bind(driver)(PACKAGE_NAME), expectedResult);
       assert.strictEqual(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE), true);
     });
@@ -248,7 +239,7 @@ describe('performance data', function () {
             bucketStart=start1 activeTime=time1 rxBytes=rb1 rxPackets=rp1 txBytes=tb1 txPackets=tp1 operations=op1
             bucketStart=start2 activeTime=time2 rxBytes=rb2 rxPackets=rp2 txBytes=tb2 txPackets=tp2 operations=op2`;
     it('should return network stats', async function () {
-      (adb.shell as sinon.SinonStub).withArgs(shellArgs, {quoteArgs: true}).resolves(data);
+      (adb.shell as sinon.SinonStub).withArgs(shellArgs).resolves(data);
       assert.deepStrictEqual(await getNetworkTrafficInfo.bind(driver)(), [
         NETWORK_KEYS[1],
         ['start1', undefined, 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],
@@ -257,7 +248,7 @@ describe('performance data', function () {
       assert.strictEqual(retryIntervalStub.calledWith(RETRY_COUNT, RETRY_PAUSE), true);
     });
     it('should be able to parse data in old format', async function () {
-      (adb.shell as sinon.SinonStub).withArgs(shellArgs, {quoteArgs: true}).resolves(dataInOldFormat);
+      (adb.shell as sinon.SinonStub).withArgs(shellArgs).resolves(dataInOldFormat);
       assert.deepStrictEqual(await getNetworkTrafficInfo.bind(driver)(), [
         NETWORK_KEYS[0],
         ['start1', 'time1', 'rb1', 'rp1', 'tb1', 'tp1', 'op1', 'dur'],

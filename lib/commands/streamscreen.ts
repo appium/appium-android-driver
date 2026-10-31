@@ -282,7 +282,7 @@ function createStreamingLogger(streamName: string, udid: string): AppiumLogger {
 }
 
 async function verifyStreamingRequirements(adb: ADB): Promise<void> {
-  if (!(await adb.shell(['which', SCREENRECORD_BINARY], {quoteArgs: true})).trim()) {
+  if (!(await adb.shell(['which', SCREENRECORD_BINARY])).trim()) {
     throw new Error(`The required '${SCREENRECORD_BINARY}' binary is not available on the device under test`);
   }
 
@@ -327,7 +327,7 @@ const deviceInfoRegexes = [
 ] as const;
 
 async function getDeviceInfo(adb: ADB, log?: AppiumLogger): Promise<DeviceInfo> {
-  const output = await adb.shell(['dumpsys', 'display'], {quoteArgs: true});
+  const output = await adb.shell(['dumpsys', 'display']);
   const result: Partial<DeviceInfo> = {};
   for (const [key, pattern] of deviceInfoRegexes) {
     const match = pattern.exec(output);

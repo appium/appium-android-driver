@@ -78,16 +78,6 @@ export async function startActivity(
 /**
  * Starts an Android activity using the activity manager.
  *
- * Intent argument values are passed through to the device shell unchanged for
- * backward compatibility. Callers must POSIX-shell-quote literal values containing
- * whitespace, quotes, `$`, wildcards, or other shell metacharacters. This applies
- * to intent fields, categories, and extra keys and values, even when supplied as
- * structured parameters. Existing shell fragments and expansions remain supported.
- * For example, use `extras: [['s', 'message', "'hello world'"]]` to send a literal
- * space. A literal apostrophe inside single quotes must be represented as `'"'"'`;
- * for example, the shell-quoted form of `it's!` is `'it'"'"'s!'`.
- * Do not pass untrusted values without quoting them first.
- *
  * @param wait Set it to `true` if you want to block the method call
  * until the activity manager's process returns the control to the system.
  * `false` by default.
@@ -174,10 +164,6 @@ export async function mobileStartActivity(
 /**
  * Sends a broadcast intent to the Android system.
  *
- * Values retain their existing device-shell interpretation. Callers must quote
- * literal argument values, including extra keys and values, using POSIX shell
- * quoting. See {@link mobileStartActivity} for quoting requirements and examples.
- *
  * @param receiverPermission Require receiver to hold the given permission.
  * @param allowBackgroundActivityStarts Whether the receiver may start activities even if in the background.
  * @param user The user ID for which the broadcast is sent.
@@ -243,10 +229,6 @@ export async function mobileBroadcast(
 /**
  * Starts an Android service.
  *
- * Values retain their existing device-shell interpretation. Callers must quote
- * literal argument values, including extra keys and values, using POSIX shell
- * quoting. See {@link mobileStartActivity} for quoting requirements and examples.
- *
  * @param foreground Set it to `true` if your service must be started as foreground service.
  * This option is ignored if the API level of the device under test is below 26 (Android 8).
  * @param user The user ID for which the service is started.
@@ -305,10 +287,6 @@ export async function mobileStartService(
 
 /**
  * Stops an Android service.
- *
- * Values retain their existing device-shell interpretation. Callers must quote
- * literal argument values, including extra keys and values, using POSIX shell
- * quoting. See {@link mobileStartActivity} for quoting requirements and examples.
  *
  * @param user The user ID for which the service is stopped.
  * @param intent The name of the activity intent to stop, for example

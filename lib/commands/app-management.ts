@@ -625,7 +625,7 @@ export async function uninstallOtherPackages(
 export async function getThirdPartyPackages(this: AndroidDriver, filterPackages: string[] = []): Promise<string[]> {
   const filterPackagesSet = new Set(filterPackages);
   try {
-    const packagesString = await this.adb.shell(['pm', 'list', 'packages', '-3'], {quoteArgs: true});
+    const packagesString = await this.adb.shell(['pm', 'list', 'packages', '-3']);
     const appPackagesArray = packagesString
       .trim()
       .replace(/package:/g, '')

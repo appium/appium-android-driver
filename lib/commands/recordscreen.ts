@@ -304,7 +304,7 @@ async function terminateBackgroundScreenRecording(adb: ADB, force = true): Promi
   }
 
   try {
-    await adb.shell(['kill', force ? '-15' : '-2', ...screenrecordPids.map(String)], {quoteArgs: true});
+    await adb.shell(['kill', force ? '-15' : '-2', ...screenrecordPids.map(String)]);
     await waitForCondition(async () => util.isEmpty(await adb.getProcessIdsByName(SCREENRECORD_BINARY)), {
       waitMs: PROCESS_SHUTDOWN_TIMEOUT,
       intervalMs: 500,

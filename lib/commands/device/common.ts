@@ -282,7 +282,7 @@ export async function initDevice(this: AndroidDriver): Promise<void> {
         // after Settings app is installed
         await retryInterval(3, 500, async () => await hideKeyboardCompletely.bind(this)());
       } else if (hideKeyboard === false) {
-        await this.adb.shell(['ime', 'reset'], {quoteArgs: true});
+        await this.adb.shell(['ime', 'reset']);
       }
     })(),
   );

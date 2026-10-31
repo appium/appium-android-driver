@@ -15,7 +15,7 @@ const RESPONSE_PATTERN = /:\s+(\w+)/;
  * @returns Promise that resolves when the UI mode is set.
  */
 export async function mobileSetUiMode(this: AndroidDriver, mode: string, value: string): Promise<void> {
-  await this.adb.shell(['cmd', 'uimode', mode, value], {quoteArgs: true});
+  await this.adb.shell(['cmd', 'uimode', mode, value]);
 }
 
 /**
@@ -29,7 +29,7 @@ export async function mobileSetUiMode(this: AndroidDriver, mode: string, value: 
  * @throws {Error} If the command response cannot be parsed.
  */
 export async function mobileGetUiMode(this: AndroidDriver, mode: string): Promise<string> {
-  const response = await this.adb.shell(['cmd', 'uimode', mode], {quoteArgs: true});
+  const response = await this.adb.shell(['cmd', 'uimode', mode]);
   // response looks like 'Night mode: no'
   const match = RESPONSE_PATTERN.exec(response);
   if (!match) {

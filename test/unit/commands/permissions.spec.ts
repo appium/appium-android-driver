@@ -1,39 +1,48 @@
 import assert from 'node:assert/strict';
+import {execFile} from 'node:child_process';
 import {describe, it} from 'node:test';
+import {promisify} from 'node:util';
 
 import {mobileChangePermissions} from '../../../lib/commands/permissions.js';
 import type {AndroidDriver} from '../../../lib/driver.js';
-import {parseDeviceCommand, testShell} from '../../helpers/shell.js';
+
+async function parseCommand(args: string[]): Promise<string[]> {
+  const {stdout} = await promisify(execFile)('/bin/sh', ['-c', `set -- ${args.join(' ')}; printf '%s\\0' "$@"`]);
+  return stdout.split('\0').slice(0, -1);
+}
 
 describe('permission shell arguments', function () {
   for (const action of ['grant', 'revoke'] as const) {
-    it(`quotes the package when resolving all permissions to ${action}`, {skip: !testShell}, async function () {
-      const pkg = 'com.example.\'";$(printf unexpected)\n*';
-      const commands: string[][] = [];
-      const driver = {
-        opts: {},
-        log: {info() {}},
-        assertFeatureEnabled() {
-          throw new Error('adb_shell is disabled');
-        },
-        adb: {
-          shell: async (args: string[], opts: {quoteArgs?: boolean}) => {
-            assert.strictEqual(opts.quoteArgs, true);
-            commands.push(args);
-            return 'package dump';
+    it(
+      `quotes the package when resolving all permissions to ${action}`,
+      {skip: process.platform === 'win32'},
+      async function () {
+        const pkg = 'com.example.\'";$(printf unexpected)\n*';
+        const commands: string[][] = [];
+        const driver = {
+          opts: {},
+          log: {info() {}},
+          assertFeatureEnabled() {
+            throw new Error('adb_shell is disabled');
           },
-          getGrantedPermissions: async (appPackage: string, dump: string) => {
-            assert.strictEqual(appPackage, pkg);
-            assert.strictEqual(dump, 'package dump');
-            return [];
+          adb: {
+            shell: async (args: string[]) => {
+              commands.push(args);
+              return 'package dump';
+            },
+            getGrantedPermissions: async (appPackage: string, dump: string) => {
+              assert.strictEqual(appPackage, pkg);
+              assert.strictEqual(dump, 'package dump');
+              return [];
+            },
+            getReqPermissions: async () => [],
           },
-          getReqPermissions: async () => [],
-        },
-      } as unknown as AndroidDriver;
-      await mobileChangePermissions.call(driver, 'all', pkg, action);
-      assert.strictEqual(commands.length, 1);
-      assert.deepStrictEqual(await parseDeviceCommand(commands[0], {quoteArgs: true}), ['dumpsys', 'package', pkg]);
-    });
+        } as unknown as AndroidDriver;
+        await mobileChangePermissions.call(driver, 'all', pkg, action);
+        assert.strictEqual(commands.length, 1);
+        assert.deepStrictEqual(await parseCommand(commands[0]), ['dumpsys', 'package', pkg]);
+      },
+    );
   }
 
   it('keeps appops gated before executing shell', async function () {
@@ -54,8 +63,8 @@ describe('permission shell arguments', function () {
     );
   });
 
-  it('quotes appops arguments after the feature check', {skip: !testShell}, async function () {
-    const value = "a'b!;$(printf unexpected)\n*";
+  it('quotes appops arguments after the feature check', {skip: process.platform === 'win32'}, async function () {
+    const value = "a'b;$(printf unexpected)\n*";
     let checked = false;
     let command: string[] = [];
     const driver = {
@@ -64,20 +73,13 @@ describe('permission shell arguments', function () {
         checked = true;
       },
       adb: {
-        shell: async (args: string[], opts: {quoteArgs?: boolean}) => {
-          assert.strictEqual(opts.quoteArgs, true);
+        shell: async (args: string[]) => {
           assert.ok(checked);
           command = args;
         },
       },
     } as unknown as AndroidDriver;
     await mobileChangePermissions.call(driver, value, value, 'allow', 'appops');
-    assert.deepStrictEqual(await parseDeviceCommand(command, {quoteArgs: true}), [
-      'appops',
-      'set',
-      value,
-      value,
-      'allow',
-    ]);
+    assert.deepStrictEqual(await parseCommand(command), ['appops', 'set', value, value, 'allow']);
   });
 });

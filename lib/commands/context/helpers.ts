@@ -666,7 +666,7 @@ async function procFromWebview(this: AndroidDriver, webview: string): Promise<st
  * for more details.
  */
 async function getPotentialWebviewProcs(this: AndroidDriver): Promise<string[]> {
-  const out = await this.adb.shell(['cat', '/proc/net/unix'], {quoteArgs: true});
+  const out = await this.adb.shell(['cat', '/proc/net/unix']);
   const names: string[] = [];
   const allMatches: string[] = [];
   for (const line of out.split('\n')) {

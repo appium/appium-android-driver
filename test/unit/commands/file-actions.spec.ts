@@ -1,12 +1,28 @@
 import assert from 'node:assert/strict';
+import {execFile} from 'node:child_process';
 import {describe, it, beforeEach, afterEach} from 'node:test';
+import {promisify} from 'node:util';
 
 import * as support from '@appium/support';
 import {ADB} from 'appium-adb';
 import sinon from 'sinon';
 
 import {AndroidDriver} from '../../../lib/driver.js';
-import {parseDeviceCommand, testShell} from '../../helpers/shell.js';
+
+const testShell = process.env.APPIUM_TEST_SH ?? (process.platform === 'win32' ? undefined : '/bin/sh');
+
+// Exercise appium-adb's real quoting and a POSIX shell; stub only device transport.
+async function parseDeviceCommand(command: string | string[], opts?: {quoteArgs?: boolean}): Promise<string[]> {
+  const adb = new ADB();
+  const transport = sinon.stub(adb, 'adbExec').resolves('');
+  await adb.shell(command, opts);
+  const args = transport.firstCall.args[0] as string[];
+  const serialized = args.slice(1).join(' ');
+  const {stdout} = await promisify(execFile)(testShell!, ['-c', `set -- ${serialized}; printf '%s\\0' "$@"`], {
+    env: {...process.env, APPIUM_QUOTE_TEST: 'unexpected-expansion', MSYS_NO_PATHCONV: '1'},
+  });
+  return stdout.split('\0').slice(0, -1);
+}
 
 let driver: AndroidDriver;
 const sandbox = sinon.createSandbox();

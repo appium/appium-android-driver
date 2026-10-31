@@ -146,15 +146,16 @@ export async function mobileGetPerformanceData(
 export async function getMemoryInfo(this: AndroidDriver, packageName: string, retries: number = 2): Promise<any[][]> {
   return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
     const cmd = [
-      'sh',
-      '-c',
-      'dumpsys meminfo "$1" | grep -E "$2"',
-      'sh',
-      packageName,
-      `${MEMINFO_TITLES.NATIVE}|${MEMINFO_TITLES.DALVIK}|${MEMINFO_TITLES.EGL}` +
-        `|${MEMINFO_TITLES.GL}|${MEMINFO_TITLES.TOTAL}`,
+      'dumpsys',
+      'meminfo',
+      `'${packageName}'`,
+      '|',
+      'grep',
+      '-E',
+      `'${MEMINFO_TITLES.NATIVE}|${MEMINFO_TITLES.DALVIK}|${MEMINFO_TITLES.EGL}` +
+        `|${MEMINFO_TITLES.GL}|${MEMINFO_TITLES.TOTAL}'`,
     ];
-    const data = await this.adb.shell(cmd, {quoteArgs: true});
+    const data = await this.adb.shell(cmd);
     if (!data) {
       throw new Error('No data from dumpsys');
     }
@@ -206,7 +207,7 @@ export async function getNetworkTrafficInfo(this: AndroidDriver, retries: number
     let operations: string | undefined;
 
     const cmd = ['dumpsys', 'netstats'];
-    let data = await this.adb.shell(cmd, {quoteArgs: true});
+    let data = await this.adb.shell(cmd);
     if (!data) throw new Error('No data from dumpsys'); //eslint-disable-line curly
 
     // In case of network traffic information, it is different for the return data between emulator and real device.
@@ -391,7 +392,7 @@ export async function getCPUInfo(
   return await retryInterval(retries, RETRY_PAUSE_MS, async () => {
     let output: string;
     try {
-      output = await this.adb.shell(['dumpsys', 'cpuinfo'], {quoteArgs: true});
+      output = await this.adb.shell(['dumpsys', 'cpuinfo']);
     } catch (e) {
       const err = e as ExecError;
       if (err.stderr) {
@@ -428,8 +429,8 @@ export async function getCPUInfo(
  */
 export async function getBatteryInfo(this: AndroidDriver, retries: number = 2): Promise<any[][]> {
   return (await retryInterval(retries, RETRY_PAUSE_MS, async () => {
-    const cmd = ['sh', '-c', 'dumpsys battery | grep level'];
-    const data = await this.adb.shell(cmd, {quoteArgs: true});
+    const cmd = ['dumpsys', 'battery', '|', 'grep', 'level'];
+    const data = await this.adb.shell(cmd);
     if (!data) throw new Error('No data from dumpsys'); //eslint-disable-line curly
 
     const power = parseInt((data.split(':')[1] || '').trim(), 10);

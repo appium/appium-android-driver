@@ -50,7 +50,7 @@ export async function setUrl(this: AndroidDriver, uri: string): Promise<void> {
  */
 export async function getDisplayDensity(this: AndroidDriver): Promise<number> {
   // first try the property for devices
-  let out = await this.adb.shell(['getprop', 'ro.sf.lcd_density'], {quoteArgs: true});
+  let out = await this.adb.shell(['getprop', 'ro.sf.lcd_density']);
   if (out) {
     const val = parseInt(out, 10);
     // if the value is NaN, try getting the emulator property
@@ -60,7 +60,7 @@ export async function getDisplayDensity(this: AndroidDriver): Promise<number> {
     this.log.debug(`Parsed density value was NaN: "${out}"`);
   }
   // fallback to trying property for emulators
-  out = await this.adb.shell(['getprop', 'qemu.sf.lcd_density'], {quoteArgs: true});
+  out = await this.adb.shell(['getprop', 'qemu.sf.lcd_density']);
   if (out) {
     const val = parseInt(out, 10);
     if (!isNaN(val)) {
