@@ -1,3 +1,9 @@
+## [14.2.6](https://github.com/appium/appium-android-driver/compare/v14.2.5...v14.2.6) (2026-10-31)
+
+### Bug Fixes
+
+* preserve literal permission command arguments ([#1113](https://github.com/appium/appium-android-driver/issues/1113)) ([d8de55e](https://github.com/appium/appium-android-driver/commit/d8de55e92dbc27fcb288c87782cd0dad91843e07))
+
 ## [14.2.5](https://github.com/appium/appium-android-driver/compare/v14.2.4...v14.2.5) (2026-10-20)
 
 ### Bug Fixes
