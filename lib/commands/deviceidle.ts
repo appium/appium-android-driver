@@ -39,5 +39,5 @@ export async function mobileDeviceidle(
         `action must be one of ${JSON.stringify(SUPPORTED_ACTIONS)}. Got '${action}' instead`,
       );
   }
-  await this.adb.shellChunks(argsGenerator, packagesArr);
+  await this.adb.shellChunks(argsGenerator, packagesArr, {quoteArgs: true});
 }
